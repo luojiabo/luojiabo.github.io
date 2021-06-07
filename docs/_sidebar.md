@@ -1,3 +1,3 @@
 <!-- docs/_sidebar.md -->
 
-* [lua](lua/)
+* [lua入门](lua/)
