@@ -1,6 +1,5 @@
-- Translations
-  - [:uk: English](/)
-  - [:cn: 中文](/zh-cn/)
-  - [:de: Deutsch](/de-de/)
-  - [:es: Español](/es/)
-  - [:ru: Русский](/ru-ru/)
+* [首页](/)
+* lua
+
+  * [lua入门](lua/)
+  * [lua进阶](lua/)

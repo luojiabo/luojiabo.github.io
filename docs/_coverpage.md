@@ -1,12 +1,7 @@
 ![logo](_media/icon.svg)
 
-# docsify <small>4.12.1</small>
+# 随便写点啥 <small>4.0</small>
 
-> A magical documentation site generator.
+## ||ヽ(*￣▽￣*)ノミ|Ю
 
-- Simple and lightweight
-- No statically built html files
-- Multiple themes
-
-[GitHub](https://github.com/docsifyjs/docsify/)
-[Getting Started](#docsify)
+[开始](#docs)
