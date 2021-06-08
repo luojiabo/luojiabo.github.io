@@ -598,10 +598,283 @@ print("平均值为",average(10,5,3,4,5,6))
 
 
 ## 13、模块和包
+
+    1. require 函数
+
+        require("<模块名>")
+
+        -- test_module2.php 文件
+        -- module 模块为上文提到到 module.lua
+        -- 别名变量 m
+        local m = require("module")
+        
+        print(m.constant)
+        
+        m.func3()
+
+    2. 加载机制
+
+        对于自定义的模块，模块文件不是放在哪个文件目录都行，函数 require 有它自己的文件路径加载策略，它会尝试从 Lua 文件或 C 程序库中加载模 块。
+
+        require 用于搜索 Lua 文件的路径是存放在全局变量 package.path 中，当 Lua 启动后，会以环境变量 LUA_PATH 的值来初始这个环境变量。如果没有找到该环境变量，则使用一个编译时定义的默认路径来初始化   
+
+
+        如果找过目标文件，则会调用 package.loadfile 来加载模块。否则，就会去找 C 程序库。
+
+        搜索的文件路径是从全局变量 package.cpath 获取，而这个变量则是通过环境变量 LUA_CPATH 来初始。
+
+        搜索的策略跟上面的一样，只不过现在换成搜索的是 so 或 dll 类型的文件。如果找得到，那么 require 就会通过 package.loadlib 来加载它。
+
+    3. c包
+
+        Lua和C是很容易结合的，使用C为Lua写包。
+
+        与Lua中写包不同，C包在使用以前必须首先加载并连接，在大多数系统中最容易的实现方式是通过动态连接库机制。
+
+        Lua在一个叫loadlib的函数内提供了所有的动态连接的功能
+
 ## 14、原表（Metatable）
+
+
+        有两个很重要的函数来处理元表：
+
+        setmetatable(table,metatable): 对指定table设置元表(metatable)，如果元表(metatable)中存在__metatable键值，setmetatable会失败 。
+        getmetatable(table): 返回对象的元表(metatable)。
+
+        以下为元表常用的字段：
+
+            算术类元方法:     字段:__add(+), __mul(*), __ sub(-), __div(/), __unm, __mod(%), __pow, (__concat)
+            关系类元方法： 字段：__eq, __lt(<), __le(<=)，其他Lua自动转换 a~=b --> not(a == b) a > b --> b < a a >= b --> b <= a (注意NaN的情况)
+            table访问的元方法： 字段: __index, __newindex
+            __index:   查询：访问表中不存的字段&
+            rawget(t, i)
+            __newindex： 更新：向表中不存在索引赋值 
+
+            rawset(t, k, v)
+
+
+* __inidex 方法
+    这是 metatable 最常用的键。
+
+    当你通过键来访问 table 的时候，如果这个键没有值，那么Lua就会寻找该table的metatable（假定有metatable）中的__index 键。如果__index包含一个表格，Lua会在表格中查找相应的键。
+
+  ```
+    > other = { foo = 3 } 
+    > t = setmetatable({}, { __index = other }) 
+    > t.foo
+    3
+    > t.bar
+    nil
+  ```  
+
+* __newindex 元方法
+  
+    __newindex 元方法用来对表更新，__index则用来对表访问 。
+
+    当你给表的一个缺少的索引赋值，解释器就会查找__newindex 元方法：如果存在则调用这个函数而不进行赋值操作。
+
+    以下实例演示了 __newindex 元方法的应用：
+    ```
+    mymetatable = {}
+    mytable = setmetatable({key1 = "value1"}, { __newindex = mymetatable })
+
+    print(mytable.key1)
+
+    mytable.newkey = "新值2"
+    print(mytable.newkey,mymetatable.newkey)
+
+    mytable.key1 = "新值1"
+    print(mytable.key1,mymetatable.newkey1)
+    ```
+* 为表添加操作符
+  ```
+    -- 计算表中最大值，table.maxn在Lua5.2以上版本中已无法使用
+    -- 自定义计算表中最大值函数 table_maxn
+    function table_maxn(t)
+        local mn = 0
+        for k, v in pairs(t) do
+            if mn < k then
+                mn = k
+            end
+        end
+        return mn
+    end
+
+    -- 两表相加操作
+    mytable = setmetatable({ 1, 2, 3 }, {
+    __add = function(mytable, newtable)
+        for i = 1, table_maxn(newtable) do
+        table.insert(mytable, table_maxn(mytable)+1,newtable[i])
+        end
+        return mytable
+    end
+    })
+
+    secondtable = {4,5,6}
+
+    mytable = mytable + secondtable
+        for k,v in ipairs(mytable) do
+    print(k,v)
+    end
+  ```
+
+
 ## 15、协同程序
+
+    1. 什么是协同
+    
+        Lua 协同程序(coroutine)与线程比较类似：拥有独立的堆栈，独立的局部变量，独立的指令指针，同时又与其它协同程序共享全局变量和其它大部分东西。
+        协同是非常强大的功能，但是用起来也很复杂。
+
+    2. 线程和协同程序区别
+
+        线程与协同程序的主要区别在于，一个具有多个线程的程序可以同时运行几个线程，而协同程序却需要彼此协作的运行。
+
+        在任一指定时刻只有一个协同程序在运行，并且这个正在运行的协同程序只有在明确的被要求挂起的时候才会被挂起。
+
+        协同程序有点类似同步的多线程，在等待同一个线程锁的几个线程有点类似协同。
+
+
+    3. 基本语法
+
+        coroutine.create()	创建coroutine，返回coroutine， 参数是一个函数，当和
+        
+        resume配合使用的时候就唤醒函数调用
+       
+        coroutine.resume()	重启coroutine，和create配合使用
+      
+       coroutine.yield()	挂起coroutine，将coroutine设置为挂起状态，这个和resume配合使用能有很多有用的效果
+      
+        coroutine.status()	查看coroutine的状态
+        注：coroutine的状态有三种：dead，suspend，running，具体什么时候有这样的状态请
+        
+        参考下面的程序
+        coroutine.wrap（）	创建coroutine，返回一个函数，一旦你调用这个函数，就进入coroutine，和create功能重复
+        
+        coroutine.running()	返回正在跑的coroutine，一个coroutine就是一个线程，当使
+        用running的时候，就是返回一个corouting的线程号
+
+ ```
+    -- coroutine_test.lua 文件
+    co = coroutine.create(
+        function(i)
+            print(i);
+        end
+    )
+    
+    coroutine.resume(co, 1)   -- 1
+    print(coroutine.status(co))  -- dead
+    
+    print("----------")
+    
+    co = coroutine.wrap(
+        function(i)
+            print(i);
+        end
+    )
+    
+    co(1)
+    
+    print("----------")
+    
+    co2 = coroutine.create(
+        function()
+            for i=1,10 do
+                print(i)
+                if i == 3 then
+                    print(coroutine.status(co2))  --running
+                    print(coroutine.running()) --thread:XXXXXX
+                end
+                coroutine.yield()
+            end
+        end
+    )
+    
+    coroutine.resume(co2) --1
+    coroutine.resume(co2) --2
+    coroutine.resume(co2) --3
+    
+    print(coroutine.status(co2))   -- suspended
+    print(coroutine.running())   --nil
+    
+    print("----------")
+```
+    coroutine.running就可以看出来,coroutine在底层实现就是一个线程。
+
+    当create一个coroutine的时候就是在新线程中注册了一个事件。
+
+    当使用resume触发事件的时候，create的coroutine函数就被执行了，当遇到yield的时候就代表挂起当前线程，等候再次resume触发事件。
+
+
 ## 16、文件I/O
 ## 17、对象
+
+我们可以使用点号(.)来访问类的属性：print(r.length)
+
+我们可以使用冒号(:)来访问类的属性：r:printArea()
+```
+    -- Meta class
+    Shape = {area = 0}
+    -- 基础类方法 new
+    function Shape:new (o,side)
+    o = o or {}
+    setmetatable(o, self)
+    self.__index = self
+    side = side or 0
+    self.area = side*side;
+    return o
+    end
+    -- 基础类方法 printArea
+    function Shape:printArea ()
+    print("面积为 ",self.area)
+    end
+
+    -- 创建对象
+    myshape = Shape:new(nil,10)
+    myshape:printArea()
+
+    Square = Shape:new()
+    -- 派生类方法 new
+    function Square:new (o,side)
+    o = o or Shape:new(o,side)
+    setmetatable(o, self)
+    self.__index = self
+    return o
+    end
+
+    -- 派生类方法 printArea
+    function Square:printArea ()
+    print("正方形面积为 ",self.area)
+    end
+
+    -- 创建对象
+    mysquare = Square:new(nil,10)
+    mysquare:printArea()
+
+    Rectangle = Shape:new()
+    -- 派生类方法 new
+    function Rectangle:new (o,length,breadth)
+    o = o or Shape:new(o)
+    setmetatable(o, self)
+    self.__index = self
+    self.area = length * breadth
+    return o
+    end
+
+    -- 派生类方法 printArea
+    function Rectangle:printArea ()
+    print("矩形面积为 ",self.area)
+    end
+
+    -- 创建对象
+    myrectangle = Rectangle:new(nil,10,20)
+    myrectangle:printArea()
+```
+
+
+
 ## 18、错误处理
 ## 19、调试
 ## 20、垃圾回收
+
+# 扩展
