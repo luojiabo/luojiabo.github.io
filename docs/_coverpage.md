@@ -1,6 +1,6 @@
 ![logo](_media/icon.svg)
 
-# 随便写点啥 <small>4.0</small>
+# 随便写点啥 <small>0.0.0703</small>
 
 ## ||ヽ(*￣▽￣*)ノミ|Ю
 
