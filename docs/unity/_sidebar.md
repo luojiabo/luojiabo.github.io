@@ -2,9 +2,9 @@
 
   - 第一篇 基础篇
   - [第1章 欢迎来到Shader的世界](/unity/unityshader/1.md)
-  - [第2章 渲染流水线](/unity/unityshader/1.md)
-  - [第3章 Unity Shader](/unity/unityshader/1.md)
-  - [第4章 所需数学基础](/unity/unityshader/1.md)
+  - [第2章 渲染流水线](/unity/unityshader/2.md)
+  - [第3章 Unity Shader](/unity/unityshader/3.md)
+  - [第4章 所需数学基础](/unity/unityshader/4.md)
 
   - 第二篇 初级篇
   - [第5章 开始学习Unity Shader](/unity/unityshader/1.md)
