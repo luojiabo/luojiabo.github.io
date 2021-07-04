@@ -1,7 +1,7 @@
 ![logo](_media/icon.svg)
 
-# 随便写点啥 <small>0.0.0703</small>
+# 笔记本 <small>0.0.0703</small>
 
 ## ||ヽ(*￣▽￣*)ノミ|Ю
 
-[开始](#docs)
+[开始](#Document)
