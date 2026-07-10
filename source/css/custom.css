@@ -2,9 +2,13 @@
    自定义移动端适配：菜单折叠成汉堡按钮
    ======================================== */
 
-/* 强制导航栏常驻显示（覆盖主题默认 opacity: 0） */
+/* 强制导航栏常驻显示 */
 #nav {
   opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+  transform: none !important;
+  filter: none !important;
 }
 
 /* 防止整个页面横向溢出 */
@@ -15,23 +19,27 @@ html, body {
 
 /* 平板及以下：菜单折叠成汉堡按钮 */
 @media screen and (max-width: 1300px) {
-  /* 隐藏菜单项 */
-  .menus_items {
+  /* 只隐藏顶部导航的菜单项，不影响侧边栏 */
+  #nav .menus_items {
     display: none !important;
+    visibility: hidden !important;
   }
 
-  /* 显示汉堡按钮 */
-  #toggle-menu {
+  /* 显示汉堡按钮 - 用最高优先级 */
+  #nav #toggle-menu {
     display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   #toggle-menu .site-page {
     font-size: inherit;
   }
 
-  /* 搜索按钮只显示图标，不显示文字 */
-  #search-button span:not(.site-page) {
-    display: none;
+  /* 搜索按钮只显示图标 */
+  #nav #search-button span:not(.site-page) {
+    display: none !important;
+    visibility: hidden !important;
   }
 
   /* 调整 nav 内边距 */
@@ -42,11 +50,13 @@ html, body {
     box-sizing: border-box !important;
   }
 
-  #menus {
+  #nav #menus {
     display: flex !important;
     align-items: center !important;
     gap: 8px !important;
     flex-shrink: 0 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   #nav > * {
