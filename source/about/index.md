@@ -5,7 +5,7 @@ type: "about"
 layout: "about"
 ---
 
-# 👋 你好，我是妖怪佬
+# 👋 你好，我是老妖怪
 
 一只爱折腾的代码苦手，热衷于研究各种有趣的技术。
 
@@ -24,5 +24,5 @@ layout: "about"
 ## 关于本站
 
 - 框架：[Hexo](https://hexo.io/) + [Butterfly](https://github.com/jerryc127/hexo-theme-butterfly)
-- 部署：[Netlify](https://www.netlify.com/)
-- 域名：blog.laoyaoguai.top
+- 部署：GitHub Pages
+- 域名：laoyaoguai.top
