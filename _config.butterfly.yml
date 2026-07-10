@@ -163,4 +163,4 @@ beautify:
 # Inject
 inject:
   head:
-    - <link rel="stylesheet" href="/css/custom.css?v=5">
+    - <link rel="stylesheet" href="/css/custom.css?v=6">

@@ -30,11 +30,12 @@ html, body {
     display: inline-block !important;
     visibility: visible !important;
     opacity: 1 !important;
-    background: red !important;
-    color: white !important;
-    font-size: 28px !important;
-    padding: 4px 10px !important;
-    border-radius: 4px !important;
+    color: #fff !important;
+    font-size: 1.3em !important;
+  }
+
+  #nav #toggle-menu:hover {
+    color: rgba(255, 255, 255, 0.7) !important;
   }
 
   #toggle-menu .site-page {
