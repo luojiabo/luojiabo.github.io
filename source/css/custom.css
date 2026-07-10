@@ -5,18 +5,27 @@
 /* 平板及以下：菜单折叠成汉堡按钮 */
 @media screen and (max-width: 1300px) {
   /* 隐藏菜单项 */
-  #nav .menus_items {
+  .menus_items {
     display: none !important;
   }
 
   /* 显示汉堡按钮 */
-  #nav #toggle-menu {
+  #toggle-menu {
     display: inline-block !important;
   }
 
-  /* 搜索按钮在移动端也只显示图标 */
-  #nav #search-button .site-page {
+  #toggle-menu .site-page {
     font-size: inherit;
+  }
+
+  /* 搜索按钮只显示图标，不显示文字 */
+  #search-button span:not(.site-page) {
+    display: none;
+  }
+
+  /* 调整 nav 内边距，腾出空间给汉堡按钮 */
+  #nav {
+    padding: 0 16px !important;
   }
 }
 
@@ -24,9 +33,10 @@
 @media screen and (max-width: 1300px) {
   #site-name,
   .site-name {
-    max-width: 60vw;
+    max-width: 50vw;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-size: 1.1em !important;
   }
 }
