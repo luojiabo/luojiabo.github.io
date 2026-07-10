@@ -1,0 +1,21 @@
+[build]
+  command = "npm run build"
+  publish = "public"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[redirects]]
+  from = "/Build/*"
+  to = "https://laoyaoguai.top/Build/:splat"
+  status = 200
+  
+[[redirects]]
+  from = "/TemplateData/*"
+  to = "https://laoyaoguai.top/TemplateData/:splat"
+  status = 200
+  
+[[redirects]]
+  from = "/StreamingAssets/*"
+  to = "https://laoyaoguai.top/StreamingAssets/:splat"
+  status = 200

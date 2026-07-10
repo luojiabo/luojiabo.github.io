@@ -1,0 +1,160 @@
+# Butterfly Theme Config
+# See full config: node_modules/hexo-theme-butterfly/_config.yml
+
+# Navbar
+nav:
+  logo:
+  display_title: true
+  fixed: true
+  announcements:
+
+menu:
+  首页: / || fas fa-home
+  归档: /archives/ || fas fa-archive
+  标签: /tags/ || fas fa-tags
+  分类: /categories/ || fas fa-folder-open
+  关于: /about/ || fas fa-heart
+
+# Index Cover
+index_top_img:
+index_img:
+default_cover:
+  - https://s4.zstatic.net/ajax/libs/hexo-theme-butterfly/5.4.3/cover/default.png
+
+# Avatar
+avatar:
+  img: 
+  effect: false
+
+# Social Icons
+social:
+  fab fa-github: https://github.com/laoyaoguai || Github || '#24292e'
+  fas fa-envelope: mailto:your-email@example.com || Email || '#4a7dbe'
+
+# Footer
+footer:
+  owner:
+    enable: true
+    since: 2026
+  custom_text: 🚀 技术无止境，折腾不停歇
+  copyright: true
+
+# Post meta
+post_meta:
+  page:
+    date_type: both
+    categories: true
+    tags: true
+  post:
+    date_type: both
+    categories: true
+    tags: false
+
+# Article
+article:
+  highlight:
+    theme: atom-one-light
+    copy: true
+    height_limit:
+
+# Code block
+code_blocks:
+  style: mac
+
+# TOC
+toc:
+  post: true
+  page: true
+  number: false
+  expand_all: true
+  max_open: 6
+
+# Read more
+excerpt:
+  auto_excerpt:
+    enable: true
+    length: 150
+
+# Dark mode
+darkmode:
+  enable: true
+  default: auto
+  time: 
+    default: auto
+
+# Aside
+aside:
+  enable: true
+  hide: false
+  mobile: true
+  position: right
+  card_author:
+    enable: true
+    description: 一只爱折腾的代码苦手
+  card_announcement:
+    enable: false
+  card_recent_post:
+    enable: true
+    limit: 5
+    sort: date
+  card_categories:
+    enable: true
+    limit: 8
+    expand: none
+  card_tags:
+    enable: true
+    limit: 30
+    orderby: random
+    order: 1
+  card_webinfo:
+    enable: true
+    post_count: true
+    last_push_date: true
+    site_runtime:
+      enable: true
+      date: 2026-07-10
+
+# Comment
+comments:
+  use:
+    - Twikoo
+  text: true
+  post: true
+
+twikoo:
+  envId: 
+  region: 
+  visitor: false
+  option:
+
+# Search
+search:
+  use:
+    - local_search
+local_search:
+  preload: true
+  CDN:
+
+# Math (disable unless needed)
+mathjax:
+  enable: false
+  per_page: false
+katex:
+  enable: false
+  per_page: false
+
+# PWA
+pwa:
+  enable: false
+
+# CDN
+CDN:
+  internal_provider: local
+  third_party_provider: cdnjs
+
+# Beautify
+beautify:
+  enable: true
+  field: site
+  title-prefix-icon:
+  title-prefix-icon_color:
