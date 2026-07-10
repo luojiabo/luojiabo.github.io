@@ -11,9 +11,9 @@ table{max-width:100%;overflow-x:auto;display:block}
 pre{white-space:pre-wrap;word-break:break-word}
 /* topbar */
 #top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
-#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#logo{font-weight:700;color:#5b5bff;margin-right:6px;font-size:14px;text-decoration:none;cursor:pointer}
 #sep{color:#999;margin-right:6px}
-#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#cur{color:#666;font-size:13px;flex:0 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;margin-left:4px}
 #btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
 #btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
 #btns button:hover{background:#f0f0ec;color:#5b5bff}
@@ -81,7 +81,7 @@ pre{white-space:pre-wrap;word-break:break-word}
 }
 </style></head><body>
 <header id="top">
-  <span id="logo">虎书5</span>
+  <a href="/books/" id="logo">虎书5</a>
   <span id="sep">/</span>
   <span id="cur">Ch18 颜色</span>
   <span id="btns">
