@@ -1,0 +1,32 @@
+/* ========================================
+   自定义移动端适配：菜单折叠成汉堡按钮
+   ======================================== */
+
+/* 平板及以下：菜单折叠成汉堡按钮 */
+@media screen and (max-width: 1300px) {
+  /* 隐藏菜单项 */
+  #nav .menus_items {
+    display: none !important;
+  }
+
+  /* 显示汉堡按钮 */
+  #nav #toggle-menu {
+    display: inline-block !important;
+  }
+
+  /* 搜索按钮在移动端也只显示图标 */
+  #nav #search-button .site-page {
+    font-size: inherit;
+  }
+}
+
+/* 调整标题在小屏幕的表现 */
+@media screen and (max-width: 1300px) {
+  #site-name,
+  .site-name {
+    max-width: 60vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

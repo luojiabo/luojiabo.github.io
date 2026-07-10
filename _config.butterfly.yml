@@ -159,3 +159,8 @@ beautify:
   field: site
   title-prefix-icon:
   title-prefix-icon_color:
+
+# Inject
+inject:
+  head:
+    - <link rel="stylesheet" href="/css/custom.css">
