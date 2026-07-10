@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch18: 颜色</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch18 颜色</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第18章：颜色 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第18章（p.503-524）。<br>
+<strong>本章是图形学的"色彩"</strong>——它告诉你：颜色不是"红绿蓝"这么简单，背后有一整套<strong>色彩科学（Color Science）</strong>。<br>
+学完本章，你将真正理解色度学、色域、白点、Gamma 校正、色温等 PBR 渲染的基石。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s18intro">18.0 为什么需要学"颜色"？</a></li>
+  <li><a href="#s181">18.1 什么是颜色？</a></li>
+  <li><a href="#s182">18.2 人类视觉系统</a></li>
+  <li><a href="#s183">18.3 色度学（Colorimetry）</a></li>
+  <li><a href="#s184">18.4 Gamma 校正</a></li>
+  <li><a href="#s185">18.5 色适应</a></li>
+  <li><a href="#s186">18.6 颜色模型</a></li>
+  <li><a href="#s187">18.7 颜色在图形学中的应用</a></li>
+  <li><a href="#s188">18.8 全章总结</a></li>
+</ul>
+</div>
+
+<hr>
+
+<h2 id="18-0-为什么需要学-颜色">18.0 为什么需要学"颜色"？</h2>
+
+<p>你可能觉得"颜色就是 RGB"——你已经用了很多年 RGB 了。但 <strong>为什么 255, 0, 0 是红色？为什么 255, 255, 255 是白色？为什么显示器上的颜色和打印出来的不一样？</strong></p>
+
+<p>这些问题表面上很简单，但它们通往一门严谨的科学——<strong>色彩科学</strong>。PBR 渲染、HDR、色彩管理——所有这些现代图形学技术，离开了对颜色的深刻理解就会出 bug。</p>
+
+<p><strong>这一章的目标：</strong></p>
+<ol>
+  <li>理解颜色的<strong>物理学</strong>——光谱 SPD</li>
+  <li>掌握<strong>色度学（Colorimetry）</strong>：三刺激值、配色函数</li>
+  <li>理解 <strong>CIE XYZ</strong> 颜色空间及其意义</li>
+  <li>掌握<strong>色品图（Chromaticity Diagram）</strong>——马蹄形</li>
+  <li>理解<strong>色域（Gamut）</strong> 与色域映射</li>
+  <li>掌握<strong>白点</strong> 和<strong>色温</strong></li>
+  <li>理解<strong>色适应（Chromatic Adaptation）</strong></li>
+  <li>掌握<strong>Gamma 校正</strong></li>
+</ol>
+
+<p><strong>你有过这些困惑吗？</strong></p>
+<ul>
+  <li>为什么 PS 里的"色相/饱和度"调整在 RGB 图像上效果那么奇怪？</li>
+  <li>为什么你的游戏截图在手机上看太暗、在显示器上看太亮？</li>
+  <li>为什么印刷出来的照片和屏幕上看到的不一样？</li>
+  <li>为什么同一个 3D 场景在 Unity 和 Unreal 中颜色不同？</li>
+</ul>
+<p>所有这些问题的答案都在本章中。</p>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：你在显示器上看到的一张红色图片 = 显示器发出红色光。但一张红色印刷品 = 纸反射红色光、吸收其他光。这两个"红色"的物理过程完全不同，它们的 RGB 值应该一样吗？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">这就是色彩管理的核心问题——不同设备用不同的方式产生颜色，我们要确保它们看起来一致。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="18-1-什么是颜色">18.1 什么是颜色？</h2>
+
+<h3 id="18-1-1-颜色的来源">18.1.1 颜色的来源</h3>
+
+<p><strong>颜色 = 人类视觉系统对光谱的感知</strong></p>
+
+<p>光是一种电磁波。不同的波长对应不同的颜色：</p>
+
+<table>
+<tr><th>波长 (nm)</th><th>颜色</th></tr>
+<tr><td>380~450</td><td>紫色 / 蓝色</td></tr>
+<tr><td>450~495</td><td>蓝色</td></tr>
+<tr><td>495~570</td><td>绿色</td></tr>
+<tr><td>570~590</td><td>黄色</td></tr>
+<tr><td>590~620</td><td>橙色</td></tr>
+<tr><td>620~780</td><td>红色</td></tr>
+</table>
+
+<p>但自然光几乎从不会是单一波长——它是许多波长的混合。描述这种混合的工具叫 <strong>SPD（Spectral Power Distribution，光谱功率分布）</strong>。</p>
+
+<pre><code><span class="keyword">struct</span> SPD {
+    float power[<span class="number">81</span>];   // 380nm ~ 780nm, 每5nm一个采样
+    float operator()(float lambda) {
+        <span class="comment">// 插值采样</span>
+    }
+};</code></pre>
+
+<h3 id="18-1-2-颜色---光---物体---眼睛">18.1.2 颜色 = 光 × 物体 × 眼睛</h3>
+
+<p>颜色的产生有三个要素：</p>
+
+<ol>
+  <li><strong>光源</strong>：SPD(λ)（如 D65 日光）——决定了有哪些波长的光可用</li>
+  <li><strong>物体</strong>：反射率 R(λ)（如绿草、红苹果）——决定了哪些波长的光被反射</li>
+  <li><strong>眼睛</strong>：LMS 锥体响应函数——决定了你怎么感知这些光</li>
+</ol>
+
+<div class="formula">最终看到的光 = 光源 SPD(λ) × 物体反射率 R(λ) × 眼睛响应</div>
+
+<div class="info-box">
+<strong>日常类比</strong>：颜色不是物体的固有属性，而是<strong>光</strong>和<strong>眼睛</strong>共同作用的结果。就像"辣"不是辣椒的固有属性——是你的味觉神经对辣椒素的反应。没有你的舌头，辣椒就不"辣"。没有你的眼睛，物体就没有"颜色"。
+</div>
+
+<hr>
+
+<h2 id="18-2-人类视觉系统">18.2 人类视觉系统</h2>
+
+<h3 id="18-2-1-为什么人眼只用-3-种传感器">18.2.1 为什么人眼只用 3 种传感器？</h3>
+
+<p>我们的视网膜上有两种感光细胞：</p>
+<ul>
+  <li><strong>锥体（Cones）</strong>：负责颜色视觉，有 3 种类型</li>
+  <li><strong>杆体（Rods）</strong>：负责暗视觉，只有一种类型（无色）</li>
+</ul>
+
+<table>
+<tr><th>细胞</th><th>类型</th><th>峰值波长</th><th>敏感性</th></tr>
+<tr><td>L cones</td><td>长波</td><td>~565 nm</td><td>红</td></tr>
+<tr><td>M cones</td><td>中波</td><td>~535 nm</td><td>绿</td></tr>
+<tr><td>S cones</td><td>短波</td><td>~440 nm</td><td>蓝</td></tr>
+<tr><td>Rods</td><td>暗视觉</td><td>~500 nm</td><td>无色</td></tr>
+</table>
+
+<div class="guizang-figure">
+<img src="images/ch18/tristimulus.png" alt="三刺激值与配色函数——LMS锥体响应">
+<div class="guizang-caption">图18-1：LMS 锥体响应曲线——人眼的三种感光细胞对不同波长的敏感度，红色（L）、绿色（M）、蓝色（S）</div>
+</div>
+
+<p><strong>锥体响应函数</strong>——每种锥体对入射光谱按波长积分：</p>
+
+<div class="formula">L = ∫ S(λ) · L_bar(λ) dλ<br>M = ∫ S(λ) · M_bar(λ) dλ<br>S = ∫ S(λ) · S_bar(λ) dλ</div>
+
+<table>
+<tr><th>符号</th><th>含义</th><th>白话翻译</th></tr>
+<tr><td>S(λ)</td><td>入射光的 SPD（光谱功率分布）</td><td>到达眼睛的光在每个波长上的能量</td></tr>
+<tr><td><b>L_bar</b>(λ)</td><td>L 锥体对不同波长的敏感度</td><td>L 锥体"喜欢"哪些波长</td></tr>
+<tr><td>L</td><td>L 锥体的最终响应值</td><td>对所有波长的贡献求和</td></tr>
+<tr><td>∫ dλ</td><td>对波长积分</td><td>把每个波长的贡献加起来</td></tr>
+</table>
+
+<div class="key-box">
+<strong>核心洞察</strong>：人眼只有 <strong>3 种色彩传感器</strong>——这就是为什么<strong>3 通道 RGB 就够了</strong>。这是整个色彩科学的起点。
+</div>
+
+<h3 id="18-2-2-锥体响应的数学拆解">18.2.2 锥体响应的数学拆解</h3>
+
+<p>每种锥体的响应是一个积分——把光谱上每个波长的能量乘以该锥体对该波长的敏感度，然后加起来：</p>
+
+<div class="formula">L = ∫<sub>380</sub><sup>780</sup> S(λ) · <span style="color:#e74c3c;">L̄</span>(λ) dλ</div>
+
+<table>
+<tr><th>符号</th><th>含义</th><th>白话翻译</th></tr>
+<tr><td>S(λ)</td><td>入射光的光谱功率分布</td><td>每个波长上的"能量"有多少</td></tr>
+<tr><td><span style="color:#e74c3c;">L̄(λ)</span></td><td>L锥体的光谱敏感度函数</td><td>L锥体对不同波长的"喜好程度"</td></tr>
+<tr><td>S(λ)·L̄(λ)</td><td>逐波长乘积</td><td>波长λ处的光 × 该波长的敏感度</td></tr>
+<tr><td>∫dλ</td><td>对所有波长积分</td><td>把所有波长的贡献加起来</td></tr>
+<tr><td>L</td><td>L锥体的总响应</td><td>一个数，描述"有多红"</td></tr>
+</table>
+
+<p><strong>数值例子</strong>：假设光谱 S(λ) 只在 565nm 处有能量 = 1，其他地方为 0：</p>
+<pre><code>L = S(565) × L̄(565) × Δλ = 1 × 1.0 × 5 ≈ 5.0  (大响应，因为 565nm 是 L 锥体峰值)
+M = S(565) × M̄(565) × Δλ = 1 × 0.5 × 5 ≈ 2.5  (中等响应)
+S = S(565) × S̄(565) × Δλ = 1 × 0.0 × 5 ≈ 0.0  (无响应)</code></pre>
+
+<h3 id="18-2-3-同色异谱-metamerism">18.2.3 同色异谱（Metamerism）</h3>
+
+<p><strong>同色异谱 = "两个不同 SPD 看起来完全一样"</strong></p>
+
+<p>因为人眼只通过 3 个通道（LMS）来感知颜色，所以完全不同的光谱分布可以产生完全相同的 LMS 三刺激值——从而看起来是"同一个颜色"。</p>
+
+<pre><code><span class="comment">// 两种 SPD 产生完全相同的颜色</span>
+SPD spd1, spd2;
+float L1 = integrate(spd1, L_bar);  // spd1 的 L 响应
+float L2 = integrate(spd2, L_bar);  // spd2 的 L 响应
+<span class="comment">// L1 == L2, M1 == M2, S1 == S2 -> 颜色完全一致</span></code></pre>
+
+<div class="info-box">
+<strong>应用</strong>：<strong>显示器/打印机</strong>利用这个原理——它们发出的光谱和自然物体反射的光谱完全不同，但只要 LMS 响应相同，人眼就认为颜色一致。
+</div>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么你在超市的荧光灯下买衣服，拿回家在阳光下看颜色不一样了？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">因为荧光灯和太阳的 SPD 完全不同！虽然它们都是"白光"，但光谱成分不一样，导致物体反射光进入你眼睛的 LMS 响应也不同。这就是同色异谱的局限性——同一个物体在两种光源下可能是不同颜色。所以高端商品看色要用标准光源（如 D65）。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="18-3-色度学-colorimetry">18.3 色度学（Colorimetry）</h2>
+
+<h3 id="18-3-1-为什么需要色度学">18.3.1 为什么需要色度学？</h3>
+
+<p>人眼有 3 种锥体，所以理论上用 3 个数值就能描述任何颜色。但问题是：<strong>这 3 个数值跟具体的锥体响应有关——不同人的锥体敏感度不同怎么办？</strong>色度学的目标就是定义<strong>标准化的、与人无关的</strong>颜色描述体系。</p>
+
+<h3 id="18-3-1-从-lms-到-cie-的动机">18.3.1 从 LMS 到 CIE 的动机</h3>
+
+<p>LMS 是<strong>生理学</strong>空间——它描述了你眼睛里的 3 种锥体对光的响应。但不同人的锥体敏感度有细微差异。为了工程上的可重复性，CIE 定义了一个<strong>"标准观察者"</strong>——用一组固定的配色函数代替了个体差异。</p>
+
+<p>换句话说：<strong>LMS = "你的眼睛"，CIE = "标准化的眼睛"</strong>。</p>
+
+<h3 id="18-3-2-cie-rgb-配色函数">18.3.2 CIE RGB 配色函数</h3>
+
+<p><strong>CIE 1931：用 3 种固定原色"匹配"任意颜色</strong></p>
+
+<table>
+<tr><th>原色</th><th>波长</th><th>颜色</th></tr>
+<tr><td>R</td><td>700.0 nm</td><td>红色</td></tr>
+<tr><td>G</td><td>546.1 nm</td><td>绿色</td></tr>
+<tr><td>B</td><td>435.8 nm</td><td>蓝色</td></tr>
+</table>
+
+<p><strong>配色函数</strong>：对于任意光谱 S(λ)，算出匹配这个颜色需要的 R、G、B 量：</p>
+
+<div class="formula">R = ∫ S(λ) · r_bar(λ) dλ<br>G = ∫ S(λ) · g_bar(λ) dλ<br>B = ∫ S(λ) · b_bar(λ) dλ</div>
+
+<p><strong>问题</strong>：某些光谱需要<strong>负值 R</strong>才能匹配——很不直观。负的红色意味着你需要在被试者那一侧加红光，而不是在测试侧。这在实际使用中很不方便。</p>
+
+<h3 id="18-3-3-cie-xyz-标准观察者">18.3.3 CIE XYZ 标准观察者</h3>
+
+<p><strong>CIE XYZ：把 CIE RGB 变换到"全正值"空间</strong></p>
+
+<p>CIE 在 1931 年做了一个线性变换，把 RGB 变换到 XYZ 空间，使得所有值都是正数：</p>
+
+<div class="formula">[X]   [ 0.49000  0.31000  0.20000 ] [R]<br>[Y] = [ 0.17697  0.81240  0.01063 ] [G]<br>[Z]   [ 0.00000  0.01000  0.99000 ] [B]</div>
+
+<table>
+<tr><th>符号</th><th>含义</th><th>白话翻译</th></tr>
+<tr><td>X</td><td>红色响应（正比于红-绿感知）</td><td>近似红色的量</td></tr>
+<tr><td>Y</td><td><strong>亮度（Luminance）</strong></td><td>可见光的"强度"——跟人眼感受到的明亮程度对应</td></tr>
+<tr><td>Z</td><td>蓝色响应</td><td>近似蓝色的量</td></tr>
+</table>
+
+<div class="key-box">
+<strong>关键属性</strong>：
+<ul>
+  <li>Y = <strong>亮度（Luminance）</strong>——唯一包含亮度信息的通道</li>
+  <li>X, Z = 色度（没有亮度信息）</li>
+  <li><strong>所有值都是正数</strong></li>
+  <li>XYZ 是后续所有色彩空间的基础</li>
+</ul>
+</div>
+
+<h3 id="18-3-4-色品图-chromaticity-diagram">18.3.4 色品图（Chromaticity Diagram）</h3>
+
+<p><strong>色品图 = "去掉亮度的颜色 2D 表示"</strong></p>
+
+<p>把 XYZ 归一化，去掉亮度信息，就得到了色品坐标：</p>
+
+<div class="formula">x = X / (X + Y + Z)<br>y = Y / (X + Y + Z)</div>
+
+<p>因为 x + y + z = 1，所以只需要 x 和 y 两个值就能完整描述色度（去掉了亮度）。</p>
+
+<div class="guizang-figure">
+<img src="images/ch18/cie_chromaticity.png" alt="CIE马蹄形色品图">
+<div class="guizang-caption">图18-2：CIE 1931 色品图——马蹄形边界是光谱轨迹（纯光谱色），三角形是 sRGB 显示器的色域</div>
+</div>
+
+<table>
+<tr><th>概念</th><th>含义</th><th>图形解释</th></tr>
+<tr><td>马蹄形边界</td><td><strong>光谱轨迹（Spectrum Locus）</strong></td><td>弧线 = 纯光谱色（单波长），马蹄内部 = 混合色</td></tr>
+<tr><td>底部直线</td><td><strong>纯紫线（Line of Purples）</strong></td><td>连接光谱两端的直线，紫色不在光谱中（不存在"紫色的波长"）</td></tr>
+<tr><td>内部三角形</td><td>设备色域</td><td>显示器能显示的颜色是马蹄内部的一个三角形</td></tr>
+</table>
+
+<div class="key-box">
+<strong>核心洞察</strong>：<strong>马蹄形色品图 = "人类视觉能看到的所有颜色"</strong>——任何显示器的色域只是其中的一部分。
+</div>
+
+<p><strong>数值计算示例：SPD → XYZ → xy</strong></p>
+
+<p>假设我们有一个简单的 SPD——只在 500nm 处有能量 1.0，其余为 0：</p>
+
+<pre><code><span class="comment">// SPD：单一波长 500nm（绿色光）</span>
+<span class="comment">// 查 CIE 1931 配色函数表：</span>
+x̄(<span class="number">500</span>) = <span class="number">0.0049</span>,  ȳ(<span class="number">500</span>) = <span class="number">0.3230</span>,  z̄(<span class="number">500</span>) = <span class="number">0.2720</span>
+
+<span class="comment">// 三刺激值</span>
+X = <span class="number">1.0</span> × <span class="number">0.0049</span> = <span class="number">0.0049</span>
+Y = <span class="number">1.0</span> × <span class="number">0.3230</span> = <span class="number">0.3230</span>  (即亮度)
+Z = <span class="number">1.0</span> × <span class="number">0.2720</span> = <span class="number">0.2720</span>
+
+<span class="comment">// 色品坐标</span>
+x = <span class="number">0.0049</span> / (<span class="number">0.0049</span> + <span class="number">0.3230</span> + <span class="number">0.2720</span>) = <span class="number">0.0082</span>
+y = <span class="number">0.3230</span> / (<span class="number">0.0049</span> + <span class="number">0.3230</span> + <span class="number">0.2720</span>) = <span class="number">0.5385</span>
+<span class="comment">// → 色品坐标 (0.008, 0.538) ≈ 纯绿色</span></code></pre>
+
+<h3 id="18-3-5-色域-gamut">18.3.5 色域（Gamut）</h3>
+
+<p><strong>色域 = "设备能显示的所有颜色"</strong></p>
+
+<p>显示器色域在色品图上是一个三角形——三个顶点对应 R/G/B 原色。</p>
+
+<div class="guizang-figure">
+<img src="images/ch18/srgb_gamut.png" alt="sRGB色域对比——sRGB vs Adobe RGB vs DCI-P3">
+<div class="guizang-caption">图18-3：不同色域标准对比——sRGB（最小）、Adobe RGB（中等）、DCI-P3（较大），在色品图上的覆盖范围</div>
+</div>
+
+<table>
+<tr><th>标准</th><th>色域大小</th><th>应用</th></tr>
+<tr><td><strong>sRGB</strong></td><td>约 35% CIE</td><td>网页、显示器、手机屏幕</td></tr>
+<tr><td><strong>Adobe RGB</strong></td><td>约 50% CIE</td><td>印刷、专业摄影</td></tr>
+<tr><td><strong>DCI-P3</strong></td><td>约 45% CIE</td><td>电影、HDR 显示（iPhone、iPad）</td></tr>
+<tr><td><strong>Rec.2020</strong></td><td>约 75% CIE</td><td>UHDTV 标准（4K/8K）</td></tr>
+<tr><td><strong>ACES</strong></td><td>大于 100% CIE</td><td>电影级制作（覆盖所有人眼可见色）</td></tr>
+</table>
+
+<h3 id="18-3-6-ucs-均匀色品坐标">18.3.6 UCS 均匀色品坐标</h3>
+
+<p>CIE xy 色品图虽然经典，但有一个严重问题：<strong>视觉不均匀</strong>。在色品图的不同区域，相同的距离（Δx, Δy）对应的人眼感知差异完全不同。MacAdam 在 1942 年发现了这一点——他在色品图的不同位置画出了一系列"刚好能察觉颜色差异"的椭圆（MacAdam Ellipses），这些椭圆的大小和方向随位置剧烈变化。</p>
+
+<p><strong>解决方案</strong>：CIE 1976 UCS（Uniform Chromaticity Scale）图：</p>
+
+<div class="formula">u' = 4X / (X + 15Y + 3Z)<br>v' = 9Y / (X + 15Y + 3Z)</div>
+
+<table>
+<tr><th>属性</th><th>CIE xy</th><th>CIE u'v'</th></tr>
+<tr><td>视觉均匀性</td><td>差（MacAdam 椭圆大小差距 > 10 倍）</td><td>好（椭圆大小差距 < 3 倍）</td></tr>
+<tr><td>用途</td><td>经典展示、色度学教学</td><td>实际色域计算、色差测量</td></tr>
+<tr><td>是否是线性变换</td><td>是（从 XYZ 直接投影）</td><td>否（非线性投影）</td></tr>
+</table>
+
+<h3 id="18-3-7-白点-white-point">18.3.7 白点（White Point）</h3>
+
+<p><strong>白点 = "显示器/光源的'白色'坐标"</strong></p>
+
+<p>你可能会想"白色就是白色，还有什么不同的白色？"——但不同的光源有不同的"白色"：白炽灯偏黄，日光偏白，阴天偏蓝。白点就是这些白色在色品图上的坐标。</p>
+
+<table>
+<tr><th>白点</th><th>色品坐标</th><th>色温</th><th>用途</th></tr>
+<tr><td>D65</td><td>(0.3127, 0.3290)</td><td>6500K</td><td>sRGB / HDTV 标准</td></tr>
+<tr><td>D50</td><td>(0.3457, 0.3585)</td><td>5000K</td><td>印刷标准</td></tr>
+<tr><td>D93</td><td>(0.2830, 0.2970)</td><td>9300K</td><td>早期 CRT 显示器</td></tr>
+</table>
+
+<p><strong>色温</strong>：低 K = 暖（偏红），高 K = 冷（偏蓝）。所以 5500K 的闪光灯比 3200K 的白炽灯更"白"。</p>
+
+<p><strong>色温与黑体辐射的关系：</strong></p>
+<table>
+<tr><th>温度</th><th>颜色</th><th>例子</th></tr>
+<tr><td>~1800 K</td><td>橙红</td><td>蜡烛火焰</td></tr>
+<tr><td>~2800 K</td><td>暖黄</td><td>家用白炽灯</td></tr>
+<tr><td>~3200 K</td><td>暖白</td><td>摄影卤素灯</td></tr>
+<tr><td>~5500 K</td><td>中白（日光）</td><td>正午阳光</td></tr>
+<tr><td>~6500 K</td><td>冷白（D65）</td><td>阴天、sRGB 标准</td></tr>
+<tr><td>~9300 K</td><td>偏蓝</td><td>早期 CRT 显示器</td></tr>
+</table>
+<p><strong>注意</strong>：颜色中的"暖色"（红/橙）对应低色温，"冷色"（蓝）对应高色温——这和日常直觉相反，但在物理学和色彩学中，温度越高颜色越偏蓝。</p>
+
+<h3 id="18-3-10-色域映射">18.3.10 色域映射</h3>
+
+<p>当你把一个高色域的图片显示在低色域显示器上时，超出色域的颜色需要被"映射"到显示器能显示的范围内：</p>
+
+<table>
+<tr><th>映射策略</th><th>做法</th><th>效果</th></tr>
+<tr><td><strong>裁剪（Clip）</strong></td><td>超出色域的颜色直接截断到边界</td><td>颜色鲜艳但损失细节（色块）</td></tr>
+<tr><td><strong>压缩（Compress）</strong></td><td>整体向色域中心压缩</td><td>保留细节但整体饱和度降低</td></tr>
+<tr><td><strong>感知映射（Perceptual）</strong></td><td>尽量保持感知差异</td><td>效果好但计算复杂</td></tr>
+</table>
+
+<h3 id="18-3-8-色差公式-δe">18.3.8 色差公式 ΔE</h3>
+
+<p>在实际应用中（如质检、印刷），经常需要回答一个问题：<strong>"这两个颜色差多少？"</strong> 直接算 RGB 距离是不行的——因为 RGB 空间感知不均匀。解决方案是用 Lab 空间的欧几里得距离：</p>
+
+<div class="formula">ΔE<sub>ab</sub><sup>*</sup> = √[(ΔL<sup>*</sup>)² + (Δa<sup>*</sup>)² + (Δb<sup>*</sup>)²]</div>
+
+<table>
+<tr><th>ΔE 值</th><th>人眼感知</th></tr>
+<tr><td>&lt; 1</td><td>几乎看不出差别</td></tr>
+<tr><td>1~3</td><td>仔细对比才能看出</td></tr>
+<tr><td>3~6</td><td>可以明显看出差别</td></tr>
+<tr><td>&gt; 6</td><td>完全不同的颜色</td></tr>
+</table>
+
+<p>更现代的 CIE DE2000（ΔE<sub>00</sub>）对蓝色区域的误差做了进一步修正——这是当前色彩科学的标准色差公式。</p>
+
+<hr>
+
+<h2 id="18-4-gamma-校正">18.4 Gamma 校正</h2>
+
+<h3 id="18-4-1-为什么需要-gamma">18.4.1 为什么需要 Gamma？</h3>
+
+<p><strong>CRT 显示器亮度 ≠ 输入电压的线性关系</strong></p>
+
+<p>老式 CRT 显示器有一个物理特性：输入电压和显示亮度之间不是线性关系，而是幂律关系：</p>
+
+<div class="formula">display_brightness = (input_voltage)<sup>γ</sup></div>
+
+<p>典型 CRT 的 gamma = 2.2。所以如果你存了 0.5 这个值，显示器实际输出的亮度是 0.5<sup>2.2</sup> ≈ 0.22——太暗！</p>
+
+<div class="guizang-figure">
+<img src="images/ch18/gamma_curve.png" alt="Gamma校正曲线——线性 vs sRGB编码/解码">
+<div class="guizang-caption">图18-4：Gamma 校正曲线——蓝色直线是线性响应，红色曲线是 sRGB gamma 编码（弯曲向上补偿显示器的 gamma 2.2）</div>
+</div>
+
+<h3 id="18-4-2-gamma-校正的原理">18.4.2 Gamma 校正的原理</h3>
+
+<p>解决方法是：<strong>存储时预先做逆变换</strong>，显示时 CRT 的自然 gamma 会自动还原：</p>
+
+<div class="formula">stored_value = (original_value)<sup>1/γ</sup><br>最终亮度 = (original<sup>1/2.2</sup>)<sup>2.2</sup> = original</div>
+
+<p><strong>完整的 Gamma 校正流程（用数字说话）：</strong></p>
+
+<table>
+<tr><th>步骤</th><th>操作</th><th>值</th><th>说明</th></tr>
+<tr><td>① 物理亮度</td><td>你想要的亮度</td><td>0.5</td><td>物理上 50% 的亮度</td></tr>
+<tr><td>② 编码</td><td>pow(0.5, 1/2.2)</td><td>0.73</td><td>做 gamma 编码，存入图片文件</td></tr>
+<tr><td>③ 存储 / 传输</td><td>存为 0.73</td><td>0.73</td><td>PNG/JPG 中存的是 0.73</td></tr>
+<tr><td>④ CRT 显示</td><td>pow(0.73, 2.2)</td><td>0.5</td><td>CRT 的自然 gamma 还原了亮度</td></tr>
+<tr><td>⑤ 最终亮度</td><td>回到 0.5 ✓</td><td>0.5</td><td>完美还原！</td></tr>
+</table>
+
+<p><strong>如果忘记 gamma 校正：</strong></p>
+<table>
+<tr><th>步骤</th><th>操作</th><th>值</th><th>说明</th></tr>
+<tr><td>① 物理亮度</td><td>你想要的亮度</td><td>0.5</td><td></td></tr>
+<tr><td>② 直接存储</td><td>存为 0.5</td><td>0.5</td><td>没有做 gamma 编码</td></tr>
+<tr><td>③ CRT 显示</td><td>pow(0.5, 2.2)</td><td>0.22</td><td>显示器自动做 gamma</td></tr>
+<tr><td>④ 最终亮度</td><td>实际只有 0.22</td><td>0.22</td><td>太暗了！！</td></tr>
+</table>
+
+<h3 id="18-4-3-srgb-gamma-的完整公式">18.4.3 sRGB Gamma 的完整公式</h3>
+
+<pre><code><span class="comment">// sRGB 到线性空间（解码）——把 sRGB 图片还原为真实亮度</span>
+<span class="keyword">float</span> sRGB_to_linear(<span class="keyword">float</span> c) {
+    <span class="keyword">if</span> (c &lt;= <span class="number">0.04045</span>) <span class="keyword">return</span> c / <span class="number">12.92</span>;
+    <span class="keyword">else</span> <span class="keyword">return</span> pow((c + <span class="number">0.055</span>) / <span class="number">1.055</span>, <span class="number">2.4</span>);
+}
+
+<span class="comment">// 线性到 sRGB（编码）——把计算结果存为 sRGB 图片</span>
+<span class="keyword">float</span> linear_to_sRGB(<span class="keyword">float</span> c) {
+    <span class="keyword">if</span> (c &lt;= <span class="number">0.0031308</span>) <span class="keyword">return</span> c * <span class="number">12.92</span>;
+    <span class="keyword">else</span> <span class="keyword">return</span> <span class="number">1.055</span> * pow(c, <span class="number">1</span>/<span class="number">2.4</span>) - <span class="number">0.055</span>;
+}</code></pre>
+
+<div class="formula">简化版（约等于）：sRGB ≈ pow(linear, 1/2.2)<br>线性 ≈ pow(sRGB, 2.2)</div>
+
+<div class="key-box">
+<strong>核心洞察</strong>：<strong>永远是线性空间做光照运算，最后再 sRGB 输出</strong>——这是 PBR 的基础原则。直接在 sRGB 空间做光照计算结果是错的。
+</div>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么在 sRGB 空间做光照计算是错误的？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">光照计算（如漫反射 = n·l）假设光强度以线性方式叠加——两倍的光就是两倍的亮度。但 sRGB 是经过 gamma 编码的非线性空间，数值 0.5 并不代表"一半的亮度"（实际上是 0.5^2.2 ≈ 0.22）。所以在 sRGB 空间做光照，你的计算结果会完全偏离物理真实。总是先解码到线性空间，算完了再编码回 sRGB。</blockquote>
+</div>
+
+<h3 id="18-4-4-gamma-与-srgb-的实际影响">18.4.4 Gamma 与 sRGB 的实际影响</h3>
+
+<p>在现代图形学中，gamma 校正的影响无处不在：</p>
+<ul>
+  <li><strong>纹理贴图</strong>：所有照片和手绘纹理都是 sRGB 编码的。采样后必须解码到线性空间再做光照。</li>
+  <li><strong>光照计算</strong>：所有物理光照模型（Lambert、Phong、PBR）都需要在线性空间计算。</li>
+  <li><strong>抗锯齿</strong>：在 sRGB 空间做抗锯齿混合会导致边缘变暗（因为 0.5 在 sRGB 中不等于一半亮度）。</li>
+  <li><strong>HDR 渲染</strong>：色调映射后的结果需要编码到 sRGB 才能正确显示。</li>
+</ul>
+
+<h3 id="18-4-5-srgb-与-gamma-的常见误解">18.4.5 sRGB 与 Gamma 的常见误解</h3>
+
+<table>
+<tr><th>误解</th><th>正确理解</th></tr>
+<tr><td>Gamma 只是 CRT 的历史遗留问题</td><td>现代 LCD/LED 显示器为了兼容 sRGB 标准，仍然模拟了 gamma 2.2 响应</td></tr>
+<tr><td>所有图片格式都是线性的</td><td>PNG、JPG、GIF 等绝大多数图片格式都使用 sRGB gamma 编码</td></tr>
+<tr><td>线性空间和 sRGB 空间可以互相替换</td><td>绝对不行！线性空间的 0.5 ≠ sRGB 的 0.5</td></tr>
+</table>
+
+<hr>
+
+<h2 id="18-5-色适应-chromatic-adaptation">18.5 色适应（Chromatic Adaptation）</h2>
+
+<h3 id="18-5-1-为什么需要色适应">18.5.1 为什么需要色适应？</h3>
+
+<p>你的大脑非常神奇：在暖色灯光下看一张白纸，它看起来还是白的。但实际上白纸反射的光偏黄了——只是你的大脑<strong>"自动做了白平衡"</strong>。这个现象叫色适应。</p>
+
+<p>在图形学中，如果你渲染一个场景使用了 5000K 的光源（暖色），但显示在 6500K 的显示器上（冷色），你需要把颜色从 5000K 的感知"适应"到 6500K 的显示——这就是 von Kries 色适应模型做的事。</p>
+
+<h3 id="18-5-2-von-kries-系数律">18.5.2 von Kries 系数律</h3>
+
+<div class="guizang-figure">
+<img src="images/ch18/von_kries.png" alt="色适应von Kries——白点对齐变换">
+<div class="guizang-caption">图18-5：von Kries 色适应——将颜色从源白点变换到目标白点，在 LMS 空间中对每个通道独立缩放</div>
+</div>
+
+<p>von Kries 模型假设色适应就是在 LMS 空间中独立缩放每个通道的响应：</p>
+
+<div class="formula">L' = α · L<br>M' = β · M<br>S' = γ · S</div>
+
+<table>
+<tr><th>符号</th><th>含义</th></tr>
+<tr><td>L, M, S</td><td>源颜色在 LMS 空间的值</td></tr>
+<tr><td>α, β, γ</td><td>每个通道的缩放因子（由源白点和目标白点决定）</td></tr>
+<tr><td>L', M', S'</td><td>适应后的颜色</td></tr>
+</table>
+
+<p><strong>计算 α, β, γ 的步骤（以 D65 → D50 为例）：</strong></p>
+
+<pre><code><span class="comment">// 源白点 D65 (6500K) 在 XYZ 空间</span>
+XYZ_D65 = (0.9505, 1.0000, 1.0890)
+
+<span class="comment">// 目标白点 D50 (5000K) 在 XYZ 空间</span>
+XYZ_D50 = (0.9642, 1.0000, 0.8249)
+
+<span class="comment">// 用 Bradford 变换矩阵 M 转换到 LMS 空间</span>
+LMS_D65 = M × XYZ_D65    <span class="comment">// → (L_d65, M_d65, S_d65)</span>
+LMS_D50 = M × XYZ_D50    <span class="comment">// → (L_d50, M_d50, S_d50)</span>
+
+<span class="comment">// 缩放因子 = 目标/源</span>
+α = L_d50 / L_d65        <span class="comment">// LMS 各通道的比例因子</span>
+β = M_d50 / M_d65
+γ = S_d50 / S_d65</code></pre>
+
+<p><strong>完整的变换流程：</strong></p>
+
+<div class="formula">XYZ_adapted = M<sup>-1</sup> · diag(α, β, γ) · M · XYZ_source</div>
+
+<p>步骤拆解：</p>
+<ol>
+  <li>用 M 矩阵把 XYZ 变换到 LMS 空间</li>
+  <li>在 LMS 空间用 α, β, γ 缩放（白点对齐）</li>
+  <li>用 M<sup>-1</sup> 变换回 XYZ 空间</li>
+</ol>
+
+<div class="info-box">
+<strong>游戏开发实战</strong>：Unity HDRP / Unreal 都用色适应来做不同光照条件下的白平衡。
+</div>
+
+<h3 id="18-5-3-bradford-与-cat02-变换矩阵">18.5.3 Bradford 与 CAT02 变换矩阵</h3>
+
+<p>从 XYZ 到 LMS 的变换有很多种选择，不同的矩阵适合不同的用途：</p>
+
+<table>
+<tr><th>变换</th><th>用途</th><th>特点</th></tr>
+<tr><td>Bradford</td><td>最常用的色适应变换</td><td>对蓝色通道的适应更准确，广泛应用于 ICC 色彩管理</td></tr>
+<tr><td>CAT02</td><td>CIE 推荐的色适应变换</td><td>在 CIECAM02 色貌模型中使用</td></tr>
+<tr><td>von Kries 原始</td><td>经典理论模型</td><td>简单但准确度不如后来者</td></tr>
+</table>
+
+<pre><code><span class="comment">// Bradford 变换矩阵（XYZ → LMS）</span>
+<span class="keyword">mat3x3</span> M_Bradford = {
+    <span class="number">0.8951</span>, <span class="number">0.2664</span>, -<span class="number">0.1614</span>,
+   -<span class="number">0.7502</span>, <span class="number">1.7135</span>,  <span class="number">0.0367</span>,
+    <span class="number">0.0389</span>, -<span class="number">0.0685</span>,  <span class="number">1.0296</span>
+};
+
+<span class="comment">// 使用 Bradford 变换做色适应：</span>
+<span class="comment">// 1. M × XYZ_source → LMS_source</span>
+<span class="comment">// 2. 按比例缩放 LMS 各通道</span>
+<span class="comment">// 3. M^(-1) × LMS_adapted → XYZ_adapted</span></code></pre>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么从 XYZ 到 LMS 的变换不直接用 <code>X = L, Y = M, Z = S</code>？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">因为 CIE XYZ 是人为构造的虚拟原色，而 LMS 是生物学上测量的锥体响应。从虚拟到生物需要线性变换来"对齐"。Bradford 和 CAT02 都是基于实际实验数据拟合出来的，它们能把 XYZ 空间旋转到更接近人眼感知的方向。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="18-6-颜色模型">18.6 颜色模型</h2>
+
+<h3 id="18-6-1-rgb-模型">18.6.1 RGB 模型</h3>
+
+<p><strong>简单直接</strong>——每个通道独立，对应显示器硬件。</p>
+
+<table>
+<tr><th>优势</th><th>劣势</th></tr>
+<tr><td>硬件原生（显示器直接使用）</td><td>和亮度/饱和度<strong>不直观</strong></td></tr>
+<tr><td>Shader 友好（直接操作）</td><td>调整"更亮"需要同时改 R、G、B</td></tr>
+</table>
+
+<p><strong>RGB 相加混合 vs 颜料相减混合：</strong></p>
+
+<table>
+<tr><th>混合方式</th><th>原理</th><th>例子</th></tr>
+<tr><td>加法混色（显示器）</td><td>RGB 光叠加，越加越亮</td><td>红+绿=黄，红+绿+蓝=白</td></tr>
+<tr><td>减法混色（颜料）</td><td>吸收光，越混越暗</td><td>黄+蓝=绿，青+品红+黄=黑</td></tr>
+</table>
+
+<h3 id="18-6-2-hsv---hsl-模型">18.6.2 HSV / HSL 模型</h3>
+
+<p><strong>更直观</strong>——艺术家友好，分离出色相、饱和度、亮度/明度。</p>
+
+<table>
+<tr><th>分量</th><th>HSV</th><th>HSL</th></tr>
+<tr><td><strong>H（色相）</strong></td><td>0°-360°</td><td>0°-360°</td></tr>
+<tr><td><strong>S（饱和度）</strong></td><td>0-1</td><td>0-1</td></tr>
+<tr><td><strong>V / L</strong></td><td>亮度（Value）</td><td>明度（Lightness）</td></tr>
+</table>
+
+<p><strong>问题</strong>：和<strong>感知无关</strong>——饱和度增加 0.1 在黄色和蓝色上的视觉变化完全不同。数学性质也不好（非线性）。</p>
+
+<h3 id="18-6-3-cie-lab---lch-模型">18.6.3 CIE Lab / Lch 模型</h3>
+
+<p><strong>感知均匀</strong>——Lab 空间中两个颜色的"距离"与人的感知差异成正比。</p>
+
+<table>
+<tr><th>分量</th><th>含义</th></tr>
+<tr><td>L</td><td>亮度（Lightness）</td></tr>
+<tr><td>a</td><td>红-绿轴（+红，-绿）</td></tr>
+<tr><td>b</td><td>黄-蓝轴（+黄，-蓝）</td></tr>
+<tr><td>C = √(a²+b²)</td><td>色度（Chroma）</td></tr>
+<tr><td>h = atan2(b, a)</td><td>色相角（Hue angle）</td></tr>
+</table>
+
+<p><strong>Lab 的数学定义（从 XYZ 变换）：</strong></p>
+
+<pre><code><span class="comment">// 辅助函数 f(t)</span>
+<span class="function">float</span> f(<span class="keyword">float</span> t) {
+    <span class="keyword">if</span> (t &gt; (<span class="number">6</span>/<span class="number">29</span>)³)
+        <span class="keyword">return</span> pow(t, <span class="number">1</span>/<span class="number">3</span>);
+    <span class="keyword">else</span>
+        <span class="keyword">return</span> t / (<span class="number">3</span> * (<span class="number">6</span>/<span class="number">29</span>)²) + <span class="number">4</span>/<span class="number">29</span>;
+}
+
+<span class="comment">// XYZ_n = 白点的 XYZ 坐标</span>
+L = <span class="number">116</span> * f(Y / Y_n) - <span class="number">16</span>;  <span class="comment">// L 范围 [0, 100]</span>
+a = <span class="number">500</span> * (f(X / X_n) - f(Y / Y_n));  <span class="comment">// 红-绿</span>
+b = <span class="number">200</span> * (f(Y / Y_n) - f(Z / Z_n));  <span class="comment">// 黄-蓝</span></code></pre>
+
+<table>
+<tr><th>条件</th><th>含义</th></tr>
+<tr><td>a &gt; 0</td><td>偏红色</td></tr>
+<tr><td>a &lt; 0</td><td>偏绿色</td></tr>
+<tr><td>b &gt; 0</td><td>偏黄色</td></tr>
+<tr><td>b &lt; 0</td><td>偏蓝色</td></tr>
+<tr><td>a = 0 且 b = 0</td><td>灰色（无色）</td></tr>
+</table>
+
+<div class="info-box">
+<strong>应用</strong>：图像处理（色彩增强、色调映射）——在 Lab 空间操作最自然，因为它的坐标轴与人的色彩感知对齐。例如"增加对比度"在 Lab 空间中就是拉伸 L 通道的范围，"增强饱和度"就是增大 a、b 的值。
+</div>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么 Lab 空间比 RGB 空间更适合做图像编辑？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">因为 RGB 空间中，R、G、B 三个通道高度耦合——调整"亮度"需要同时改变三个通道的值，而且很容易产生色偏。Lab 空间把亮度（L）和颜色信息（a、b）完全分离。调整 L 通道只改变亮度，不影响色调；调整 a、b 通道只改变颜色，不影响亮度。这就是 Photoshop 中"明度"和"色相/饱和度"分开调整的原理。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="18-7-颜色在图形学中的应用">18.7 颜色在图形学中的应用</h2>
+
+<h3 id="18-7-1-pbr-中的颜色管理">18.7.1 PBR 中的颜色管理</h3>
+
+<p><strong>PBR = 物理正确的颜色管理</strong></p>
+
+<pre><code>Input    → Linearize → PBR Shading → Display Adapt → sRGB Output
+(纹理)     (Gamma-)     (物理光)      (色适应)         (Gamma+)
+           (校正)       照计算)                       (校正)</code></pre>
+
+<p>这条管线是现代渲染引擎的标配：</p>
+<ol>
+  <li><strong>Linearize</strong>：sRGB 纹理 → 线性空间（解码 gamma）</li>
+  <li><strong>PBR Shading</strong>：在线性空间做物理光照计算</li>
+  <li><strong>Display Adapt</strong>：色适应（从场景白点变换到显示器白点）</li>
+  <li><strong>sRGB Output</strong>：线性结果 → sRGB 编码（编码 gamma）</li>
+</ol>
+
+<p><strong>完整的颜色管线示例（从纹理到屏幕）：</strong></p>
+
+<pre><code><span class="comment">// ---- 像素着色器中的颜色管理 ----</span>
+<span class="comment">// 输入：sRGB 纹理（通道值 0-255，存储时已 gamma 编码）</span>
+
+<span class="comment">// 第1步：采样纹理得到 sRGB 颜色</span>
+vec4 texColor_sRGB = texture(sRGBTexture, uv);
+
+<span class="comment">// 第2步：解码到线性空间（sRGB → 线性）</span>
+vec3 texColor_linear = sRGB_to_linear(texColor_sRGB.rgb);
+
+<span class="comment">// 第3步：在线性空间做光照计算（所有物理计算都在这里）</span>
+vec3 diffuse = kd * lightIntensity * max(<span class="number">0.0</span>, dot(n, l));
+vec3 specular = ks * lightIntensity * pow(max(<span class="number">0.0</span>, dot(n, h), <span class="number">32.0</span>));
+
+<span class="comment">// 第4步：合成最终线性颜色</span>
+vec3 finalColor_linear = (diffuse + specular) * texColor_linear;
+
+<span class="comment">// 第5步：色调映射（HDR → LDR）</span>
+vec3 mapped = tonemap(finalColor_linear);
+
+<span class="comment">// 第6步：编码回 sRGB 用于显示</span>
+vec3 outputColor = linear_to_sRGB(mapped);
+fragmentColor = vec4(outputColor, <span class="number">1.0</span>);</code></pre>
+
+<div class="key-box">
+<strong>核心原则</strong>：整个着色管线都在线性空间运算，<strong>只在最后输出时做 sRGB 编码</strong>。如果你在 sRGB 空间做光照，物理上是错误的。
+</div>
+
+<h3 id="18-7-2-色温与白平衡">18.7.2 色温与白平衡</h3>
+
+<p><strong>日光</strong>（D65 = 6500K）的色品坐标：</p>
+
+<div class="formula">x = 0.3127, y = 0.3290</div>
+
+<p><strong>白平衡调整</strong>：如果光源改变，对 RGB 通道分别缩放：</p>
+
+<div class="formula">R' = R / R_white<br>G' = G / G_white<br>B' = B / B_white</div>
+
+<p>其中 R_white、G_white、B_white 是白点在 RGB 空间的坐标。</p>
+
+<h3 id="18-7-3-aces-颜色空间">18.7.3 ACES 颜色空间</h3>
+
+<p><strong>ACES（Academy Color Encoding System）</strong>——电影行业的色彩管理标准：</p>
+<ul>
+  <li>色域超过 CIE XYZ（覆盖所有人眼可见颜色）</li>
+  <li>包含完整的<strong>色彩管理流程</strong>（输入→处理→输出）</li>
+  <li>PBR 渲染中的"黄金标准"</li>
+</ul>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么 ACES 的色域比 CIE XYZ 还大？这怎么可能？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">CIE XYZ 的色域并不是"最大"的——它的原色是虚拟的。ACES 使用 AP0 原色，其三角形在色品图上比 CIE 马蹄形还要大，这意味着有些 AP0 颜色其实不在可见光谱内。这是故意设计的——这样任何可见颜色都能用 ACES 表示，不会出现"超出色域"的情况。简单说：ACES 造了一个比可见光谱更大的容器，确保容得下所有颜色。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="18-8-全章总结">18.8 全章总结</h2>
+
+<blockquote>
+<p><strong>核心洞察</strong>：颜色不是"红绿蓝"——是<strong>光谱 × 眼睛 × 显示器的三方博弈</strong>。</p>
+</blockquote>
+
+<table>
+<tr><th>概念</th><th>一句话</th><th>关键公式</th></tr>
+<tr><td><strong>3 种锥体</strong></td><td>人眼只用 3 个通道感光，所以 3 通道够用</td><td>L = ∫S(λ)·L̄(λ)dλ</td></tr>
+<tr><td><strong>同色异谱</strong></td><td>不同光谱、相同颜色</td><td>LMS 积分结果相同</td></tr>
+<tr><td><strong>CIE XYZ</strong></td><td>标准色彩空间，Y 等于亮度</td><td>X=∫S·x̄dλ, Y=∫S·ȳdλ</td></tr>
+<tr><td><strong>色品图</strong></td><td>去掉亮度的 2D 颜色图</td><td>x=X/(X+Y+Z), y=Y/(X+Y+Z)</td></tr>
+<tr><td><strong>色域</strong></td><td>设备能显示的颜色范围</td><td>色品图上的三角形</td></tr>
+<tr><td><strong>Gamma</strong></td><td>存储非线性，计算线性</td><td>V_out = V_in^γ</td></tr>
+<tr><td><strong>色适应</strong></td><td>大脑自动白平衡</td><td>L'=α·L, M'=β·M, S'=γ·S</td></tr>
+<tr><td><strong>ACES</strong></td><td>电影级色彩管理</td><td>AP0 原色矩阵</td></tr>
+</table>
+
+<h3 id="关键公式速查">关键公式速查</h3>
+
+<pre><code>LMS 响应:    L=∫S(λ)·L̄(λ)dλ, M=∫S(λ)·M̄(λ)dλ, S=∫S(λ)·S̄(λ)dλ
+CIE XYZ:    X=∫S(λ)·x̄(λ)dλ, Y=∫S(λ)·ȳ(λ)dλ, Z=∫S(λ)·z̄(λ)dλ
+色品坐标:   x=X/(X+Y+Z), y=Y/(X+Y+Z)
+UCS:        u'=4X/(X+15Y+3Z), v'=9Y/(X+15Y+3Z)
+Gamma:      V_out = V_in^γ
+sRGB→线性:  c_linear = sRGB_to_linear(c_sRGB)
+线性→sRGB:  c_sRGB = linear_to_sRGB(c_linear)
+Von Kries:  L'=α·L, M'=β·M, S'=γ·S
+Lab:        L=116·f(Y/Yₙ)-16, a=500·(f(X/Xₙ)-f(Y/Yₙ)), b=200·(f(Y/Yₙ)-f(Z/Zₙ))</code></pre>
+
+<h3 id="常见误区">常见误区</h3>
+
+<table>
+<tr><th>误区</th><th>正确理解</th></tr>
+<tr><td>"颜色是物体的固有属性"</td><td>颜色 = 光 × 物体反射率 × 眼睛感知——缺一不可</td></tr>
+<tr><td>"RGB 值直接代表亮度"</td><td>sRGB 是 gamma 编码的，0.5 ≠ 一半亮度</td></tr>
+<tr><td>"两个颜色看起来一样 = SPD 一样"</td><td>同色异谱——完全不同的 SPD 可以看起来完全一样</td></tr>
+<tr><td>"白色就是白色"</td><td>不同光源的白点不同（D65=6500K 偏蓝, D50=5000K 偏黄）</td></tr>
+<tr><td>"显示器能显示所有颜色"</td><td>显示器色域仅覆盖 CIE 色品图的 35%~80%</td></tr>
+</table>
+
+<blockquote>
+<p><strong>一句话总结</strong>：颜色是<strong>物理（光谱）× 生物（锥体）× 工程（显示）</strong>的交叉学科。理解色彩科学 = 理解 PBR 渲染中为什么每一步颜色处理都至关重要。</p>
+<p><strong>下一步</strong>：第 19 章《视觉感知》——理解人类视觉如何限制图形学的终极质量。这是从"科学"到"艺术"的桥梁。</p>
+</blockquote>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li class="active"><a href="ch18_颜色.html" class="active">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#18-0-为什么需要学-颜色">18.0 为什么需要学"颜色"？</a></li>
+  <li class="toc-h2"><a href="#18-1-什么是颜色">18.1 什么是颜色？</a></li>
+  <li class="toc-h3"><a href="#18-1-1-颜色的来源">18.1.1 颜色的来源</a></li>
+  <li class="toc-h3"><a href="#18-1-2-颜色---光---物体---眼睛">18.1.2 颜色 = 光 × 物体 × 眼睛</a></li>
+  <li class="toc-h2"><a href="#18-2-人类视觉系统">18.2 人类视觉系统</a></li>
+  <li class="toc-h3"><a href="#18-2-1-为什么人眼只用-3-种传感器">18.2.1 为什么人眼只用 3 种传感器？</a></li>
+  <li class="toc-h3"><a href="#18-2-2-锥体响应的数学拆解">18.2.2 锥体响应的数学拆解</a></li>
+  <li class="toc-h3"><a href="#18-2-3-同色异谱-metamerism">18.2.3 同色异谱（Metamerism）</a></li>
+  <li class="toc-h2"><a href="#18-3-色度学-colorimetry">18.3 色度学（Colorimetry）</a></li>
+  <li class="toc-h3"><a href="#18-3-1-为什么需要色度学">18.3.1 为什么需要色度学？</a></li>
+  <li class="toc-h3"><a href="#18-3-1-从-lms-到-cie-的动机">18.3.1 从 LMS 到 CIE 的动机</a></li>
+  <li class="toc-h3"><a href="#18-3-2-cie-rgb-配色函数">18.3.2 CIE RGB 配色函数</a></li>
+  <li class="toc-h3"><a href="#18-3-3-cie-xyz-标准观察者">18.3.3 CIE XYZ 标准观察者</a></li>
+  <li class="toc-h3"><a href="#18-3-4-色品图-chromaticity-diagram">18.3.4 色品图（Chromaticity Diagram）</a></li>
+  <li class="toc-h3"><a href="#18-3-5-色域-gamut">18.3.5 色域（Gamut）</a></li>
+  <li class="toc-h3"><a href="#18-3-6-ucs-均匀色品坐标">18.3.6 UCS 均匀色品坐标</a></li>
+  <li class="toc-h3"><a href="#18-3-7-白点-white-point">18.3.7 白点（White Point）</a></li>
+  <li class="toc-h3"><a href="#18-3-10-色域映射">18.3.10 色域映射</a></li>
+  <li class="toc-h3"><a href="#18-3-8-色差公式-δe">18.3.8 色差公式 ΔE</a></li>
+  <li class="toc-h2"><a href="#18-4-gamma-校正">18.4 Gamma 校正</a></li>
+  <li class="toc-h3"><a href="#18-4-1-为什么需要-gamma">18.4.1 为什么需要 Gamma？</a></li>
+  <li class="toc-h3"><a href="#18-4-2-gamma-校正的原理">18.4.2 Gamma 校正的原理</a></li>
+  <li class="toc-h3"><a href="#18-4-3-srgb-gamma-的完整公式">18.4.3 sRGB Gamma 的完整公式</a></li>
+  <li class="toc-h3"><a href="#18-4-4-gamma-与-srgb-的实际影响">18.4.4 Gamma 与 sRGB 的实际影响</a></li>
+  <li class="toc-h3"><a href="#18-4-5-srgb-与-gamma-的常见误解">18.4.5 sRGB 与 Gamma 的常见误解</a></li>
+  <li class="toc-h2"><a href="#18-5-色适应-chromatic-adaptation">18.5 色适应（Chromatic Adaptation）</a></li>
+  <li class="toc-h3"><a href="#18-5-1-为什么需要色适应">18.5.1 为什么需要色适应？</a></li>
+  <li class="toc-h3"><a href="#18-5-2-von-kries-系数律">18.5.2 von Kries 系数律</a></li>
+  <li class="toc-h3"><a href="#18-5-3-bradford-与-cat02-变换矩阵">18.5.3 Bradford 与 CAT02 变换矩阵</a></li>
+  <li class="toc-h2"><a href="#18-6-颜色模型">18.6 颜色模型</a></li>
+  <li class="toc-h3"><a href="#18-6-1-rgb-模型">18.6.1 RGB 模型</a></li>
+  <li class="toc-h3"><a href="#18-6-2-hsv---hsl-模型">18.6.2 HSV / HSL 模型</a></li>
+  <li class="toc-h3"><a href="#18-6-3-cie-lab---lch-模型">18.6.3 CIE Lab / Lch 模型</a></li>
+  <li class="toc-h2"><a href="#18-7-颜色在图形学中的应用">18.7 颜色在图形学中的应用</a></li>
+  <li class="toc-h3"><a href="#18-7-1-pbr-中的颜色管理">18.7.1 PBR 中的颜色管理</a></li>
+  <li class="toc-h3"><a href="#18-7-2-色温与白平衡">18.7.2 色温与白平衡</a></li>
+  <li class="toc-h3"><a href="#18-7-3-aces-颜色空间">18.7.3 ACES 颜色空间</a></li>
+  <li class="toc-h2"><a href="#18-8-全章总结">18.8 全章总结</a></li>
+  <li class="toc-h3"><a href="#关键公式速查">关键公式速查</a></li>
+  <li class="toc-h3"><a href="#常见误区">常见误区</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

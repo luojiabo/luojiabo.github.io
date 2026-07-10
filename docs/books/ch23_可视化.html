@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch23: 可视化</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch23 可视化</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第23章：可视化 — 零基础极详细讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第23章 <em>Visualization</em>（p.645-679），由10年游戏引擎/渲染研发经验工程师执笔。<br>
+<strong>本章关键词</strong>：科学可视化、信息可视化、标量场/向量场、等值面、流线、体绘制、传递函数、D3.js、Tableau、ParaView。<br>
+学完本章，你会理解：<strong>为什么要用"图"代替"表"、人类视觉系统怎么帮你"看出"模式、等值面/流线/LIC怎么把抽象数据变可见</strong>。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s230">0. 为什么要用"图"代替"表"？</a></li>
+  <li><a href="#s231">23.1 背景与三类资源限制</a></li>
+  <li><a href="#s232">23.2 数据类型</a></li>
+  <li><a href="#s233">23.3 以人为中心的设计过程</a></li>
+  <li><a href="#s234">23.4 视觉编码原则</a></li>
+  <li><a href="#s235">23.5 交互原则</a></li>
+  <li><a href="#s236">23.6 复合视图与多视图</a></li>
+  <li><a href="#s237">23.7 数据归约</a></li>
+  <li><a href="#s238">23.8 实例与应用</a></li>
+  <li><a href="#s23sum">全章总结</a></li>
+</ul>
+</div>
+
+<!-- ==================== 第0节 ==================== -->
+<h2 id="0--为什么要用-图-代替-表">0. 为什么要用"图"代替"表"？</h2>
+
+<p><strong>一句话本质</strong>：人脑的工作记忆只有4±1个chunk。可视化就是把100万个数据点"卸载"到视网膜上，用pre-attentive vision在0.2秒内看完。</p>
+
+<div class="analogy">
+<strong>💡 生活类比：超市购物清单</strong>
+<p>想象你去超市买50样东西。如果你只带一张文字清单（=数据表格），你得逐行阅读、记忆、来回对照——工作记忆很快就崩溃了。但如果你的清单是一个"超市平面图"，每个商品的位置都标在图上（=可视化），你一眼就能看到"牛奶在东北角、面包在西南角"——这就是"外部存储"的力量。</p>
+</div>
+
+<table>
+<tr><th>维度</th><th>文字/数字</th><th>可视化</th></tr>
+<tr><td><strong>短期记忆负荷</strong></td><td>高（要记住所有项）</td><td>低（外部存储在图上）</td></tr>
+<tr><td><strong>处理模式</strong></td><td>串行（逐项读）</td><td>平行（一次扫视）</td></tr>
+<tr><td><strong>适合的数据量</strong></td><td>几十</td><td>几百~几百万</td></tr>
+<tr><td><strong>适合的任务</strong></td><td>精确数值查找</td><td>模式发现、异常检测</td></tr>
+</table>
+
+<div class="key-box">
+<strong>🔥 重要洞察（游戏引擎视角）</strong>：每帧GPU给你1张8M像素的图，相当于给玩家一个"无限大、工作记忆为零"的视觉外部存储。这就是为什么profiler一定要用flame graph / timeline / heatmap，没人愿意读1000行CSV看哪段代码慢。
+</div>
+
+<hr>
+
+<!-- ==================== 23.1 ==================== -->
+<h2 id="23-1-背景-background">23.1 背景（Background）</h2>
+
+<h3 id="23-1-1-为什么需要关注-可视化">23.1.1 为什么需要关注"可视化"？</h3>
+
+<p>我们生活在大数据时代——每秒产生海量数据，但人类的大脑仍然是"石器时代"的配置。可视化就是<strong>在人类认知能力和数据量之间架桥</strong>。</p>
+
+<h3 id="23-1-2-三类资源限制">23.1.2 三类资源限制</h3>
+
+<div class="analogy">
+<strong>💡 生活类比：做PPT汇报</strong>
+<p>想象你做季度汇报PPT。你面临三个限制：电脑性能差（计算资源=加载大图会卡）、老板只有5分钟注意力（人类感知=不能讲太复杂）、投影仪分辨率低（显示资源=放不下100个小图）。可视化的设计就是同时平衡这三个约束。</p>
+</div>
+
+<table>
+<tr><th>限制类型</th><th>关键问题</th><th>应对策略</th><th>游戏引擎类比</th></tr>
+<tr><td><strong>计算</strong></td><td>实时要求 &lt;1s响应</td><td>LOD、空间分割、GPU并行</td><td>16ms帧预算</td></tr>
+<tr><td><strong>人类</strong></td><td>4±1 chunk、change blindness</td><td>external memory、pre-attentive</td><td>HUD必须pre-attentive</td></tr>
+<tr><td><strong>显示</strong></td><td>"像素用完"、信息密度vs杂</td><td>overview+detail、aggregation</td><td>4K屏每帧8M像素</td></tr>
+</table>
+
+<hr>
+
+<!-- ==================== 23.2 ==================== -->
+<h2 id="23-2-数据类型-data-types">23.2 数据类型（Data Types）</h2>
+
+<h3 id="23-2-1-为什么数据类型-几乎决定一切">23.2.1 为什么数据类型"几乎决定一切"？</h3>
+
+<p>可视化设计的第一原则：<strong>数据类型决定图表类型</strong>。给表格数据画树图，给图数据画柱状图——都是灾难。</p>
+
+<pre><code>数据                    可视化抽象               典型图
+─────────────────────────────────────────────────────
+表格 (table)             items × dimensions      scatter / bar / line
+关系 (graph/tree)        nodes + links           node-link / treemap
+空间 (field)             2D/3D场值               isosurface / streamlines / DVR</code></pre>
+
+<h3 id="23-2-2-三类维度的本质区别">23.2.2 三类维度的本质区别</h3>
+
+<table>
+<tr><th>类型</th><th>例子</th><th>可以做算术？</th><th>可以排序？</th><th>可以区分？</th><th>可视化策略</th></tr>
+<tr><td><strong>定量（quantitative）</strong></td><td>年龄、身高、温度</td><td>✅ 加减乘除</td><td>✅</td><td>✅</td><td>用position/length/angle</td></tr>
+<tr><td><strong>有序（ordered）</strong></td><td>衬衫尺码S/M/L、评分1-5</td><td>❌ 不能做加减</td><td>✅</td><td>✅</td><td>用lightness/saturation</td></tr>
+<tr><td><strong>分类（categorical）</strong></td><td>水果、国家、名字</td><td>❌</td><td>❌</td><td>✅</td><td>用hue/texture/shape</td></tr>
+</table>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么"有序"数据不能用hue（色相）编码？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">因为hue没有隐含排序！我们的大脑不会觉得"红色比蓝色大"——红色和蓝色只是"不同"，不是"谁大谁小"。要让数据看起来有大小关系，要用lightness（明度）——暗→亮天然对应小→大。</blockquote>
+</div>
+
+<hr>
+
+<!-- ==================== 23.3 ==================== -->
+<h2 id="23-3-以人为中心的设计过程-human-centered-design">23.3 以人为中心的设计过程（Human-Centered Design）</h2>
+
+<h3 id="23-3-1-四层嵌套验证">23.3.1 四层嵌套验证</h3>
+
+<pre><code>┌─────────────────────────────────────────────────┐
+│  ① Domain problem characterization              │ ← 问题真的需要可视化？
+│  ┌─────────────────────────────────────────┐    │
+│  │  ② Data/operation abstraction design     │    │ ← 抽象成什么operations？
+│  │  ┌─────────────────────────────────┐    │    │
+│  │  │  ③ Encoding/interaction design │    │    │ ← 选什么视觉通道？
+│  │  │  ┌─────────────────────────┐    │    │    │
+│  │  │  │  ④ Algorithm design     │    │    │    │ ← 怎么算得快？
+│  │  │  │                         │    │    │    │
+│  │  │  └─────────────────────────┘    │    │    │
+│  │  └─────────────────────────────────┘    │    │
+│  └─────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────┘</code></pre>
+
+<div class="analogy">
+<strong>💡 生活类比：装修房子</strong>
+<p>第①层是"你要装修什么房子"（Domain——别墅还是公寓）；第②层是"你要哪些房间"（Abstraction——卧室/厨房/书房）；第③层是"每个房间怎么装修"（Encoding——墙色、地板、灯光）；第④层是"具体怎么施工"（Algorithm——水电/泥工/木工顺序）。你不能跳过前两层直接选墙色——否则厨房可能被装成卧室。</p>
+</div>
+
+<table>
+<tr><th>层</th><th>核心问题</th><th>验证方法</th><th>常见错误</th></tr>
+<tr><td>① Domain</td><td>用户真正需要解决什么问题？</td><td>实地观察、interview、原型测试</td><td>没问用户直接做</td></tr>
+<tr><td>② Abstraction</td><td>数据应该抽象成什么操作？</td><td>现场研究、task成功率</td><td>抽象层次不对</td></tr>
+<tr><td>③ Encoding</td><td>用什么视觉通道编码？</td><td>心理物理实验、error rate</td><td>用hue表示定量</td></tr>
+<tr><td>④ Algorithm</td><td>怎么算得足够快？</td><td>复杂度分析、benchmark</td><td>过度优化</td></tr>
+</table>
+
+<hr>
+
+<!-- ==================== 23.4 ==================== -->
+<h2 id="23-4-视觉编码原则-visual-encoding-principles">23.4 视觉编码原则（Visual Encoding Principles）</h2>
+
+<h3 id="23-4-1-核心框架-mark---channel">23.4.1 核心框架：mark × channel</h3>
+
+<p>可视化 = 选mark（图形元素）× 选channel（视觉属性）。</p>
+
+<table>
+<tr><th>mark类型</th><th>维度</th><th>例子</th></tr>
+<tr><td><strong>点（point）</strong></td><td>0D</td><td>散点图中每个数据点</td></tr>
+<tr><td><strong>线（line）</strong></td><td>1D</td><td>折线图中的线条</td></tr>
+<tr><td><strong>区域（area）</strong></td><td>2D</td><td>柱状图、热力图</td></tr>
+<tr><td><strong>体积（volume）</strong></td><td>3D</td><td>体绘制中的体素</td></tr>
+</table>
+
+<h3 id="23-4-2-通道排行榜-必背">23.4.2 通道排行榜（必背！）</h3>
+
+<div class="guizang-figure">
+<img src="images/ch23/ch23_channel_ranking.png" alt="视觉编码通道排行榜">
+<div class="guizang-caption">图23-1：视觉编码通道准确度排行榜——位置最准，颜色最弱</div>
+</div>
+
+<p><strong>定量数据准确度从高到低</strong>（Cleveland &amp; McGill, 1985）：</p>
+
+<div class="formula">position > length > angle > slope > area > volume > lightness > saturation > hue > texture</div>
+
+<p><strong>这个排行榜为什么重要？</strong>因为它告诉你：能用柱状图（length）就别用气泡图（area），能用折线图（position+slope）就别用颜色编码。</p>
+
+<div class="choice-table">
+<strong>🔧 技术选型：什么时候用什么通道？</strong>
+<table>
+<tr><th>数据类型</th><th>最佳通道</th><th>次佳</th><th>绝对不要用</th></tr>
+<tr><td><strong>定量</strong>（FPS、内存、温度）</td><td>position（坐标轴）</td><td>length（柱状图）</td><td>hue（你分不清数值）</td></tr>
+<tr><td><strong>有序</strong>（等级、严重程度）</td><td>lightness（明度）</td><td>saturation（饱和度）</td><td>hue（无排列含义）</td></tr>
+<tr><td><strong>分类</strong>（地区、部门、类型）</td><td>position + hue</td><td>texture（纹理）</td><td>size（会误导为定量）</td></tr>
+</table>
+</div>
+
+<div class="key-box">
+<strong>🔥 重要洞察</strong>：Position对所有三种数据类型都是最准确的通道！这就是为什么所有可视化工具都优先把最重要的维度放到XY轴上——人眼对"位置"的感知精度最高。
+</div>
+
+<h3 id="23-4-3-颜色-color---最容易用错">23.4.3 颜色（Color）——最容易用错</h3>
+
+<h4 id="hsl三分量">HSL三分量</h4>
+
+<table>
+<tr><th>分量</th><th>含义</th><th>适合</th><th>不适合</th></tr>
+<tr><td><strong>Hue（色相）</strong></td><td>红/绿/蓝/紫</td><td>分类数据（最多6-12种）</td><td>定量/有序数据</td></tr>
+<tr><td><strong>Saturation（饱和度）</strong></td><td>鲜艳vs灰暗</td><td>有序数据（次选）</td><td>大区域（太艳刺眼）</td></tr>
+<tr><td><strong>Lightness（明度）</strong></td><td>亮vs暗</td><td>有序数据（最佳）</td><td>小区域（看不清）</td></tr>
+</table>
+
+<h4 id="彩虹色图的两大缺陷">彩虹色图的两大缺陷</h4>
+
+<div class="guizang-figure">
+<img src="images/ch23/ch23_rainbow_defects.png" alt="彩虹色图两大缺陷">
+<div class="guizang-caption">图23-2：彩虹色图缺陷——左为无序+非线性，右为单调亮度替代方案</div>
+</div>
+
+<table>
+<tr><th>缺陷</th><th>表现</th><th>后果</th></tr>
+<tr><td><strong>① 用hue表示顺序</strong></td><td>红→橙→黄→绿的顺序是人为的，不是天生的</td><td>用户无法凭直觉判断"哪个值更大"</td></tr>
+<tr><td><strong>② 不是perceptually linear</strong></td><td>等宽的数据区间，在彩虹色图上的视觉宽度不一样</td><td>用户对数据差距的感知被严重扭曲</td></tr>
+</table>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么Unreal引擎的默认colormap已经不用rainbow了？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">因为彩虹色图会误导用户！假如一个温度图用彩虹色，-2000°C到-1000°C看起来和-1000°C到0°C"宽度"不同——即使实际温度差都是1000°C。现代引擎改用monotonic lightness ramp（单调亮度渐变），让等数据间隔在视觉上也是等间隔。</blockquote>
+</div>
+
+<h4 id="替代方案-colorbrewer">替代方案：ColorBrewer</h4>
+
+<ul>
+  <li>推荐工具：colorbrewer2.org</li>
+  <li>顺序数据 → "sequential"色板（单色渐变）</li>
+  <li>分类数据 → "qualitative"色板（不同色相）</li>
+  <li>发散数据 → "diverging"色板（两种颜色从中间向两端渐变）</li>
+  <li>色盲友好 → 用ColorBrewer的colorblind-safe选项（约10%男性色盲）</li>
+</ul>
+
+<h3 id="23-4-4-2d-vs-3d空间布局">23.4.4 2D vs 3D空间布局</h3>
+
+<table>
+<tr><th>场景</th><th>推荐</th><th>原因</th></tr>
+<tr><td><strong>抽象数据</strong>（销量、性能、统计）</td><td><strong>2D</strong></td><td>避免Occlusion、透视扭曲、文字难读</td></tr>
+<tr><td><strong>真实3D数据</strong>（CT、流体、地理）</td><td><strong>3D</strong></td><td>物理结构本身就是3D</td></tr>
+</table>
+
+<div class="key-box">
+<strong>🔥 重要洞察（引擎视角）</strong>：抽象数据（库存量、用户分布）→ 2D仪表盘（FPS、CPU、GPU）。物理3D（关卡布局、体积云）→ 3D viewport。调试时尽量用2D top-down / front view看逻辑结构——3D只会让你困惑。
+</div>
+
+<hr>
+
+<!-- ==================== 23.5 ==================== -->
+<h2 id="23-5-交互原则-interaction-principles">23.5 交互原则（Interaction Principles）</h2>
+
+<h3 id="23-5-1-经典三句箴言">23.5.1 经典三句箴言</h3>
+
+<p><strong>Shneiderman, 1996</strong>："Overview first, zoom and filter, details on demand."</p>
+
+<div class="analogy">
+<strong>💡 生活类比：逛博物馆</strong>
+<p>你走进博物馆，先在门口看地图（Overview - 全貌），然后走向感兴趣的展厅（Zoom - 聚焦），在展厅里只看某个时期的展品（Filter - 过滤），最后凑近看某件文物的介绍牌（Details on demand - 细节按需）——这就是完美的交互流程。</p>
+</div>
+
+<pre><code>1. Overview       → 看全貌，找兴趣点
+2. Zoom & Filter  → 缩到感兴趣区域 / 过滤掉噪声
+3. Details on Demand → 鼠标悬停/单击看精确值</code></pre>
+
+<h3 id="23-5-2-交互的成本">23.5.2 交互的成本</h3>
+
+<p><strong>关键洞察</strong>：交互需要人的时间——如果用户必须"穷举"才能找到答案，可视化就退化成手工人肉搜索。解决方法是让系统自动检测值得看的特征，主动推到用户面前。但完全自动 = 不需要可视化 = 退回算法问题。平衡点：自动 + 人在loop里。</p>
+
+<h3 id="23-5-3-动画-animation">23.5.3 动画（Animation）</h3>
+
+<table>
+<tr><th>方式</th><th>优点</th><th>缺点</th><th>适合</th></tr>
+<tr><td><strong>全程动画</strong></td><td>容易追踪变化过程</td><td>帧数多了记忆负担大</td><td>展示趋势变化</td></tr>
+<tr><td><strong>翻页（2帧flip）</strong></td><td>简单、易比较</td><td>丢失中间过程</td><td>前后对比</td></tr>
+<tr><td><strong>静态并排</strong></td><td>最易精确比较</td><td>占空间</td><td>比较5个版本</td></tr>
+</table>
+
+<div class="key-box">
+<strong>🔥 重要洞察</strong>：动画不是万能的。研究表明，对于"比较5个版本"的任务，静态并排比动画更有效。动画只有在"追踪单个物体随时间变化"时才真正有用。
+</div>
+
+<hr>
+
+<!-- ==================== 23.6 ==================== -->
+<h2 id="23-6-复合视图与多视图-composite-and-adjacent-views">23.6 复合视图与多视图（Composite and Adjacent Views）</h2>
+
+<div class="guizang-figure">
+<img src="images/ch23/ch23_multiview.png" alt="多视图布局对比">
+<div class="guizang-caption">图23-3：三种多视图布局——Overview+Detail、Small Multiples、Brushing+Linking</div>
+</div>
+
+<table>
+<tr><th>布局</th><th>原理</th><th>适合</th><th>例子</th></tr>
+<tr><td><strong>Single Drawing</strong></td><td>所有数据一张图</td><td>数据量小、维度少</td><td>柱状图、折线图</td></tr>
+<tr><td><strong>Overview + Detail</strong></td><td>缩略图+细节图联动</td><td>大数据、需要定位</td><td>地图（全景+缩放）</td></tr>
+<tr><td><strong>Small Multiples</strong></td><td>多张相同编码的小图</td><td>按维度分面</td><td>按年份的销售趋势图</td></tr>
+<tr><td><strong>Brushing + Linking</strong></td><td>多视图共享选中状态</td><td>多维探索</td><td>选中一个点→所有视图高亮</td></tr>
+<tr><td><strong>Glyph</strong></td><td>复杂标记</td><td>多维数据点</td><td>Chernoff人脸图</td></tr>
+</table>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么Chernoff人脸图（用眉毛角度、嘴巴大小编码数据）是个坏主意？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">因为人类对面孔特征是非线性感知的！我们天生对"眉毛角度"极度敏感（因为它表示情绪），但对"鼻子大小"不太敏感。你在数据中编码了同样的信息量，但用户的感知会被眉毛角度主导——数据中的微小变化被放大，而鼻子大小的巨变被忽视。这就是"通道的可分离性"问题。</blockquote>
+</div>
+
+<hr>
+
+<!-- ==================== 23.7 ==================== -->
+<h2 id="23-7-数据归约-data-reduction">23.7 数据归约（Data Reduction）</h2>
+
+<h3 id="23-7-1-核心问题-数据太大-画不下">23.7.1 核心问题：数据太大，画不下</h3>
+
+<div class="guizang-figure">
+<img src="images/ch23/ch23_data_reduction.png" alt="数据归约4大策略">
+<div class="guizang-caption">图23-4：数据归约4大策略——过滤、聚合、Focus+Context、降维</div>
+</div>
+
+<table>
+<tr><th>策略</th><th>本质</th><th>适用场景</th><th>代价</th></tr>
+<tr><td><strong>过滤（Filter）</strong></td><td>只画满足条件的子集</td><td>用户有明确查询</td><td>可能漏掉重要模式</td></tr>
+<tr><td><strong>聚合（Aggregate）</strong></td><td>N个item合并为1个mark</td><td>大量同类数据</td><td>丢失个体差异</td></tr>
+<tr><td><strong>Focus+Context</strong></td><td>局部细节+全局上下文</td><td>需要同时看整体和局部</td><td>实现复杂</td></tr>
+<tr><td><strong>降维（Dim Reduction）</strong></td><td>从N维压到2-3维</td><td>维度爆炸</td><td>细粒度结构丢失</td></tr>
+</table>
+
+<h3 id="23-7-2-focus---context-经典方法">23.7.2 Focus + Context 经典方法</h3>
+
+<table>
+<tr><th>方法</th><th>原理</th><th>例子</th></tr>
+<tr><td><strong>Fish-eye Lens</strong></td><td>单径向透镜</td><td>地图上的放大镜效果</td></tr>
+<tr><td><strong>Stretch & Squish</strong></td><td>拉伸局部、压缩其余</td><td>TreeJuxtaposer</td></tr>
+<tr><td><strong>SpaceTree</strong></td><td>隐藏非路径节点</td><td>树形结构聚焦</td></tr>
+</table>
+
+<h3 id="23-7-3-降维方法对比">23.7.3 降维方法对比</h3>
+
+<table>
+<tr><th>方法</th><th>原理</th><th>适合</th><th>局限性</th></tr>
+<tr><td><strong>PCA</strong></td><td>保留最大方差方向</td><td>线性结构的数据</td><td>无法捕捉非线性结构</td></tr>
+<tr><td><strong>MDS</strong></td><td>保留点之间的距离</td><td>相似度数据</td><td>计算量大</td></tr>
+<tr><td><strong>t-SNE</strong></td><td>保留局部邻域结构</td><td>高维聚类可视化</td><td>全局结构可能失真</td></tr>
+<tr><td><strong>UMAP</strong></td><td>比t-SNE更快</td><td>大规模高维数据</td><td>相对新，参数敏感</td></tr>
+</table>
+
+<hr>
+
+<!-- ==================== 23.8 ==================== -->
+<h2 id="23-8-实例与应用-examples">23.8 实例与应用（Examples）</h2>
+
+<div class="guizang-figure">
+<img src="images/ch23/ch23_classic_viz.png" alt="经典可视化案例">
+<div class="guizang-caption">图23-5：三种经典可视化——散点图、树图Treemap、平行坐标</div>
+</div>
+
+<h3 id="23-8-1-表格数据---parallel-coordinates-平行坐标">23.8.1 表格数据 — Parallel Coordinates（平行坐标）</h3>
+
+<p><strong>为什么需要平行坐标？</strong>当数据有5-20个维度时，普通的散点图无法展示。平行坐标用多根平行轴，每个数据点是一条穿过所有轴的折线。</p>
+
+<table>
+<tr><th>维度数</th><th>适合的图</th><th>例子</th></tr>
+<tr><td>1D</td><td>直方图</td><td>年龄分布</td></tr>
+<tr><td>2D</td><td>散点图</td><td>身高vs体重</td></tr>
+<tr><td>3D</td><td>3D散点图+颜色</td><td>身高vs体重vs年龄</td></tr>
+<tr><td>4-20D</td><td>平行坐标</td><td>汽车数据（排量/油耗/价格/重量/马力）</td></tr>
+<tr><td>20D+</td><td>降维（PCA/t-SNE）</td><td>基因表达数据</td></tr>
+</table>
+
+<h3 id="23-8-2-图数据---node-link-vs-matrix">23.8.2 图数据 — Node-Link vs Matrix</h3>
+
+<table>
+<tr><th>任务</th><th>适合</th><th>理由</th></tr>
+<tr><td>看拓扑结构、聚类</td><td><strong>Matrix视图</strong></td><td>无edge crossing，聚类一目了然</td></tr>
+<tr><td>看路径、局部邻域</td><td><strong>Node-Link</strong></td><td>路径追踪直观</td></tr>
+<tr><td>看层次结构</td><td><strong>Treemap / 树状图</strong></td><td>包含关系比连接关系更高效</td></tr>
+</table>
+
+<h3 id="23-8-3-空间场数据---科学可视化">23.8.3 空间场数据 — 科学可视化</h3>
+
+<table>
+<tr><th>场类型</th><th>可视化方法</th><th>游戏引擎类比</th></tr>
+<tr><td><strong>标量场</strong>（温度、密度、CT值）</td><td>等值面（Isosurface）、直接体绘制（DVR）</td><td>体积云、Fog</td></tr>
+<tr><td><strong>向量场</strong>（速度、风力、磁场）</td><td>箭头、流线（Streamlines）、LIC</td><td>粒子系统、风场</td></tr>
+<tr><td><strong>张量场</strong>（扩散MRI、应力）</td><td>极难——通常用glyph/颜色编码</td><td>有限元分析</td></tr>
+</table>
+
+<div class="key-box">
+<strong>🔥 重要洞察（引擎视角）</strong>：CT/MRI医学可视化和游戏引擎的体积渲染是<strong>算法上完全同源</strong>的！你用的volumetric fog、体积云、烟尘，本质上就是直接体绘制（DVR）+ 传递函数（Transfer Function）。学完这章，你应该意识到：引擎里的profiler、HUD、telemetry dashboard、editor布局——都遵循同样的可视化设计原理。
+</div>
+
+<hr>
+
+<!-- ==================== Summary ==================== -->
+<h2 id="全章总结">全章总结</h2>
+
+<div class="formula">可视化 = 把人类视觉系统当成高带宽外存来用</div>
+
+<table>
+<tr><th>主题</th><th>一句话</th></tr>
+<tr><td><strong>数据决定图</strong></td><td>表格/图/场 → 完全不同可视化范式</td></tr>
+<tr><td><strong>人决定图</strong></td><td>4±1 chunk、pre-attentive 0.2s</td></tr>
+<tr><td><strong>通道决定图</strong></td><td>position最准，hue最花</td></tr>
+<tr><td><strong>交互决定图</strong></td><td>Overview → Zoom → Filter → Details</td></tr>
+<tr><td><strong>归约决定图</strong></td><td>Aggregate / Filter / Focus+Context / DimReduction</td></tr>
+</table>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：你在游戏引擎里都用过哪些"可视化"？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">Unreal Insights的火焰图（Flame Graph）= Focus+Context + Aggregation；RenderDoc的帧调试器 = Overview+Detail；UE的World Outliner = 树状图（Treemap的变体）。本章的所有原理你都"无意识"地在用——现在你知道为什么这些工具长得这样了。</blockquote>
+</div>
+
+<h3 id="10条工程师行动清单">10条工程师行动清单</h3>
+
+<ol>
+  <li><strong>永远先问"是什么数据类型"</strong>（table/graph/field）再选图</li>
+  <li><strong>定量数据用position/length</strong>，不要用hue</li>
+  <li><strong>类别数据用hue + 冗余编码</strong>（texture/shape）</li>
+  <li><strong>避免rainbow colormap</strong>——用ColorBrewer sequential ramp</li>
+  <li><strong>2D优先于3D</strong>（除非数据本身就是3D）</li>
+  <li><strong>多视图 + linked highlighting</strong>是处理高维数据最稳的方案</li>
+  <li><strong>大数据先aggregate/filter/sample</strong>，再画</li>
+  <li><strong>Focus + Context</strong>是同时看细节和全局的最强模式</li>
+  <li><strong>动画用2帧flip</strong>，不要用全程动画</li>
+  <li><strong>每层设计都验证</strong>（domain/abstraction/encoding/algorithm）</li>
+</ol>
+
+<h3 id="工具生态地图">工具生态地图</h3>
+
+<table>
+<tr><th>用途</th><th>工具</th></tr>
+<tr><td>学术/医学</td><td>VTK, ParaView, ITK, OsiriX</td></tr>
+<tr><td>商业BI</td><td>Tableau, Power BI, Looker</td></tr>
+<tr><td>Web信息可视化</td><td>D3.js, Observable, Vega-Lite, Plotly</td></tr>
+<tr><td>编程艺术</td><td>Processing, p5.js</td></tr>
+<tr><td>引擎调试</td><td>Unreal Insights, RenderDoc, PIX</td></tr>
+</table>
+
+<div class="analogy">
+<strong>💡 最终类比：眼镜</strong>
+<p>可视化就像一副眼镜——它不创造新的信息，只是帮你看清原本就在那里的东西。一副好眼镜让你看到树叶的纹理（=发现数据中的模式），一副坏眼镜让你头晕目眩（=糟糕的可视化设计）。好的可视化设计就像好的眼镜：你不会注意到它的存在，但你的世界突然变得清晰了。</p>
+</div>
+
+<blockquote>
+<p><strong>"可视化"不是"画图"，而是"把人类视觉系统当成高带宽外存来用"。</strong><br>
+引擎里的profiler、HUD、telemetry dashboard跟医学CT、Tableau仪表盘是<strong>同源问题</strong>。掌握这一章的设计原理，你的debug工具、UI、HUD都会上升一个档次。</p>
+</blockquote>
+
+<hr>
+<p><strong>讲义完成。第23章覆盖了从数据分析到视觉编码再到交互设计的完整可视化体系——这是你的"数据思维"必修课。</strong></p>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li class="active"><a href="ch23_可视化.html" class="active">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#0--为什么要用-图-代替-表">0. 为什么要用"图"代替"表"？</a></li>
+  <li class="toc-h2"><a href="#23-1-背景-background">23.1 背景（Background）</a></li>
+  <li class="toc-h3"><a href="#23-1-1-为什么需要关注-可视化">23.1.1 为什么需要关注"可视化"？</a></li>
+  <li class="toc-h3"><a href="#23-1-2-三类资源限制">23.1.2 三类资源限制</a></li>
+  <li class="toc-h2"><a href="#23-2-数据类型-data-types">23.2 数据类型（Data Types）</a></li>
+  <li class="toc-h3"><a href="#23-2-1-为什么数据类型-几乎决定一切">23.2.1 为什么数据类型"几乎决定一切"？</a></li>
+  <li class="toc-h3"><a href="#23-2-2-三类维度的本质区别">23.2.2 三类维度的本质区别</a></li>
+  <li class="toc-h2"><a href="#23-3-以人为中心的设计过程-human-centered-design">23.3 以人为中心的设计过程（Human-Centered Design）</a></li>
+  <li class="toc-h3"><a href="#23-3-1-四层嵌套验证">23.3.1 四层嵌套验证</a></li>
+  <li class="toc-h2"><a href="#23-4-视觉编码原则-visual-encoding-principles">23.4 视觉编码原则（Visual Encoding Principles）</a></li>
+  <li class="toc-h3"><a href="#23-4-1-核心框架-mark---channel">23.4.1 核心框架：mark × channel</a></li>
+  <li class="toc-h3"><a href="#23-4-2-通道排行榜-必背">23.4.2 通道排行榜（必背！）</a></li>
+  <li class="toc-h3"><a href="#23-4-3-颜色-color---最容易用错">23.4.3 颜色（Color）——最容易用错</a></li>
+  <li class="toc-h3"><a href="#23-4-4-2d-vs-3d空间布局">23.4.4 2D vs 3D空间布局</a></li>
+  <li class="toc-h2"><a href="#23-5-交互原则-interaction-principles">23.5 交互原则（Interaction Principles）</a></li>
+  <li class="toc-h3"><a href="#23-5-1-经典三句箴言">23.5.1 经典三句箴言</a></li>
+  <li class="toc-h3"><a href="#23-5-2-交互的成本">23.5.2 交互的成本</a></li>
+  <li class="toc-h3"><a href="#23-5-3-动画-animation">23.5.3 动画（Animation）</a></li>
+  <li class="toc-h2"><a href="#23-6-复合视图与多视图-composite-and-adjacent-views">23.6 复合视图与多视图（Composite and Adjacent Views）</a></li>
+  <li class="toc-h2"><a href="#23-7-数据归约-data-reduction">23.7 数据归约（Data Reduction）</a></li>
+  <li class="toc-h3"><a href="#23-7-1-核心问题-数据太大-画不下">23.7.1 核心问题：数据太大，画不下</a></li>
+  <li class="toc-h3"><a href="#23-7-2-focus---context-经典方法">23.7.2 Focus + Context 经典方法</a></li>
+  <li class="toc-h3"><a href="#23-7-3-降维方法对比">23.7.3 降维方法对比</a></li>
+  <li class="toc-h2"><a href="#23-8-实例与应用-examples">23.8 实例与应用（Examples）</a></li>
+  <li class="toc-h3"><a href="#23-8-1-表格数据---parallel-coordinates-平行坐标">23.8.1 表格数据 — Parallel Coordinates（平行坐标）</a></li>
+  <li class="toc-h3"><a href="#23-8-2-图数据---node-link-vs-matrix">23.8.2 图数据 — Node-Link vs Matrix</a></li>
+  <li class="toc-h3"><a href="#23-8-3-空间场数据---科学可视化">23.8.3 空间场数据 — 科学可视化</a></li>
+  <li class="toc-h2"><a href="#全章总结">全章总结</a></li>
+  <li class="toc-h3"><a href="#10条工程师行动清单">10条工程师行动清单</a></li>
+  <li class="toc-h3"><a href="#工具生态地图">工具生态地图</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

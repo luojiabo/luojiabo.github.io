@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch13: 采样</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch13 采样</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第13章：采样 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第13章（p.335-355）。<br>
+<strong>本章是图形学的"概率基础"——它告诉你：怎么用随机采样解决图形学里"积分算不出来"的问题。</strong><br>
+学完本章，你将真正理解 Monte Carlo 积分、Importance Sampling、Metropolis 算法等核心概念。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s130">13.0 为什么要学采样？</a></li>
+  <li><a href="#s131">13.1 测度（Measure）</a></li>
+  <li><a href="#s132">13.2 连续概率</a></li>
+  <li><a href="#s133">13.3 大数定律与 Monte Carlo 积分</a></li>
+  <li><a href="#s134">13.4 重要性采样（Importance Sampling）</a></li>
+  <li><a href="#s135">13.5 三种采样方法</a></li>
+  <li><a href="#s136">13.6 分层采样（Stratified Sampling）</a></li>
+  <li><a href="#s137">13.7 球面/圆盘上的均匀采样</a></li>
+  <li><a href="#s138">13.8 实际应用</a></li>
+  <li><a href="#ssummary">全章总结</a></li>
+</ul>
+</div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+  <li>理解<strong>为什么要学采样</strong>——像素的颜色是各方向光的积分</li>
+  <li>理解<strong>测度（Measure）</strong>的直觉——面积尺/角度尺/长度尺</li>
+  <li>掌握<strong>积分的概率视角</strong>——把积分变成"期望"</li>
+  <li>掌握<strong>大数定律</strong>——硬币投掷 100 次 vs 10000 次</li>
+  <li>理解<strong>Monte Carlo 算 π</strong>——数值例子</li>
+  <li>掌握<strong>3 种采样方法</strong>：Function Inversion / Rejection / Metropolis</li>
+  <li>理解<strong>重要性采样（Importance Sampling）</strong>——三步推导</li>
+  <li>理解<strong>Metropolis 算法</strong>——"山上散步"类比</li>
+</ol>
+
+<hr>
+
+<h2 id="13-0-为什么要学采样">13.0 为什么要学采样？</h2>
+
+<h3 id="13-0-1-像素的颜色---各方向光的积分">13.0.1 像素的颜色 = 各方向光的积分</h3>
+
+<blockquote>
+<p><strong>一个像素的颜色 = 从该像素射出的所有方向的光的积分</strong></p>
+</blockquote>
+
+<p>想象你站在一扇窗户前，透过窗玻璃看外面的世界。你的<strong>一个眼球像素</strong>收到的光，实际上是<strong>来自所有方向的</strong>——天空的蓝光、建筑的灰光、草地的绿光——全部叠加在一起。</p>
+
+<p>在计算机图形学里，一个像素的颜色公式是：</p>
+
+<pre><code>像素颜色 = ∫_{所有方向} L(方向) × 滤波器(方向) d方向</code></pre>
+
+<table>
+<tr><th>符号</th><th>含义</th></tr>
+<tr><td><code>L(方向)</code></td><td>来自某个方向的光的"辐射亮度"（radiance）</td></tr>
+<tr><td><code>滤波器(方向)</code></td><td>像素对各个方向的敏感度</td></tr>
+<tr><td><code>d方向</code></td><td>在方向空间中的微元（球面面积元）</td></tr>
+</table>
+
+<h3 id="13-0-2-为什么这个积分算不出来">13.0.2 为什么这个积分算不出来？</h3>
+
+<p><strong>问题</strong>：这个积分<strong>没有解析解</strong>。你不能用一个公式算出来。</p>
+
+<p><strong>为什么？</strong> 因为 <code>L(方向)</code> 取决于：</p>
+
+<ul>
+<li>场景里几百个物体的位置、形状、材质</li>
+<li>几十个光源的强度、颜色、位置</li>
+<li>光在物体之间经过了几次反射/折射</li>
+</ul>
+
+<blockquote>
+<p>怎么可能用一个闭式公式表达？</p>
+</blockquote>
+
+<p><strong>所以——只能用数值积分</strong>。这就是采样的意义：<strong>你用有限个方向上的光的值，来近似那个无限积分</strong>。</p>
+
+<p>每条"采样光线"就是一次对 <code>L(方向)</code> 的"测量"。采样越多，近似越准确。这就是为什么本章名叫"采样"——它是所有现代渲染器（从 Pixar 到 Unreal）的核心。</p>
+
+<div class="analogy-box">
+<strong>🏠 生活类比：民意调查</strong>
+<blockquote>
+<p>想象你要知道"全国有多少人喜欢巧克力"。你不能问 14 亿人（太多），你只能随机问 1000 人。1000 人的答案 × 总人口 = 估计值。<strong>采样 = 抽样调查</strong>。样本越多，估计越准。</p>
+</blockquote>
+</div>
+
+<hr>
+
+<h2 id="13-1-测度-measure">13.1 测度（Measure）</h2>
+
+<h3 id="13-1-1-什么是测度">13.1.1 什么是测度？</h3>
+
+<blockquote>
+<p><strong>测度 = 一把"尺子"——用来量一个集合的大小</strong></p>
+</blockquote>
+
+<p>想象你有三把不同的尺子：</p>
+
+<p><strong>1. 面积尺</strong>（平方米）</p>
+
+<ul>
+<li>量房间大小：30 平方米</li>
+<li>量硬币大小：0.0005 平方米</li>
+<li>量一张纸的厚度：<strong>0 平方米</strong>（因为厚度太薄，在面积尺下是 0）</li>
+</ul>
+
+<p><strong>2. 角度尺</strong>（弧度/立体角）</p>
+
+<ul>
+<li>量星星在天空中的"大小"：0.001 立体角</li>
+<li>量你的手掌在眼前的"大小"：0.5 立体角</li>
+<li>量画面左上角到右下角的范围：π 立体角</li>
+</ul>
+
+<p><strong>3. 长度尺</strong>（米）</p>
+
+<ul>
+<li>量房间长度：5 米</li>
+<li>量一张纸的厚度：0.0001 米</li>
+</ul>
+
+<blockquote>
+<p><strong>关键</strong>：同一个集合（比如"一张纸"），用不同的尺子量——<strong>不同的结果</strong>。</p>
+</blockquote>
+
+<pre><code>纸的面积（面积尺）       = 0.06 平方米
+纸的厚度（长度尺）       = 0.0001 米
+纸的一维流形（面积尺）   = 0 平方米（因为"一张纸"在 2D 中是 0 面积）</code></pre>
+
+<h3 id="13-1-2-图形学为什么需要测度">13.1.2 图形学为什么需要测度？</h3>
+
+<blockquote>
+<p><strong>"在某个测度上求平均" = 图形学的核心工具</strong></p>
+</blockquote>
+
+<p><strong>公式</strong>：</p>
+
+<pre><code>average(f) = ∫ f(x) dμ(x) / ∫ dμ(x)</code></pre>
+
+<p>这看起来抽象，但实际很直观：</p>
+
+<p><strong>例子：穿过 [0,1] 正方形的直线的平均长度</strong></p>
+
+<p>问题：画一条穿过 1×1 正方形的直线，它的平均长度是多少？</p>
+
+<ul>
+<li>如果用"角度尺"（θ 均匀分布）：答案是 ~1.2</li>
+<li>如果用"截距尺"（a, b 均匀分布）：答案是 ~1.7</li>
+</ul>
+
+<p><strong>为什么不同？</strong> 因为"角度均匀"和"截距均匀"是两种不同的"随机直线"——测度不同，平均不同。</p>
+
+<div class="key-box">
+<strong>核心洞察</strong>：没有"正确"的测度，只有"方便"的测度。选择测度就是选择"哪个方向/位置更重要"。
+</div>
+
+<h3 id="13-1-3-2d-直线测度--选择最简单的尺子">13.1.3 2D 直线测度——选择最简单的尺子</h3>
+
+<p>在图形学里，经常需要在 2D 平面上"随机选一条直线"。</p>
+
+<p><strong>法线坐标（p, θ）——最简单的测度</strong>：</p>
+
+<pre><code>直线的表示：x·cosθ + y·sinθ - p = 0
+
+自然测度：dμ = dp·dθ</code></pre>
+
+<p>为什么这个最自然？因为它是<strong>平移和旋转不变的</strong>——无论如何移动/旋转直线坐标系，同样的集合得到同样的测度。</p>
+
+<table>
+<tr><th>参数化</th><th>测度公式</th><th>复杂度</th></tr>
+<tr><td>斜截式 y = mx + b</td><td>dm·db</td><td>简单但不平移不变</td></tr>
+<tr><td>截距式 (a, b)</td><td>ab·da·db / (a²+b²)²</td><td>复杂</td></tr>
+<tr><td><strong>法线式 (p, θ)</strong></td><td><strong>dp·dθ</strong></td><td><strong>最简单！无系数</strong></td></tr>
+</table>
+
+<blockquote>
+<p><strong>💡 实战意义</strong>：在渲染中采样"随机光路"时，法线坐标让采样代码最简单。</p>
+</blockquote>
+
+<hr>
+
+<h2 id="13-2-连续概率">13.2 连续概率</h2>
+
+<h3 id="13-2-1-概率密度函数-pdf">13.2.1 概率密度函数（PDF）</h3>
+
+<blockquote>
+<p><strong>PDF p(x) = "随机变量在 x 附近的相对可能性"</strong></p>
+</blockquote>
+
+<p><strong>两个核心性质</strong>：</p>
+
+<pre><code>p(x) ≥ 0                                   <span class="comment">// 非负</span>
+∫_{-∞}^{+∞} p(x) dx = 1                    <span class="comment">// 归一化</span></code></pre>
+
+<p><strong>直觉</strong>：</p>
+
+<ul>
+<li>概率密度 = "单位长度/面积上的概率"</li>
+<li>在一个小区间 [x, x+dx] 内的概率 = p(x)·dx</li>
+<li>总面积 = 1（总概率）</li>
+</ul>
+
+<p><strong>例子</strong>：</p>
+
+<table>
+<tr><th>分布</th><th>PDF</th></tr>
+<tr><td><strong>均匀分布 U[0,1]</strong></td><td><code>p(x) = 1</code>（在 0 到 1 之间恒为 1）</td></tr>
+<tr><td><strong>正态分布 N(0,1)</strong></td><td><code>p(x) = (1/√(2π))·e^(-x²/2)</code></td></tr>
+<tr><td><strong>指数分布</strong></td><td><code>p(x) = λ·e^(-λx)</code></td></tr>
+</table>
+
+<h3 id="13-2-2-期望值">13.2.2 期望值</h3>
+
+<blockquote>
+<p><strong>期望 = "按概率密度加权后的平均"</strong></p>
+</blockquote>
+
+<pre><code>E[f(x)] = ∫ f(x) · p(x) dx</code></pre>
+
+<p><strong>重要性质</strong>：</p>
+
+<ul>
+<li><strong>线性</strong>：E[af + bg] = a·E[f] + b·E[g]</li>
+<li><strong>乘法（独立时）</strong>：E[fg] = E[f]·E[g]</li>
+</ul>
+
+<p>线性性质非常重要——它让"把大问题拆成小问题"成为可能。</p>
+
+<h3 id="13-2-3-方差-variance">13.2.3 方差（Variance）</h3>
+
+<blockquote>
+<p><strong>方差 = "随机变量和期望的距离的平方的期望"——衡量"有多散"</strong></p>
+</blockquote>
+
+<pre><code>V[x] = E[(x - E[x])²] = E[x²] - E[x]²</code></pre>
+
+<p><strong>标准差</strong>：<code>σ = √V[x]</code>——"typical 误差"</p>
+
+<p><strong>关键性质</strong>：</p>
+
+<ul>
+<li>独立变量方差相加：<code>V[x + y] = V[x] + V[y]</code></li>
+<li>常数缩放：<code>V[a·x] = a²·V[x]</code></li>
+</ul>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么"独立"这么重要？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">因为独立时方差的性质最简单——直接相加。如果不独立，方差之间有"协方差"项。这在分层采样里特别重要——分层后的样本不是完全独立的，但相关性让方差公式变得有趣。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="13-3-大数定律与-monte-carlo-积分">13.3 大数定律与 Monte Carlo 积分</h2>
+
+<h3 id="13-3-1-大数定律--硬币投掷">13.3.1 大数定律——硬币投掷</h3>
+
+<blockquote>
+<p><strong>大数定律 = "投硬币的次数越多，正面比例越接近 1/2"</strong></p>
+</blockquote>
+
+<p><strong>实验</strong>：</p>
+
+<table>
+<tr><th>投掷次数</th><th>正面比例（典型）</th><th>偏差</th></tr>
+<tr><td>10 次</td><td>70%</td><td>20%</td></tr>
+<tr><td>100 次</td><td>53%</td><td>3%</td></tr>
+<tr><td>10000 次</td><td>50.23%</td><td>0.23%</td></tr>
+</table>
+
+<p><strong>数学形式</strong>：</p>
+
+<pre><code>P(lim_{N→∞} (1/N) · Σᵢ xᵢ = E[x]) = 1</code></pre>
+
+<p>随 N 增大，样本均值以概率 1 收敛到期望值。</p>
+
+<p><strong>误差</strong>：<strong>收敛速度 = O(1/√N)</strong>——想让误差减半，样本数需要翻 4 倍。</p>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么是 1/√N？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">中心极限定理。独立同分布的随机变量和的标准差 ≈ √N（因为独立时方差相加），所以样本均值的标准差 = √N / N = 1/√N。误差随样本数呈平方根衰减——这意味着采样效率的提升是"边际递减"的。</blockquote>
+</div>
+
+<h3 id="13-3-2-monte-carlo-积分基本公式">13.3.2 Monte Carlo 积分基本公式</h3>
+
+<blockquote>
+<p><strong>MC 积分 = "用样本平均代替积分"</strong></p>
+</blockquote>
+
+<p><strong>最简单的形式</strong>：</p>
+
+<pre><code>∫ f(x) dx ≈ (1/N) · Σᵢ f(xᵢ)    其中 xᵢ 从均匀分布中采样</code></pre>
+
+<p><strong>更一般的形式</strong>（带 PDF）：</p>
+
+<pre><code>∫ f(x) · p(x) dx ≈ (1/N) · Σᵢ f(xᵢ)    其中 xᵢ ~ p(x) 分布</code></pre>
+
+<h3 id="13-3-3-monte-carlo-算-π----数值例子">13.3.3 Monte Carlo 算 π —— 数值例子</h3>
+
+<blockquote>
+<p><strong>用随机点算 π</strong></p>
+</blockquote>
+
+<p><strong>方法</strong>：在一个 2×2 的正方形内均匀随机撒点，统计落在单位圆内的比例。</p>
+
+<div class="guizang-figure">
+<img src="images/ch13/monte_carlo_pi.png" alt="Monte Carlo算π">
+<div class="guizang-caption">图13-1：Monte Carlo 算 π——在 2×2 正方形内撒随机点，统计落在单位圆内的比例，乘以 4 就是 π 的估计</div>
+</div>
+
+<pre><code>正方形面积 = 2 × 2 = 4
+单位圆面积 = π × 1² = π
+
+落在圆内的概率 = π / 4
+            → π = 4 × (圆内点 / 总点数)</code></pre>
+
+<table>
+<tr><th>符号</th><th>含义</th></tr>
+<tr><td><code>4</code></td><td>2×2 正方形的面积</td></tr>
+<tr><td><code>π</code></td><td>单位圆的面积</td></tr>
+<tr><td><code>π / 4</code></td><td>随机点落在圆内的概率（面积比）</td></tr>
+</table>
+
+<p><strong>算法</strong>：</p>
+
+<pre><code><span class="keyword">import</span> random
+
+<span class="function">def</span> estimate_pi(N):
+    inside = <span class="number">0</span>
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(N):
+        x = random.uniform(-<span class="number">1</span>, <span class="number">1</span>)   <span class="comment"># 随机 x</span>
+        y = random.uniform(-<span class="number">1</span>, <span class="number">1</span>)   <span class="comment"># 随机 y</span>
+        <span class="keyword">if</span> x*x + y*y &lt;= <span class="number">1</span>:          <span class="comment"># 在圆内？</span>
+            inside += <span class="number">1</span>
+    <span class="keyword">return</span> <span class="number">4</span> * inside / N</code></pre>
+
+<p><strong>收敛速度</strong>：</p>
+
+<table>
+<tr><th>样本数 N</th><th>估计值（典型）</th><th>误差</th></tr>
+<tr><td>10</td><td>3.20</td><td>1.8%</td></tr>
+<tr><td>100</td><td>3.12</td><td>0.7%</td></tr>
+<tr><td>1,000</td><td>3.144</td><td>0.08%</td></tr>
+<tr><td>100,000</td><td>3.1412</td><td>0.01%</td></tr>
+</table>
+
+<div class="key-box">
+<strong>关键洞察</strong>：MC 方法的好处是<strong>误差与维度无关</strong>。如果 f(x) 是 100 维的函数（比如 100 次反射的光路），传统数值积分需要 10¹⁰⁰ 次计算——MC 只需要几千次。这就是为什么 Monte Carlo 是高维问题的唯一可行方案。
+</div>
+
+<hr>
+
+<h2 id="13-4-重要性采样-importance-sampling">13.4 重要性采样（Importance Sampling）</h2>
+
+<h3 id="13-4-1-问题-普通-mc-浪费样本">13.4.1 问题：普通 MC 浪费样本</h3>
+
+<p>普通 MC：在积分域内均匀采样。</p>
+
+<pre><code>I = ∫_{0}^{1} f(x) dx
+
+均匀采样：x₀=0.1, x₁=0.5, x₂=0.9
+<span class="keyword">if</span> f(x) 只在 x≈0.8 附近很大，其他地方≈0：
+  样本 x₀=0.1 → f(0.1)≈0  （浪费！）
+  样本 x₁=0.5 → f(0.5)≈0  （浪费！）
+  样本 x₂=0.9 → f(0.9)很大  （有用）</code></pre>
+
+<blockquote>
+<p><strong>问题</strong>：大量样本浪费在 f(x) 接近于 0 的区域。</p>
+</blockquote>
+
+<h3 id="13-4-2-三步推导-从-均匀采样-到-有偏采样">13.4.2 三步推导：从"均匀采样"到"有偏采样"</h3>
+
+<p><strong>目标</strong>：计算 <code>I = ∫ f(x) dx</strong></p>
+
+<p><strong>关键技巧：乘一个 q(x)/q(x)——"桥"</strong></p>
+
+<p><strong>第一步：乘上 q/q</strong></p>
+
+<p>虽然看起来无意义，但这是整个方法的核心：</p>
+
+<pre><code>I = ∫ f(x) dx = ∫ f(x) × <span class="number">1</span> dx = ∫ f(x) × (q(x)/q(x)) dx</code></pre>
+
+<p>没错，这只是乘以 1。但把分子分母分开看：</p>
+
+<pre><code>I = ∫ [f(x) / q(x)] × q(x) dx</code></pre>
+
+<p><strong>第二步：把右边看成期望</strong></p>
+
+<p>现在，<code>q(x)</code> 是一个概率密度函数（PDF）。那么：</p>
+
+<pre><code>I = ∫ [f(x) / q(x)] × q(x) dx = E_q[ f(X) / q(X) ]</code></pre>
+
+<p>这里的期望 <code>E_q</code> 是在分布 <code>q(x)</code> 下计算的。</p>
+
+<p><strong>第三步：用样本近似期望</strong></p>
+
+<pre><code>I ≈ (1/N) · Σᵢ f(xᵢ) / q(xᵢ)    其中 xᵢ ~ q(x)</code></pre>
+
+<p><strong>公式三连（完整推导）</strong>：</p>
+
+<pre><code>I = ∫ f(x) dx
+  = ∫ f(x) · [q(x)/q(x)] dx              <span class="comment"># 第一步：乘 q/q</span>
+  = ∫ [f(x)/q(x)] · q(x) dx              <span class="comment"># 第二步：重组</span>
+  = E_q[ f(X)/q(X) ]                      <span class="comment"># 第三步：这是期望</span>
+  ≈ (1/N) · Σᵢ f(xᵢ)/q(xᵢ)               <span class="comment"># 第四步：样本近似</span></code></pre>
+
+<table>
+<tr><th>步骤</th><th>操作</th><th>目的</th></tr>
+<tr><td>1</td><td>乘 q/q</td><td>引入采样分布</td></tr>
+<tr><td>2</td><td>重组为 [f/q] × q</td><td>让 q 成为一个 PDF</td></tr>
+<tr><td>3</td><td>看成期望</td><td>准备好样本近似</td></tr>
+<tr><td>4</td><td>样本近似</td><td>得到 MC 估计</td></tr>
+</table>
+
+<div class="key-box">
+<strong>核心洞察</strong>：取 <code>q(x) ∝ f(x)</code> 时——即 q 正比于 f 的形状——<code>f(x)/q(x)</code> 是常数，方差 = 0！<br>
+但在实践中，我们不知道 f 的形状（否则就不需要算了），所以选择一个<strong>近似 f 形状的 PDF</strong>。
+</div>
+
+<h3 id="13-4-3-重要性采样-vs-普通-mc">13.4.3 重要性采样 vs 普通 MC</h3>
+
+<table>
+<tr><th>方法</th><th>方差</th><th>解释</th></tr>
+<tr><td><strong>普通 MC</strong></td><td>O(1/N) × 常数 C</td><td>C 随 f 的形状变化</td></tr>
+<tr><td><strong>重要性采样</strong></td><td>O(1/N) × 小常数 C'</td><td>C' 取决于 q 与 f 的相似度</td></tr>
+<tr><td><strong>完美 q = f</strong></td><td>0</td><td>不需要样本！</td></tr>
+</table>
+
+<p><strong>实际效果</strong>：一个好的重要性采样分布可以让方差<strong>下降 10-100 倍</strong>。</p>
+
+<h3 id="13-4-4-应用">13.4.4 应用</h3>
+
+<p><strong>环境贴图采样</strong>：</p>
+
+<ul>
+<li><code>f(x)</code> = 环境光在方向 x 的强度</li>
+<li><code>q(x) ∝ 环境光强度 × cosθ</code></li>
+<li>结果：高光区域被多采样，暗区域少采样</li>
+</ul>
+
+<p><strong>BRDF 采样</strong>：</p>
+
+<ul>
+<li><code>f(x)</code> = BRDF(入射方向 x)</li>
+<li><code>q(x) ∝ BRDF(x) × cosθ</code></li>
+<li>结果：镜面反射方向被多采样</li>
+</ul>
+
+<p><strong>直接光采样</strong>：</p>
+
+<ul>
+<li><code>f(x)</code> = 光源在 x 方向的贡献</li>
+<li><code>q(x) ∝ 光源强度</code></li>
+<li>结果：亮光源被多采样</li>
+</ul>
+
+<hr>
+
+<h2 id="13-5-三种采样方法">13.5 三种采样方法</h2>
+
+<h3 id="13-5-1-函数反演-function-inversion">13.5.1 函数反演（Function Inversion）</h3>
+
+<blockquote>
+<p><strong>最直接的采样方法——找 CDF 的反函数</strong></p>
+</blockquote>
+
+<p><strong>3 步算法</strong>：</p>
+
+<pre><code>1. 对 PDF p(x) 求积分得到 CDF：P(x) = ∫_{-∞}^{x} p(t) dt
+2. 求 CDF 的反函数：P⁻¹
+3. α = P⁻¹(ξ)，其中 ξ ~ U[0,1]</code></pre>
+
+<table>
+<tr><th>步骤</th><th>操作</th><th>输出</th></tr>
+<tr><td>1</td><td>积分 PDF</td><td>CDF P(x)</td></tr>
+<tr><td>2</td><td>求反函数</td><td>P⁻¹(y)</td></tr>
+<tr><td>3</td><td>代入均匀随机数</td><td>样本 α</td></tr>
+</table>
+
+<p><strong>例子：p(x) = 3x²/2 on [-1, 1]</strong></p>
+
+<pre><code><span class="comment"># 第 1 步：求 CDF</span>
+P(x) = ∫_{-1}^{x} (3t²/2) dt = (x³ + 1)/2
+
+<span class="comment"># 第 2 步：求反函数</span>
+P⁻¹(ξ) = ∛(2ξ - 1)
+
+<span class="comment"># 第 3 步：生成样本</span>
+α = ∛(2ξ - 1)</code></pre>
+
+<h3 id="13-5-2-拒绝采样-rejection">13.5.2 拒绝采样（Rejection）</h3>
+
+<blockquote>
+<p><strong>简单但低效——在包围盒里随机采，不在目标区域就拒绝</strong></p>
+</blockquote>
+
+<pre><code><span class="function">def</span> rejection_sample(pdf, bound_box):
+    <span class="keyword">while</span> True:
+        x = uniform(bound_box.min, bound_box.max)
+        y = uniform(<span class="number">0</span>, bound_box.max_density)
+        <span class="keyword">if</span> y &lt; pdf(x):      <span class="comment"># 在接受区域内？</span>
+            <span class="keyword">return</span> x        <span class="comment"># 接受</span>
+        <span class="comment"># 否则拒绝，重来</span></code></pre>
+
+<p><strong>优点</strong>：实现极其简单。</p>
+
+<p><strong>缺点</strong>：</p>
+
+<ul>
+<li>效率低（很多点被拒）</li>
+<li>不能和分层采样结合使用</li>
+</ul>
+
+<blockquote>
+<p><strong>💡 实战</strong>：拒绝采样几乎只用于<strong>调试和原型</strong>，从不用于最终产品。</p>
+</blockquote>
+
+<h3 id="13-5-3-metropolis-算法---山上散步-类比">13.5.3 Metropolis 算法——"山上散步"类比</h3>
+
+<blockquote>
+<p><strong>Metropolis = "一个盲人在山上散步，每次迈一小步，倾向于往高处走"</strong></p>
+</blockquote>
+
+<div class="guizang-figure">
+<img src="images/ch13/russian_roulette.png" alt="俄罗斯轮盘赌">
+<div class="guizang-caption">图13-2：俄罗斯轮盘赌——决策树展示光线追踪的随机终止策略，与 Metropolis 算法的"概率转移"思想一脉相承</div>
+</div>
+
+<p><strong>直觉</strong>：</p>
+
+<p>想象你在一座<strong>山</strong>上（山的形状 = 目标分布 p(x)）。你是一个<strong>盲人</strong>，看不见整座山，只能用拐杖感受脚下的高度。</p>
+
+<p>你想"均匀地"访问整座山——<strong>高度越高的地方，访问次数越多</strong>（因为 p(x) 越大）。</p>
+
+<p><strong>散步规则</strong>：</p>
+
+<ol>
+<li>你现在站在位置 x（当前高度 = p(x)）</li>
+<li>随机迈一小步到候选位置 y（附近随机走）</li>
+<li>比较两个高度：
+<ul>
+<li>如果 y 比 x <strong>高</strong>（p(y) &gt; p(x)）：<strong>接受</strong>——走到 y</li>
+<li>如果 y 比 x <strong>矮</strong>（p(y) &lt; p(x)）：<strong>以概率 p(y)/p(x) 接受</strong>——否则留在 x</li>
+</ul>
+</li>
+<li>记录当前位置作为样本</li>
+</ol>
+
+<blockquote>
+<p><strong>关键</strong>：即使你在"山顶"（p(x) 最大），你依然可以往下走——只是概率小一些。这保证了你不会卡在局部极值。</p>
+</blockquote>
+
+<p><strong>为什么这个算法对图形学重要？</strong></p>
+
+<p>传统 MC 需要知道 PDF 的确切形式（才能做反演或重要性采样）。但<strong>在路径追踪中</strong>，光路分布极其复杂——没有解析的 PDF。</p>
+
+<p>Metropolis <strong>不需要知道 PDF 的解析形式</strong>，只需要能<strong>计算任意两点之间的 PDF 比值</strong>。</p>
+
+<p><strong>算法伪代码</strong>：</p>
+
+<pre><code><span class="function">def</span> metropolis(target_pdf, step_size, N):
+    x = 初始位置
+    samples = []
+    
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(N):
+        y = x + normal_random(<span class="number">0</span>, step_size)  <span class="comment"># 迈一小步</span>
+        a = target_pdf(y) / target_pdf(x)     <span class="comment"># 高度比</span>
+        <span class="keyword">if</span> random() &lt; min(<span class="number">1</span>, a):              <span class="comment"># 以概率 a 接受</span>
+            x = y
+        samples.append(x)                     <span class="comment"># 记录样本</span>
+    
+    <span class="keyword">return</span> samples</code></pre>
+
+<p><strong>应用——MLT（Metropolis Light Transport）</strong>：</p>
+
+<ul>
+<li><strong>Veach &amp; Guibas 1997</strong> 引入——离线渲染的里程碑</li>
+<li>MLT 将 Metropolis 应用到光路空间</li>
+<li>对"难以采样"的光路（焦散、SDS 路径）特别有效</li>
+</ul>
+
+<p><strong>缺点</strong>：</p>
+
+<ul>
+<li>样本之间<strong>相关</strong>（相邻样本不是独立的）</li>
+<li>需要 <strong>burn-in</strong>（初始样本不可用，需要丢弃前几千个）</li>
+<li>收敛性分析困难</li>
+</ul>
+
+<div class="analogy-box">
+<strong>🏔️ 生活类比：盲人爬山</strong>
+<blockquote>
+<p>想象你是一个盲人，想"均匀地"访问整座山。普通 MC 像"用直升机随机降落在山的任意位置"——简单但低效。Metropolis 像"自己用拐杖爬山"——慢一些，但能到达山的任何角落，特别适合直升机到不了的地方（如山的深处、岩洞）。</p>
+</blockquote>
+</div>
+
+<hr>
+
+<h2 id="13-6-分层采样-stratified-sampling">13.6 分层采样（Stratified Sampling）</h2>
+
+<blockquote>
+<p><strong>分层采样 = "把空间切成小格子，每格采一个样本"</strong></p>
+</blockquote>
+
+<div class="guizang-figure">
+<img src="images/ch13/stratified_sampling.png" alt="分层采样">
+<div class="guizang-caption">图13-3：分层采样 vs 纯随机——纯随机会出现"聚团"（大片空白区域），分层采样保证均匀覆盖</div>
+</div>
+
+<pre><code><span class="function">def</span> stratified_2d(n):
+    <span class="string">"""在一个正方形里采 n² 个分层样本"""</span>
+    samples = []
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(n):
+        <span class="keyword">for</span> j <span class="keyword">in</span> range(n):
+            u = (i + random()) / n    <span class="comment"># 每个格子内随机偏移</span>
+            v = (j + random()) / n
+            samples.append((u, v))
+    <span class="keyword">return</span> samples</code></pre>
+
+<table>
+<tr><th>参数</th><th>含义</th></tr>
+<tr><td><code>n</code></td><td>每维的格子数（共 n² 个格子）</td></tr>
+<tr><td><code>i, j</code></td><td>格子的整数索引</td></tr>
+<tr><td><code>(i + random()) / n</code></td><td>格子内的随机位置</td></tr>
+</table>
+
+<p><strong>为什么比纯随机好？</strong></p>
+
+<blockquote>
+<p>纯随机可能出现"聚团"——几个样本聚在一起，导致大片空白区域无样本。分层采样<strong>保证了均匀覆盖</strong>。</p>
+</blockquote>
+
+<p><strong>方差对比</strong>：</p>
+
+<table>
+<tr><th>方法</th><th>方差收敛速度</th></tr>
+<tr><td>普通 MC</td><td>O(1/N)</td></tr>
+<tr><td>重要性采样</td><td>O(1/N) × 小常数</td></tr>
+<tr><td><strong>分层采样</strong></td><td><strong>O(1/N³)</strong>——巨幅加速！</td></tr>
+</table>
+
+<p><strong>实际应用</strong>：</p>
+
+<ul>
+<li>每个像素使用 4×4 分层采样 → 16 条光线</li>
+<li>保证像素内覆盖均匀 → 减少噪点</li>
+<li>现代渲染器几乎<strong>必须</strong>使用分层采样</li>
+</ul>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么分层采样的方差是 O(1/N³)？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">直觉：分层后，每个格子里的样本"代表"整个格子，所以估计的方差是格子内部的方差 + 格子之间的方差。格子数 = n² = N（总样本数），格子内部方差 ∝ 1/n² = 1/N。但格子之间方差因为分层而消失——只剩格子内部方差 + 一个高阶项。结果是 O(1/N³)，比普通 MC 的 O(1/N) 好得多。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="13-7-球面-圆盘上的均匀采样">13.7 球面/圆盘上的均匀采样</h2>
+
+<h3 id="13-7-1-圆盘均匀采样">13.7.1 圆盘均匀采样</h3>
+
+<pre><code><span class="function">def</span> sample_disk(R):
+    ξ1 = random()
+    ξ2 = random()
+    φ = <span class="number">2</span> · π · ξ1         <span class="comment"># 角度均匀</span>
+    r = R · sqrt(ξ2)        <span class="comment"># 半径用 sqrt 补偿面积</span>
+    <span class="keyword">return</span> (r · cos(φ), r · sin(φ))</code></pre>
+
+<table>
+<tr><th>变量</th><th>含义</th></tr>
+<tr><td><code>φ = 2π · ξ₁</code></td><td>角度在 [0, 2π] 上均匀</td></tr>
+<tr><td><code>r = R · √ξ₂</code></td><td>半径用 √ 补偿（因为圆面积 ∝ r²）</td></tr>
+</table>
+
+<div class="key-box">
+<strong>为什么 r = R · √ξ₂ 而不是 R · ξ₂？</strong>因为如果直接用 <code>ξ₂</code>，点会"聚在中心"——大多数点会落在小 r 处。原因是圆面积随 r² 增长，半径应该用 √ξ₂ 来"铺平"这种不均匀。
+</div>
+
+<h3 id="13-7-2-球面均匀采样">13.7.2 球面均匀采样</h3>
+
+<pre><code><span class="function">def</span> sample_sphere():
+    ξ1 = random()
+    ξ2 = random()
+    cos_theta = <span class="number">1</span> - <span class="number">2</span> · ξ1    <span class="comment"># θ = acos(1 - 2ξ)</span>
+    phi = <span class="number">2</span> · π · ξ2
+    <span class="keyword">return</span> (cos_theta, phi)</code></pre>
+
+<table>
+<tr><th>变量</th><th>含义</th></tr>
+<tr><td><code>cos θ = 1 - 2ξ₁</code></td><td>cosθ 均匀 = θ 按 sin 分布（面积补偿）</td></tr>
+<tr><td><code>φ = 2π · ξ₂</code></td><td>方位角均匀</td></tr>
+</table>
+
+<h3 id="13-7-3-半球-cos-n-权重">13.7.3 半球（cos^n 权重）</h3>
+
+<pre><code><span class="function">def</span> sample_cos_hemisphere(n):
+    ξ1 = random()
+    ξ2 = random()
+    cos_theta = (<span class="number">1</span> - ξ1) ** (<span class="number">1</span> / (n + <span class="number">1</span>))
+    phi = <span class="number">2</span> · π · ξ2
+    <span class="keyword">return</span> (cos_theta, phi)</code></pre>
+
+<table>
+<tr><th>n 值</th><th>效果</th></tr>
+<tr><td><strong>n = 0</strong></td><td>半球均匀采样（Lambert 反射）</td></tr>
+<tr><td><strong>n &gt; 0</strong></td><td>集中在"上方"（镜面反射）</td></tr>
+<tr><td><strong>n → ∞</strong></td><td>接近垂直方向（完全镜面）</td></tr>
+</table>
+
+<div class="key-box">
+<strong>核心洞察</strong>：<strong>cos^n 半球采样</strong>是图形学的"面包和黄油"——BRDF 采样、光源采样、环境光采样都用它。
+</div>
+
+<hr>
+
+<h2 id="13-8-实际应用">13.8 实际应用</h2>
+
+<h3 id="13-8-1-光线追踪降噪">13.8.1 光线追踪降噪</h3>
+
+<ul>
+<li>每个像素采 1 条光线 → 噪声大</li>
+<li>采 4-16 条 → 好很多</li>
+<li>再加上分层采样 + 重要性采样 → 效果更好</li>
+</ul>
+
+<p><strong>主流降噪方案</strong>：</p>
+
+<table>
+<tr><th>方案</th><th>特点</th></tr>
+<tr><td><strong>SVGF</strong></td><td>Spatiotemporal Variance Guided Filtering</td></tr>
+<tr><td><strong>ReSTIR</strong></td><td>Reservoir-based SpatioTemporal Importance Resampling</td></tr>
+<tr><td><strong>DLSS 3.5 Ray Reconstruction</strong></td><td>NVIDIA AI 降噪</td></tr>
+</table>
+
+<h3 id="13-8-2-实时光线追踪">13.8.2 实时光线追踪</h3>
+
+<p><strong>NVIDIA RTX / DirectX Raytracing</strong>：</p>
+
+<ul>
+<li>BVH 加速（第12章）</li>
+<li>重要性采样 BRDF</li>
+<li>分层采样 per pixel</li>
+<li>AI 降噪</li>
+</ul>
+
+<p><strong>AMD FidelityFX</strong>：</p>
+
+<ul>
+<li>类似方案</li>
+<li>开源降噪</li>
+</ul>
+
+<h3 id="13-8-3-重要性采样的实战案例">13.8.3 重要性采样的实战案例</h3>
+
+<p><strong>环境贴图采样</strong>：</p>
+
+<p>假设你的环境贴图大部分是黑（夜晚场景），但月亮在正上方。普通 MC 会在大部分黑区浪费样本。重要性采样：</p>
+
+<pre><code><span class="comment">// 1. 算出每个像素的亮度作为 q(x)</span>
+<span class="comment">// 2. 按 q(x) 的 CDF 采样</span>
+<span class="comment">// 结果：月亮附近被多采样</span></code></pre>
+
+<p><strong>光源采样</strong>：</p>
+
+<p>场景里有 100 个灯，99 个暗的，1 个亮的。直接均匀采样方向会浪费样本在暗灯上。重要性采样：</p>
+
+<ul>
+<li>先按灯的强度概率选一个灯</li>
+<li>再在该灯上均匀采样</li>
+<li>结果：亮灯被多采样</li>
+</ul>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么 MLT 重要？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">传统 MC 在"难路径"（如焦散、SDS 路径——Specular-Diffuse-Specular）上表现极差——因为这些路径在所有路径中占比极小，均匀采样几乎采不到。MLT 通过"局部探索"找到这些罕见路径，并围绕它们产生更多相关样本。这是从"能跑"到"出图"的飞跃。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="全章总结">全章总结</h2>
+
+<blockquote>
+<p><strong>讲义核心洞察</strong>：采样 = "用概率的方法解决积分问题"——</p>
+<ul>
+<li><strong>为什么要采样</strong>：像素颜色 = 各方向光的积分，没有解析解</li>
+<li><strong>测度</strong>：面积尺/角度尺/长度尺——选择视角</li>
+<li><strong>大数定律</strong>：硬币投掷——N 越大，越准确</li>
+<li><strong>Monte Carlo 算 π</strong>：随机点统计圆的面积</li>
+<li><strong>重要性采样</strong>：三步推导——乘 q/q → 期望 → 样本近似</li>
+<li><strong>Metropolis</strong>："山上散步"——按高度概率走动</li>
+<li><strong>分层采样</strong>：切成小格，方差 O(1/N³)</li>
+</ul>
+</blockquote>
+
+<table>
+<tr><th>主题</th><th>公式</th><th>关键洞察</th></tr>
+<tr><td>MC 积分</td><td><code>∫f ≈ (1/N)·Σf(xᵢ)</code></td><td>误差 O(1/√N)，与维度无关</td></tr>
+<tr><td>重要性采样</td><td><code>I ≈ (1/N)·Σ f(xᵢ)/q(xᵢ)</code></td><td>q 越像 f，方差越小</td></tr>
+<tr><td>分层采样方差</td><td><strong>O(1/N³)</strong> vs MC O(1/N)</td><td>巨幅加速，几乎必用</td></tr>
+<tr><td>球面均匀采样</td><td><code>cosθ = 1-2ξ₁, φ = 2πξ₂</code></td><td>避免极点聚团</td></tr>
+<tr><td>半球 cos^n 采样</td><td><code>cosθ = (1-ξ₁)^(1/(n+1))</code></td><td>BRDF 采样利器</td></tr>
+<tr><td>圆盘均匀采样</td><td><code>φ = 2πξ₁, r = R√ξ₂</code></td><td>√ 补偿面积</td></tr>
+<tr><td>Metropolis 接受率</td><td><code>a = min(1, p(y)/p(x))</code></td><td>无需知道 PDF 形式</td></tr>
+</table>
+
+<div class="info-box">
+<strong>📚 关键术语速查</strong>：
+<ul>
+<li><strong>Measure（测度）</strong>：量集合大小的"尺子"</li>
+<li><strong>PDF（概率密度函数）</strong>：随机变量在 x 附近的相对可能性</li>
+<li><strong>Expectation（期望）</strong>：按概率密度加权的平均</li>
+<li><strong>Variance（方差）</strong>：随机变量和期望的距离的平方的期望</li>
+<li><strong>Law of Large Numbers（大数定律）</strong>：样本均值以概率 1 收敛到期望</li>
+<li><strong>Monte Carlo</strong>：用随机采样估算积分</li>
+<li><strong>Importance Sampling（重要性采样）</strong>：偏向 f(x) 大的区域采样</li>
+<li><strong>Function Inversion（函数反演）</strong>：用 CDF 的反函数生成样本</li>
+<li><strong>Rejection Sampling（拒绝采样）</strong>：在包围盒内随机，拒绝不满足的</li>
+<li><strong>Metropolis</strong>：基于比值 p(y)/p(x) 的随机游走</li>
+<li><strong>Stratified Sampling（分层采样）</strong>：把空间切成格子，每格采一个</li>
+<li><strong>MLT（Metropolis Light Transport）</strong>：Metropolis 在光路追踪的应用</li>
+</ul>
+</div>
+
+<p><strong>一句话总结</strong>：采样 = <strong>概率视角的积分</strong>（大数定律 + MC 算 π）+ <strong>重要性采样</strong>（三步推导）+ <strong>三种采样方法</strong>（反演/拒绝/Metropolis）+ <strong>分层采样</strong>（O(1/N³) 方差）+ <strong>球面/圆盘采样</strong>（cos^n 半球）。</p>
+
+<p><strong>下一步</strong>：第 14 章将讲解<strong>物理渲染（PBR）</strong>——辐射度量学、BRDF、传输方程、Path Tracing。这是"真实感渲染"的最终章。</p>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li class="active"><a href="ch13_采样.html" class="active">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#13-0-为什么要学采样">13.0 为什么要学采样？</a></li>
+  <li class="toc-h3"><a href="#13-0-1-像素的颜色---各方向光的积分">13.0.1 像素的颜色 = 各方向光的积分</a></li>
+  <li class="toc-h3"><a href="#13-0-2-为什么这个积分算不出来">13.0.2 为什么这个积分算不出来？</a></li>
+  <li class="toc-h2"><a href="#13-1-测度-measure">13.1 测度（Measure）</a></li>
+  <li class="toc-h3"><a href="#13-1-1-什么是测度">13.1.1 什么是测度？</a></li>
+  <li class="toc-h3"><a href="#13-1-2-图形学为什么需要测度">13.1.2 图形学为什么需要测度？</a></li>
+  <li class="toc-h3"><a href="#13-1-3-2d-直线测度--选择最简单的尺子">13.1.3 2D 直线测度——选择最简单的尺子</a></li>
+  <li class="toc-h2"><a href="#13-2-连续概率">13.2 连续概率</a></li>
+  <li class="toc-h3"><a href="#13-2-1-概率密度函数-pdf">13.2.1 概率密度函数（PDF）</a></li>
+  <li class="toc-h3"><a href="#13-2-2-期望值">13.2.2 期望值</a></li>
+  <li class="toc-h3"><a href="#13-2-3-方差-variance">13.2.3 方差（Variance）</a></li>
+  <li class="toc-h2"><a href="#13-3-大数定律与-monte-carlo-积分">13.3 大数定律与 Monte Carlo 积分</a></li>
+  <li class="toc-h3"><a href="#13-3-1-大数定律--硬币投掷">13.3.1 大数定律——硬币投掷</a></li>
+  <li class="toc-h3"><a href="#13-3-2-monte-carlo-积分基本公式">13.3.2 Monte Carlo 积分基本公式</a></li>
+  <li class="toc-h3"><a href="#13-3-3-monte-carlo-算-π----数值例子">13.3.3 Monte Carlo 算 π —— 数值例子</a></li>
+  <li class="toc-h2"><a href="#13-4-重要性采样-importance-sampling">13.4 重要性采样（Importance Sampling）</a></li>
+  <li class="toc-h3"><a href="#13-4-1-问题-普通-mc-浪费样本">13.4.1 问题：普通 MC 浪费样本</a></li>
+  <li class="toc-h3"><a href="#13-4-2-三步推导-从-均匀采样-到-有偏采样">13.4.2 三步推导：从"均匀采样"到"有偏采样"</a></li>
+  <li class="toc-h3"><a href="#13-4-3-重要性采样-vs-普通-mc">13.4.3 重要性采样 vs 普通 MC</a></li>
+  <li class="toc-h3"><a href="#13-4-4-应用">13.4.4 应用</a></li>
+  <li class="toc-h2"><a href="#13-5-三种采样方法">13.5 三种采样方法</a></li>
+  <li class="toc-h3"><a href="#13-5-1-函数反演-function-inversion">13.5.1 函数反演（Function Inversion）</a></li>
+  <li class="toc-h3"><a href="#13-5-2-拒绝采样-rejection">13.5.2 拒绝采样（Rejection）</a></li>
+  <li class="toc-h3"><a href="#13-5-3-metropolis-算法---山上散步-类比">13.5.3 Metropolis 算法——"山上散步"类比</a></li>
+  <li class="toc-h2"><a href="#13-6-分层采样-stratified-sampling">13.6 分层采样（Stratified Sampling）</a></li>
+  <li class="toc-h2"><a href="#13-7-球面-圆盘上的均匀采样">13.7 球面/圆盘上的均匀采样</a></li>
+  <li class="toc-h3"><a href="#13-7-1-圆盘均匀采样">13.7.1 圆盘均匀采样</a></li>
+  <li class="toc-h3"><a href="#13-7-2-球面均匀采样">13.7.2 球面均匀采样</a></li>
+  <li class="toc-h3"><a href="#13-7-3-半球-cos-n-权重">13.7.3 半球（cos^n 权重）</a></li>
+  <li class="toc-h2"><a href="#13-8-实际应用">13.8 实际应用</a></li>
+  <li class="toc-h3"><a href="#13-8-1-光线追踪降噪">13.8.1 光线追踪降噪</a></li>
+  <li class="toc-h3"><a href="#13-8-2-实时光线追踪">13.8.2 实时光线追踪</a></li>
+  <li class="toc-h3"><a href="#13-8-3-重要性采样的实战案例">13.8.3 重要性采样的实战案例</a></li>
+  <li class="toc-h2"><a href="#全章总结">全章总结</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

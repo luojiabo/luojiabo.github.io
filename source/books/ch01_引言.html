@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch01: 引言</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch01 引言</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第1章：引言 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第1章（Introduction, p.1-12），由10年经验游戏引擎/渲染工程师执笔。<br>
+本章回答一个最基本的问题：<strong>"计算机图形学是做什么的？"</strong>——然后给你一张全书的地图。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s11">1.1 什么是计算机图形学？</a></li>
+  <li><a href="#s12">1.2 图形学的应用领域</a></li>
+  <li><a href="#s13">1.3 图形学的主要研究方向</a></li>
+  <li><a href="#s14">1.4 图形学三要素</a></li>
+  <li><a href="#s15">1.5 本书结构</a></li>
+  <li><a href="#s16">1.6 阅读建议</a></li>
+  <li><a href="#s17">1.7 推荐学习路线</a></li>
+  <li><a href="#s18">1.8 全章总结</a></li>
+</ul>
+</div>
+
+<h2 id="学习目标">学习目标</h2>
+<p>读完本章后，你能够：</p>
+<ol>
+  <li>准确说出计算机图形学的定义，及其与计算机视觉、图像处理的区别</li>
+  <li>列举图形学至少4个应用领域，并说明各自的技术约束</li>
+  <li>理解渲染、建模、动画、交互四大研究方向的核心问题</li>
+  <li>解释速度、质量、交互性三要素之间的权衡关系</li>
+  <li>对全书23章的内容分布有整体认知</li>
+</ol>
+
+<hr>
+
+<h2 id="1-1-什么是计算机图形学">1.1 什么是计算机图形学？</h2>
+
+<h3 id="1-1-1-先问一个问题-为什么我们需要计算机图形学">1.1.1 先问一个问题：为什么我们需要计算机图形学？</h3>
+
+<p>想象一下，你从来没有看过任何电子屏幕。你的世界只有纸张、油漆和相机胶片。突然有一天，别人对你说："我可以在计算机里创建一个完全虚拟的3D世界，从这个世界的任意角度拍一张照片，看起来就像真的一样。"你会觉得这是魔法。</p>
+
+<p><strong>这就是计算机图形学在做的事情——它不是拍照，而是"造图"。</strong>它不依赖真实世界的相机去捕捉已有的图像，而是用数学和算法"合成"出人类眼睛觉得真实的图像。</p>
+
+<p>那么，一个最根本的问题来了：<strong>怎么用一堆数字（0和1）生成一张人类看了觉得"哇，好真"的图片？</strong></p>
+
+<p>这个问题可以拆成更小的子问题：</p>
+<ul>
+  <li>我如何描述一个3D物体的形状？（建模）</li>
+  <li>光照到物体上是怎么反射的？（着色）</li>
+  <li>怎么看这个3D世界？（相机/投影）</li>
+  <li>如何让物体动起来？（动画）</li>
+  <li>如何让这张图显示在屏幕上？（光栅化）</li>
+</ul>
+
+<p>全书的23章，就是逐一攻克这些子问题。</p>
+
+<h3 id="1-1-2-正式定义">1.1.2 正式定义</h3>
+
+<blockquote><strong>计算机图形学 = 用计算机生成图像的科学与艺术</strong></blockquote>
+
+<p>注意这里有两个关键词：<strong>"科学"</strong>和<strong>"艺术"</strong>。</p>
+<ul>
+  <li><strong>科学</strong>的一面：你要理解光线传播的物理规律（物理渲染）、坐标变换的数学原理（线性代数）、信号的采样与重建（信号处理）——这些都需要严谨的公式和算法。</li>
+  <li><strong>艺术</strong>的一面：在有限的计算资源下，你要做出"人眼看不出破绽"的图像。有时候一个物理上不精确但视觉上完美的小技巧（trick）比一套精确但慢10倍的物理模拟更好。</li>
+</ul>
+
+<div class="info-box">
+<strong>💡 一个贯穿全书的核心思想</strong>：图形学不是追求"物理正确"，而是追求"视觉等效"。如果观众觉得"看起来对"，那就对了。——即使物理上不完全正确。
+</div>
+
+<h3 id="1-1-3-图形学-vs--视觉-vs--图像处理----三个容易搞混的领域">1.1.3 图形学 vs. 视觉 vs. 图像处理 —— 三个容易搞混的领域</h3>
+
+<p>很多初学者分不清这三个领域。我们先通过一个生活场景来区分：</p>
+
+<p>假设你有一张照片，照片里有一只猫：</p>
+<ul>
+  <li><strong>计算机图形学</strong>：根据猫的3D模型，<strong>生成</strong>一张猫在夕阳下的照片。"我没有猫，但我可以画一只。"方向：3D模型 → 2D图像</li>
+  <li><strong>计算机视觉</strong>：给一张猫的照片，让计算机<strong>识别出</strong>"这是一只猫，它在沙发上"。方向：2D图像 → 语义理解</li>
+  <li><strong>图像处理</strong>：给一张暗的猫照片，<strong>调亮它</strong>，或者去除噪点。方向：2D图像 → 2D图像</li>
+</ul>
+
+<div class="guizang-figure">
+<img src="images/ch01/graphics_venn.png" alt="图形学、视觉、图像处理三领域关系">
+<div class="guizang-caption">图1-1：计算机图形学、计算机视觉、图像处理的领域关系——三个方向关注不同的问题</div>
+</div>
+
+<p><strong>更形象地说</strong>：</p>
+
+<table>
+<tr><th>领域</th><th>核心问题</th><th>方向</th><th>生活类比</th></tr>
+<tr><td><strong>计算机图形学</strong></td><td>"如何生成一张人眼觉得真实的图像？"</td><td>合成 → 图像</td><td>画家（从无到有）</td></tr>
+<tr><td><strong>计算机视觉</strong></td><td>"如何从图像中理解3D世界？"</td><td>图像 → 理解</td><td>安检员（看画面判断内容）</td></tr>
+<tr><td><strong>图像处理</strong></td><td>"如何增强/转换一张已有的图像？"</td><td>图像 → 图像</td><td>修图师（美化已有照片）</td></tr>
+<tr><td><strong>计算摄影</strong></td><td>"如何用计算手段改进照片拍摄？"</td><td>多图像 → 好图像</td><td>手机夜景模式（多帧合成）</td></tr>
+<tr><td><strong>可视化</strong></td><td>"如何把数据变成人能看懂的形式？"</td><td>数据 → 图形</td><td>图表设计师</td></tr>
+</table>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：Photoshop的"液化"工具（把猫脸变圆）属于哪个领域？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">答案是<strong>图像处理</strong>——输入一张图，输出被修改的同类型图，没有"理解"图像内容，也没有生成新的3D信息。但如果Photoshop根据照片自动重建了猫的3D模型再修改，那就是图形学+视觉的交叉了。</blockquote>
+</div>
+
+<h3 id="1-1-4-一个小测试帮你确认理解">1.1.4 一个小测试帮你确认理解</h3>
+
+<p>判断以下场景分别属于哪个领域：</p>
+<ol>
+  <li><strong>人脸识别解锁手机</strong> → 计算机视觉（从图像中识别身份）</li>
+  <li><strong>在《原神》中看到提瓦特大陆</strong> → 计算机图形学（实时渲染3D世界）</li>
+  <li><strong>用美图秀秀加一个"复古滤镜"</strong> → 图像处理（对图像做颜色变换）</li>
+  <li><strong>电影《阿凡达》中的潘多拉星球</strong> → 计算机图形学（完全由计算机生成）</li>
+  <li><strong>自动驾驶汽车识别前方行人</strong> → 计算机视觉（从视频流中理解环境）</li>
+</ol>
+
+<div class="key-box">
+<strong>🔑 核心记忆点</strong>：图形学是<strong>"造"图像</strong>，视觉和图像处理是<strong>"读"图像</strong>。一个从无到有，一个从有到知。
+</div>
+
+<hr>
+
+<h2 id="1-2-图形学的应用领域">1.2 图形学的应用领域</h2>
+
+<h3 id="1-2-1-娱乐-最广为人知的应用">1.2.1 娱乐（最广为人知的应用）</h3>
+
+<p><strong>它解决什么问题？</strong>我们要让观众沉浸在虚拟世界中，无论是交互式的（游戏）还是被动观看的（电影）。</p>
+
+<p><strong>游戏 vs 电影：完全不同的技术哲学</strong></p>
+
+<p>游戏和电影虽然都是"生成图像"，但它们的技术约束天差地别：</p>
+
+<table>
+<tr><th>维度</th><th>游戏渲染（实时）</th><th>电影渲染（离线）</th></tr>
+<tr><td>帧预算</td><td><strong>16-33毫秒/帧</strong>（60fps-30fps）</td><td><strong>数小时甚至数天/帧</strong></td></tr>
+<tr><td>核心技术</td><td>光栅化 + 各种近似技巧</td><td>光线追踪 / 路径追踪</td></tr>
+<tr><td>质量目标</td><td>"足够好"——不掉帧就行</td><td>"照片级真实"——每一帧都是艺术品</td></tr>
+<tr><td>代表引擎</td><td>Unreal Engine 5, Unity</td><td>PBRT, RenderMan, Arnold</td></tr>
+<tr><td>硬件</td><td>玩家自己的GPU（RTX 4090等）</td><td>渲染农场（几千台服务器）</td></tr>
+<tr><td>柔体模拟</td><td>简化的物理（刚体为主）</td><td>完整的物理模拟（布料、流体、毛发）</td></tr>
+</table>
+
+<p><strong>为什么差别这么大？</strong></p>
+<p>想象你在做一道菜：</p>
+<ul>
+  <li><strong>游戏渲染</strong>像是做一个<strong>快餐</strong>——客人点了马上要吃，你必须在几分钟内端上来。你不能让客人等一小时。所以你用微波炉加热半成品，用调味料掩盖瑕疵。客人吃完了说"挺好吃的！"——这就够了。</li>
+  <li><strong>电影渲染</strong>像是做一个<strong>米其林三星料理</strong>——客人提前几周预定，你可以花三天熬高汤、用分子料理技术。每一道菜（每一帧）都是艺术品。</li>
+</ul>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么VR（虚拟现实）的渲染比普通游戏更难？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">VR有两个屏幕（左右眼各一个），需要 <strong>90fps 以上</strong> 才能避免晕动症，同时延迟要低于 20ms。这意味着渲染一张图的时间不到 <strong>11毫秒</strong>，比普通游戏的33毫秒还要紧张。而且 VR 需要双目渲染，计算量翻倍。所以 VR 是图形学中"最极端"的实时渲染挑战。</blockquote>
+</div>
+
+<h3 id="1-2-2-设计-制造实物之前先在虚拟中验证">1.2.2 设计（制造实物之前先在虚拟中验证）</h3>
+
+<p><strong>它解决什么问题？</strong>在真正制造一个产品之前，先用计算机模拟它的外观和功能，避免昂贵的物理原型迭代。</p>
+
+<ul>
+  <li><strong>CAD（计算机辅助设计）</strong>：汽车、飞机、手机——所有现代工业产品都先在设计软件中建模，通过渲染图评审造型。</li>
+  <li><strong>建筑可视化</strong>：房子还没盖，开发商先出"效果图"给你看。"效果图"就是图形学渲染的。</li>
+  <li><strong>工业设计</strong>：产品造型评审、人机工程学分析。</li>
+</ul>
+
+<p><strong>一个真实案例</strong>：特斯拉的车型设计——从Model S到Cybertruck，外观都先在计算机中建模、渲染、评审，最后才制造物理原型。一台物理原型车的成本是数百万美元，而数字原型的成本只是工程师的时间。</p>
+
+<h3 id="1-2-3-科学可视化">1.2.3 科学可视化</h3>
+
+<p><strong>它解决什么问题？</strong>科学数据往往是高维的、抽象的——温度场、磁力线、分子结构。人眼不能直接"看到"数据，但人眼擅长看图像。可视化就是把数据<strong>翻译成</strong>图像。</p>
+
+<ul>
+  <li><strong>医学CT/MRI → 3D体绘制</strong>：一组二维切片重建出三维的器官结构，医生可以旋转查看。</li>
+  <li><strong>气象数据 → 等值面/流线</strong>：把大气压力场渲染成彩色云图，台风路径一目了然。</li>
+  <li><strong>分子结构 → 球棍模型</strong>：蛋白质折叠的3D可视化帮助生物学家理解分子功能。</li>
+</ul>
+
+<h3 id="1-2-4-虚拟现实-vr----增强现实-ar">1.2.4 虚拟现实（VR） / 增强现实（AR）</h3>
+
+<p><strong>VR</strong>：完全由计算机生成的3D世界，用户通过头显"进入"这个世界。</p>
+<p><strong>AR</strong>：在真实世界上叠加虚拟物体——你透过手机摄像头看到客厅里多了一只虚拟的皮卡丘。</p>
+
+<p><strong>技术挑战</strong>：VR/AR对图形学提出了极高的要求——不仅要真实，还要实时、还要追踪用户的头部运动、还要正确遮挡（虚拟物体在真实物体后面时要被挡住）。</p>
+
+<hr>
+
+<h2 id="1-3-图形学的主要研究方向">1.3 图形学的主要研究方向</h2>
+
+<h3 id="1-3-1-渲染-rendering---从3d到2d的核心技术">1.3.1 渲染（Rendering）——从3D到2D的核心技术</h3>
+
+<blockquote><strong>渲染 = 从3D模型到2D图像的计算过程</strong></blockquote>
+
+<p><strong>它解决什么问题？</strong>你有一个3D场景（一堆三角形、光源、材质），你想得到一张2D图片。怎么做？这就是渲染要回答的问题。</p>
+
+<p><strong>两大技术流派：</strong></p>
+
+<div class="info-box">
+<strong>光线追踪（Ray Tracing）</strong>
+<ul>
+  <li><strong>思想</strong>：模拟真实光线的传播路径——从摄像机发出光线，光线在场景中反射、折射，最终到达光源。</li>
+  <li><strong>优点</strong>：物理上精确，可以产生反射、折射、软阴影等复杂的视觉效果。</li>
+  <li><strong>缺点</strong>：计算量极大，每帧需要数十亿条光线。</li>
+  <li><strong>用途</strong>：电影特效、离线渲染。</li>
+</ul>
+</div>
+
+<div class="info-box">
+<strong>光栅化（Rasterization）</strong>
+<ul>
+  <li><strong>思想</strong>：把3D三角形的三个顶点投影到屏幕上，然后"填充"三角形内部的像素。</li>
+  <li><strong>优点</strong>：极快，GPU硬件专门为这个流程优化。</li>
+  <li><strong>缺点</strong>：需要各种"技巧"来模拟反射、阴影等效果。</li>
+  <li><strong>用途</strong>：游戏、实时渲染。</li>
+</ul>
+</div>
+
+<h3 id="1-3-2-建模-modeling---创造3d物体的艺术">1.3.2 建模（Modeling）——创造3D物体的艺术</h3>
+
+<blockquote><strong>建模 = 创建3D几何和形状</strong></blockquote>
+
+<p><strong>它解决什么问题？</strong>渲染需要物体——但物体从哪来？建模就是"造物体"的过程。</p>
+
+<p>常见的建模方法：</p>
+<ul>
+  <li><strong>多边形建模</strong>（3ds Max / Maya / Blender）：像"折纸"一样，通过推拉顶点、边和面来塑造形状。这是最常用的方法。</li>
+  <li><strong>细分曲面</strong>（Catmull-Clark）：从一个粗糙的多面体开始，通过递归细分使其变光滑。<strong>生活类比</strong>：像把一个棱角分明的石头打磨成光滑的鹅卵石。</li>
+  <li><strong>隐式曲面</strong>（CSG / Metaball）：用数学公式定义表面。比如"所有到两个点的距离之和等于常数"就是一个椭球。</li>
+  <li><strong>程序化生成</strong>（Houdini / 噪声函数）：用算法自动生成大量几何体。<strong>生活类比</strong>：造一片森林——你不会一棵一棵地种，而是写一个"种树程序"自动生成成千上万棵树。</li>
+  <li><strong>扫描重建</strong>（摄影测量 / LiDAR）：用真实世界的扫描数据重建3D模型。</li>
+</ul>
+
+<h3 id="1-3-3-动画-animation---让物体活起来">1.3.3 动画（Animation）——让物体活起来</h3>
+
+<blockquote><strong>让物体动起来</strong></blockquote>
+
+<p><strong>它解决什么问题？</strong>静态的3D模型没有生命力。动画就是定义物体"随时间的变化"——位置变化（运动）、形状变化（变形）、属性变化（颜色淡入淡出）。</p>
+
+<ul>
+  <li><strong>关键帧动画</strong>：你指定几个关键时刻的状态（例如第0帧在A位置，第24帧在B位置），计算机自动插值出中间帧。<strong>生活类比</strong>：定格动画——你摆好木偶的姿势拍一张，调整一下再拍一张……计算机帮你自动生成中间帧。</li>
+  <li><strong>物理模拟</strong>：让物理定律驱动运动——布料飘动、流体流动、刚体碰撞。</li>
+  <li><strong>角色动画</strong>：骨骼+蒙皮——内骨骼决定运动，外表皮跟随骨骼变形。</li>
+  <li><strong>群体动画</strong>（Boids）：模拟鸟群、鱼群的行为——每只个体遵循简单的规则（避免碰撞、保持一致方向、朝向群体中心），整体产生复杂的涌现行为。</li>
+</ul>
+
+<h3 id="1-3-4-交互-interaction---用户与图形系统的桥梁">1.3.4 交互（Interaction）——用户与图形系统的桥梁</h3>
+
+<blockquote><strong>用户与图形系统的交互</strong></blockquote>
+
+<p><strong>它解决什么问题？</strong>单纯的"生成图像"是不够的——用户需要与图像互动。点击按钮、旋转视角、拖动物体——这些都是交互。</p>
+
+<ul>
+  <li>鼠标/键盘/手柄/触摸——经典的2D输入设备</li>
+  <li>VR控制器 / 手势识别——3D空间的自然交互</li>
+  <li>触觉反馈——让你"感觉到"虚拟物体</li>
+  <li>眼动追踪——知道你在看哪里，做注视点渲染（只有你注视的区域才是高分辨率）</li>
+</ul>
+
+<hr>
+
+<h2 id="1-4-图形学三要素----一个-好-的图形系统">1.4 图形学三要素 —— 一个"好"的图形系统</h2>
+
+<h3 id="1-4-1-三要素概述">1.4.1 三要素概述</h3>
+
+<p><strong>它解决什么问题？</strong>你怎么评价一个图形系统好不好？不能只看"画得漂不漂亮"——因为漂亮往往是靠牺牲速度换来的。一个<strong>好</strong>的图形系统必须在三个维度上找到平衡。</p>
+
+<div class="guizang-figure">
+<img src="images/ch01/graphics_triangle.png" alt="图形学三要素三角关系">
+<div class="guizang-caption">图1-2：图形学三要素——速度、质量、交互性的权衡</div>
+</div>
+
+<blockquote><strong>一个图形系统的好坏由三个要素决定：速度、质量、交互性</strong></blockquote>
+
+<table>
+<tr><th>要素</th><th>含义</th><th>典型场景</th><th>优先级</th></tr>
+<tr><td><strong>速度（Speed）</strong></td><td>每秒能渲染多少帧</td><td>游戏：60fps → 16.7ms/帧</td><td>实时应用最高</td></tr>
+<tr><td><strong>质量（Quality）</strong></td><td>图像有多真实、多精细</td><td>电影：24h/帧 → 照片级真实</td><td>离线应用最高</td></tr>
+<tr><td><strong>交互性（Interactivity）</strong></td><td>用户能否实时操作、响应有多快</td><td>VR：90fps + 低延迟</td><td>沉浸式应用最高</td></tr>
+</table>
+
+<h3 id="1-4-2-三要素之间的权衡">1.4.2 三要素之间的权衡</h3>
+
+<p>这三个要素是<strong>互相拉扯</strong>的——你不可能同时拥有三者到极致：</p>
+
+<ul>
+  <li><strong>速度 vs. 质量</strong>：最简单的取舍。游戏为了60fps，愿意降低阴影分辨率、降低抗锯齿质量、使用较少的三角形。电影可以为了质量等三天。</li>
+  <li><strong>速度 vs. 交互性</strong>：如果帧率低（＜30fps），用户操作时会有明显的"卡顿感"，交互体验差。</li>
+  <li><strong>质量 vs. 交互性</strong>：高质量渲染通常需要更多计算，这会增加延迟，降低交互响应速度。</li>
+</ul>
+
+<h3 id="1-4-3-三要素分析示例">1.4.3 三要素分析示例</h3>
+
+<p><strong>示例1：一个典型的3A游戏</strong></p>
+<ul>
+  <li>速度：60fps（16.7ms/帧）——必须保证，不能低于30fps</li>
+  <li>质量：高——PBR材质、动态全局光照、高质量抗锯齿</li>
+  <li>交互性：中高——操作响应迅速，但过场动画时交互性降低</li>
+  <li>——在这个场景中，速度是"硬约束"，质量和交互性在速度允许的范围内尽可能好</li>
+</ul>
+
+<p><strong>示例2：电影《阿凡达2》的CG镜头</strong></p>
+<ul>
+  <li>速度：不重要——一帧渲染几天都可以</li>
+  <li>质量：极致——水面的次表面散射、毛孔级别的皮肤细节</li>
+  <li>交互性：无——观众只能看，不能操作</li>
+  <li>——质量和速度不需要权衡，因为速度约束几乎不存在</li>
+</ul>
+
+<p><strong>示例3：VR游戏</strong></p>
+<ul>
+  <li>速度：90fps + 20ms延迟——少一帧都会导致用户晕动症</li>
+  <li>质量：中——为了保持90fps，可能降低渲染分辨率</li>
+  <li>交互性：极致——头部追踪、手柄追踪、全身IK</li>
+  <li>——三个要素都极高，这也是VR硬件（4090显卡）的极限挑战</li>
+</ul>
+
+<div class="key-box">
+<strong>🔑 核心洞察</strong>："图形学的本质 = 在有限时间内做出最好的图"——这是贯穿全书的核心思想。没有"最正确"的渲染，只有"最适合当前约束"的渲染。
+</div>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：手机上的3D游戏（如《王者荣耀》的局内画面）和PC上的3A大作（如《赛博朋克2077》）在速度-质量-交互性的平衡上有何不同？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">手机游戏：速度约束更紧（电池、散热限制），质量必须大幅降低（低多边形、低分辨率纹理、简化的着色器）。PC 3A大作：速度约束较松（有独立显卡），质量可以更高。但两者都在各自的约束下寻求最优解。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="1-5-本书结构">1.5 本书结构</h2>
+
+<h3 id="1-5-1-全书的-地图">1.5.1 全书的"地图"</h3>
+
+<p><strong>它解决什么问题？</strong>全书23章，如果你从头到尾逐字读，很可能迷失在各章的细节中。先看这张"地图"，你就能理解每章在全景中的位置。</p>
+
+<div class="guizang-figure">
+<img src="images/ch01/book_structure.png" alt="虎书5全书六大模块结构">
+<div class="guizang-caption">图1-3：虎书5全书结构——六大模块覆盖图形学全部核心领域</div>
+</div>
+
+<p>全书23章分为<strong>6大模块（Parts）</strong>：</p>
+
+<h3 id="part-1--数学基础-第2-4章----图形学的通用语言">Part 1: 数学基础（第2-4章）——"图形学的通用语言"</h3>
+<p>这三章给图形学所需的所有基础工具。你不需要成为数学家，但需要理解这些工具的<strong>直观含义</strong>和<strong>图形学用途</strong>。</p>
+<ul>
+  <li><strong>Ch2 杂项数学</strong>：集合、向量、矩阵、三角、重心坐标、蒙特卡洛——图形学"弹药库"</li>
+  <li><strong>Ch3 光栅图像</strong>：像素、RGB、Alpha合成、Gamma校正——图像是如何在计算机中表示的</li>
+  <li><strong>Ch4 光线追踪</strong>：从摄像机发射光线→求交→着色——全书的"灵魂章节"</li>
+</ul>
+
+<h3 id="part-2--核心渲染-第5-11章----画出一个三角形的完整流程">Part 2: 核心渲染（第5-11章）——"画出一个三角形的完整流程"</h3>
+<p>这是图形学管线的核心部分——从你有一个三角形到你把它显示在屏幕上的全过程：</p>
+<ul>
+  <li><strong>Ch5 表面着色</strong>：物体被光照后颜色怎么算（Lambert/Phong模型）</li>
+  <li><strong>Ch6 线性代数</strong>：变换的数学基础（基、特征值、SVD）</li>
+  <li><strong>Ch7 变换矩阵</strong>：平移、旋转、缩放——一个物体如何在3D空间中移动</li>
+  <li><strong>Ch8 视图与投影</strong>：如何把3D场景"拍"到2D平面上（透视/正交）</li>
+  <li><strong>Ch9 图形管线</strong>：从顶点到像素的完整硬件流程——GPU是怎么工作的</li>
+  <li><strong>Ch10 信号处理</strong>：采样、滤波、抗锯齿——为什么图像有锯齿？怎么去掉？</li>
+  <li><strong>Ch11 纹理映射</strong>：把一张2D图片"贴"到3D模型表面</li>
+</ul>
+
+<h3 id="part-3--进阶渲染-第12-15章----让画面更真实">Part 3: 进阶渲染（第12-15章）——"让画面更真实"</h3>
+<p>在掌握了基础管线后，这些章节「升级」到更真实、更高效的渲染技术：</p>
+<ul>
+  <li><strong>Ch12 数据结构</strong>：网格、BVH、八叉树——如何高效存储和查询3D几何</li>
+  <li><strong>Ch13 采样</strong>：蒙特卡洛、重要性采样——"用随机数算出正确答案"</li>
+  <li><strong>Ch14 物理渲染</strong>：BRDF、辐射度量学、路径追踪——"物理上正确的渲染"</li>
+  <li><strong>Ch15 曲线</strong>：Bézier、B-Spline、NURBS——平滑曲线的数学表示</li>
+</ul>
+
+<h3 id="part-4--动画与硬件-第16-17章">Part 4: 动画与硬件（第16-17章）</h3>
+<p>从静态画面到动态世界：</p>
+<ul>
+  <li><strong>Ch16 计算机动画</strong>：关键帧、骨骼、蒙皮、反向动力学</li>
+  <li><strong>Ch17 使用图形硬件</strong>：GPU架构、Shader编程、VBO/VAO</li>
+</ul>
+
+<h3 id="part-5--颜色与感知-第18-20章----人眼的最后验收">Part 5: 颜色与感知（第18-20章）——"人眼的最后验收"</h3>
+<p>图形学的最终输出是给<strong>人眼</strong>看的。这三章告诉你人眼怎么看颜色、怎么感知深度：</p>
+<ul>
+  <li><strong>Ch18 颜色</strong>：XYZ色彩空间、色域、Gamma校正的物理基础</li>
+  <li><strong>Ch19 视觉感知</strong>：人眼解剖、深度线索、视觉错觉——"人眼的bug"</li>
+  <li><strong>Ch20 色调再现</strong>：HDR、Tone Mapping——如何把高动态范围显示到普通屏幕上</li>
+</ul>
+
+<h3 id="part-6--高级主题-第21-23章">Part 6: 高级主题（第21-23章）</h3>
+<ul>
+  <li><strong>Ch21 隐式建模</strong>：SDF、CSG、Marching Cubes</li>
+  <li><strong>Ch22 游戏中的CG</strong>：游戏引擎架构、场景管理、LOD</li>
+  <li><strong>Ch23 可视化</strong>：如何把数据变成有意义的图形</li>
+</ul>
+
+<hr>
+
+<h2 id="1-6-阅读建议">1.6 阅读建议</h2>
+
+<h3 id="如果你是初学者-第一次接触图形学">如果你是初学者（第一次接触图形学）</h3>
+
+<p>建议<strong>按顺序</strong>阅读 Ch2 → Ch3 → Ch4 → ... → Ch23：</p>
+
+<pre><code>Ch2(数学) → Ch3(像素) → Ch4(光线追踪) → Ch5(着色) → Ch6(线代) → Ch7(变换)
+→ Ch8(投影) → Ch9(管线) → Ch10(采样) → Ch11(纹理) → Ch12(数据结构)
+→ Ch13(采样进阶) → Ch14(物理渲染) → Ch15(曲线) → Ch16(动画)
+→ Ch17(GPU) → Ch18(颜色) → Ch19(视觉) → Ch20(色调)
+→ Ch21(隐式建模) → Ch22(游戏) → Ch23(可视化)</code></pre>
+
+<p>每章花1-2天。遇到数学推导时，不要卡住——理解<strong>直观含义</strong>比记住公式更重要。当你看到公式时，问自己三个问题：</p>
+<ol>
+  <li>这个公式<strong>解决了什么问题</strong>？</li>
+  <li>每个符号的<strong>直观含义</strong>是什么？</li>
+  <li>在图形学中<strong>什么场景</strong>会用到这个公式？</li>
+</ol>
+
+<h3 id="如果你是想快速上手做项目">如果你是想快速上手做项目</h3>
+
+<pre><code>Ch8(投影) → Ch9(管线) → Ch17(GPU编程) → Ch5(着色) → Ch11(纹理)
+→ Ch6(线代) → Ch7(变换)</code></pre>
+
+<p>这样你很快就能写一个能在屏幕上画三角形的程序——先有"能跑"的东西，再回头补理论。</p>
+
+<h3 id="如果你是游戏开发者">如果你是游戏开发者</h3>
+
+<pre><code>Ch22(游戏) → Ch8-9(管线) → Ch5(着色) → Ch16(动画) → Ch17(GPU)
+→ Ch11(纹理) → Ch10(抗锯齿) → Ch14(PBR)</code></pre>
+
+<hr>
+
+<h2 id="1-7-推荐学习路线-更直观的版本">1.7 推荐学习路线（更直观的版本）</h2>
+
+<p>如果你觉得上面对照读者类型的阅读建议还不够直观，这里给你一个"一步步学会图形学"的路线图——从画一个三角形开始，到写一个PBR渲染器结束：</p>
+
+<pre><code>Step 1: "画一个三角形"
+  Ch3(像素) + Ch8(投影) + Ch9(管线)
+  你会：理解GPU如何把一个三角形变成屏幕上的像素
+
+Step 2: "画一个有光照的三角形"
+  Ch5(着色) + Ch11(纹理)
+  你会：让三角形看起来有立体感、贴上花纹
+
+Step 3: "渲染一堆三角形（一个3D物体）"
+  Ch7(变换) + Ch12(数据结构) + Ch17(GPU)
+  你会：加载模型、变换位置、用GPU绘制
+
+Step 4: "让画面更真实"
+  Ch14(物理渲染) + Ch18(颜色) + Ch20(色调)
+  你会：了解PBR、Gamma校正、HDR
+
+Step 5: "让物体动起来"
+  Ch16(动画) + Ch15(曲线)
+  你会：关键帧动画、IK、Bézier曲线
+
+Step 6: "更高级的技术"
+  Ch13(采样) + Ch21(隐式建模) + Ch23(可视化)
+  你会：蒙特卡洛、SDF、数据可视化</code></pre>
+
+<p>每完成一个Step，你都可以做一些小项目来巩固：</p>
+<table>
+<tr><th>Step</th><th>动手项目建议</th></tr>
+<tr><td>Step 1</td><td>写一个程序，在屏幕上画一个不断旋转的彩色三角形</td></tr>
+<tr><td>Step 2</td><td>给这个三角形加上漫反射光照，贴一张纹理图</td></tr>
+<tr><td>Step 3</td><td>加载一个OBJ模型（如斯坦福兔子），用变换矩阵控制相机视角</td></tr>
+<tr><td>Step 4</td><td>实现一个简单的PBR着色器，输出HDR图像</td></tr>
+<tr><td>Step 5</td><td>让兔子跳起来（关键帧动画 + 插值）</td></tr>
+<tr><td>Step 6</td><td>用SDF做简单的隐式建模</td></tr>
+</table>
+
+<h2 id="1-8-全章总结">1.8 全章总结</h2>
+
+<h3 id="本章你学会了什么---完整回顾">本章你学会了什么？——完整回顾</h3>
+
+<ol>
+  <li><strong>计算机图形学的定义</strong>：用计算机生成图像的科学与艺术。不是拍照，是"造图"。</li>
+  <li><strong>与相关领域的区别</strong>：图形学=合成→图像，视觉=图像→理解，图像处理=图像→图像。</li>
+  <li><strong>应用领域</strong>：娱乐（游戏/电影）、设计（CAD/建筑可视化）、科学可视化（医学/气象）、VR/AR。</li>
+  <li><strong>四大研究方向</strong>：渲染（从3D到2D）、建模（创造几何）、动画（让物体运动）、交互（用户操作）。</li>
+  <li><strong>三要素权衡</strong>：速度、质量、交互性——图形学的本质就是在有限时间内做最好的图。</li>
+  <li><strong>全书地图</strong>：6大模块23章，从数学基础到高级渲染再到颜色感知。</li>
+</ol>
+
+<div class="key-box">
+<strong>🔑 一句话记住本章</strong>：<br>
+<strong>"图形学的本质不在于知道所有公式，而在于理解时间与质量的取舍。"</strong><br>
+——当你读到后面每一章时，时刻想想"这一章在哪个方面优化了速度/质量/交互性？"
+</div>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li class="active"><a href="ch01_引言.html" class="active">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#1-1-什么是计算机图形学">1.1 什么是计算机图形学？</a></li>
+  <li class="toc-h3"><a href="#1-1-1-先问一个问题-为什么我们需要计算机图形学">1.1.1 先问一个问题：为什么我们需要计算机图形学？</a></li>
+  <li class="toc-h3"><a href="#1-1-2-正式定义">1.1.2 正式定义</a></li>
+  <li class="toc-h3"><a href="#1-1-3-图形学-vs--视觉-vs--图像处理----三个容易搞混的领域">1.1.3 图形学 vs. 视觉 vs. 图像处理 —— 三个容易搞混的领域</a></li>
+  <li class="toc-h3"><a href="#1-1-4-一个小测试帮你确认理解">1.1.4 一个小测试帮你确认理解</a></li>
+  <li class="toc-h2"><a href="#1-2-图形学的应用领域">1.2 图形学的应用领域</a></li>
+  <li class="toc-h3"><a href="#1-2-1-娱乐-最广为人知的应用">1.2.1 娱乐（最广为人知的应用）</a></li>
+  <li class="toc-h3"><a href="#1-2-2-设计-制造实物之前先在虚拟中验证">1.2.2 设计（制造实物之前先在虚拟中验证）</a></li>
+  <li class="toc-h3"><a href="#1-2-3-科学可视化">1.2.3 科学可视化</a></li>
+  <li class="toc-h3"><a href="#1-2-4-虚拟现实-vr----增强现实-ar">1.2.4 虚拟现实（VR） / 增强现实（AR）</a></li>
+  <li class="toc-h2"><a href="#1-3-图形学的主要研究方向">1.3 图形学的主要研究方向</a></li>
+  <li class="toc-h3"><a href="#1-3-1-渲染-rendering---从3d到2d的核心技术">1.3.1 渲染（Rendering）——从3D到2D的核心技术</a></li>
+  <li class="toc-h3"><a href="#1-3-2-建模-modeling---创造3d物体的艺术">1.3.2 建模（Modeling）——创造3D物体的艺术</a></li>
+  <li class="toc-h3"><a href="#1-3-3-动画-animation---让物体活起来">1.3.3 动画（Animation）——让物体活起来</a></li>
+  <li class="toc-h3"><a href="#1-3-4-交互-interaction---用户与图形系统的桥梁">1.3.4 交互（Interaction）——用户与图形系统的桥梁</a></li>
+  <li class="toc-h2"><a href="#1-4-图形学三要素----一个-好-的图形系统">1.4 图形学三要素 —— 一个"好"的图形系统</a></li>
+  <li class="toc-h3"><a href="#1-4-1-三要素概述">1.4.1 三要素概述</a></li>
+  <li class="toc-h3"><a href="#1-4-2-三要素之间的权衡">1.4.2 三要素之间的权衡</a></li>
+  <li class="toc-h3"><a href="#1-4-3-三要素分析示例">1.4.3 三要素分析示例</a></li>
+  <li class="toc-h2"><a href="#1-5-本书结构">1.5 本书结构</a></li>
+  <li class="toc-h3"><a href="#1-5-1-全书的-地图">1.5.1 全书的"地图"</a></li>
+  <li class="toc-h3"><a href="#part-1--数学基础-第2-4章----图形学的通用语言">Part 1: 数学基础（第2-4章）——"图形学的通用语言"</a></li>
+  <li class="toc-h3"><a href="#part-2--核心渲染-第5-11章----画出一个三角形的完整流程">Part 2: 核心渲染（第5-11章）——"画出一个三角形的完整流程"</a></li>
+  <li class="toc-h3"><a href="#part-3--进阶渲染-第12-15章----让画面更真实">Part 3: 进阶渲染（第12-15章）——"让画面更真实"</a></li>
+  <li class="toc-h3"><a href="#part-4--动画与硬件-第16-17章">Part 4: 动画与硬件（第16-17章）</a></li>
+  <li class="toc-h3"><a href="#part-5--颜色与感知-第18-20章----人眼的最后验收">Part 5: 颜色与感知（第18-20章）——"人眼的最后验收"</a></li>
+  <li class="toc-h3"><a href="#part-6--高级主题-第21-23章">Part 6: 高级主题（第21-23章）</a></li>
+  <li class="toc-h2"><a href="#1-6-阅读建议">1.6 阅读建议</a></li>
+  <li class="toc-h3"><a href="#如果你是初学者-第一次接触图形学">如果你是初学者（第一次接触图形学）</a></li>
+  <li class="toc-h3"><a href="#如果你是想快速上手做项目">如果你是想快速上手做项目</a></li>
+  <li class="toc-h3"><a href="#如果你是游戏开发者">如果你是游戏开发者</a></li>
+  <li class="toc-h2"><a href="#1-7-推荐学习路线-更直观的版本">1.7 推荐学习路线（更直观的版本）</a></li>
+  <li class="toc-h2"><a href="#1-8-全章总结">1.8 全章总结</a></li>
+  <li class="toc-h3"><a href="#本章你学会了什么---完整回顾">本章你学会了什么？——完整回顾</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

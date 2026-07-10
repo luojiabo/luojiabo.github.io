@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch09: 图形管线</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch09 图形管线</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第9章：图形管线 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第9章（p.177-195）。<br>
+本章是实时渲染的"施工图"——它告诉你现代 GPU 到底是怎么一步步把 3D 物体画到屏幕上的。<br>
+学完本章，你将真正理解<strong>光栅化（rasterization）</strong>这个图形学的核心技术。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s91">9.1 光栅化（Rasterization）</a></li>
+  <li><a href="#s92">9.2 光栅化前后的操作</a></li>
+  <li><a href="#s93">9.3 完整渲染管线</a></li>
+  <li><a href="#s94">9.4 实用考虑</a></li>
+</ul>
+</div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+  <li>理解<strong>图形管线的 4 个阶段</strong>——顶点处理、光栅化、片元处理、混合</li>
+  <li>掌握<strong>中点算法（Midpoint Algorithm）</strong>——画线的核心算法</li>
+  <li>理解<strong>三角形的栅格化</strong>——重心坐标 + Gouraud 插值</li>
+  <li>掌握<strong>透视正确的插值</strong>——为什么直接插值 (u, v) 是错的</li>
+  <li>理解<strong>裁剪（Clipping）</strong>——为什么要在投影变换前后都做</li>
+  <li>掌握<strong>z-Buffer 算法</strong>——隐藏面消除的工业标准</li>
+</ol>
+
+<hr>
+
+<h2 id="9-1-光栅化-rasterization">9.1 光栅化（Rasterization）</h2>
+
+<h3 id="9-1-1-图形管线的-4-个阶段">9.1.1 图形管线的 4 个阶段</h3>
+
+<p><strong>核心洞察</strong>：所有实时渲染（游戏、UI、AR/VR）都遵循同一个"流水线"：</p>
+
+<div class="guizang-figure">
+<img src="images/ch09/pipeline_gpu.png" alt="GPU四阶段流水线">
+<div class="guizang-caption">图9-1：GPU 四阶段渲染流水线——顶点处理 → 光栅化 → 片元着色 → 输出混合</div>
+</div>
+
+<p><strong>4 个阶段的核心职责</strong>：</p>
+
+<table>
+<tr><th>阶段</th><th>输入</th><th>输出</th><th>主要操作</th></tr>
+<tr><td><strong>顶点处理</strong></td><td>顶点坐标</td><td>屏幕空间顶点</td><td>矩阵变换（MVP）</td></tr>
+<tr><td><strong>光栅化</strong></td><td>屏幕空间三角形</td><td>片元（像素）</td><td>"哪些像素被三角形覆盖"</td></tr>
+<tr><td><strong>片元处理</strong></td><td>片元</td><td>处理后片元</td><td>着色、纹理采样</td></tr>
+<tr><td><strong>混合</strong></td><td>多个片元</td><td>最终颜色</td><td>深度测试、Alpha 混合</td></tr>
+</table>
+
+<blockquote><p><strong>核心洞察</strong>：<strong>光栅化</strong>是管线的"心脏"——它把"连续的三角形"转换为"离散的像素"。这一步是<strong>实时渲染和光线追踪的核心区别</strong>：光线追踪每个像素独立处理（图像顺序），光栅化每个三角形独立处理（物体顺序）。</p></blockquote>
+
+<h3 id="9-1-2-画线算法-line-drawing">9.1.2 画线算法（Line Drawing）</h3>
+
+<p><strong>画线 = "在像素网格上画一条尽可能直的直线"</strong></p>
+
+<p><strong>直线的隐式方程</strong>：</p>
+
+<div class="formula">f(x, y) ≡ (y₀ - y₁)x + (x₁ - x₀)y + x₀y₁ - x₁y₀ = 0</div>
+
+<p><strong>核心思想</strong>：</p>
+<ul>
+  <li>直线的"一侧" f(x, y) &gt; 0</li>
+  <li>直线的"另一侧" f(x, y) &lt; 0</li>
+  <li>直线上的点 f(x, y) = 0</li>
+</ul>
+
+<h3 id="9-1-3-中点算法-midpoint-algorithm">9.1.3 中点算法（Midpoint Algorithm）</h3>
+
+<p><strong>中点算法 = "决定下一个像素在 y+1 还是 y"的高效算法</strong></p>
+
+<p><strong>核心思想</strong>：</p>
+
+<pre><code>当前像素 (x, y)
+候选像素 (x+1, y) 和 (x+1, y+1)
+中点 = (x+1, y+0.5)
+
+如果 f(中点) &lt; 0 → 直线在 x+1, y 之上 → 选 (x+1, y+1)
+否则 → 选 (x+1, y)</code></pre>
+
+<p><strong>算法伪代码</strong>：</p>
+
+<pre><code><span class="function">function</span> midpoint_line(x₀, y₀, x₁, y₁):
+  y = y₀
+  <span class="keyword">for</span> x <span class="keyword">in</span> range(x₀, x₁):
+    drawpixel(x, y)
+    <span class="keyword">if</span> f(x+<span class="number">1</span>, y+<span class="number">0.5</span>) &lt; <span class="number">0</span>:
+      y = y + <span class="number">1</span></code></pre>
+
+<blockquote><p><strong>核心洞察</strong>：<strong>增量算法</strong>只用了"加法"——避免了乘法。这让 Bresenham 算法（1965年！）至今仍在使用。</p></blockquote>
+
+<h3 id="9-1-4-三角形的栅格化-triangle-rasterization">9.1.4 三角形的栅格化（Triangle Rasterization）</h3>
+
+<p><strong>三角形的栅格化 = "哪些像素被三角形覆盖"</strong></p>
+
+<div class="guizang-figure">
+<img src="images/ch09/triangle_rasterization.png" alt="三角形光栅化">
+<div class="guizang-caption">图9-2：三角形光栅化——三角形覆盖像素网格，通过重心坐标判断像素归属</div>
+</div>
+
+<p><strong>重心坐标插值</strong>：</p>
+
+<pre><code>对三角形顶点 p₀, p₁, p₂ 和颜色 c₀, c₁, c₂
+重心坐标 (α, β, γ) = 内部点的三角形面积比例
+
+像素颜色 c = α·c₀ + β·c₁ + γ·c₂</code></pre>
+
+<p><strong>Gouraud 插值</strong> = 在三角形内部<strong>线性</strong>插值颜色（在屏幕空间）。</p>
+
+<p><strong>算法步骤</strong>：</p>
+
+<pre><code><span class="comment"># 计算包围盒</span>
+xmin = floor(x₀); xmax = ceil(x₁)
+ymin = floor(y₀); ymax = ceil(y₁)
+
+<span class="keyword">for</span> y <span class="keyword">in</span> range(ymin, ymax+<span class="number">1</span>):
+    <span class="keyword">for</span> x <span class="keyword">in</span> range(xmin, xmax+<span class="number">1</span>):
+        <span class="comment"># 计算重心坐标</span>
+        α = f₁₂(x, y) / f₁₂(x₀, y₀)
+        β = f₂₀(x, y) / f₂₀(x₁, y₁)
+        γ = f₀₁(x, y) / f₀₁(x₂, y₂)
+        <span class="keyword">if</span> α &gt; <span class="number">0</span> <span class="keyword">and</span> β &gt; <span class="number">0</span> <span class="keyword">and</span> γ &gt; <span class="number">0</span>:
+            c = α·c₀ + β·c₁ + γ·c₂
+            drawpixel(x, y, c)</code></pre>
+
+<h3 id="9-1-5-透视正确的插值-perspective-correct-interpolation">9.1.5 透视正确的插值（Perspective Correct Interpolation）</h3>
+
+<blockquote><p><strong>核心陷阱</strong>：直接用屏幕空间的 (α, β, γ) 插值纹理坐标 (u, v) 是<strong>错误的</strong>！</p></blockquote>
+
+<p><strong>为什么？</strong></p>
+
+<p>3D 空间中等间距的网格 → 屏幕空间中等间距的网格（近大远小）→ 但屏幕空间的"等间距"在 3D 空间<strong>不等间距</strong>！</p>
+
+<p><strong>实际做法</strong>：把所有插值量当作"齐次坐标"——插值 u, v, <strong>w 也插值</strong>，最后再做透视除法。</p>
+
+<pre><code><span class="comment"># 三个顶点的齐次插值</span>
+u_s = α(u₀/w₀) + β(u₁/w₁) + γ(u₂/w₂)
+v_s = α(v₀/w₀) + β(v₁/w₁) + γ(v₂/w₂)
+1_s = α(<span class="number">1</span>/w₀) + β(<span class="number">1</span>/w₁) + γ(<span class="number">1</span>/w₂)
+
+<span class="comment"># 透视除法</span>
+u = u_s / 1_s
+v = v_s / 1_s</code></pre>
+
+<blockquote><p><strong>核心洞察</strong>：<strong>插值 w 然后再除</strong> = 透视正确。这让远处的纹理保持"看起来对"——这是 3D 渲染<strong>不会变形</strong>的关键。</p></blockquote>
+
+<h3 id="9-1-6-裁剪-clipping">9.1.6 裁剪（Clipping）</h3>
+
+<p><strong>裁剪 = "把视体外的部分切掉"</strong></p>
+
+<p>透视投影会把 "z = 0"（视点平面）映射到 <strong>z = ±∞</strong>。如果三角形的一部分在视点之后（z &gt; 0），透视除法会出现<strong>除以 0</strong> 的情况！</p>
+
+<table>
+<tr><th>方式</th><th>优点</th><th>缺点</th></tr>
+<tr><td><strong>视体前裁剪</strong>（用 6 个平面）</td><td>三角形完全在视体中，透视除法安全</td><td>需要 6 次平面对每个三角形</td></tr>
+<tr><td><strong>齐次坐标裁剪</strong>（用 6 个 4D 平面）</td><td>一次齐次除法，4D 平面简单</td><td>透视除法后才真正安全</td></tr>
+</table>
+
+<hr>
+
+<h2 id="9-2-光栅化前后的操作">9.2 光栅化前后的操作</h2>
+
+<h3 id="9-2-1-最简单的-2d-渲染管线">9.2.1 最简单的 2D 渲染管线</h3>
+
+<p><strong>2D 渲染 = 顶点处理（不做事）+ 光栅化 + 片元处理（用顶点颜色）+ 混合（覆盖）</strong></p>
+
+<h3 id="9-2-2-最小-3d-渲染管线">9.2.2 最小 3D 渲染管线</h3>
+
+<p><strong>3D 渲染 = 顶点处理（MVP 变换）+ 光栅化 + 片元处理 + 混合</strong></p>
+
+<p><strong>问题</strong>：3D 物体的"深度顺序"怎么办？</p>
+<ul>
+  <li><strong>画家算法</strong>：先画远的，再画近的。但<strong>有循环遮挡</strong>时无法处理！</li>
+  <li><strong>z-Buffer</strong>：每个像素存一个深度值，只保留最近的像素</li>
+</ul>
+
+<h3 id="9-2-3-z-buffer-算法-工业标准">9.2.3 z-Buffer 算法（工业标准）</h3>
+
+<p><strong>z-Buffer = "每个像素存一个深度值 + 深度测试"</strong></p>
+
+<div class="guizang-figure">
+<img src="images/ch09/zbuffer_depth.png" alt="Z-Buffer深度测试">
+<div class="guizang-caption">图9-3：Z-Buffer 深度测试——比较模型A和模型B的深度值，保留最近的可见结果</div>
+</div>
+
+<pre><code><span class="comment"># 初始化</span>
+zbuffer[每个像素] = ∞
+
+<span class="comment"># 对每个三角形</span>
+<span class="keyword">for</span> each pixel (x, y) <span class="keyword">in</span> triangle:
+    z = 插值深度(x, y)
+    <span class="keyword">if</span> z &lt; zbuffer[x, y]:
+        zbuffer[x, y] = z
+        color_buffer[x, y] = 像素颜色</code></pre>
+
+<blockquote><p><strong>核心洞察</strong>：<strong>z-Buffer 是无敌的</strong>——它不依赖任何排序，对任何几何形状都有效。<strong>所有现代 GPU 都用 z-Buffer</strong>（或它的变种）。</p></blockquote>
+
+<p><strong>z-Buffer 的精度问题</strong>：</p>
+<ul>
+  <li><strong>整数存储</strong>比 float 更快，但精度有限</li>
+  <li><strong>靠近 near plane</strong> 的精度高，<strong>靠近 far plane</strong> 的精度低</li>
+  <li><strong>z-fighting</strong>：当两个三角形几乎在同一深度时，可能出现"闪烁"</li>
+</ul>
+
+<hr>
+
+<h2 id="9-3-完整渲染管线">9.3 完整渲染管线</h2>
+
+<h3 id="9-3-1-着色频率对比">9.3.1 着色频率对比</h3>
+
+<p>面着色（Flat Shading）、顶点插值（Gouraud Shading）和像素着色（Phong Shading）是三种不同粒度的着色方式，效果和性能依次递进。</p>
+
+<div class="guizang-figure">
+<img src="images/ch09/shading_frequency.png" alt="着色频率对比">
+<div class="guizang-caption">图9-4：着色频率对比——面着色（左）、顶点插值（中）、像素着色（右）</div>
+</div>
+
+<table>
+<tr><th>着色方式</th><th>粒度</th><th>性能</th><th>效果</th></tr>
+<tr><td><strong>面着色</strong></td><td>每个三角形一个颜色</td><td>最快</td><td>有明显棱角</td></tr>
+<tr><td><strong>顶点插值</strong></td><td>每个顶点一个颜色，内部线性插值</td><td>中等</td><td>平滑渐变</td></tr>
+<tr><td><strong>像素着色</strong></td><td>每个像素独立计算</td><td>最慢</td><td>最逼真</td></tr>
+</table>
+
+<h3 id="9-3-2-完整流程代码">9.3.2 完整流程代码</h3>
+
+<pre><code><span class="comment">// 顶点着色器（Vertex Shader）</span>
+vec4 p_world = M_model * vec4(position, <span class="number">1.0</span>);
+vec4 p_camera = M_view * p_world;
+vec4 p_clip = M_proj * p_camera;
+
+<span class="comment">// 裁剪（Clipping）—— 4 个齐次平面</span>
+<span class="keyword">if</span> (!is_inside_view_volume(p_clip)) discard;
+
+<span class="comment">// 光栅化（Rasterization）—— 找覆盖的像素</span>
+<span class="keyword">for</span> each pixel (x_s, y_s) <span class="keyword">in</span> triangle:
+    <span class="comment">// 透视除法（Perspective Division）</span>
+    vec3 p_ndc = p_clip.xyz / p_clip.w;
+    
+    <span class="comment">// 视口变换（Viewport Transform）</span>
+    vec2 p_screen = (p_ndc.xy + <span class="number">1.0</span>) * <span class="number">0.5</span> * viewport_size;
+    
+    <span class="comment">// 片元着色器（Fragment Shader）</span>
+    vec3 color = compute_lighting(p_world, normal, ...);
+    
+    <span class="comment">// 深度测试（Depth Test）</span>
+    <span class="keyword">if</span> (p_ndc.z &lt; z_buffer[x_s, y_s]):
+        z_buffer[x_s, y_s] = p_ndc.z;
+        color_buffer[x_s, y_s] = color;</code></pre>
+
+<h3 id="9-3-3-gpu-硬件化">9.3.3 GPU 硬件化</h3>
+
+<table>
+<tr><th>阶段</th><th>GPU 硬件</th><th>是否可编程</th></tr>
+<tr><td><strong>顶点处理</strong></td><td>Vertex Shader</td><td>✅ GLSL/HLSL</td></tr>
+<tr><td><strong>光栅化</strong></td><td>Rasterizer</td><td>❌ 固定功能</td></tr>
+<tr><td><strong>片元处理</strong></td><td>Fragment Shader</td><td>✅ GLSL/HLSL</td></tr>
+<tr><td><strong>混合</strong></td><td>Output Merger</td><td>部分可编程</td></tr>
+</table>
+
+<blockquote><p><strong>关键洞察</strong>：<strong>光栅化是固定功能</strong>——硬件直接实现。但顶点/片元是<strong>可编程</strong>的——你可以写自己的着色器。这就是为什么现代游戏能实现各种视觉效果。</p></blockquote>
+
+<hr>
+
+<h2 id="9-4-实用考虑">9.4 实用考虑</h2>
+
+<h3 id="9-4-1-性能优化">9.4.1 性能优化</h3>
+
+<p><strong>1. 早期 z 测试（Early Z）</strong>：在片元着色器之前做深度测试，节省大量 GPU 计算。</p>
+
+<pre><code><span class="keyword">if</span> (z &gt; z_buffer[x, y]) discard;  <span class="comment">// 节省片元着色器调用</span></code></pre>
+
+<p><strong>2. 三角形排序</strong>：虽然 z-Buffer 不需要排序，但透明物体需要从后往前画。</p>
+
+<p><strong>3. 视锥体剔除（Frustum Culling）</strong>：在 CPU 端剔除整个不在视体内的物体，节省 GPU 时间。</p>
+
+<h3 id="9-4-2-抗锯齿-anti-aliasing">9.4.2 抗锯齿（Anti-Aliasing）</h3>
+
+<p><strong>问题</strong>：三角形边缘的"锯齿"是光栅化的固有问题（像素是离散的）。</p>
+
+<table>
+<tr><th>技术</th><th>原理</th><th>性能</th></tr>
+<tr><td><strong>SSAA</strong></td><td>渲染 4×4 像素，最后平均</td><td>最慢</td></tr>
+<tr><td><strong>MSAA</strong></td><td>每个像素有多个子样本，只着色一次</td><td>中等</td></tr>
+<tr><td><strong>FXAA / TAA</strong></td><td>后处理抗锯齿</td><td>最快</td></tr>
+</table>
+
+<h3 id="9-4-3-为什么是三角形">9.4.3 为什么是三角形？</h3>
+<ul>
+  <li><strong>永远平面</strong>：3 个点确定一个平面</li>
+  <li><strong>简单求交</strong>：光线-三角形求交是图形学的核心算法</li>
+  <li><strong>插值简单</strong>：重心坐标线性插值</li>
+  <li><strong>GPU 优化</strong>：硬件直接支持三角形栅格化</li>
+</ul>
+
+<hr>
+
+<h2 id="全章总结">全章总结</h2>
+
+<blockquote>
+<p><strong>讲义核心洞察</strong>：图形管线是实时渲染的"施工图"——</p>
+<ul>
+  <li><strong>4 个阶段</strong>：顶点处理 → 光栅化 → 片元处理 → 混合</li>
+  <li><strong>光栅化的核心</strong>：把"连续的三角形"变成"离散的像素"</li>
+  <li><strong>透视正确的插值</strong>：插值齐次坐标后做透视除法</li>
+  <li><strong>裁剪</strong>：在齐次坐标中（4D 平面），而不是世界坐标</li>
+  <li><strong>z-Buffer</strong>：工业标准的隐藏面消除算法</li>
+</ul>
+</blockquote>
+
+<p><strong>关键公式速查</strong>：</p>
+
+<div class="formula">中点算法: f(x+1, y+0.5) 的符号决定下一像素</div>
+<div class="formula">重心插值: c = αc₀ + βc₁ + γc₂ (α+β+γ=1)</div>
+<div class="formula">透视正确插值: u = u_s / 1_s, 其中 u_s = α(u₀/w₀) + β(u₁/w₁) + γ(u₂/w₂)</div>
+<div class="formula">z-Buffer: if (z &lt; z_buffer[x, y]) 写入</div>
+
+<p><strong>下一步</strong>：第 10 章将讲解<strong>信号处理基础</strong>——理解"采样、滤波、混叠"等图形学基础概念。</p>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li class="active"><a href="ch09_图形管线.html" class="active">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#9-1-光栅化-rasterization">9.1 光栅化（Rasterization）</a></li>
+  <li class="toc-h3"><a href="#9-1-1-图形管线的-4-个阶段">9.1.1 图形管线的 4 个阶段</a></li>
+  <li class="toc-h3"><a href="#9-1-2-画线算法-line-drawing">9.1.2 画线算法（Line Drawing）</a></li>
+  <li class="toc-h3"><a href="#9-1-3-中点算法-midpoint-algorithm">9.1.3 中点算法（Midpoint Algorithm）</a></li>
+  <li class="toc-h3"><a href="#9-1-4-三角形的栅格化-triangle-rasterization">9.1.4 三角形的栅格化（Triangle Rasterization）</a></li>
+  <li class="toc-h3"><a href="#9-1-5-透视正确的插值-perspective-correct-interpolation">9.1.5 透视正确的插值（Perspective Correct Interpolation）</a></li>
+  <li class="toc-h3"><a href="#9-1-6-裁剪-clipping">9.1.6 裁剪（Clipping）</a></li>
+  <li class="toc-h2"><a href="#9-2-光栅化前后的操作">9.2 光栅化前后的操作</a></li>
+  <li class="toc-h3"><a href="#9-2-1-最简单的-2d-渲染管线">9.2.1 最简单的 2D 渲染管线</a></li>
+  <li class="toc-h3"><a href="#9-2-2-最小-3d-渲染管线">9.2.2 最小 3D 渲染管线</a></li>
+  <li class="toc-h3"><a href="#9-2-3-z-buffer-算法-工业标准">9.2.3 z-Buffer 算法（工业标准）</a></li>
+  <li class="toc-h2"><a href="#9-3-完整渲染管线">9.3 完整渲染管线</a></li>
+  <li class="toc-h3"><a href="#9-3-1-着色频率对比">9.3.1 着色频率对比</a></li>
+  <li class="toc-h3"><a href="#9-3-2-完整流程代码">9.3.2 完整流程代码</a></li>
+  <li class="toc-h3"><a href="#9-3-3-gpu-硬件化">9.3.3 GPU 硬件化</a></li>
+  <li class="toc-h2"><a href="#9-4-实用考虑">9.4 实用考虑</a></li>
+  <li class="toc-h3"><a href="#9-4-1-性能优化">9.4.1 性能优化</a></li>
+  <li class="toc-h3"><a href="#9-4-2-抗锯齿-anti-aliasing">9.4.2 抗锯齿（Anti-Aliasing）</a></li>
+  <li class="toc-h3"><a href="#9-4-3-为什么是三角形">9.4.3 为什么是三角形？</a></li>
+  <li class="toc-h2"><a href="#全章总结">全章总结</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

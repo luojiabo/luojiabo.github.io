@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch12: 图形学数据结构</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch12 图形学数据结构</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第12章：图形学数据结构 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第12章（p.291-334）。<br>
+<strong>本章是图形学的"工程基础"——它告诉你：怎么存 3D 物体？怎么快速找到我看不见的三角形？怎么让"加速结构"正确？</strong><br>
+学完本章，你将真正理解 mesh 表示、场景图、空间加速结构（BSP/Octree/kd-tree）。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s120">12.0 三角形网格到底长什么样？</a></li>
+  <li><a href="#s121">12.1 三角形网格（Triangle Meshes）</a></li>
+  <li><a href="#s122">12.2 场景图（Scene Graph）</a></li>
+  <li><a href="#s123">12.3 空间数据结构（Spatial Data Structures）</a></li>
+  <li><a href="#s124">12.4 深度排序与隐藏面消除</a></li>
+  <li><a href="#s125">12.5 Cache 友好的内存布局</a></li>
+  <li><a href="#s126">12.6 综合应用</a></li>
+  <li><a href="#ssummary">全章总结</a></li>
+</ul>
+</div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+  <li>掌握<strong>3 种 Mesh 数据结构</strong>：triangle-to-vertex / 索引化 / 邻接表示</li>
+  <li>理解<strong>流形（Manifold）</strong>与<strong>非流形</strong>的概念——用"完整布料"类比</li>
+  <li>掌握<strong>3 种边/邻接数据结构</strong>：Winged-Edge / Half-Edge / Full-Edge</li>
+  <li>理解<strong>场景图（Scene Graph）</strong>的层次结构</li>
+  <li>掌握<strong>空间数据结构</strong>：Uniform Grid / BVH / BSP / kd-tree</li>
+  <li>理解<strong>光线求交加速</strong>的核心思想</li>
+  <li>掌握<strong>深度排序算法</strong>：Painter's / BSP / 透明排序</li>
+  <li>了解<strong>Cache 友好的内存布局</strong>（tiling arrays）</li>
+</ol>
+
+<hr>
+
+<h2 id="12-0-三角形网格到底长什么样">12.0 三角形网格到底长什么样？</h2>
+
+<p>在正式进入数据结构之前，我们先搞清楚<strong>三角形网格（Triangle Mesh）</strong>的基本面貌——这是本章讨论一切数据结构的"原材料"。</p>
+
+<h3 id="12-0-1-什么是三角形网格">12.0.1 什么是三角形网格？</h3>
+
+<blockquote>
+<p><strong>三角形网格 = 用一堆小三角形拼成一个 3D 物体</strong>。想象一个乐高模型：每一块乐高是一个三角形，几十块乐高拼在一起就成了一个球/人/车。</p>
+</blockquote>
+
+<p>在图形学里：</p>
+
+<ul>
+<li><strong>顶点（Vertex）</strong>：空间中的点，比如 <code>(1.0, 0.5, 2.0)</code></li>
+<li><strong>三角形（Triangle）</strong>：由 3 个顶点组成的面</li>
+<li><strong>网格（Mesh）</strong>：一堆三角形拼在一起</li>
+</ul>
+
+<h3 id="12-0-2-一个具体例子-4-个三角形拼成的金字塔">12.0.2 一个具体例子：4 个三角形拼成的金字塔</h3>
+
+<pre><code>        Top(0,1,0)
+         /\
+        /  \
+       /    \
+      /______\
+B(-1,0,1)    C(1,0,1)
+   /\          /\
+  /  \        /  \
+ /____\______/____\
+A(-1,0,-1)   D(1,0,-1)</code></pre>
+
+<p>这个金字塔由 4 个三角形组成：</p>
+
+<table>
+<tr><th>面</th><th>顶点</th></tr>
+<tr><td>前面 △Top-AB</td><td>(0,1,0) - (-1,0,-1) - (-1,0,1)</td></tr>
+<tr><td>右面 △Top-BC</td><td>(0,1,0) - (-1,0,1) - (1,0,1)</td></tr>
+<tr><td>后面 △Top-CD</td><td>(0,1,0) - (1,0,1) - (1,0,-1)</td></tr>
+<tr><td>左面 △Top-DA</td><td>(0,1,0) - (1,0,-1) - (-1,0,-1)</td></tr>
+</table>
+
+<h3 id="12-0-3-一个实际的工程问题">12.0.3 一个实际的工程问题</h3>
+
+<p>假设你想在游戏里放一个<strong>100 万个三角形的恐龙模型</strong>。你怎么存？</p>
+
+<table>
+<tr><th>做法</th><th>存储方式</th><th>代价</th></tr>
+<tr><td>做法 1（最笨）</td><td>把 100 万个三角形的 300 万个顶点全部列出来</td><td>3 倍内存浪费</td></tr>
+<tr><td>做法 2（聪明）</td><td>50 万个唯一顶点 + 300 万索引</td><td>省内存</td></tr>
+<tr><td>做法 3（更聪明）</td><td>顶点 + 邻接信息</td><td>支持细分/简化/平滑着色</td></tr>
+</table>
+
+<div class="key-box">
+<strong>本章的核心问题</strong>：<strong>怎么高效地组织和查询这些三角形的关系？</strong>Winged-Edge、Half-Edge、BSP、BVH... 本质上都在回答这个问题。
+</div>
+
+<div class="guizang-figure">
+<img src="images/ch12/triangle_mesh.png" alt="三角形网格">
+<div class="guizang-caption">图12-1：三角形网格——顶点、边、面的关系。球面 mesh 由数百个三角形拼成，每个三角形共享 3 个顶点</div>
+</div>
+
+<hr>
+
+<h2 id="12-1-三角形网格-triangle-meshes">12.1 三角形网格（Triangle Meshes）</h2>
+
+<h3 id="12-1-1-流形-vs-非流形---完整布料--类比">12.1.1 流形 vs 非流形——"完整布料" 类比</h3>
+
+<blockquote>
+<p><strong>流形（Manifold）= "完整布料"</strong></p>
+<p>想象你拿一块完整的布料：<br>
+- 布料的<strong>每一小块</strong>都是平整的，像一个小圆盘<br>
+- 你可以在布料上任意一点画个小圈——圈内都是<strong>连续、平整</strong>的布料</p>
+<p>这就是流形的直觉：<strong>表面上每个点的邻域都像一个扁平的小圆盘</strong>。</p>
+</blockquote>
+
+<p><strong>非流形 = "布料破了一个洞"或者"多块布料粘在一起"</strong></p>
+
+<p><strong>三种常见的非流形案例</strong>：</p>
+
+<h4 id="案例-1-一条边被三个面共享-非流形边">案例 1：一条边被三个面共享（非流形边）</h4>
+
+<pre><code>   面A     面B
+    \       /
+     \     /
+      \   /
+       \ /
+    共享边 e
+       / \
+      /   \
+     /     \
+    /       \
+   面C</code></pre>
+
+<p>想象三块布料的边缘粘在同一条线上——这就像<strong>三扇门共用一个门框</strong>。这在现实里不合理。</p>
+
+<blockquote>
+<p>在正常流形网格里，一条边<strong>恰好被 2 个三角形共享</strong>。如果一条边被 3 个（或 1 个）三角形共享，它就<strong>非流形</strong>。</p>
+</blockquote>
+
+<h4 id="案例-2-一个顶点周围不连续-非流形顶点">案例 2：一个顶点周围不连续（非流形顶点）</h4>
+
+<pre><code>   面A       面B
+    /\       /\
+   /  \     /  \
+  /    \   /    \
+ /______\ /______\
+    ^ 共享顶点 v</code></pre>
+
+<p>想象两片布料<strong>只在一个角上碰了一下</strong>——它们没有共享边，只有一个点碰在一起。</p>
+
+<h4 id="案例-3-边界边-合法">案例 3：边界边（合法！）</h4>
+
+<p>如果一个网格是一块<strong>"矩形布料"</strong>（没有围成封闭体），它的最外圈边只有 1 个三角形——这叫<strong>边界边</strong>，是合法的。</p>
+
+<div class="key-box">
+<strong>为什么管流形？</strong> 流形保证你可以<strong>一致地定义法线方向</strong>，也保证了<strong>相邻三角形共享的信息是完整的</strong>。细分、简化、UV 展开、布尔运算——这些算法<strong>全部假设输入是流形</strong>。输入非流形，结果就错了。
+</div>
+
+<p><strong>检查方法——"一圈测试"</strong>：</p>
+
+<blockquote>
+<p>对每个顶点，绕着它的所有三角形走一圈，看能不能<strong>连续不断地回到起点</strong>。如果能，就是流形。如果走着走着撞到边界或分叉，就是非流形。</p>
+</blockquote>
+
+<h3 id="12-1-2-方向-orientation---三角形的顶点顺序">12.1.2 方向（Orientation）——三角形的顶点顺序</h3>
+
+<blockquote>
+<p><strong>方向 = "三角形顶点的顺序"——决定"哪面朝外"</strong></p>
+</blockquote>
+
+<p><strong>两种约定</strong>：</p>
+
+<table>
+<tr><th>约定</th><th>描述</th><th>使用</th></tr>
+<tr><td><strong>逆时针（CCW, Counterclockwise）</strong></td><td>从外面看，顶点按逆时针排列</td><td>OpenGL 默认</td></tr>
+<tr><td><strong>顺时针（CW, Clockwise）</strong></td><td>从外面看，顶点按顺时针排列</td><td>DirectX 默认</td></tr>
+</table>
+
+<p><strong>为什么重要？</strong></p>
+
+<ul>
+<li>方向决定了三角形的<strong>法线方向</strong>（右手定则）</li>
+<li>背面剔除（back-face culling）依赖方向判断"哪面朝相机"</li>
+</ul>
+
+<p><strong>不可定向的表面——Möbius 带</strong>：</p>
+
+<blockquote>
+<p>还记得那个<strong>Möbius 带</strong>吗？——一张纸扭了半圈后粘在一起。它只有一个面。你在上面选一个方向走一圈走回来，方向反了。<strong>几乎所有图形学算法都会在这种表面上失败</strong>，因为法线方向无法一致地定义。</p>
+</blockquote>
+
+<h3 id="12-1-3-共享-vs-独立顶点">12.1.3 共享 vs 独立顶点</h3>
+
+<table>
+<tr><th>模式</th><th>内存</th><th>优缺点</th></tr>
+<tr><td><strong>共享顶点（索引化）</strong></td><td>50 万顶点 + 300 万索引 → 省内存</td><td>UV 可能不连续</td></tr>
+<tr><td><strong>独立顶点</strong></td><td>300 万顶点 → 3 倍内存</td><td>UV 完全灵活，每个三角形独立</td></tr>
+</table>
+
+<p><strong>实际中怎么选？</strong></p>
+
+<blockquote>
+<p>游戏开发中最常用的是<strong>索引化网格（Indexed Mesh）</strong>：每个顶点存一份（位置、法线、UV、切线等），三角形用 3 个顶点索引表示。GPU 硬件也为此做了优化。</p>
+</blockquote>
+
+<div class="info-box">
+<strong>💡 实战经验</strong>：Unity/Unreal 里烘焙 mesh 时，导入器自动决定哪些顶点可共享、哪些必须分裂。你几乎不需要手动处理。
+</div>
+
+<h3 id="12-1-4-triangle-to-vertex-网格-最直接的表示">12.1.4 Triangle-to-Vertex 网格（最直接的表示）</h3>
+
+<p><strong>核心数据结构</strong>：</p>
+
+<pre><code><span class="keyword">struct</span> Mesh {
+    Vertex vertices[N];     <span class="comment">// 顶点数组</span>
+    <span class="keyword">int</span> indices[3 * M];     <span class="comment">// M 个三角形的顶点索引</span>
+};</code></pre>
+
+<p><strong>变种 1：独立三角形（无索引）</strong></p>
+
+<pre><code><span class="keyword">struct</span> Tri {
+    Vertex v0, v1, v2;
+};
+Tri tris[M];   <span class="comment">// 优点：简单。缺点：内存大 3 倍</span></code></pre>
+
+<p><strong>变种 2：Triangle Strip（三角形带）</strong></p>
+
+<p>N 个顶点 → N-2 个三角形（省 3 倍内存）。</p>
+
+<pre><code>顶点:   [v0, v1, v2, v3, v4, v5]
+三角形: (v0,v1,v2), (v1,v3,v2), (v2,v3,v4), (v3,v5,v4), ...</code></pre>
+
+<p>注意奇偶三角形的顶点顺序相反——这是为了保持 CCW。</p>
+
+<p><strong>变种 3：Triangle Fan（三角形扇）</strong></p>
+
+<p>1 个中心顶点 + N 个环形顶点 → N-2 个三角形。</p>
+
+<pre><code>顶点:   [center, v0, v1, v2, v3]
+三角形: (center,v0,v1), (center,v1,v2), (center,v2,v3)</code></pre>
+
+<p>适合圆形/扇形 mesh（如 pizza、扇叶）。</p>
+
+<h3 id="12-1-5-邻接信息--为什么要知道-谁挨着谁">12.1.5 邻接信息——为什么要知道"谁挨着谁"？</h3>
+
+<p><strong>问题</strong>：只存顶点 + 索引的网格，你<strong>不知道一个三角形的邻居是谁</strong>。</p>
+
+<p><strong>为什么需要邻居？</strong></p>
+
+<p><strong>场景 1：细分（Subdivision）</strong></p>
+
+<blockquote>
+<p>你想把网格变平滑，生成更多的三角形。Catmull-Clark 细分需要<strong>每个顶点的邻居三角形的法线</strong>。没有邻接信息 → 你算不出来。</p>
+</blockquote>
+
+<p><strong>场景 2：简化（Simplification）</strong></p>
+
+<blockquote>
+<p>你想把 100 万三角形的模型简化为 1 万三角形（QEM 算法）。<strong>边折叠</strong>需要知道哪些三角形共享那条边。</p>
+</blockquote>
+
+<p><strong>场景 3：平滑着色</strong></p>
+
+<blockquote>
+<p>一个顶点被 6 个三角形共享，你想用<strong>6 个三角形法线的平均值</strong>作为该顶点的法线。没有邻接信息，你不知道哪 6 个。</p>
+</blockquote>
+
+<p><strong>邻接的代价</strong>：建立邻接信息需要扫描整个网格——<strong>O(N) 时间、O(N) 内存</strong>。因此游戏引擎通常只在"加载时"构建一次邻接，运行时只读。</p>
+
+<h3 id="12-1-6-三种边-邻接数据结构">12.1.6 三种边/邻接数据结构</h3>
+
+<h4 id="1--winged-edge-翼边结构">1. Winged-Edge（翼边结构）</h4>
+
+<blockquote>
+<p><strong>Winged-Edge = "一条边知道两侧的面，以及每侧面的 4 条邻边"</strong></p>
+</blockquote>
+
+<pre><code><span class="keyword">struct</span> WingedEdge {
+    Vertex v0, v1;          <span class="comment">// 两个端点</span>
+    Face f0, f1;            <span class="comment">// 两侧的面</span>
+    Edge e0_ccw, e0_cw;     <span class="comment">// f0 侧的逆时针/顺时针邻边</span>
+    Edge e1_ccw, e1_cw;     <span class="comment">// f1 侧的逆时针/顺时针邻边</span>
+};</code></pre>
+
+<p><strong>遍历示例：从面 A 出发走一圈</strong>：</p>
+
+<ol>
+<li>从面 A 出发，看到边 e1（AB）。e0_ccw 指向 e2（BC），e0_cw 指向 e3（CA）</li>
+<li>沿着 e0_ccw 走到 e2（BC）。e2 的 f0 = A（当前），f1 = D（相邻）</li>
+<li>从 e2 的 e0_ccw 走到 e3（CA）。e3 的 f0 = A，f1 = E</li>
+<li>从 e3 的 e0_ccw 走，回到 e1（AB）——遍历完成</li>
+</ol>
+
+<div class="analogy-box">
+<strong>🦋 生活类比：蝴蝶</strong>
+<blockquote>
+<p>Winged-Edge 的"翅膀"：<strong>每条边都像一只蝴蝶，向两侧展开 4 个翅膀（邻边）</strong>。只要你从面 A 出发，跟着"翅膀"走，就能遍历面 A 的所有边，然后跳到相邻面继续。</p>
+</blockquote>
+</div>
+
+<p><strong>优缺点</strong>：</p>
+
+<ul>
+<li>✓ 从一条边出发，可以得到<strong>两侧所有邻边和邻面</strong></li>
+<li>✗ 每条边 8 个指针，<strong>内存开销大</strong>（30+ 字节/边）</li>
+</ul>
+
+<h4 id="2--half-edge-半边结构----图形学最流行">2. Half-Edge（半边结构）—— 图形学最流行</h4>
+
+<blockquote>
+<p><strong>Half-Edge = "把每条边拆成 2 个有向半边"——图形学最流行的邻接结构</strong></p>
+</blockquote>
+
+<p><strong>核心思想</strong>：一条"无向边" AB 被拆成两个"有向半边"：<code>A→B</code> 和 <code>B→A</code>。每个半边属于一个面。</p>
+
+<div class="guizang-figure">
+<img src="images/ch12/half_edge.png" alt="Half-Edge结构">
+<div class="guizang-caption">图12-2：Half-Edge结构——每条无向边拆成两个有向半边（A→B 和 B→A），用 next 形成面的循环，用 pair 跳到相邻面</div>
+</div>
+
+<p><strong>逆时针约定</strong>：</p>
+
+<ul>
+<li>每个面内的所有半边按<strong>逆时针方向</strong>排列成一个循环</li>
+<li><code>next</code> 指针指向本面的下一条半边（逆时针方向）</li>
+<li><code>pair</code> 指针指向<strong>反向</strong>的半边（属于相邻面）</li>
+</ul>
+
+<pre><code><span class="keyword">struct</span> HalfEdge {
+    Vertex vertex;        <span class="comment">// 半边的起点</span>
+    HalfEdge next;        <span class="comment">// 本面下一条半边（逆时针）</span>
+    HalfEdge pair;        <span class="comment">// 反向半边（相邻面的）</span>
+    Face face;            <span class="comment">// 所属的面</span>
+};</code></pre>
+
+<table>
+<tr><th>对比项</th><th>Winged-Edge</th><th>Half-Edge</th></tr>
+<tr><td>指针数/边</td><td>8 个</td><td>5 个（拆成 2 个半边）</td></tr>
+<tr><td>遍历面循环</td><td>需要 4 个翅膀指针</td><td>天然是循环（next 形成闭环）</td></tr>
+<tr><td>内存</td><td>~30 字节/边</td><td>~15 字节/半边</td></tr>
+</table>
+
+<div class="info-box">
+<strong>💡 应用</strong>：Blender 内核（BMesh）、CGAL、OpenMesh 都使用 Half-Edge 作为核心数据结构。
+</div>
+
+<h4 id="3--full-edge">3. Full-Edge</h4>
+
+<p>结合 Winged-Edge 和 Half-Edge 的思想——更完整、更大。不常用。</p>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么 Half-Edge 比 Winged-Edge 更流行？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">因为遍历面循环是图形学最常见的操作（细分、简化、平滑着色）。Half-Edge 的 next 指针天然形成"面的循环"——沿 next 走一圈就是绕面一圈。Winged-Edge 需要查 4 个翅膀指针才能确定下一条边，既慢又容易出错。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="12-2-场景图-scene-graph">12.2 场景图（Scene Graph）</h2>
+
+<h3 id="12-2-1-核心思想">12.2.1 核心思想</h3>
+
+<blockquote>
+<p><strong>场景图 = "树形结构的 3D 场景表示"——回答"什么东西在什么地方？"</strong></p>
+</blockquote>
+
+<p><strong>为什么不用扁平列表？</strong></p>
+
+<p>假设你要做一个<strong>汽车游戏</strong>：</p>
+
+<ul>
+<li>有 100 辆车在路上跑</li>
+<li>每辆车有车身、4 个轮子、2 个车门</li>
+<li>每棵树/路灯/房子也是独立对象</li>
+</ul>
+
+<p>如果用<strong>扁平列表</strong>：每帧要更新 100 辆车的 700 个子部件的位置 → <strong>灾难</strong>。</p>
+
+<p>用<strong>场景图</strong>：</p>
+
+<ul>
+<li>每辆车是一个节点</li>
+<li>车身的变换会影响所有子节点（轮子、车门）</li>
+<li>全车作为一个整体被移动</li>
+</ul>
+
+<p><strong>3 大优势</strong>：</p>
+
+<ol>
+<li><strong>共享实例</strong>：同一棵树出现 100 次 → 只存 1 份几何数据</li>
+<li><strong>层次变换</strong>：车轮跟随车体 → 自动计算位置</li>
+<li><strong>逻辑分组</strong>：灯光、相机、可碰撞对象分组管理</li>
+</ol>
+
+<h3 id="12-2-2-简单例子-铰链摆">12.2.2 简单例子：铰链摆</h3>
+
+<pre><code>World
+└── Pendulum
+    ├── UpperArm (绕顶部旋转)
+    │   └── LowerArm (绕肘部旋转)
+    │       └── Bob (在末端平移)</code></pre>
+
+<p>当你旋转 UpperArm 时，LowerArm 和 Bob 都跟着动。这就是场景图的<strong>层次变换</strong>——每个节点的变换是相对于父节点的。</p>
+
+<h3 id="12-2-3-复杂例子-车在渡轮上">12.2.3 复杂例子：车在渡轮上</h3>
+
+<pre><code>World
+├── Ferry (沿水面平移)
+│   ├── Body
+│   ├── Deck
+│   ├── CarA (在甲板上平移 + 自身旋转)
+│   │   ├── Body
+│   │   ├── WheelFL
+│   │   ├── WheelFR
+│   │   ├── WheelRL
+│   │   └── WheelRR
+│   └── CarB
+└── Water (海面渲染)</code></pre>
+
+<p><strong>渡轮移动 → 甲板上的所有车都跟着走</strong>。但每辆车还可以<strong>独立旋转</strong>（方向盘）——因为 CarA 是 Ferry 的子节点。</p>
+
+<p>实际渲染时，遍历场景图，计算每个节点的<strong>世界矩阵</strong>：</p>
+
+<pre><code>CarA.WorldMatrix    = Ferry.WorldMatrix × CarA.LocalMatrix
+WheelFL.WorldMatrix = CarA.WorldMatrix × WheelFL.LocalMatrix</code></pre>
+
+<h3 id="12-2-4-场景图实现细节">12.2.4 场景图实现细节</h3>
+
+<p><strong>5 种节点类型</strong>：</p>
+
+<table>
+<tr><th>类型</th><th>职责</th></tr>
+<tr><td><strong>Group</strong></td><td>容器节点，无几何体</td></tr>
+<tr><td><strong>Transform</strong></td><td>携带位置/旋转/缩放矩阵</td></tr>
+<tr><td><strong>Geometry</strong></td><td>实际 mesh + 材质</td></tr>
+<tr><td><strong>Light</strong></td><td>携带光照参数（颜色、强度、位置）</td></tr>
+<tr><td><strong>Camera</strong></td><td>相机参数（视场、近远平面）</td></tr>
+</table>
+
+<p><strong>Culling（视锥体裁剪）</strong>：</p>
+
+<blockquote>
+<p>遍历场景图时，如果某节点的包围盒不在视锥体内，<strong>整棵子树跳过</strong>。这是场景图最重要的性能优化。</p>
+</blockquote>
+
+<p><strong>遍历算法</strong>：</p>
+
+<table>
+<tr><th>算法</th><th>特点</th><th>适用</th></tr>
+<tr><td><strong>DFS（深度优先）</strong></td><td>先深入子树</td><td>立即模式渲染</td></tr>
+<tr><td><strong>BFS（广度优先）</strong></td><td>按层遍历</td><td>状态排序优化</td></tr>
+</table>
+
+<div class="info-box">
+<strong>💡 游戏引擎实战</strong>：Unreal Engine 的 World Outliner 就是一个场景图编辑器。Unity 的 Hierarchy 窗口也是场景图。
+</div>
+
+<hr>
+
+<h2 id="12-3-空间数据结构-spatial-data-structures">12.3 空间数据结构（Spatial Data Structures）</h2>
+
+<h3 id="12-3-1-为什么需要空间数据结构">12.3.1 为什么需要空间数据结构？</h3>
+
+<p><strong>没有空间数据结构的渲染</strong>：</p>
+
+<pre><code><span class="keyword">for</span> 每个像素:
+    发射一条光线
+    <span class="keyword">for</span> 每个三角形:        <span class="comment"># O(N)！</span>
+        测试光线与三角形求交</code></pre>
+
+<p>100 万个三角形 × 200 万像素 = 2 万亿次测试。<strong>不可能实时</strong>。</p>
+
+<p><strong>有空间数据结构的渲染</strong>：</p>
+
+<pre><code><span class="keyword">for</span> 每个像素:
+    发射一条光线
+    查询 BVH/BSP 树        <span class="comment"># O(log N)！</span>
+    只测试少量候选三角形</code></pre>
+
+<p>100 万个三角形 → 只测试 ~20 个候选三角形。差了 <strong>10 万倍</strong>。</p>
+
+<p><strong>应用场景</strong>：</p>
+
+<ul>
+<li><strong>光线追踪</strong>：快速找到光线击中的物体</li>
+<li><strong>碰撞检测</strong>：找到两个物体的最近三角形</li>
+<li><strong>视锥裁剪</strong>：找到视体外的物体</li>
+<li><strong>邻居查询</strong>：找到某点附近的物体</li>
+</ul>
+
+<h3 id="12-3-2-均匀网格-uniform-grid">12.3.2 均匀网格（Uniform Grid）</h3>
+
+<blockquote>
+<p><strong>最简单的空间结构——把空间切成"方砖"</strong></p>
+</blockquote>
+
+<pre><code><span class="keyword">class</span> UniformGrid:
+    <span class="function">def</span> __init__(self, bbox, nx, ny, nz):
+        <span class="comment"># bbox = 场景包围盒</span>
+        <span class="comment"># 切成 nx × ny × nz 个 cell</span>
+        self.cells = [[] <span class="keyword">for</span> _ <span class="keyword">in</span> range(nx * ny * nz)]
+    
+    <span class="function">def</span> insert(self, obj, obj_bbox):
+        <span class="comment"># 找到物体中心所在的 cell</span>
+        cell = self.xyz_to_index(obj_bbox.center())
+        self.cells[cell].append(obj)
+    
+    <span class="function">def</span> query(self, point):
+        cell = self.xyz_to_index(point)
+        <span class="keyword">return</span> self.cells[cell]   <span class="comment"># 只检查这个 cell</span></code></pre>
+
+<p><strong>优缺点</strong>：</p>
+
+<ul>
+<li>✓ <strong>构造简单</strong>，一步到位</li>
+<li>✓ <strong>查询 O(1)</strong>——常数时间找到 cell</li>
+<li>✗ <strong>不均匀场景效率低</strong>——空旷处大量空 cell，密集处 cell 过载</li>
+<li>✗ <strong>Cell 大小难选</strong>——太大=加速不够，太小=空 cell 太多</li>
+</ul>
+
+<h3 id="12-3-3-光线与均匀网格-dda-算法">12.3.3 光线与均匀网格（DDA 算法）</h3>
+
+<p><strong>核心算法——3D DDA（Digital Differential Analyzer）</strong>：</p>
+
+<ol>
+<li>找到光线的<strong>起始 cell</strong></li>
+<li>计算到<strong>下一个 X cell 边界</strong>的距离 <code>t_xnext</code></li>
+<li>计算到<strong>下一个 Y cell 边界</strong>的距离 <code>t_ynext</code></li>
+<li>取<strong>较小的</strong>——沿那个方向移动一格</li>
+<li>重复直到击中物体或离开网格</li>
+</ol>
+
+<pre><code>t_xnext = (cellX.right - origin.x) / dir.x
+t_ystep = (cell_width) / dir.y
+y_ystep = ... 
+
+<span class="keyword">if</span> t_xnext &lt; t_ynext:
+    沿 X 方向移动一格
+    t_xnext += t_xstep
+<span class="keyword">else</span>:
+    沿 Y 方向移动一格
+    t_ynext += t_ystep</code></pre>
+
+<div class="key-box">
+<strong>核心洞察</strong>：这个算法<strong>几乎等于 Bresenham 画线算法</strong>——都是"网格上的增量遍历"。Bresenham 在 2D 像素栅格上画线，DDA 在 3D 空间 cell 栅格上追踪光线。
+</div>
+
+<h3 id="12-3-4-包围体层次-bvh--bounding-volume-hierarchy">12.3.4 包围体层次（BVH, Bounding Volume Hierarchy）</h3>
+
+<blockquote>
+<p><strong>BVH = "盒子里套盒子"——递归地将场景分割</strong></p>
+</blockquote>
+
+<div class="guizang-figure">
+<img src="images/ch12/bvh_tree.png" alt="BVH树状图">
+<div class="guizang-caption">图12-3：BVH层次包围盒——Root → Level 1 → Level 2 → Leaf Nodes，像俄罗斯套娃一样逐层细化</div>
+</div>
+
+<pre><code>                        World (AABB)
+                       /          \
+                Building (AABB)    Car (AABB)
+                /        \          |       \
+            Floor (AABB) Wall     Body    Wheels
+            /    \
+        Tri1    Tri2</code></pre>
+
+<p><strong>光线查询算法</strong>：</p>
+
+<pre><code><span class="function">function</span> intersect(ray, node):
+    <span class="keyword">if</span> 光线不击中 node.AABB:
+        <span class="keyword">return</span> 无命中
+    
+    <span class="keyword">if</span> node 是叶子:
+        <span class="keyword">return</span> 测试所有三角形
+    
+    <span class="comment"># 分别测试左右子节点</span>
+    <span class="keyword">return</span> min(intersect(ray, left), intersect(ray, right))</code></pre>
+
+<p><strong>AABB vs OBB</strong>：</p>
+
+<table>
+<tr><th>类型</th><th>特点</th></tr>
+<tr><td><strong>AABB（轴对齐包围盒）</strong></td><td>与坐标轴对齐 → 求交最快（6 个 slab test）</td></tr>
+<tr><td><strong>OBB（有向包围盒）</strong></td><td>更紧，但求交更慢</td></tr>
+</table>
+
+<h3 id="12-3-5-bvh-的构造方法">12.3.5 BVH 的构造方法</h3>
+
+<p><strong>自顶向下（Top-Down）——最常用</strong>：</p>
+
+<pre><code><span class="function">function</span> build_bvh(triangles):
+    <span class="keyword">if</span> len(triangles) &lt;= THRESHOLD:
+        <span class="keyword">return</span> 叶子节点
+    
+    <span class="comment"># 1. 计算所有三角形的包围盒</span>
+    aabb = compute_aabb(triangles)
+    
+    <span class="comment"># 2. 找最长的轴（x/y/z 中范围最大的）</span>
+    axis = argmax(aabb.extent)
+    
+    <span class="comment"># 3. 沿该轴排序并分割</span>
+    sorted_tris = sort(triangles, key=axis)
+    mid = len(sorted_tris) // <span class="number">2</span>
+    
+    <span class="comment"># 4. 递归构建</span>
+    left_child  = build_bvh(sorted_tris[:mid])
+    right_child = build_bvh(sorted_tris[mid:])
+    
+    <span class="keyword">return</span> 内部节点(left_child, right_child)</code></pre>
+
+<p><strong>自底向上（Bottom-Up）</strong>：</p>
+
+<blockquote>
+<p>每个三角形是一个叶子，然后不断合并两个"最近"的节点。复杂度更高，但有时更优。</p>
+</blockquote>
+
+<h3 id="12-3-6-kd-tree-k-dimensional-tree">12.3.6 kd-tree（K-Dimensional Tree）</h3>
+
+<blockquote>
+<p><strong>kd-tree = "用平面切割空间"——和 BVH 的区别</strong></p>
+</blockquote>
+
+<table>
+<tr><th>对比项</th><th>BVH</th><th>kd-tree</th></tr>
+<tr><td>分割方式</td><td>包围盒子集</td><td>平面切割空间</td></tr>
+<tr><td>分割平面</td><td>不一定穿过三角形</td><td>穿过空间</td></tr>
+<tr><td>对象归属</td><td>三角形归入子节点</td><td>三角形可能跨平面（需切割）</td></tr>
+<tr><td>查询</td><td>O(log N)</td><td>O(log N) 但更少 AABB 测试</td></tr>
+</table>
+
+<p><strong>光线查询</strong>：每层只需要做 <strong>1 个平面测试</strong>——判断光线在平面的哪一侧。</p>
+
+<p><strong>优势</strong>：对静态场景，kd-tree 通常比 BVH 更快（尤其是 CPU 光线追踪）。<br>
+<strong>劣势</strong>：构造更复杂，动态场景更新慢。</p>
+
+<h3 id="12-3-7-sah-surface-area-heuristic----飞镖房间-类比">12.3.7 SAH（Surface Area Heuristic）——"飞镖房间"类比</h3>
+
+<blockquote>
+<p><strong>SAH = "飞镖房间"</strong></p>
+</blockquote>
+
+<div class="analogy-box">
+<strong>🎯 生活类比：飞镖房间</strong>
+<blockquote>
+<p>想象你站在一个<strong>大房间</strong>的门口，往房间里随机扔飞镖。<br>
+- <strong>场景 A</strong>：房间里有<strong>两堆东西</strong>——左边一堆小物件（占 5% 空间），右边一堆大箱子（占 45% 空间），还有 50% 是空地。<br>
+- 飞镖击中左边小物件的概率 ≈ 5%<br>
+- 飞镖击中右边大箱子的概率 ≈ 45%</p>
+</blockquote>
+</div>
+
+<p><strong>SAH 的核心思想</strong>：分割平面放在哪里，决定了"飞镖"（光线）<strong>期望击中多少次</strong>。</p>
+
+<p><strong>公式</strong>：</p>
+
+<div class="formula">Cost = C_trav + p_left × N_left + p_right × N_right</div>
+
+<table>
+<tr><th>参数</th><th>含义</th></tr>
+<tr><td><code>C_trav</code></td><td>遍历一个节点的固定成本（~1）</td></tr>
+<tr><td><code>p_left</code></td><td>光线穿过左子节点的概率 ≈ <code>SurfaceArea(left) / SurfaceArea(parent)</code></td></tr>
+<tr><td><code>p_right</code></td><td>光线穿过右子节点的概率 ≈ <code>SurfaceArea(right) / SurfaceArea(parent)</code></td></tr>
+<tr><td><code>N_left, N_right</code></td><td>左右子节点的三角形数量</td></tr>
+</table>
+
+<p>实际构造时，<strong>尝试多个分割位置</strong>，选择使 Cost 最小的那个。</p>
+
+<blockquote>
+<p><strong>直觉理解</strong>：你希望左右两边的"房间"（包围盒）<strong>表面积都尽可能小</strong>，同时两边的三角形数<strong>尽量均衡</strong>。这样光线无论穿到哪一边，要测试的东西都少。</p>
+</blockquote>
+
+<hr>
+
+<h2 id="12-4-深度排序与隐藏面消除">12.4 深度排序与隐藏面消除</h2>
+
+<h3 id="12-4-1-painter-s-algorithm-画家算法">12.4.1 Painter's Algorithm（画家算法）</h3>
+
+<blockquote>
+<p><strong>思想：画远处的，再画近处的——远的被近的覆盖</strong></p>
+</blockquote>
+
+<pre><code><span class="comment"># 按深度排序（从远到近）</span>
+triangles.sort(key=lambda t: -t.center.z)
+
+<span class="keyword">for</span> tri <span class="keyword">in</span> triangles:
+    draw(tri)</code></pre>
+
+<p><strong>三个三角形的例子</strong>：</p>
+
+<pre><code>三角形A: (0, 0, 10), (1, 0, 10), (0, 1, 10)    → 最近（z=10）
+三角形B: (0, 0, 20), (2, 0, 20), (0, 2, 20)    → 中间（z=20）
+三角形C: (0, 0, 30), (3, 0, 30), (0, 3, 30)    → 最远（z=30）
+
+Painter's Algorithm 的排序：C(z=30) → B(z=20) → A(z=10)</code></pre>
+
+<p><strong>致命问题 1——深度循环（Depth Cycle）</strong>：</p>
+
+<pre><code>          三角形A
+         /      \
+        /        \
+       /    X     \
+      /  互相遮挡   \
+     /              \
+    /________________\
+          三角形B</code></pre>
+
+<p>A 和 B 互相遮挡——A 的一部分在 B 前面，另一部分在 B 后面。无法确定谁先画。这叫做<strong>深度循环</strong>。</p>
+
+<p><strong>致命问题 2——三角形相交</strong>：</p>
+
+<pre><code>三角形A: (0,0,0), (10,0,10), (0,10,10)
+三角形B: (10,0,0), (0,0,10), (10,10,10)</code></pre>
+
+<p>这两个三角形穿过了对方——没有一前一后的关系。</p>
+
+<h3 id="12-4-2-bsp-tree-二叉空间分割树">12.4.2 BSP Tree（二叉空间分割树）</h3>
+
+<blockquote>
+<p><strong>BSP Tree = "用平面递归切割空间，解决深度循环"</strong></p>
+</blockquote>
+
+<div class="guizang-figure">
+<img src="images/ch12/bsp_tree.png" alt="BSP树分割">
+<div class="guizang-caption">图12-4：BSP树分割——2D 空间被递归地切成更小的子区域，右侧的树形结构展示了 Split 1 → Region A/B → Split 2/3 → A1/A2/B1/B2</div>
+</div>
+
+<p><strong>核心思想</strong>：选一个三角形作为"分割平面"，把其他三角形分为"前面"和"后面"两组。递归处理。</p>
+
+<p><strong>4 种情况</strong>：</p>
+
+<p><strong>情况 1：三角形完全在分割平面的前面</strong></p>
+
+<blockquote>
+<p>如果三角形的所有三个顶点到平面的<strong>有符号距离都是正数</strong>，则它完全在平面前面。<br>
+例子：分割平面是 <code>z = 5</code>，三角形顶点为 <code>(0,0,10), (1,0,11), (0,1,10)</code>——所有 z 值都 &gt; 5。这个三角形被放入"前面"子树继续处理。</p>
+</blockquote>
+
+<p><strong>情况 2：三角形完全在分割平面的后面</strong></p>
+
+<blockquote>
+<p>如果三角形的所有三个顶点到平面的<strong>有符号距离都是负数</strong>，则它完全在平面后面。<br>
+例子：分割平面是 <code>z = 5</code>，三角形顶点为 <code>(0,0,1), (1,0,2), (0,1,1)</code>——所有 z 值都 &lt; 5。这个三角形被放入"后面"子树。</p>
+</blockquote>
+
+<p><strong>情况 3：三角形跨越分割平面</strong></p>
+
+<blockquote>
+<p>如果三角形三个顶点中<strong>有的在前、有的在后</strong>，则被平面切成了两部分。<br>
+例子：分割平面是 <code>z = 5</code>，三角形顶点为 <code>(0,0,1), (1,0,10), (0,1,3)</code>——顶点 <code>(1,0,10)</code> 在前面，其余在后面。处理方法是：用平面切割这个三角形，生成两个子三角形——一个在前面、一个在后面，分别放入对应的子树。</p>
+</blockquote>
+
+<p><strong>情况 4：三角形恰好躺在分割平面上</strong></p>
+
+<blockquote>
+<p>如果三个顶点到平面的距离都是 0（或接近 0），则三角形和分割平面重合。<br>
+例子：分割平面是 <code>z = 5</code>，三角形顶点为 <code>(0,0,5), (2,0,5), (0,2,5)</code>——所有 z 值等于 5。这个三角形被放在当前节点，不送入子树。绘制时在当前节点位置绘制。</p>
+</blockquote>
+
+<p><strong>BSP 树的绘制算法（画家顺序）</strong>：</p>
+
+<pre><code><span class="function">function</span> draw_bsp(node, camera_position):
+    <span class="keyword">if</span> node 是叶子:
+        <span class="keyword">return</span>
+    
+    side = camera_position 相对于 node.plane 在哪一侧
+    
+    <span class="keyword">if</span> side == <span class="string">"前面"</span>:
+        draw_bsp(node.back)    <span class="comment"># 先画后面的</span>
+        draw(node.triangle)     <span class="comment"># 再画当前三角形</span>
+        draw_bsp(node.front)   <span class="comment"># 最后画前面的</span>
+    <span class="keyword">else</span>:
+        draw_bsp(node.front)
+        draw(node.triangle)
+        draw_bsp(node.back)</code></pre>
+
+<blockquote>
+<p><strong>BSP 树的保证</strong>：<strong>无论相机在哪个位置</strong>，这个"后→中→前"的遍历顺序都正确——<strong>没有深度循环</strong>。</p>
+</blockquote>
+
+<p><strong>缺点</strong>：BSP 树的构造是<strong>静态的</strong>，场景移动/变形时需要重建。因此 Quake 系列引擎用它来组织<strong>静态地图</strong>。</p>
+
+<hr>
+
+<h2 id="12-5-cache-友好的内存布局">12.5 Cache 友好的内存布局</h2>
+
+<h3 id="12-5-1-内存层次">12.5.1 内存层次</h3>
+
+<p><strong>现代 CPU 的"内存阶梯"</strong>：</p>
+
+<table>
+<tr><th>层级</th><th>大小</th><th>延迟</th><th>相对速度</th></tr>
+<tr><td><strong>L1 Cache</strong></td><td>~32 KB</td><td>1 ns</td><td>~10 个 CPU 周期</td></tr>
+<tr><td><strong>L2 Cache</strong></td><td>~256 KB</td><td>3 ns</td><td>30 个周期</td></tr>
+<tr><td><strong>L3 Cache</strong></td><td>~8 MB</td><td>12 ns</td><td>120 个周期</td></tr>
+<tr><td><strong>主存（RAM）</strong></td><td>~16 GB</td><td>100 ns</td><td>1000 个周期</td></tr>
+</table>
+
+<p>从 L1 到主存：<strong>慢了 100 倍</strong>！</p>
+
+<blockquote>
+<p><strong>核心洞察</strong>：如果你的数据不在 cache 里，CPU 就得等 100 个周期去主存拿——这是现代渲染最主要的瓶颈之一。</p>
+</blockquote>
+
+<h3 id="12-5-2-aos-vs-soa">12.5.2 AoS vs SoA</h3>
+
+<p><strong>Array of Struct（AoS）</strong>：</p>
+
+<pre><code><span class="keyword">struct</span> Vertex {
+    <span class="keyword">float</span> x, y, z;        <span class="comment">// 位置</span>
+    <span class="keyword">float</span> nx, ny, nz;     <span class="comment">// 法线</span>
+    <span class="keyword">float</span> u, v;          <span class="comment">// UV</span>
+};
+Vertex vertices[N];</code></pre>
+
+<p>存法：<code>(x,y,z, nx,ny,nz, u,v), (x,y,z, nx,ny,nz, u,v), ...</code></p>
+
+<p><strong>Struct of Array（SoA）</strong>：</p>
+
+<pre><code><span class="keyword">float</span> xs[N], ys[N], zs[N];          <span class="comment">// 所有位置</span>
+<span class="keyword">float</span> nxs[N], nys[N], nzs[N];      <span class="comment">// 所有法线</span>
+<span class="keyword">float</span> us[N], vs[N];                <span class="comment">// 所有 UV</span></code></pre>
+
+<p>存法：<code>(x, x, x, ...), (y, y, y, ...), (z, z, z, ...), ...</code></p>
+
+<p><strong>为什么 SoA 经常更快？</strong></p>
+
+<p>假设你只关心"顶点位置"（比如做变换矩阵计算）：</p>
+
+<ul>
+<li><strong>AoS</strong>：加载一个顶点的数据 → cache 里装满了你暂时不用的法线和 UV</li>
+<li><strong>SoA</strong>：连续加载 <code>xs</code> 数组 → cache 里全部是你要的位置数据</li>
+</ul>
+
+<p><strong>SIMD 友好</strong>：SoA 可以一次加载 4 个 x 值做向量化。</p>
+
+<h3 id="12-5-3-tiling-分块阵列">12.5.3 Tiling（分块阵列）</h3>
+
+<blockquote>
+<p><strong>Tiling = "把大数组切成小方块，方块内连续存储"</strong></p>
+</blockquote>
+
+<pre><code>传统行优先:
+  [0,0][0,1][0,2]...[1,0][1,1][1,2]...
+
+Tiling (2×2 方块):
+  Tile0: [0,0][0,1][1,0][1,1]   (连续)
+  Tile1: [0,2][0,3][1,2][1,3]   (连续)
+  Tile2: [2,0][2,1][3,0][3,1]   (连续)
+  ...</code></pre>
+
+<p><strong>为什么 Tiling 好？</strong></p>
+
+<blockquote>
+<p>如果你做<strong>2D 邻域查询</strong>（比如纹理滤波、光线追踪像素块），传统行优先需要跳到很远的位置读数据（cache miss）。Tiling 保证同一方块内的数据在内存中紧邻——<strong>cache 命中率大幅提升</strong>。</p>
+</blockquote>
+
+<p><strong>光线追踪中的应用</strong>：</p>
+
+<ul>
+<li><strong>Ray Packets</strong>：一组相邻像素的光线组成一个"包"，它们访问的 AABB 和三角形很可能在同一个 tile 内</li>
+<li><strong>BVH 构造</strong>也用 tiling 优化 cache</li>
+</ul>
+
+<div class="info-box">
+<strong>💡 UE5 Nanite 的 Meshlet</strong> = Tiling 思想在 mesh 上的应用。一个 meshlet 是 ~128 个顶点的"小 mesh"，刚好适合 GPU cache。
+</div>
+
+<hr>
+
+<h2 id="12-6-综合应用">12.6 综合应用</h2>
+
+<h3 id="12-6-1-高级-mesh-处理">12.6.1 高级 Mesh 处理</h3>
+
+<p><strong>简化（Simplification）</strong>：</p>
+
+<blockquote>
+<p>输入：高密度 mesh（100k 三角形）<br>
+输出：低密度 mesh（10k 三角形）<br>
+核心：QEM（Quadric Error Metrics），每次折叠误差最小的边</p>
+</blockquote>
+
+<p><strong>细分（Subdivision）</strong>：</p>
+
+<blockquote>
+<p>输入：低密度 mesh<br>
+输出：平滑的高密度 mesh<br>
+核心：Catmull-Clark / Loop，每次迭代加倍三角形数</p>
+</blockquote>
+
+<p><strong>重网格化（Remeshing）</strong>：</p>
+
+<blockquote>
+<p>输入：任意（可能劣质）mesh<br>
+输出：均匀高质量三角形 mesh<br>
+应用：3D 打印、有限元仿真</p>
+</blockquote>
+
+<h3 id="12-6-2-光线追踪流水线">12.6.2 光线追踪流水线</h3>
+
+<pre><code>1. 加载场景
+2. 构造 BVH
+3. 对每个像素生成 primary ray
+4. 查询 BVH：
+   a. 测试根节点 AABB
+   b. 递归测试子节点 AABB
+   c. 命中叶子 → 测试实际三角形
+5. 命中后计算着色（BRDF + 直接光 + 间接光）
+6. 递归处理反射/折射</code></pre>
+
+<blockquote>
+<p><strong>性能瓶颈</strong>：BVH 构造是一次性的（加载时），但 BVH 查询是<strong>每帧每像素</strong>的。所以查询必须极快。</p>
+</blockquote>
+
+<p><strong>现代优化</strong>：</p>
+
+<ul>
+<li><strong>Multi-BVH</strong>：多个 BVH 树合并查询</li>
+<li><strong>BVH 压缩</strong>：用 8 字节而不是 24 字节存一个 AABB</li>
+<li><strong>GPU BVH</strong>：用 compute shader 在 GPU 上构造和遍历</li>
+</ul>
+
+<h3 id="12-6-3-现代游戏引擎的数据结构">12.6.3 现代游戏引擎的数据结构</h3>
+
+<p><strong>Unreal Engine 5 Nanite</strong>：</p>
+
+<ul>
+<li>虚拟几何体系统——显存容不下整个场景的三角形</li>
+<li>Meshlet（~128 顶点/块）+ BLAS + TLAS 层次 BVH</li>
+<li>直接渲染数亿三角形</li>
+</ul>
+
+<p><strong>Unity DOTS / ECS</strong>：</p>
+
+<ul>
+<li>Entity Component System——数据和逻辑分离</li>
+<li>BatchRendererGroup（BRG）按 mesh+材质合并绘制</li>
+<li>避免 CPU 端的 draw call 瓶颈</li>
+</ul>
+
+<p><strong>DirectX 12 / Vulkan Mesh Shader</strong>：</p>
+
+<ul>
+<li>把整个 mesh 作为计算负载上传到 GPU</li>
+<li>Bindless Resource：不绑定具体资源，随时引用</li>
+</ul>
+
+<hr>
+
+<h2 id="全章总结">全章总结</h2>
+
+<blockquote>
+<p><strong>讲义核心洞察</strong>：图形学数据结构 = "用最少的内存装下世界，用最少的查询击中目标"——</p>
+<ul>
+<li><strong>三角形网格</strong>：索引化 / 独立 / strip / fan</li>
+<li><strong>流形</strong>："完整布料"——每个点周围像圆盘</li>
+<li><strong>Winged-Edge</strong>：8 指针/边，翅膀遍历</li>
+<li><strong>Half-Edge</strong>：5 指针/半边，逆时针循环</li>
+<li><strong>场景图</strong>：树形结构 = 共享实例 + 层次变换</li>
+<li><strong>空间加速</strong>：Uniform Grid → BVH → kd-tree → BSP</li>
+<li><strong>SAH</strong>："飞镖房间"——最小化期望求交次数</li>
+<li><strong>Cache 友好</strong>：SoA + Tiling</li>
+</ul>
+</blockquote>
+
+<table>
+<tr><th>主题</th><th>核心</th><th>关键洞察</th></tr>
+<tr><td>Triangle Fan</td><td>1 中心 + N-1 边缘 → N-2 三角形</td><td>适合扇形 mesh</td></tr>
+<tr><td>Triangle Strip</td><td>N 顶点 → N-2 三角形（省 3 倍内存）</td><td>奇偶翻转保持 CCW</td></tr>
+<tr><td>Winged-Edge</td><td>8 指针 / 边</td><td>遍历面需 4 个翅膀</td></tr>
+<tr><td>Half-Edge</td><td>5 指针 / 半边</td><td>next 形成循环，最流行</td></tr>
+<tr><td>DDA 算法</td><td><code>t_xnext = (cellX.right - origin.x) / dir.x</code></td><td>Bresenham 在 3D 的扩展</td></tr>
+<tr><td>BVH 查询</td><td>O(log N) 平均</td><td>先测近子节点可加速</td></tr>
+<tr><td>SAH</td><td><code>Cost = C_trav + p_left·N_left + p_right·N_right</code></td><td>选择 Cost 最小的分割</td></tr>
+<tr><td>BSP 4 情况</td><td>全前 / 全后 / 跨越 / 共面</td><td>跨越时需切割三角形</td></tr>
+<tr><td>Tiling</td><td>L1 cache 命中 → 100 倍加速</td><td>2D 邻域查询的关键</td></tr>
+</table>
+
+<div class="info-box">
+<strong>📚 关键术语速查</strong>：
+<ul>
+<li><strong>Manifold（流形）</strong>：完整布料——每个点邻域像圆盘</li>
+<li><strong>Half-Edge（半边）</strong>：把无向边拆成两个有向半边</li>
+<li><strong>Scene Graph（场景图）</strong>：树形结构组织 3D 场景</li>
+<li><strong>BVH</strong>：层次包围盒——俄罗斯套娃式</li>
+<li><strong>kd-tree</strong>：用平面切割空间</li>
+<li><strong>SAH</strong>：表面积启发式（飞镖房间）</li>
+<li><strong>BSP</strong>：二叉空间分割——画家算法无循环</li>
+<li><strong>Painter's Algorithm</strong>：画家算法——远→近</li>
+<li><strong>SoA</strong>：Struct of Array——Cache 友好</li>
+<li><strong>Tiling</strong>：分块存储——2D 邻域查询优化</li>
+</ul>
+</div>
+
+<p><strong>一句话总结</strong>：图形学数据结构 = <strong>Mesh 表示</strong>（索引化 / Half-Edge）+ <strong>场景图</strong>（树形层次）+ <strong>空间加速</strong>（BVH/SAH/kd-tree/BSP）+ <strong>Cache 优化</strong>（SoA/Tiling）。</p>
+
+<p><strong>下一步</strong>：第 13 章将讲解<strong>采样与重建</strong>——理解"随机采样、重要性采样、Metropolis 算法"。这是通往路径追踪的桥梁。</p>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li class="active"><a href="ch12_图形学数据结构.html" class="active">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#12-0-三角形网格到底长什么样">12.0 三角形网格到底长什么样？</a></li>
+  <li class="toc-h3"><a href="#12-0-1-什么是三角形网格">12.0.1 什么是三角形网格？</a></li>
+  <li class="toc-h3"><a href="#12-0-2-一个具体例子-4-个三角形拼成的金字塔">12.0.2 一个具体例子：4 个三角形拼成的金字塔</a></li>
+  <li class="toc-h3"><a href="#12-0-3-一个实际的工程问题">12.0.3 一个实际的工程问题</a></li>
+  <li class="toc-h2"><a href="#12-1-三角形网格-triangle-meshes">12.1 三角形网格（Triangle Meshes）</a></li>
+  <li class="toc-h3"><a href="#12-1-1-流形-vs-非流形---完整布料--类比">12.1.1 流形 vs 非流形——"完整布料" 类比</a></li>
+  <li class="toc-h3"><a href="#12-1-2-方向-orientation---三角形的顶点顺序">12.1.2 方向（Orientation）——三角形的顶点顺序</a></li>
+  <li class="toc-h3"><a href="#12-1-3-共享-vs-独立顶点">12.1.3 共享 vs 独立顶点</a></li>
+  <li class="toc-h3"><a href="#12-1-4-triangle-to-vertex-网格-最直接的表示">12.1.4 Triangle-to-Vertex 网格（最直接的表示）</a></li>
+  <li class="toc-h3"><a href="#12-1-5-邻接信息--为什么要知道-谁挨着谁">12.1.5 邻接信息——为什么要知道"谁挨着谁"？</a></li>
+  <li class="toc-h3"><a href="#12-1-6-三种边-邻接数据结构">12.1.6 三种边/邻接数据结构</a></li>
+  <li class="toc-h2"><a href="#12-2-场景图-scene-graph">12.2 场景图（Scene Graph）</a></li>
+  <li class="toc-h3"><a href="#12-2-1-核心思想">12.2.1 核心思想</a></li>
+  <li class="toc-h3"><a href="#12-2-2-简单例子-铰链摆">12.2.2 简单例子：铰链摆</a></li>
+  <li class="toc-h3"><a href="#12-2-3-复杂例子-车在渡轮上">12.2.3 复杂例子：车在渡轮上</a></li>
+  <li class="toc-h3"><a href="#12-2-4-场景图实现细节">12.2.4 场景图实现细节</a></li>
+  <li class="toc-h2"><a href="#12-3-空间数据结构-spatial-data-structures">12.3 空间数据结构（Spatial Data Structures）</a></li>
+  <li class="toc-h3"><a href="#12-3-1-为什么需要空间数据结构">12.3.1 为什么需要空间数据结构？</a></li>
+  <li class="toc-h3"><a href="#12-3-2-均匀网格-uniform-grid">12.3.2 均匀网格（Uniform Grid）</a></li>
+  <li class="toc-h3"><a href="#12-3-3-光线与均匀网格-dda-算法">12.3.3 光线与均匀网格（DDA 算法）</a></li>
+  <li class="toc-h3"><a href="#12-3-4-包围体层次-bvh--bounding-volume-hierarchy">12.3.4 包围体层次（BVH, Bounding Volume Hierarchy）</a></li>
+  <li class="toc-h3"><a href="#12-3-5-bvh-的构造方法">12.3.5 BVH 的构造方法</a></li>
+  <li class="toc-h3"><a href="#12-3-6-kd-tree-k-dimensional-tree">12.3.6 kd-tree（K-Dimensional Tree）</a></li>
+  <li class="toc-h3"><a href="#12-3-7-sah-surface-area-heuristic----飞镖房间-类比">12.3.7 SAH（Surface Area Heuristic）——"飞镖房间"类比</a></li>
+  <li class="toc-h2"><a href="#12-4-深度排序与隐藏面消除">12.4 深度排序与隐藏面消除</a></li>
+  <li class="toc-h3"><a href="#12-4-1-painter-s-algorithm-画家算法">12.4.1 Painter's Algorithm（画家算法）</a></li>
+  <li class="toc-h3"><a href="#12-4-2-bsp-tree-二叉空间分割树">12.4.2 BSP Tree（二叉空间分割树）</a></li>
+  <li class="toc-h2"><a href="#12-5-cache-友好的内存布局">12.5 Cache 友好的内存布局</a></li>
+  <li class="toc-h3"><a href="#12-5-1-内存层次">12.5.1 内存层次</a></li>
+  <li class="toc-h3"><a href="#12-5-2-aos-vs-soa">12.5.2 AoS vs SoA</a></li>
+  <li class="toc-h3"><a href="#12-5-3-tiling-分块阵列">12.5.3 Tiling（分块阵列）</a></li>
+  <li class="toc-h2"><a href="#12-6-综合应用">12.6 综合应用</a></li>
+  <li class="toc-h3"><a href="#12-6-1-高级-mesh-处理">12.6.1 高级 Mesh 处理</a></li>
+  <li class="toc-h3"><a href="#12-6-2-光线追踪流水线">12.6.2 光线追踪流水线</a></li>
+  <li class="toc-h3"><a href="#12-6-3-现代游戏引擎的数据结构">12.6.3 现代游戏引擎的数据结构</a></li>
+  <li class="toc-h2"><a href="#全章总结">全章总结</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

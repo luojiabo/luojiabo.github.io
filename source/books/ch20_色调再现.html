@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch20: 色调再现</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch20 色调再现</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第20章：色调再现 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第20章（p.569-594）。<br>
+<strong>核心问题</strong>：渲染器算出来的是一个物理上正确但显示器放不下的高动态范围（HDR）图像，你怎么把它压缩到显示器能显示的低动态范围（LDR）而不丢失细节？<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s201">20.1 问题的诞生：深夜看电视场景</a></li>
+  <li><a href="#s202">20.2 三种直觉解法</a></li>
+  <li><a href="#s203">20.3 为什么不能简单缩放？</a></li>
+  <li><a href="#s204">20.4 两条路线</a></li>
+  <li><a href="#s205">20.5 动态范围详解</a></li>
+  <li><a href="#s206">20.6 颜色处理</a></li>
+  <li><a href="#s207">20.7 图像形成模型</a></li>
+  <li><a href="#s208">20.8 全局空间算子</a></li>
+  <li><a href="#s209">20.9 Reinhard 色调映射（逐行注释）</a></li>
+  <li><a href="#s210">20.10 局部算子</a></li>
+  <li><a href="#s211">20.11 工业级算子</a></li>
+  <li><a href="#s212">20.12 公式速查与选型指南</a></li>
+</ul>
+</div>
+
+<hr>
+
+<h2 id="20-1-问题的诞生-深夜看电视场景">20.1 问题的诞生：深夜看电视场景</h2>
+
+<p>想象一个场景：深夜你关灯看电视。电视里是一部电影，有两个镜头——</p>
+
+<ul>
+  <li><strong>镜头 A</strong>：白天阳光下的沙滩，非常亮</li>
+  <li><strong>镜头 B</strong>：月光下的森林，非常暗</li>
+</ul>
+
+<p>你的电视机只有一个亮度范围（比如 0~300 尼特<span class="fn" title="尼特（nit）= cd/m²，亮度的标准单位。1尼特=一根蜡烛在1平方米上的亮度。">&#8224;</span>）。它怎么同时显示"阳光"和"月光"？</p>
+
+<p>如果它把"阳光"缩放到 300 尼特，"月光"就几乎变黑了，什么都看不见。如果它把"月光"抬升到能看见的程度，"阳光"就过曝成一团白。</p>
+
+<div class="key-box">
+<strong>核心问题</strong>：<strong>色调映射</strong>（Tone Mapping）要解决的问题——把宽动态范围（HDR）压缩到窄动态范围（LDR）的同时，让亮区和暗区的细节都能看清。
+</div>
+
+<div class="guizang-figure">
+<img src="images/ch20/ch20_tv_analogy.png" alt="深夜看电视类比">
+<div class="guizang-caption">图20-1：深夜看电视——阳光沙滩与月光森林同时显示，这就是色调映射要解决的问题</div>
+</div>
+
+<h3 id="20-1-1-数字层面的问题">20.1.1 数字层面的问题</h3>
+
+<pre><code>渲染器算出来的 HDR 图像（每个像素是浮点数）：
+  窗外的阳光直射表面  →  亮度 = 100,000 cd/m²
+  室内的桌面          →  亮度 = 100 cd/m²
+  桌下的阴影          →  亮度 = 0.5 cd/m²
+
+显示器能显示的范围（普通 SDR<span class="fn" title="SDR = Standard Dynamic Range, 标准动态范围。普通显示器的亮度范围，约0.3~300尼特。">&#8224;</span> 显示器）：
+  最亮 = 300 cd/m²
+  最暗 = 0.3 cd/m²
+  比例 = 1000:1
+
+问题是：100,000 和 0.5 差了 20 万倍，显示器只有 1000 倍范围。
+    ↓
+必须用一种"聪明的压缩"——色调映射（Tone Mapping）
+</code></pre>
+
+<h3 id="20-1-2-人眼的动态范围--8224">20.1.2 人眼的动态范围&#8224;</h3>
+
+<pre><code>自然界的亮度范围：
+  星光夜空 .............. ~0.001 cd/m²
+  月光下 ................ ~1 cd/m²
+  室内灯光 .............. ~100 cd/m²
+  阴天室外 .............. ~1,000 cd/m²
+  阳光直射 .............. ~100,000 cd/m²
+  太阳本体 .............. ~1,000,000,000 cd/m²
+          ↑ 相差 9 个数量级（10亿倍）
+
+人眼的能力：
+  单一时刻能分辨 ≈ 4~5 个数量级（10000:1 ~ 100000:1）
+  通过瞳孔调节+化学适应，整体可适应 10+ 个数量级
+
+显示器的短板：
+  SDR 显示器：~2 个数量级（1000:1）
+  HDR 显示器：~3~4 个数量级（高端 > OLED）
+</code></pre>
+
+<div class="guizang-figure">
+<img src="images/ch20/ch20_hdr_ldr_curves.png" alt="HDR与LDR动态范围对比">
+<div class="guizang-caption">图20-2：HDR vs LDR 动态范围对比——自然场景有9个数量级，显示器只能显示2~3个</div>
+</div>
+
+<hr>
+
+<h2 id="20-2-三种直觉解法">20.2 三种直觉解法</h2>
+
+<p><strong>如果你自己来设计"HDR→LDR 压缩"，你会怎么做？</strong> 下面三种方法从简单到复杂，逐渐逼近工业标准。</p>
+
+<h3 id="解法-1-直接线性缩放-最简单但最差">解法 1：直接线性缩放（最简单但最差）</h3>
+
+<p><strong>思路</strong>：把所有亮度按比例缩小到显示器范围。</p>
+
+<div class="formula">L<sub>display</sub> = L<sub>render</sub> / L<sub>max</sub></div>
+
+<pre><code>举例：原始最大值 = 100,000 → 缩小到 300
+      原始 0.5    → 0.5 × 300/100000 = 0.0015 → 几乎黑色
+
+结果：阳光部分正常了，阴影部分什么都看不见。
+</code></pre>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：线性缩放为什么不行？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">因为自然界亮度范围太大了（10万倍），线性缩放会把暗区压到接近0，丢失所有暗部细节。这就像你用"等比例缩图"把一座大山和一座小丘画在同一张纸上——小丘变成几乎看不见的一个点。</blockquote>
+</div>
+
+<h3 id="解法-2-取对数-经典解法">解法 2：取对数（经典解法）</h3>
+
+<p><strong>思路</strong>：用对数把乘法关系变成加法关系，压缩大值，保留小值。</p>
+
+<div class="formula">L<sub>display</sub> = log(1 + L<sub>render</sub>) / log(1 + L<sub>max</sub>)</div>
+
+<pre><code>直觉：log 的特性——大值被压得狠，小值被压得少
+  100,000 → log 之后 → 11.5
+  0.5     → log 之后 → 0.4
+  比值从 200,000:1 缩小到 28:1
+
+结果：亮区和暗区都能看到了，但对比度偏平（像"褪色"了）
+</code></pre>
+
+<div class="info-box">
+<strong>生活类比</strong>：对数就像"用分贝量声音"。100分贝和1000分贝只差10倍，而不是100倍——大数被有意压缩了。但问题是对数太"均匀"了，该亮的地方不够亮。
+</div>
+
+<h3 id="解法-3-s-形曲线-工业标准">解法 3：S 形曲线（工业标准）</h3>
+
+<p><strong>思路</strong>：用 Sigmoid<span class="fn" title="Sigmoid函数：S形曲线，在0附近近似线性，在正负无穷处渐近饱和。因其形状像字母S得名。">&#8224;</span> 曲线——暗部线性保留，亮部渐近压缩。</p>
+
+<div class="formula">L<sub>display</sub> = L<sub>render</sub> / (L<sub>render</sub> + k)</div>
+
+<p>其中 k 是"半饱和常数"<span class="fn" title="半饱和常数：当L_render = k时，输出恰好为0.5。k决定了"多亮才算亮"。">&#8224;</span></p>
+
+<pre><code>特性：暗部 → 近似线性（细节保留）
+      亮部 → 渐近压缩（不会过曝成一团白）
+      中间区域 → 平滑过渡
+
+这就是游戏/电影里最常见的色调映射曲线形状
+</code></pre>
+
+<hr>
+
+<h2 id="20-3-为什么不能简单缩放">20.3 为什么不能简单缩放？</h2>
+
+<h3 id="核心矛盾">核心矛盾</h3>
+
+<table>
+<tr><th>场景</th><th>动态范围</th><th>需要怎么处理</th></tr>
+<tr><td>阳光海滩</td><td>极亮（100,000 cd/m²）</td><td>大幅压缩</td></tr>
+<tr><td>月光森林</td><td>极暗（1 cd/m²）</td><td>适度提升</td></tr>
+<tr><td>室内桌面</td><td>中等（100 cd/m²）</td><td>基本保留</td></tr>
+</table>
+
+<p><strong>问题</strong>：同一个场景、同一张图像，同时包含三种区域。一个函数无法同时满足所有需求。</p>
+
+<table>
+<tr><th>方案</th><th>海滩</th><th>森林</th><th>结论</th></tr>
+<tr><td>压暗（线性缩小）</td><td>正常</td><td>全黑</td><td>暗部丢失</td></tr>
+<tr><td>提亮（线性放大）</td><td>过曝</td><td>正常</td><td>亮部丢失</td></tr>
+<tr><td>S形曲线</td><td>压缩但可看</td><td>提亮但可看</td><td>两者兼顾</td></tr>
+</table>
+
+<div class="key-box">
+<strong>一句话总结</strong>：色调映射 = 模拟人眼的自动适应能力。人眼通过瞳孔+视网膜自动调节，显示器不会自动调节，所以我们用算法来模拟。
+</div>
+
+<hr>
+
+<h2 id="20-4-两条路线">20.4 两条路线</h2>
+
+<table>
+<tr><th>路线</th><th>思路</th><th>现状</th></tr>
+<tr><td><strong>路线 A</strong>：硬件 HDR</td><td>显示器本身支持 HDR（OLED、Dolby Vision），增加硬件的动态范围</td><td>正在普及，但尚未完全</td></tr>
+<tr><td><strong>路线 B</strong>：软件色调映射</td><td>用算法把 HDR 压缩到 LDR 显示</td><td><strong>当前主力方法</strong>，本章主题</td></tr>
+</table>
+
+<blockquote>
+无论硬件 HDR 发展到什么程度，色调映射算法都不可或缺——因为内容的动态范围总是超过硬件的极限。
+</blockquote>
+
+<hr>
+
+<h2 id="20-5-动态范围详解">20.5 动态范围详解</h2>
+
+<h3 id="20-5-1-ldr-和-hdr-编码格式">20.5.1 LDR 和 HDR 编码格式</h3>
+
+<table>
+<tr><th>编码格式</th><th>每通道位数</th><th>动态范围</th><th>典型用途</th></tr>
+<tr><td>8-bit LDR (sRGB)</td><td>8 bit</td><td>~2.4 log₁₀</td><td>普通显示器、网页图片</td></tr>
+<tr><td>10-bit HDR10</td><td>10 bit</td><td>~3 log₁₀</td><td>蓝光、HDR 电视</td></tr>
+<tr><td>FP16 (OpenEXR)</td><td>16 bit 浮点</td><td>理论 760 个数量级</td><td>渲染中间结果、电影制作</td></tr>
+<tr><td>FP32</td><td>32 bit 浮点</td><td>天文数字</td><td>科学计算、高精度渲染</td></tr>
+</table>
+
+<h3 id="20-5-2-三种度量方式">20.5.2 三种度量方式</h3>
+
+<p><strong>这是在解决什么问题</strong>：动态范围本质上就是"最亮除以最暗"。但不同行业用不同的尺子量——结果一样，单位不同。</p>
+
+<table>
+<tr><th>度量方法</th><th>公式</th><th>用中文说就是</th><th>例子（阳光/阴影）</th></tr>
+<tr><td>比值法</td><td>L<sub>max</sub>/L<sub>min</sub></td><td>最亮除以最暗</td><td>200,000:1</td></tr>
+<tr><td>对数法</td><td>log₁₀(L<sub>max</sub>/L<sub>min</sub>)</td><td>用对数尺子量，差1=差10倍</td><td>5.3 log₁₀</td></tr>
+<tr><td>SNR法</td><td>20·log₁₀(信噪比)</td><td>考虑了噪声，暗区噪声太大再暗也白搭</td><td>（取决于传感器）</td></tr>
+</table>
+
+<hr>
+
+<h2 id="20-6-颜色处理">20.6 颜色处理</h2>
+
+<h3 id="20-6-1-亮度压缩-颜色不变">20.6.1 亮度压缩，颜色不变</h3>
+
+<p><strong>这是在解决什么问题</strong>：HDR 图像有 RGB 三个通道。如果对三个通道单独压缩，颜色比例会乱掉——红色压得比绿色多，画面就偏色了。所以正确的做法是：只压缩亮度，RGB比例保持不变。</p>
+
+<div class="formula">C<sub>display</sub> = (C<sub>original</sub> / L<sub>original</sub>) × L<sub>compressed</sub></div>
+
+<p>用中文说就是：原始 RGB 除以亮度（得到颜色比例），再乘以压缩后的亮度（恢复亮度但保留色相<span class="fn" title="色相（Hue）：色彩的主色调——红、绿、蓝等。亮度（Luminance）：色彩的明暗程度。饱和度（Saturation）：色彩的鲜艳程度。">&#8224;</span>）。</p>
+
+<h3 id="20-6-2-饱和度问题">20.6.2 饱和度问题</h3>
+
+<p><strong>这是在解决什么问题</strong>：太严格保持 RGB 比例，亮区的颜色反而会变得"过艳"——因为人眼在亮场景下对颜色的敏感度降低。</p>
+
+<div class="formula">C<sub>display</sub> = (C<sub>original</sub> / L<sub>original</sub>)<sup>s</sup> × L<sub>compressed</sub></div>
+
+<table>
+<tr><th>s 值</th><th>效果</th><th>适用场景</th></tr>
+<tr><td>s = 1</td><td>完全保持 RGB 比例</td><td>可能过艳，不太自然</td></tr>
+<tr><td>s = 0.6</td><td>适度降低饱和度</td><td>最常用的默认值</td></tr>
+<tr><td>s = 0.3</td><td>大幅降低饱和度</td><td>模拟亮环境下的视觉</td></tr>
+</table>
+
+<hr>
+
+<h2 id="20-7-图像形成模型">20.7 图像形成模型</h2>
+
+<h3 id="20-7-1-基本模型">20.7.1 基本模型</h3>
+
+<p><strong>这是在解决什么问题</strong>：一个像素的亮度是怎么来的？我们需要一个简单模型来理解"亮度"的组成成分。</p>
+
+<div class="formula">L(x,y) = r(x,y) · E(x,y)</div>
+
+<table>
+<tr><th>符号</th><th>含义</th><th>用中文说就是</th><th>范围</th></tr>
+<tr><td>L(x,y)</td><td>你看到的像素亮度</td><td>照片上那个位置的明暗</td><td>0 ~ 很大</td></tr>
+<tr><td>r(x,y)</td><td>反射率</td><td>物体"本来"的明暗——白墙≈0.9，黑布≈0.05</td><td>0.005 ~ 1</td></tr>
+<tr><td>E(x,y)</td><td>照度</td><td>照到物体上的光有多强——太阳下 vs 月光下</td><td>0 ~ 极大</td></tr>
+</table>
+
+<div class="info-box">
+<strong>生活类比</strong>：一张照片的亮度 = 物体本身 × 光照。<br>
+白墙（反射率0.9）即使光照弱也比较亮；黑布（反射率0.05）即使光照强仍然暗。<br>
+<strong>懂了这一点，就懂了色调映射的核心策略</strong>：压缩照度（E），保留反射率（r）。
+</div>
+
+<h3 id="20-7-2-对数域-加法比乘法好处理">20.7.2 对数域：加法比乘法好处理</h3>
+
+<p><strong>这是在解决什么问题</strong>：取对数之后，"乘法"变成了"加法"，方便我们分别处理反射率和照度。</p>
+
+<div class="formula">log(L) = log(r) + log(E)</div>
+
+<table>
+<tr><th>成分</th><th>变化频率</th><th>物理含义</th><th>处理策略</th></tr>
+<tr><td>log(r)（反射率）</td><td>高频（变化快）</td><td>纹理、边缘、细节</td><td>保留</td></tr>
+<tr><td>log(E)（照度）</td><td>低频（变化慢）</td><td>整体明暗</td><td>压缩</td></tr>
+</table>
+
+<hr>
+
+<h2 id="20-8-全局空间算子">20.8 全局空间算子</h2>
+
+<h3 id="20-8-1-对数平均亮度">20.8.1 对数平均亮度</h3>
+
+<p><strong>这是在解决什么问题</strong>：我们需要知道场景的"平均亮度"来调节整体明暗。但普通平均会被极亮的像素（如太阳）主导，不代表人眼感知的"平均"。对数平均解决了这个问题。</p>
+
+<div class="formula">L̄<sub>v</sub> = exp( (1/N) · Σ log(δ + L<sub>v</sub>(x,y)) )</div>
+
+<p><strong>四步拆解</strong>：</p>
+<ol>
+  <li>给每个亮度加小常数 δ（防 log(0)）</li>
+  <li>取自然对数 log()</li>
+  <li>对所有像素求平均</li>
+  <li>再取指数 exp() 恢复成亮度值</li>
+</ol>
+
+<pre><code>为什么不用普通平均？
+  场景中有太阳 = 亮度 1,000,000
+  其他都是阴影 = 亮度 10
+  普通平均 ≈ 500,000 → 被太阳主导
+  log 平均 ≈ 3,162 → 更反映人眼感知的平均亮度
+</code></pre>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：如果场景中有一盏特别亮的灯，对色调映射有什么影响？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">普通平均会被这盏灯大幅拉高，导致整体压得过暗。而log平均把极亮值的影响控制在对数域——10倍的光强差距在对数域只差1个单位。这就是为什么log平均是"感知平均"。</blockquote>
+</div>
+
+<h3 id="20-8-2-sigmoid-压缩曲线">20.8.2 Sigmoid 压缩曲线</h3>
+
+<p><strong>这是在解决什么问题</strong>：Sigmoid 曲线是在"线性保留"和"渐近压缩"之间做权衡。暗部线性增长（细节分明），亮部渐近压缩（不会过曝）。</p>
+
+<div class="formula">L<sub>display</sub> = L<sub>original</sub> / (L<sub>original</sub> + f)</div>
+
+<table>
+<tr><th>情况</th><th>数学</th><th>效果</th></tr>
+<tr><td>L &lt;&lt; f（暗区）</td><td>L<sub>d</sub> ≈ L/f</td><td>线性，细节丰富</td></tr>
+<tr><td>L &gt;&gt; f（亮区）</td><td>L<sub>d</sub> ≈ 1</td><td>渐近饱和，不超白</td></tr>
+<tr><td>L = f（中间）</td><td>L<sub>d</sub> = 0.5</td><td>正好一半</td></tr>
+</table>
+
+<div class="info-box">
+<strong>生活类比</strong>：f 像是一个"门槛"。亮度低于门槛的——线性保留（你看到的细节就是真实的）。亮度高于门槛的——被压缩（越亮压得越狠，但永远不会超过显示器的最大亮度）。
+</div>
+
+<h3 id="20-8-3-除法算子">20.8.3 除法算子</h3>
+
+<table>
+<tr><th>方法</th><th>公式</th><th>用中文说就是</th><th>问题</th></tr>
+<tr><td>全局除法</td><td>L<sub>d</sub> = L<sub>v</sub> / L̄<sub>v</sub></td><td>每个像素除以平均亮度</td><td>暗处仍然太暗</td></tr>
+<tr><td>局部除法</td><td>L<sub>d</sub> = L<sub>v</sub> / L<sub>blur</sub></td><td>除以周围区域的平均亮度</td><td>边缘有光晕（halo）</td></tr>
+</table>
+
+<hr>
+
+<h2 id="20-9-reinhard-色调映射-逐行注释">20.9 Reinhard 色调映射（逐行注释）</h2>
+
+<p><strong>这是在解决什么问题</strong>：Reinhard 色调映射（2002年发表）是最经典的色调映射算法。它把前面的所有技巧整合成三步——缩放→压缩→颜色重建。</p>
+
+<div class="guizang-figure">
+<img src="images/ch20/ch20_reinhard_flow.png" alt="Reinhard算子完整流程">
+<div class="guizang-caption">图20-3：Reinhard 色调映射完整流程——对数平均亮度→Key缩放→Sigmoid压缩→颜色重建</div>
+</div>
+
+<h3 id="完整代码-每行中文注释">完整代码（每行中文注释）</h3>
+
+<pre><code><span class="comment">// ======== Reinhard 色调映射（C++ 伪代码，每行注释） ========</span>
+<span class="comment">// 输入：HDR 图像（浮点数组，可能包含极大值如 100,000）</span>
+<span class="comment">// 输出：LDR 图像（浮点数组，范围约 [0, 1]）</span>
+
+<span class="comment">// ---- 函数1：计算对数平均亮度 ----</span>
+<span class="comment">// 这个函数的目的：找出场景的"感知平均亮度"</span>
+<span class="type">float</span> computeLogAverageLuminance(<span class="type">const</span> <span class="type">float</span>* hdrImage, <span class="type">int</span> pixelCount)
+{
+    <span class="type">float</span> sum = <span class="number">0.0f</span>;
+    <span class="type">float</span> delta = <span class="number">0.0001f</span>;    <span class="comment">// 防止 log(0) 的小常数</span>
+
+    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; pixelCount; i++)
+    {
+        <span class="comment">// 取 log：把宽范围压缩到可计算的范围</span>
+        sum += log(delta + hdrImage[i]);
+    }
+
+    <span class="comment">// 平均后取指数，得到"感知上的平均亮度"</span>
+    <span class="keyword">return</span> exp(sum / pixelCount);
+}
+
+<span class="comment">// ---- 函数2：亮度缩放（Key 调整） ----</span>
+<span class="comment">// 这个函数的目的：把 HDR 亮度的范围"挪"到适合压缩的位置</span>
+<span class="type">float</span> scaleLuminance(<span class="type">float</span> L, <span class="type">float</span> L_avg, <span class="type">float</span> key)
+{
+    <span class="comment">// key = "场景亮度偏好"参数，通常 key = 0.18（18% 灰卡反射率）</span>
+    <span class="comment">// key = 0.18 是摄影中的"中性灰"标准</span>
+    <span class="comment">// key 越大 → 场景整体偏亮（像过曝照片）</span>
+    <span class="comment">// key 越小 → 场景整体偏暗（像欠曝照片）</span>
+    <span class="comment">//</span>
+    <span class="comment">// 公式含义：scaled = (key / L_avg) × L</span>
+    <span class="comment">// 平均亮度高的场景 → 缩小幅度大 → 整体压暗</span>
+    <span class="comment">// 平均亮度低的场景 → 缩小幅度小 → 整体提亮</span>
+    <span class="keyword">return</span> (key / L_avg) * L;
+}
+
+<span class="comment">// ---- 函数3：Sigmoid 压缩 ----</span>
+<span class="comment">// 这个函数的目的：把缩放后的亮度压缩到 [0, 1] 范围</span>
+<span class="type">float</span> compressSigmoid(<span class="type">float</span> L_scaled)
+{
+    <span class="comment">// 基本 Reinhard 公式：L_d = L_scaled / (1 + L_scaled)</span>
+    <span class="comment">//</span>
+    <span class="comment">// 用中文说就是：亮度除以"自己+1"</span>
+    <span class="comment">//   L_scaled很小（暗区） → 分母≈1 → L_d≈L_scaled（线性保留）</span>
+    <span class="comment">//   L_scaled很大（亮区） → 分母≈L_scaled → L_d≈1（渐近饱和）</span>
+    <span class="comment">//   L_scaled=1（中间）  → L_d=0.5</span>
+    <span class="keyword">return</span> L_scaled / (<span class="number">1.0f</span> + L_scaled);
+}
+
+<span class="comment">// ---- 函数4：颜色重建（可选饱和度控制） ----</span>
+<span class="comment">// 这个函数的目的：把压缩后的亮度重新应用到 RGB 通道</span>
+<span class="type">void</span> reconstructColor(
+    <span class="type">const</span> <span class="type">float</span>* hdrR,     <span class="comment">// HDR 红色通道</span>
+    <span class="type">const</span> <span class="type">float</span>* hdrG,     <span class="comment">// HDR 绿色通道</span>
+    <span class="type">const</span> <span class="type">float</span>* hdrB,     <span class="comment">// HDR 蓝色通道</span>
+    <span class="type">float</span>* ldrR,           <span class="comment">// LDR 红色通道（输出）</span>
+    <span class="type">float</span>* ldrG,           <span class="comment">// LDR 绿色通道（输出）</span>
+    <span class="type">float</span>* ldrB,           <span class="comment">// LDR 蓝色通道（输出）</span>
+    <span class="type">const</span> <span class="type">float</span>* hdrLum,  <span class="comment">// HDR 原始亮度</span>
+    <span class="type">const</span> <span class="type">float</span>* ldrLum,  <span class="comment">// LDR 压缩后亮度</span>
+    <span class="type">int</span> pixelCount,
+    <span class="type">float</span> saturation       <span class="comment">// 饱和度控制 [0, 1]，通常 = 0.5~1.0</span>
+)
+{
+    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; pixelCount; i++)
+    {
+        <span class="comment">// 给每个通道（R/G/B）做饱和度修正</span>
+        <span class="comment">// 公式：C_ldr = (C_hdr / L_hdr)^s × L_ldr</span>
+        <span class="comment">//</span>
+        <span class="comment">// (C_hdr / L_hdr) = "这个颜色比例"</span>
+        <span class="comment">// ^s = 饱和度指数（s=1完全保持，s&lt;1降低饱和度）</span>
+        <span class="comment">// × L_ldr = 乘上压缩后的亮度</span>
+        <span class="comment">//</span>
+        <span class="comment">// s=1.0时：RGB比例完全保持（可能过艳）</span>
+        <span class="comment">// s=0.5时：颜色被"去饱和"→ 更自然</span>
+        ldrR[i] = pow(hdrR[i] / hdrLum[i], saturation) * ldrLum[i];
+        ldrG[i] = pow(hdrG[i] / hdrLum[i], saturation) * ldrLum[i];
+        ldrB[i] = pow(hdrB[i] / hdrLum[i], saturation) * ldrLum[i];
+    }
+}
+
+<span class="comment">// ---- 主函数：完整的色调映射管线 ----</span>
+<span class="type">void</span> reinhardToneMap(
+    <span class="type">const</span> <span class="type">float</span>* hdrImage,   <span class="comment">// HDR 亮度数组</span>
+    <span class="type">int</span> pixelCount,
+    <span class="type">float</span>* ldrOutput,         <span class="comment">// LDR 亮度输出</span>
+    <span class="type">float</span> key = <span class="number">0.18f</span>,        <span class="comment">// 亮度偏好（摄影参考：18%灰）</span>
+    <span class="type">float</span> saturation = <span class="number">0.6f</span>  <span class="comment">// 饱和度（默认 0.6 较自然）</span>
+)
+{
+    <span class="comment">// Step 0：计算对数平均亮度</span>
+    <span class="type">float</span> L_avg = computeLogAverageLuminance(hdrImage, pixelCount);
+
+    <span class="comment">// Step 1-2：对每个像素做 "缩放 + Sigmoid 压缩"</span>
+    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; pixelCount; i++)
+    {
+        <span class="type">float</span> L = hdrImage[i];
+        <span class="type">float</span> L_scaled = scaleLuminance(L, L_avg, key);  <span class="comment">// Step 1</span>
+        ldrOutput[i] = compressSigmoid(L_scaled);              <span class="comment">// Step 2</span>
+    }
+    <span class="comment">// Step 3（颜色）：在主程序中用 reconstructColor() 处理 RGB</span>
+}
+</code></pre>
+
+<h3 id="reinhard-参数速查">Reinhard 参数速查</h3>
+
+<table>
+<tr><th>参数</th><th>典型值</th><th>含义</th><th>大→小</th></tr>
+<tr><td>key</td><td>0.18（摄影标准）</td><td>整体亮度偏好</td><td>大→更亮，小→更暗</td></tr>
+<tr><td>saturation</td><td>0.6</td><td>饱和度控制</td><td>1→完全保持，0.5→适度去饱和</td></tr>
+<tr><td>对数平均</td><td>自动计算</td><td>场景的"感知平均亮度"</td><td>自动</td></tr>
+</table>
+
+<hr>
+
+<h2 id="20-10-局部算子">20.10 局部算子</h2>
+
+<h3 id="20-10-1-为什么要用局部">20.10.1 为什么要用局部？</h3>
+
+<p><strong>这是在解决什么问题</strong>：全局算子用同一个压缩曲线处理整个场景。但一个场景可能同时包含极亮（太阳）和极暗（洞内），全局曲线无法同时照顾两边。</p>
+
+<pre><code>全局 Sigmoid 的问题：
+  太阳亮度 = 100,000 → 被压到接近 1.0
+  洞内亮度 = 0.1 → 被放大到接近 0.0（仍然太暗？）
+  如果让洞内可见 → 调低 f → 太阳会过曝
+
+解决方案：不同区域用不同的压缩曲线。
+  太阳区 → 用大 f（压缩更狠）
+  阴影区 → 用小 f（压缩更轻）
+  这需要知道"每个像素所属的区域"→ 局部算子
+</code></pre>
+
+<h3 id="20-10-2-局部除法---双边滤波">20.10.2 局部除法 + 双边滤波</h3>
+
+<table>
+<tr><th>方法</th><th>公式</th><th>优点</th><th>问题</th></tr>
+<tr><td>高斯模糊除法</td><td>L<sub>d</sub> = L<sub>v</sub> / L<sub>gaussian</sub></td><td>简单快速</td><td>边缘产生光晕（halo）</td></tr>
+<tr><td>双边滤波除法</td><td>L<sub>d</sub> = L<sub>v</sub> / L<sub>bilateral</sub></td><td>边缘保持，无光晕</td><td>计算慢</td></tr>
+</table>
+
+<h3 id="20-10-3-频率域方法">20.10.3 频率域方法</h3>
+
+<p><strong>这是在解决什么问题</strong>：既然照度是"低频"（变化慢），反射率是"高频"（变化快），那就把图像做"频段分离"——压缩低频、保留高频。</p>
+
+<pre><code>步骤：
+  ① 把图像转到"对数域"（把乘法变成加法）
+  ② 用双边滤波分离 base（低频/照度）和 detail（高频/反射率）
+  ③ 只压缩 base layer（照度）
+  ④ 把 detail 加回去
+  ⑤ 指数变换回亮度
+</code></pre>
+
+<div class="key-box">
+<strong>关键洞察</strong>：频率域方法的核心优势——照度被压了，但纹理细节（反射率）完完整整保留下来。这是目前质量最高的色调映射方式。
+</div>
+
+<hr>
+
+<h2 id="20-11-工业级算子">20.11 工业级算子</h2>
+
+<div class="guizang-figure">
+<img src="images/ch20/ch20_aces_curve.png" alt="ACES/Filmic 色调映射曲线">
+<div class="guizang-caption">图20-4：ACES/Filmic S形曲线——模拟真实胶片的光化学响应，暗部线性、亮部柔和压缩</div>
+</div>
+
+<h3 id="20-11-1-aces-academy-color-encoding-system">20.11.1 ACES（Academy Color Encoding System）</h3>
+
+<p>ACES 是好莱坞电影工业的标准色调映射方案。用一句话说：<strong>ACES 是一条"模拟真实胶片响应"的多项式曲线</strong>。</p>
+
+<table>
+<tr><th>特性</th><th>说明</th></tr>
+<tr><td>输入</td><td>场景线性光（scene-referred）</td></tr>
+<tr><td>输出</td><td>显示就绪的 sRGB（display-referred）</td></tr>
+<tr><td>核心</td><td>一个拟合好的多项式函数</td></tr>
+<tr><td>暗部处理</td><td>保持对比度</td></tr>
+<tr><td>亮部处理</td><td>"胶片肩部"——模拟真实胶片的饱和</td></tr>
+</table>
+
+<h3 id="20-11-2-filmic-uncharted-2---john-hable">20.11.2 Filmic（Uncharted 2 / John Hable）</h3>
+
+<table>
+<tr><th>对比维度</th><th>ACES</th><th>Filmic</th></tr>
+<tr><td>追求</td><td>物理准确（电影标准）</td><td>视觉好看（游戏标准）</td></tr>
+<tr><td>暗部</td><td>准确还原</td><td>特意提亮（玩家需要看清暗处）</td></tr>
+<tr><td>调参</td><td>固定曲线</td><td>对比度、饱和度、白点可调</td></tr>
+<tr><td>复杂度</td><td>较高（多项式拟合）</td><td>较低（6个系数）</td></tr>
+</table>
+
+<h3 id="20-11-3-其他工业算子速览">20.11.3 其他工业算子速览</h3>
+
+<table>
+<tr><th>算子</th><th>来源</th><th>特点</th></tr>
+<tr><td><strong>Lottes</strong></td><td>Lottes 2016</td><td>暗部细节特别好</td></tr>
+<tr><td><strong>Uchimura</strong></td><td>Uchimura 2017</td><td>针对 HDR 显示器优化</td></tr>
+<tr><td><strong>Khrushchev（AgX）</strong></td><td>Blender 3.0+</td><td>Blender 默认色调映射</td></tr>
+<tr><td><strong>Frostbite</strong></td><td>EA/DICE</td><td>EA 商用引擎的色调映射（未公开）</td></tr>
+<tr><td><strong>Gran Turismo</strong></td><td>Polyphony Digital</td><td>赛车游戏的胶片感</td></tr>
+</table>
+
+<hr>
+
+<h2 id="20-12-公式速查与选型指南">20.12 公式速查与选型指南</h2>
+
+<h3 id="公式速查表">公式速查表</h3>
+
+<table>
+<tr><th>概念</th><th>公式</th><th>用中文说就是</th></tr>
+<tr><td>图像形成模型</td><td>L = r × E</td><td>亮度 = 反射率 × 照度</td></tr>
+<tr><td>对数分解</td><td>log(L) = log(r) + log(E)</td><td>乘法变加法，方便分开处理</td></tr>
+<tr><td>对数平均亮度</td><td>L̄ = exp((1/N)Σ log(δ+L<sub>i</sub>))</td><td>防止高亮像素带偏平均值</td></tr>
+<tr><td>除法算子</td><td>L<sub>d</sub> = L<sub>v</sub> / f</td><td>每个像素除以参考值 f</td></tr>
+<tr><td>Sigmoid 压缩</td><td>L<sub>d</sub> = L<sub>v</sub> / (L<sub>v</sub> + f)</td><td>暗区线性、亮区压缩</td></tr>
+<tr><td>饱和度修正</td><td>C<sub>d</sub> = (C<sub>v</sub>/L<sub>v</sub>)<sup>s</sup> × L<sub>d</sub></td><td>s控制饱和度</td></tr>
+<tr><td>Reinhard 三步</td><td>①L′=(key/L̄)L ②L<sub>d</sub>=L′/(1+L′) ③C<sub>d</sub>=(C<sub>v</sub>/L<sub>v</sub>)<sup>sat</sup>×L<sub>d</sub></td><td>缩放→Sigmoid→颜色重建</td></tr>
+<tr><td>对数压缩</td><td>L<sub>d</sub> = log(1+L<sub>v</sub>)/log(1+L<sub>max</sub>)</td><td>取对数再归一化</td></tr>
+</table>
+
+<h3 id="快速选型指南">快速选型指南</h3>
+
+<table>
+<tr><th>场景</th><th>推荐算子</th><th>原因</th></tr>
+<tr><td>移动端游戏</td><td>Reinhard 全局</td><td>快、简单、GPU 开销小</td></tr>
+<tr><td>PC/主机游戏</td><td>ACES 或 Filmic</td><td>质量高、参数好调</td></tr>
+<tr><td>电影/离线渲染</td><td>局部算子（双边滤波）</td><td>质量最优</td></tr>
+<tr><td>建筑可视化</td><td>Reinhard</td><td>稳定、参数少</td></tr>
+<tr><td>VR/AR</td><td>全局算子 + 防晕动</td><td>速度快</td></tr>
+<tr><td>夜场景</td><td>暗视觉模型 + 蓝移</td><td>沉浸感</td></tr>
+</table>
+
+<hr>
+
+<div class="key-box">
+<strong>一句话记住第20章</strong><br>
+色调映射 = 告诉显示器"你看到的亮部该多亮、暗部该多暗"——它模拟人眼的适应能力，把物理世界的宽亮度范围巧妙地塞进显示器的窄范围里。
+</div>
+
+<hr>
+
+<div class="fn-def"><strong>脚注</strong></div>
+<div class="fn-def">&#8224; <strong>尼特（nit）</strong>：亮度单位 cd/m²，1尼特≈一根蜡烛在1平方米面积上的亮度。普通显示器约300尼特，阳光直射表面可达100,000尼特。</div>
+<div class="fn-def">&#8224; <strong>SDR（标准动态范围）</strong>：Standard Dynamic Range，普通显示器的亮度范围，亮度值在0~300尼特之间，对比度约1000:1。</div>
+<div class="fn-def">&#8224; <strong>动态范围（Dynamic Range）</strong>：场景中最亮和最暗的比值。常用对数表示，差1个log单位意味着差10倍。</div>
+<div class="fn-def">&#8224; <strong>Sigmoid 函数</strong>：S形曲线，在0附近近似线性，在正负无穷处渐近饱和。因其形状像字母S而得名。是神经网络激活函数和色调映射曲线的共同数学基础。</div>
+<div class="fn-def">&#8224; <strong>半饱和常数</strong>：当 L<sub>render</sub> = k 时输出恰好为0.5。k越小，曲线越早开始压缩（暗部保留更好）；k越大，曲线越晚压缩（亮部更亮但可能过曝）。</div>
+<div class="fn-def">&#8224; <strong>色相/饱和度/亮度</strong>：色相（Hue）= 色彩的主色调（红/绿/蓝等）；饱和度（Saturation）= 色彩的鲜艳程度（从灰到纯色）；亮度（Luminance）= 色彩的明暗程度。</div>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li class="active"><a href="ch20_色调再现.html" class="active">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#20-1-问题的诞生-深夜看电视场景">20.1 问题的诞生：深夜看电视场景</a></li>
+  <li class="toc-h3"><a href="#20-1-1-数字层面的问题">20.1.1 数字层面的问题</a></li>
+  <li class="toc-h3"><a href="#20-1-2-人眼的动态范围--8224">20.1.2 人眼的动态范围&#8224;</a></li>
+  <li class="toc-h2"><a href="#20-2-三种直觉解法">20.2 三种直觉解法</a></li>
+  <li class="toc-h3"><a href="#解法-1-直接线性缩放-最简单但最差">解法 1：直接线性缩放（最简单但最差）</a></li>
+  <li class="toc-h3"><a href="#解法-2-取对数-经典解法">解法 2：取对数（经典解法）</a></li>
+  <li class="toc-h3"><a href="#解法-3-s-形曲线-工业标准">解法 3：S 形曲线（工业标准）</a></li>
+  <li class="toc-h2"><a href="#20-3-为什么不能简单缩放">20.3 为什么不能简单缩放？</a></li>
+  <li class="toc-h3"><a href="#核心矛盾">核心矛盾</a></li>
+  <li class="toc-h2"><a href="#20-4-两条路线">20.4 两条路线</a></li>
+  <li class="toc-h2"><a href="#20-5-动态范围详解">20.5 动态范围详解</a></li>
+  <li class="toc-h3"><a href="#20-5-1-ldr-和-hdr-编码格式">20.5.1 LDR 和 HDR 编码格式</a></li>
+  <li class="toc-h3"><a href="#20-5-2-三种度量方式">20.5.2 三种度量方式</a></li>
+  <li class="toc-h2"><a href="#20-6-颜色处理">20.6 颜色处理</a></li>
+  <li class="toc-h3"><a href="#20-6-1-亮度压缩-颜色不变">20.6.1 亮度压缩，颜色不变</a></li>
+  <li class="toc-h3"><a href="#20-6-2-饱和度问题">20.6.2 饱和度问题</a></li>
+  <li class="toc-h2"><a href="#20-7-图像形成模型">20.7 图像形成模型</a></li>
+  <li class="toc-h3"><a href="#20-7-1-基本模型">20.7.1 基本模型</a></li>
+  <li class="toc-h3"><a href="#20-7-2-对数域-加法比乘法好处理">20.7.2 对数域：加法比乘法好处理</a></li>
+  <li class="toc-h2"><a href="#20-8-全局空间算子">20.8 全局空间算子</a></li>
+  <li class="toc-h3"><a href="#20-8-1-对数平均亮度">20.8.1 对数平均亮度</a></li>
+  <li class="toc-h3"><a href="#20-8-2-sigmoid-压缩曲线">20.8.2 Sigmoid 压缩曲线</a></li>
+  <li class="toc-h3"><a href="#20-8-3-除法算子">20.8.3 除法算子</a></li>
+  <li class="toc-h2"><a href="#20-9-reinhard-色调映射-逐行注释">20.9 Reinhard 色调映射（逐行注释）</a></li>
+  <li class="toc-h3"><a href="#完整代码-每行中文注释">完整代码（每行中文注释）</a></li>
+  <li class="toc-h3"><a href="#reinhard-参数速查">Reinhard 参数速查</a></li>
+  <li class="toc-h2"><a href="#20-10-局部算子">20.10 局部算子</a></li>
+  <li class="toc-h3"><a href="#20-10-1-为什么要用局部">20.10.1 为什么要用局部？</a></li>
+  <li class="toc-h3"><a href="#20-10-2-局部除法---双边滤波">20.10.2 局部除法 + 双边滤波</a></li>
+  <li class="toc-h3"><a href="#20-10-3-频率域方法">20.10.3 频率域方法</a></li>
+  <li class="toc-h2"><a href="#20-11-工业级算子">20.11 工业级算子</a></li>
+  <li class="toc-h3"><a href="#20-11-1-aces-academy-color-encoding-system">20.11.1 ACES（Academy Color Encoding System）</a></li>
+  <li class="toc-h3"><a href="#20-11-2-filmic-uncharted-2---john-hable">20.11.2 Filmic（Uncharted 2 / John Hable）</a></li>
+  <li class="toc-h3"><a href="#20-11-3-其他工业算子速览">20.11.3 其他工业算子速览</a></li>
+  <li class="toc-h2"><a href="#20-12-公式速查与选型指南">20.12 公式速查与选型指南</a></li>
+  <li class="toc-h3"><a href="#公式速查表">公式速查表</a></li>
+  <li class="toc-h3"><a href="#快速选型指南">快速选型指南</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

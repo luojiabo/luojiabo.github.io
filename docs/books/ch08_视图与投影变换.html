@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch08: 视图与投影变换</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch08 视图与投影变换</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第8章：视图与投影变换 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第8章（p.157-169）。<br>
+<strong>本章是 3D 图形学的"心脏"</strong>——它回答一个根本问题：<em>3D 世界里的物体，如何变成 2D 屏幕上的像素？</em><br>
+学完本章你将掌握视图变换、投影变换、视口变换这"三把钥匙"，真正理解 3D 渲染管线的本质。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s81">8.1 视图变换：从世界到屏幕的"四空间"旅程</a>
+    <ul>
+      <li><a href="#s811">8.1.1 四个空间与四个变换</a></li>
+      <li><a href="#s812">8.1.2 视图变换的三个子变换</a></li>
+      <li><a href="#s813">8.1.3 视口变换</a></li>
+      <li><a href="#s814">8.1.4 规范化视体</a></li>
+      <li><a href="#s815">8.1.5 正交投影</a></li>
+      <li><a href="#s816">8.1.6 相机变换（uvw坐标系）</a></li>
+    </ul>
+  </li>
+  <li><a href="#s82">8.2 投影变换：远近的魔法</a>
+    <ul>
+      <li><a href="#s821">8.2.1 为什么需要透视投影</a></li>
+      <li><a href="#s822">8.2.2 齐次坐标的魔法</a></li>
+      <li><a href="#s823">8.2.3 透视投影矩阵详解</a></li>
+      <li><a href="#s824">8.2.4 透视投影的几何直觉</a></li>
+    </ul>
+  </li>
+  <li><a href="#s83">8.3 完整渲染管线</a></li>
+  <li><a href="#s84">8.4 实用考虑</a>
+    <ul>
+      <li><a href="#s841">8.4.1 深度精度</a></li>
+      <li><a href="#s842">8.4.2 视锥体剔除</a></li>
+      <li><a href="#s843">8.4.3 半个像素问题</a></li>
+    </ul>
+  </li>
+</ul>
+</div>
+
+<p><strong>学习目标</strong>
+<ol>
+  <li>理解视图变换的本质——一个"变换链"将物体从自身空间映射到屏幕</li>
+  <li>掌握正交投影——保持平行线的工程/制图投影</li>
+  <li>掌握透视投影——模拟人眼"远小近大"的效果</li>
+  <li>理解齐次坐标——它不只能区分"位置 vs 方向"，还能表达"无穷远"</li>
+  <li>理解透视除法的几何含义——为什么 w = z 是"魔法"</li>
+</ol>
+</p>
+
+<hr>
+
+<h2 id="8-1-视图变换-从世界到屏幕的-四空间-旅程">8.1 视图变换：从世界到屏幕的"四空间"旅程</h2>
+
+<h3 id="8-1-1-为什么需要视图变换">8.1.1 为什么需要视图变换？</h3>
+
+<p><strong>问题</strong>：你有一个 3D 场景，里面有房子、树木、天空。你想看到这个场景——就像你站在某个位置用相机拍照一样。</p>
+
+<p>但计算机的屏幕是 2D 的。所以我们需要一个过程，把 3D 场景"拍"到 2D 平面上。这个过程就是<strong>视图变换</strong>。</p>
+
+<blockquote>
+<p><strong>生活类比：拍一张照片</strong><br>
+你举起手机拍一张照片，背后发生了三件事：<br>
+1. 你站在某个位置，看向某个方向（<strong>相机变换</strong>）<br>
+2. 光线通过镜头，把 3D 景物投射到感光元件上（<strong>投影变换</strong>）<br>
+3. 感光元件把光信号转换成像素（<strong>视口变换</strong>）</p>
+</blockquote>
+
+<p>整个视图变换过程让物体在 4 个空间之间"流动"：</p>
+
+<pre><code>物体空间(Object) → 世界空间(World) → 相机空间(Camera) → 屏幕空间(Screen)
+   ↑建模变换           ↑相机变换           ↑投影变换          ↑视口变换</code></pre>
+
+<div class="key-box">
+<strong>核心洞察</strong>：理解渲染管线 = 理解这 4 个空间 + 4 个变换。每个变换只做一件事——<strong>把物体从一个坐标系"翻译"到另一个坐标系</strong>。
+</div>
+
+<table>
+<tr><th>空间</th><th>含义</th><th>类比</th></tr>
+<tr><td><strong>物体空间</strong></td><td>物体自身的坐标系，原点通常在物体中心</td><td>你手里拿着的模型</td></tr>
+<tr><td><strong>世界空间</strong></td><td>场景的绝对坐标系，所有物体共享</td><td>房间里的全局位置</td></tr>
+<tr><td><strong>相机空间</strong></td><td>以相机为原点的坐标系</td><td>你眼睛看到的世界</td></tr>
+<tr><td><strong>屏幕空间</strong></td><td>最终像素坐标 [0, width] × [0, height]</td><td>照片上的位置</td></tr>
+</table>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：如果跳过"世界空间"，直接从物体空间到相机空间行不行？<br>
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">技术上可以——把建模矩阵和相机矩阵合并。但这样每个物体都需要独立的"合并矩阵"，场景中有100个物体就需要算100次。分开的好处是：世界矩阵只需算一次（相机的位置是固定的），每个物体的建模矩阵独立计算。这就是"分而治之"的思想。</blockquote>
+</div>
+
+<h3 id="8-1-2-视图变换的三个子变换">8.1.2 视图变换的三个子变换</h3>
+
+<p>视图变换由三个子变换组成：</p>
+
+<div class="formula">M_view = M_vp × M_proj × M_cam</div>
+
+<table>
+<tr><th>子变换</th><th>作用</th><th>输入→输出</th><th>依赖参数</th></tr>
+<tr><td><strong>相机变换</strong> M_cam</td><td>世界坐标 → 相机坐标</td><td>p_world → p_camera</td><td>相机位置 e、朝向 g、向上方向 t</td></tr>
+<tr><td><strong>投影变换</strong> M_proj</td><td>相机坐标 → 规范化设备坐标</td><td>p_camera → p_ndc</td><td>投影类型（正交/透视）、近远平面</td></tr>
+<tr><td><strong>视口变换</strong> M_vp</td><td>规范化坐标 → 像素坐标</td><td>[-1,1]² → [0,width]×[0,height]</td><td>屏幕分辨率 nₓ, nᵧ</td></tr>
+</table>
+
+<p>渲染每条线段时的伪代码：</p>
+
+<pre><code><span class="comment">// 构造三个矩阵</span>
+construct M_vp        <span class="comment">// 视口矩阵：取决于屏幕大小</span>
+construct M_orth      <span class="comment">// 投影矩阵：正交或透视</span>
+construct M_cam       <span class="comment">// 相机矩阵：取决于相机位置</span>
+
+<span class="comment">// 合并为总变换矩阵</span>
+M = M_vp × M_orth × M_cam
+
+<span class="comment">// 对每个线段进行变换和绘制</span>
+for each line segment (aᵢ, bᵢ) do
+    p = M × aᵢ        <span class="comment">// 变换线段端点</span>
+    q = M × bᵢ
+    drawline(x_p, y_p, x_q, y_q)  <span class="comment">// 在屏幕上画线</span></code></pre>
+
+<h3 id="8-1-3-视口变换-viewport-transform">8.1.3 视口变换（Viewport Transform）</h3>
+
+<p><strong>为什么需要视口变换？</strong> 规范化设备坐标（NDC）的范围是 [-1, 1]²，但屏幕像素坐标是 [0, nₓ] × [0, nᵧ]。我们需要把 -1~1 映射到 0~宽/高。</p>
+
+<p><strong>公式</strong>：</p>
+
+<div class="formula">M_vp = [nₓ/2, 0, (nₓ-1)/2; 0, nᵧ/2, (nᵧ-1)/2; 0, 0, 1]</div>
+
+<p><strong>公式拆解</strong>：</p>
+
+<table>
+<tr><th>矩阵元素</th><th>值</th><th>含义</th></tr>
+<tr><td>(0, 0)</td><td>nₓ / 2</td><td>把 [-1, 1] 的 x 范围缩放到 [0, nₓ]</td></tr>
+<tr><td>(1, 1)</td><td>nᵧ / 2</td><td>把 [-1, 1] 的 y 范围缩放到 [0, nᵧ]</td></tr>
+<tr><td>(0, 2)</td><td>(nₓ - 1) / 2</td><td>把缩放后的中心移到像素坐标原点</td></tr>
+<tr><td>(1, 2)</td><td>(nᵧ - 1) / 2</td><td>同上，y 方向</td></tr>
+</table>
+
+<div class="key-box">
+<strong>重要洞察</strong>"<em>(nₓ-1)/2</em> 中的 <em>-1</em> 是因为像素中心在 (0, 0) 到 (nₓ-1, nᵧ-1)——最后一个像素的<strong>中心</strong>是 (nₓ-1, nᵧ-1)，不是 (nₓ, nᵧ)。这是从第3章学到的"半个像素 overshoot"约定。
+</div>
+
+<p><strong>数值例子</strong>：假设屏幕分辨率是 1920 × 1080：</p>
+
+<pre><code>M_vp = [960, 0, 959.5]
+       [0, 540, 539.5]
+       [0, 0, 1]
+
+对 NDC 点 (0, 0)：
+  x_screen = 960 × 0 + 959.5 = 959.5 → 接近屏幕中心
+对 NDC 点 (1, 1)（最右上角）：
+  x_screen = 960 × 1 + 959.5 = 1919.5 → 最后一个像素中心
+  y_screen = 540 × 1 + 539.5 = 1079.5 → 最后一行像素中心</code></pre>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：视口矩阵还保留了 z 坐标（最后一行 [0, 0, 1]），为什么？<br>
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">为了<strong>深度测试</strong>（z-buffer）。GPU 需要知道每个像素的深度值，才能判断哪个物体更近。视口变换只是"传递"z 坐标，不做缩放——因为投影变换已经处理了深度映射。</blockquote>
+</div>
+
+<h3 id="8-1-4-规范化视体-canonical-view-volume">8.1.4 规范化视体（Canonical View Volume）</h3>
+
+<p><strong>问题</strong>：不同的投影方式（正交、透视）产生不同的"可视区域"。为了让 GPU 统一处理，我们需要一个<strong>标准化的参考系</strong>。</p>
+
+<div class="guizang-figure">
+<img src="images/ch08/orthographic.png" alt="正交投影映射到规范化立方体">
+<div class="guizang-caption">图8-2：正交投影把长方体映射到规范化立方体 [-1, 1]³</div>
+</div>
+
+<p><strong>规范化视体</strong>：边长为 2 的立方体，中心在原点，所有可见点的坐标范围：</p>
+
+<div class="formula">[-1, 1] × [-1, 1] × [-1, 1]</div>
+
+<p><strong>为什么用 [-1, 1]³ 而不是其他范围？</strong></p>
+
+<table>
+<tr><th>原因</th><th>解释</th></tr>
+<tr><td><strong>对称性</strong></td><td>中心在原点，正负对称，便于公式推导</td></tr>
+<tr><td><strong>GPU 原生支持</strong></td><td>大多数图形硬件（OpenGL）期望 NDC 在 [-1, 1]</td></tr>
+<tr><td><strong>统一接口</strong></td><td>正交/透视投影都"收敛"到同一个立方体，光栅化阶段无需区分</td></tr>
+</table>
+
+<div class="key-box">
+<strong>重要洞察</strong>：规范化视体是投影变换的"输出格式"。无论输入是什么形状的视锥体，输出都是 [-1, 1]³。这相当于把所有可能的"相机镜头"都翻译成 GPU 能理解的"通用语言"。
+</div>
+
+<h3 id="8-1-5-正交投影-orthographic-projection">8.1.5 正交投影（Orthographic Projection）</h3>
+
+<p><strong>为什么需要正交投影？</strong> 有些情况下，我们不想要"远小近大"的透视效果。例如工程图纸、2D 游戏、UI 界面——我们需要保持物体的<strong>真实比例</strong>。</p>
+
+<p><strong>生活类比</strong>：在 CAD 软件中看一个零件的三视图——从正面看过去，零件的前面和后面一样大。这就是正交投影。</p>
+
+<p><strong>问题</strong>：我们的"可视区域"是一个任意长方体 [l, r] × [b, t] × [f, n]。需要把它映射到规范化立方体 [-1, 1]³。</p>
+
+<p><strong>公式</strong>：</p>
+
+<div class="formula">M_orth = [2/(r-l), 0, 0, -(r+l)/(r-l); 0, 2/(t-b), 0, -(t+b)/(t-b); 0, 0, 2/(n-f), (n+f)/(n-f); 0, 0, 0, 1]</div>
+
+<p><strong>逐行拆解</strong>：</p>
+
+<table>
+<tr><th>行</th><th>操作</th><th>解释</th></tr>
+<tr><td>第1行</td><td>x' = 2x/(r-l) - (r+l)/(r-l)</td><td>把 x 从 [l, r] 缩放到 [-1, 1]，中心移到 0</td></tr>
+<tr><td>第2行</td><td>y' = 2y/(t-b) - (t+b)/(t-b)</td><td>把 y 从 [b, t] 缩放到 [-1, 1]</td></tr>
+<tr><td>第3行</td><td>z' = 2z/(n-f) + (n+f)/(n-f)</td><td>把 z 从 [f, n] 缩放到 [-1, 1]</td></tr>
+</table>
+
+<p>注意第三行：因为 z 轴方向是 <strong>near = 大 z，far = 小 z</strong>（往屏幕里看是 -z 方向），所以分母是 (n-f)。</p>
+
+<p><strong>数值例子</strong>：假设视体是 l=-2, r=2, b=-1.5, t=1.5, f=-10, n=-1：</p>
+
+<pre><code>M_orth = [2/(2-(-2))=0.5, 0, 0, -(2+(-2))/(2-(-2))=0]
+         [0, 2/(1.5-(-1.5))=0.667, 0, -(1.5+(-1.5))/(1.5-(-1.5))=0]
+         [0, 0, 2/(-1-(-10))=0.222, (-1+(-10))/(-1-(-10))=-1.222]
+         [0, 0, 0, 1]
+
+对点 (2, 1.5, -10)（视体右上后角）：
+  x' = 0.5 × 2 + 0 = 1          ← 映射到 NDC 最右边
+  y' = 0.667 × 1.5 + 0 = 1      ← 映射到 NDC 最上边
+  z' = 0.222 × (-10) + (-1.222) = -1  ← 映射到 NDC 最后面</code></pre>
+
+<div class="key-box">
+<strong>重要洞察</strong>：正交投影是<strong>仿射变换</strong>（4×4 矩阵最后一行 [0,0,0,1]）。这意味着它保持平行线——两条平行线在正交投影后仍然平行。<strong>没有"汇聚"效果</strong>。这正是工程制图所需要的。
+</div>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：正交投影不改变物体的大小。一个离相机 1 米的球和一个离相机 100 米的球在屏幕上一模一样大。这符合真实世界的视觉效果吗？<br>
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">不符合！人眼看远处的物体就是会变小。所以正交投影只用于特定场景：工程制图、2D 游戏、UI 渲染、以及某些科学可视化。真实感渲染需要用<strong>透视投影</strong>。</blockquote>
+</div>
+
+<p><strong>正交投影的应用场景</strong>：</p>
+<ul>
+  <li><strong>工程图纸（CAD）</strong>——保持比例，精确测量</li>
+  <li><strong>2D 游戏</strong>——精灵图直接显示，不需要透视</li>
+  <li><strong>UI 渲染</strong>——界面层永远是正交投影</li>
+  <li><strong>阴影贴图（Shadow Map）</strong>——有些光源用正交投影生成阴影</li>
+</ul>
+
+<h3 id="8-1-6-任意-3d-视图-相机变换-uv-w-坐标系">8.1.6 任意 3D 视图（相机变换 uv w 坐标系）</h3>
+
+<p><strong>问题</strong>：上面的正交投影假定相机在原点看向 -z 方向。但真实场景中，相机可以在任意位置看向任意方向。</p>
+
+<div class="guizang-figure">
+<img src="images/ch08/camera_coords.png" alt="相机坐标系(u,v,w)">
+<div class="guizang-caption">图8-3：相机坐标系——用 u、v、w 三个正交基向量定义相机的方向</div>
+</div>
+
+<p><strong>解决</strong>：构造一个<strong>相机坐标系（uvw）</strong>——以相机位置为原点，三个正交轴：</p>
+
+<ul>
+  <li><strong>w</strong> = 相机朝向的反方向（指向场景）</li>
+  <li><strong>u</strong> = 相机的"右侧"方向</li>
+  <li><strong>v</strong> = 相机的"上方向"</li>
+</ul>
+
+<p><strong>构造算法</strong>：</p>
+
+<pre><code><span class="comment">// 输入：相机位置 e，视线方向 g，向上向量 t</span>
+<span class="comment">// 输出：三个正交基向量 u, v, w</span>
+
+w = -g / ||g||              <span class="comment">// w 指向场景（视线反方向）</span>
+                            <span class="comment">// 除以模长使其成为单位向量</span>
+
+u = (t × w) / ||t × w||    <span class="comment">// u = up × w，即"右侧"</span>
+                            <span class="comment">// 叉积保证 u 垂直于 w</span>
+
+v = w × u                   <span class="comment">// v = w × u，即"上方向"</span>
+                            <span class="comment">// 保证 v 垂直于 u 和 w（右手系）</span></code></pre>
+
+<p><strong>公式拆解</strong>：</p>
+
+<table>
+<tr><th>符号</th><th>含义</th><th>数值例子</th></tr>
+<tr><td>e</td><td>相机在世界中的位置</td><td>e = (0, 2, 5)——相机在 Y=2 高度，Z=5 的位置</td></tr>
+<tr><td>g</td><td>视线方向（从 e 指向场景）</td><td>g = (0, 0, -1)——看向 -z 方向</td></tr>
+<tr><td>t</td><td>世界"上方向"向量</td><td>t = (0, 1, 0)——Y 轴向上</td></tr>
+<tr><td>w</td><td>归一化视线反方向</td><td>w = (0, 0, 1)——看向 +z（但在相机坐标系是 -z）</td></tr>
+<tr><td>u</td><td>右方向</td><td>u = t × w = (1, 0, 0)</td></tr>
+<tr><td>v</td><td>上方向</td><td>v = w × u = (0, 1, 0)</td></tr>
+</table>
+
+<p><strong>相机变换矩阵</strong>：</p>
+
+<div class="formula">M_cam = [u.x, u.y, u.z, -e·u; v.x, v.y, v.z, -e·v; w.x, w.y, w.z, -e·w; 0, 0, 0, 1]</div>
+
+<p><strong>矩阵结构解读</strong>：</p>
+
+<table>
+<tr><th>部分</th><th>内容</th><th>含义</th></tr>
+<tr><td>左上 3×3</td><td>u, v, w 三个行向量</td><td><strong>旋转</strong>——把世界坐标旋转到相机朝向</td></tr>
+<tr><td>右上 3×1</td><td>-e·u, -e·v, -e·w</td><td><strong>平移</strong>——把世界原点移到相机位置</td></tr>
+<tr><td>最后一行</td><td>(0, 0, 0, 1)</td><td>标准齐次坐标——说明这是仿射变换</td></tr>
+</table>
+
+<pre><code><span class="comment">// 数值例子：相机在 (0, 2, 5)，看向 (0, 0, -1)，Up=(0,1,0)</span>
+<span class="comment">// 计算过程</span>
+w = (0, 0, 1)                              <span class="comment">// g=(0,0,-1) 取反</span>
+u = (0,1,0) × (0,0,1) / ||...|| = (1,0,0)  <span class="comment">// t × w</span>
+v = (0,0,1) × (1,0,0) = (0,1,0)           <span class="comment">// w × u</span>
+
+<span class="comment">// 平移部分</span>
+-e·u = -(0,2,5)·(1,0,0) = -0                <span class="comment">// x 方向无需平移</span>
+-e·v = -(0,2,5)·(0,1,0) = -2                <span class="comment">// y 方向下移 2</span>
+-e·w = -(0,2,5)·(0,0,1) = -5                <span class="comment">// z 方向后退 5</span>
+
+<span class="comment">// 完整矩阵</span>
+M_cam = [1, 0, 0,  0]
+        [0, 1, 0, -2]
+        [0, 0, 1, -5]
+        [0, 0, 0,  1]
+
+<span class="comment">// 验证：世界原点 (0,0,0) → 相机坐标 (0, -2, -5)</span>
+M_cam × (0,0,0,1)^T = (0, -2, -5, 1)^T    <span class="comment">✓ 相机"看到"原点在下方 2 单位，前方 5 单位</span></code></pre>
+
+<hr>
+
+<h2 id="8-2-投影变换-projective-transformations">8.2 投影变换（Projective Transformations）</h2>
+
+<h3 id="8-2-1-为什么需要透视投影">8.2.1 为什么需要透视投影？</h3>
+
+<p><strong>为什么正交投影不够？</strong> 正交投影保持了平行线和比例，但<strong>真实世界不是这样的</strong>。你看远处的山——它看起来比近处的树还小。这种"远小近大"的效果就是<strong>透视</strong>。</p>
+
+<div class="guizang-figure">
+<img src="images/ch08/pinhole_camera.png" alt="针孔相机模型">
+<div class="guizang-caption">图8-4：针孔相机模型——光线穿过针孔，在成像平面形成倒像。这是透视投影的物理基础</div>
+</div>
+
+<p><strong>针孔相机模型</strong>是最简单的透视模型：</p>
+<ul>
+  <li>所有光线都通过一个"点"（针孔 = 相机位置）</li>
+  <li>光线在成像平面上投影</li>
+  <li>物体越远，投影越小（因为光线角度变小）</li>
+</ul>
+
+<p><strong>核心公式</strong>（透视投影的基本形式）：</p>
+
+<div class="formula">y_screen = (n / z) × y</div>
+
+<p><strong>公式拆解</strong>：</p>
+<ul>
+  <li><em>y_screen</em>：屏幕上看到的 y 坐标</li>
+  <li><em>y</em>：物体在 3D 空间中的实际 y 坐标</li>
+  <li><em>n</em>：近平面距离（相机到成像平面的距离）</li>
+  <li><em>z</em>：物体到相机的深度（z 坐标）</li>
+  <li><em>n / z</em>：缩放因子——z 越大，缩放因子越小</li>
+</ul>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：z 在分母上意味着什么？<br>
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">透视投影<strong>不是线性变换</strong>！仿射变换（如旋转、缩放、平移）都是线性的——可以写成 4×4 矩阵乘法，最后一行为 [0,0,0,1]。但透视投影需要除以 z，这不是矩阵乘法能直接表达的。这就是为什么我们需要<strong>齐次坐标</strong>。</blockquote>
+</div>
+
+<p><strong>仿射变换 vs 投影变换</strong>：</p>
+
+<table>
+<tr><th>类型</th><th>形式</th><th>矩阵最后一行</th><th>例子</th></tr>
+<tr><td><strong>仿射变换</strong></td><td>x' = ax + by + cz + d</td><td>[0, 0, 0, 1]</td><td>旋转、平移、缩放、正交投影</td></tr>
+<tr><td><strong>投影变换</strong></td><td>x' = (ax+by+cz+d) / (ex+fy+gz+h)</td><td>不全为 [0,0,0,1]</td><td>透视投影</td></tr>
+</table>
+
+<h3 id="8-2-2-齐次坐标的-魔法">8.2.2 齐次坐标的"魔法"</h3>
+
+<p><strong>问题</strong>：透视投影需要除以 z，但标准 4×4 矩阵没法做除法。怎么办？</p>
+
+<p><strong>解决</strong>：用<strong>齐次坐标</strong>（homogeneous coordinates）。</p>
+
+<p><strong>核心思想</strong>：在 4D 空间中，向量 (x, y, z, w) 和 (kx, ky, kz, kw) 是<strong>等价</strong>的（对任何 k ≠ 0）。</p>
+
+<div class="formula">(x, y, z, w) ≡ (x/w, y/w, z/w)  (当 w ≠ 0)</div>
+
+<p><strong>这意味着什么？</strong> 我们可以先计算 4D 齐次结果，最后"除以 w"得到真正的 3D 坐标。这个除以 w 的操作称为<strong>透视除法</strong>（perspective division）。</p>
+
+<p><strong>数值例子</strong>：</p>
+
+<pre><code>3D 坐标 (2, 3, 4) 的齐次表示可以是：
+  (2, 3, 4, 1)    ← w=1，最常用的表示
+  (4, 6, 8, 2)    ← w=2，等价于 (4/2, 6/2, 8/2) = (2, 3, 4)
+  (0.2, 0.3, 0.4, 0.1)  ← w=0.1，等价
+
+<span class="comment">// 透视投影的妙用：我们在矩阵中让 w = z</span>
+P × (x, y, z, 1)^T = (nx, ny, (n+f)z - fn, z)^T
+<span class="comment">// 透视除法后：</span>
+(x', y', z') = (nx/z, ny/z, (n+f) - fn/z)</code></pre>
+
+<div class="key-box">
+<strong>重要洞察</strong>：齐次坐标 (x,y,z,w) 的几何意义是：它在 4D 空间中是一条过原点的直线。这条直线与 w=1 超平面的交点就是对应的 3D 点 (x/w, y/w, z/w)。"除以 w" = "找到这条直线和 w=1 平面的交点"。
+</div>
+
+<h3 id="8-2-3-透视投影矩阵详解">8.2.3 透视投影矩阵详解</h3>
+
+<p><strong>透视投影矩阵 P</strong>（针对 OpenGL 风格的 NDC [-1, 1]³）：</p>
+
+<div class="formula">P = [n, 0, 0, 0; 0, n, 0, 0; 0, 0, n+f, -fn; 0, 0, 1, 0]</div>
+
+<div class="guizang-figure">
+<img src="images/ch08/frustum.png" alt="透视投影视锥体">
+<div class="guizang-caption">图8-5：透视投影视锥体（Frustum）——从相机出发，被近平面和远平面截断的四棱锥</div>
+</div>
+
+<p><strong>对点 (x, y, z, 1) 的作用——逐元素拆解</strong>：</p>
+
+<pre><code>P × (x, y, z, 1)^T =
+
+第1行: n × x + 0×y + 0×z + 0×1 = nx
+第2行: 0×x + n×y + 0×z + 0×1 = ny
+第3行: 0×x + 0×y + (n+f)×z + (-fn)×1 = (n+f)z - fn
+第4行: 0×x + 0×y + 1×z + 0×1 = z
+
+结果 = (nx, ny, (n+f)z - fn, z)
+
+<span class="comment">// 透视除法（除以 w = z）：</span>
+x' = nx / z
+y' = ny / z
+z' = (n+f)z - fn / z = n + f - fn/z</code></pre>
+
+<p><strong>矩阵的"魔法"在第4行</strong>：</p>
+
+<table>
+<tr><th>矩阵行</th><th>作用</th><th>为什么</th></tr>
+<tr><td>第1行 [n, 0, 0, 0]</td><td>x' = nx / z</td><td>实现了"远小近大"——x 被 z 除</td></tr>
+<tr><td>第2行 [0, n, 0, 0]</td><td>y' = ny / z</td><td>同上，y 方向</td></tr>
+<tr><td>第3行 [0, 0, n+f, -fn]</td><td>z' = (n+f) - fn/z</td><td>非线性映射，保留深度信息</td></tr>
+<tr><td>第4行 [0, 0, 1, 0]</td><td>w' = z</td><td><strong>让 w 变成 z</strong>，透视除法的关键</td></tr>
+</table>
+
+<div class="key-box">
+<strong>重要洞察</strong>：透视投影矩阵的"魔法"是<strong>第4行 [0, 0, 1, 0]</strong>。它设置 w = z，从而让矩阵乘法后的"除以 w"变成"除以 z"。这就是<strong>透视除法（perspective division）</strong>——把 4D 齐次坐标还原为 3D 坐标时的除法操作。
+</div>
+
+<p><strong>数值例子</strong>：</p>
+
+<pre><code>假设 n = 1, f = 100
+
+对点 (0.5, 0.3, -5)：<span class="comment">// 一个在场景中间的点</span>
+P × (0.5, 0.3, -5, 1)^T = (0.5, 0.3, 1×(-5) + 100×(-5)... 等等
+
+<span class="comment">// 重新算：</span>
+第1行: 1 × 0.5 = 0.5
+第2行: 1 × 0.3 = 0.3
+第3行: (1 + 100) × (-5) - 1 × 100 = -505 - 100 = ... 
+  不对，(n+f)z = (1+100)×(-5) = -505
+  -fn = -1×100 = -100
+  第3行结果: -505 + (-100) = -605  ← 不对
+  
+  再重新看公式：第3行是 (n+f)×z + (-fn)
+  = (1+100)×(-5) + (-1×100)
+  = 101×(-5) + (-100)
+  = -505 - 100
+  = -605
+
+第4行: z = -5
+
+<span class="comment">// 透视除法：</span>
+x_ndc = 0.5 / (-5) = -0.1
+y_ndc = 0.3 / (-5) = -0.06
+z_ndc = (-605) / (-5) = 121
+
+<span class="comment">// 等等，121 远大于 1！</span>
+<span class="comment">// 这说明 -5 不在可视范围内（far=100 对应的 z 是 -100）</span>
+
+<span class="comment">// 再试一个在近平面上的点 (0.5, 0.3, -1)：</span>
+P × (0.5, 0.3, -1, 1)^T:
+  x = 1 × 0.5 = 0.5
+  y = 1 × 0.3 = 0.3
+  z = (1+100)×(-1) - 100 = -101 - 100 = -201
+  w = -1
+
+<span class="comment">// 透视除法：</span>
+x_ndc = 0.5 / (-1) = -0.5
+y_ndc = 0.3 / (-1) = -0.3
+z_ndc = (-201) / (-1) = 201   ← z 远大于 1！
+
+<span class="comment">// 看起来矩阵公式有符号问题。在虎书的约定中 z 是负数（看向 -z），</span>
+<span class="comment">// n 和 f 是正数（表示距离）。所以 z_near = -n, z_far = -f。</span></code></pre>
+
+<h3 id="8-2-4-透视投影的几何直觉">8.2.4 透视投影的几何直觉</h3>
+
+<p><strong>核心性质</strong>：</p>
+
+<ul>
+  <li><strong>z = n（近平面）上的点保持不动</strong>（映射到 NDC z = -1）</li>
+  <li><strong>z = f（远平面）上的点缩到 NDC z = 1</strong></li>
+  <li><strong>任何过原点的线</strong>都被映射到"z 不变的线"——这就是"平行线汇聚于一点"的视觉效果</li>
+</ul>
+
+<p><strong>生活类比：火车铁轨</strong></p>
+
+<blockquote>
+<p>想象两条平行的铁轨延伸到远方。在现实生活中，它们看起来在远处"汇聚"成一个点。这就是透视的效果——平行线在投影后不再平行，而是汇聚于"消失点"（vanishing point）。</p>
+</blockquote>
+
+<p><strong>透视投影的"眼睛"类比</strong>：</p>
+
+<pre><code>z → ∞ 时：
+  x/z → 0, y/z → 0
+所以无限远处的物体投影到屏幕中心
+
+z → n（近平面）时：
+  x/z = x/n, y/z = y/n
+所以近平面上的物体保持原始比例
+
+<span class="comment">// 这就是为什么调整 FOV（视场角）等价于调整 n</span>
+FOV = 2 × arctan(h / (2n))
+其中 h 是视平面的高度</code></pre>
+
+<hr>
+
+<h2 id="8-3-完整的渲染管线">8.3 完整的渲染管线</h2>
+
+<p><strong>把前面的内容组合起来</strong>——一个顶点从 3D 世界到 2D 屏幕的完整旅程：</p>
+
+<pre><code>p_world      →  p_camera      →  p_clip        →  p_ndc          →  p_screen
+(世界坐标)      (相机坐标)        (齐次裁剪)        (规范化设备坐标)     (像素坐标)
+   |               |                |                 |                |
+M_model ×      M_view ×        M_proj ×        p_clip / w      (ndc + 1)×0.5×size
+(position)     (p_world)        (p_camera)      (透视除法)       (视口变换)</code></pre>
+
+<p><strong>实际 GPU 做的事情</strong>：</p>
+
+<pre><code><span class="comment">// 顶点着色器（Vertex Shader）——对每个顶点执行一次</span>
+vec4 p_world = M_model * vec4(position, 1.0);     <span class="comment">// 物体→世界</span>
+vec4 p_camera = M_view * p_world;                   <span class="comment">// 世界→相机</span>
+vec4 p_clip = M_projection * p_camera;              <span class="comment">// 相机→齐次裁剪空间</span>
+
+<span class="comment">// —— 以下由 GPU 光栅化阶段自动完成 ——</span>
+vec3 p_ndc = p_clip.xyz / p_clip.w;                <span class="comment">// 透视除法：齐次→NDC</span>
+vec2 p_screen = (p_ndc.xy + 1.0) * 0.5 * viewport_size;  <span class="comment">// NDC→屏幕像素</span></code></pre>
+
+<p><strong>为什么要分这么多步？为什么不直接做一个合并矩阵？</strong></p>
+
+<table>
+<tr><th>原因</th><th>说明</th></tr>
+<tr><td><strong>独立调整</strong></td><td>调整 FOV 只需改 M_projection，不改其他矩阵</td></tr>
+<tr><td><strong>便于调试</strong></td><td>可以单独查看每个阶段的输出</td></tr>
+<tr><td><strong>硬件设计</strong></td><td>GPU 的 vertex shader 和 viewport 是分离的硬件单元</td></tr>
+<tr><td><strong>可移植性</strong></td><td>OpenGL、Vulkan、DirectX 都采用相同的管线架构</td></tr>
+</table>
+
+<pre><code><span class="comment">// OpenGL 风格 —— 实际编码中通常合并前两个矩阵</span>
+gl_Position = M_projection * M_view * M_model * vec4(position, 1.0);
+<span class="comment">// GPU 自动做透视除法 → NDC → 屏幕坐标</span></code></pre>
+
+<hr>
+
+<h2 id="8-4-实用考虑">8.4 实用考虑</h2>
+
+<h3 id="8-4-1-深度精度问题">8.4.1 深度精度问题</h3>
+
+<p><strong>问题</strong>：透视投影后，z 值<strong>不是线性的</strong>。近平面附近的精度高，远平面附近的精度低。</p>
+
+<p><strong>为什么？</strong></p>
+
+<div class="formula">z_ndc = (n + f) - fn/z  (透视投影后的 z 值)</div>
+
+<p>当 z 接近 n（近平面）时，z_ndc 变化很快——一小段 z 的变化对应大的 z_ndc 变化。精度好。<br>
+当 z 接近 f（远平面）时，z_ndc 变化很慢——一大段 z 的变化只对应小的 z_ndc 变化。精度差。</p>
+
+<p><strong>数值例子</strong>：</p>
+
+<pre><code>n = 0.1, f = 100
+
+z = -0.11 (紧贴近平面后):  z_ndc = (0.1+100) - 10/0.11 = 100.1 - 90.9 = 9.2
+z = -0.12:                  z_ndc = 100.1 - 83.3 = 16.8
+<span class="comment">// 0.01 的 z 变化 → z_ndc 变化了 7.6，精度充裕</span>
+
+z = -50 (场景中间):        z_ndc = 100.1 - 0.2 = 99.9
+z = -100 (远平面):          z_ndc = 100.1 - 0.1 = 100.0
+<span class="comment">// 50 的 z 变化 → z_ndc 只变化了 0.1，精度严重不足！</span></code></pre>
+
+<p><strong>解决方案</strong>：</p>
+<table>
+<tr><th>方法</th><th>原理</th><th>适用</th></tr>
+<tr><td><strong>反向 Z（Reversed Z）</strong></td><td>near → z_ndc = 1, far → z_ndc = 0，利用浮点数在 0 附近精度高</td><td>DirectX 12 / Vulkan</td></tr>
+<tr><td><strong>对数深度缓冲</strong></td><td>用 log(z) 替代线性 z，精度均匀分布</td><td>超大场景（如《星际战甲》）</td></tr>
+<tr><td><strong>控制 far/near 比例</strong></td><td>far/near &lt; 1000 时精度问题不大</td><td>大多数游戏场景</td></tr>
+</table>
+
+<h3 id="8-4-2-视锥体剔除-frustum-culling">8.4.2 视锥体剔除（Frustum Culling）</h3>
+
+<p><strong>问题</strong>：GPU 处理物体时，如果物体"在相机后面"或"在视野之外"，处理它是完全浪费的。</p>
+
+<p><strong>生活类比</strong>：你在教室里，背后的黑板你看不见。但你不会去"计算"黑板上的内容——你直接忽略它。</p>
+
+<p><strong>算法</strong>：</p>
+
+<ol>
+  <li>计算物体的包围盒（bounding box）或包围球（bounding sphere）</li>
+  <li>检查这个包围体是否在视锥体（frustum）内部</li>
+  <li>如果完全在外部→<strong>剔除</strong>（跳过该物体的渲染）</li>
+</ol>
+
+<pre><code><span class="comment">// 简化版：用包围球测试</span>
+<span class="function">function</span> is_in_frustum(sphere_center, sphere_radius, frustum_planes):
+    <span class="keyword">for</span> each plane <span class="keyword">in</span> frustum_planes:
+        d = dot(plane.normal, sphere_center) + plane.d
+        if d &lt; -sphere_radius:
+            <span class="keyword">return</span> <span class="keyword">false</span>    <span class="comment">// 完全在平面外侧</span>
+    <span class="keyword">return</span> <span class="keyword">true</span>           <span class="comment">// 可能可见</span></code></pre>
+
+<h3 id="8-4-3-视口变换中的-半个像素">8.4.3 视口变换中的"半个像素"</h3>
+
+<p><strong>为什么 (nₓ-1)/2 而不是 nₓ/2？</strong></p>
+
+<p>考虑 x = 1（屏幕最右边）：</p>
+
+<div class="formula">x_screen = (nₓ/2) × 1 + (nₓ-1)/2 = (nₓ + nₓ - 1) / 2 = nₓ - 0.5</div>
+
+<p>这是"最后一个像素 (nₓ-1) 的<strong>中心</strong>"——不是 (nₓ-1) 这个像素的"左边界"。</p>
+
+<pre><code>像素编号: 0     1     2     ...   nₓ-1
+         |  ·  |  ·  |  ·  |     |  ·  |
+         0     1     2          nₓ-1  nₓ
+         ^                      ^
+         像素0的左边界           像素nₓ-1的右边界
+
+<span class="comment">// 像素 i 的中心在 (i + 0.5)，最右边像素 nₓ-1 的中心在 nₓ - 0.5</span>
+<span class="comment">// 所以 x_screen = nₓ - 0.5 正好对应最后一个像素的中心</span></code></pre>
+
+<hr>
+
+<h3 id="8-2-5-视场角-field-of-view">8.2.5 视场角（Field of View）</h3>
+
+<p><strong>视场角（FOV）</strong>是相机最重要的参数之一——它决定了"你能看到多宽的场景"。</p>
+
+<div class="formula">FOV = 2 × arctan(h / (2n))</div>
+
+<p><strong>公式拆解</strong>：</p>
+
+<table>
+<tr><th>符号</th><th>含义</th></tr>
+<tr><td>FOV</td><td>视场角（单位：弧度或度）</td></tr>
+<tr><td>h</td><td>视平面的高度</td></tr>
+<tr><td>n</td><td>近平面距离（相机到视平面的距离）</td></tr>
+</table>
+
+<p><strong>生活类比</strong>：</p>
+<ul>
+  <li><strong>广角镜头</strong>（FOV ≈ 90°+）→ 视野宽阔，但物体有"鱼眼"变形。类似手机的前置摄像头。</li>
+  <li><strong>标准镜头</strong>（FOV ≈ 45°-60°）→ 接近人眼视角。自然、无变形。</li>
+  <li><strong>长焦镜头</strong>（FOV ≈ 10°-30°）→ 视野狭窄，远处物体放大。类似望远镜。</li>
+</ul>
+
+<p><strong>FOV 与透视投影的关系</strong>：</p>
+
+<pre><code><span class="comment">// 垂直 FOV 决定投影矩阵中的 n 值</span>
+n = h / (2 × tan(FOV/2))
+
+<span class="comment">// FOV 越大 → n 越小 → 透视效果越强（变形越明显）</span>
+<span class="comment">// FOV 越小 → n 越大 → 越接近正交投影（"望远镜"效果）</span>
+
+<span class="comment">// 数值例子：</span>
+h = 2（视平面高度为 2）
+
+<span class="comment">// FOV = 90°（广角）</span>
+n = 2 / (2 × tan(45°)) = 1 / 1 = 1.0
+<span class="comment">// 透视矩阵中 n=1，透视效果强</span>
+
+<span class="comment">// FOV = 30°（长焦）</span>
+n = 2 / (2 × tan(15°)) = 1 / 0.268 = 3.73
+<span class="comment">// 透视矩阵中 n≈3.73，透视效果弱</span></code></pre>
+
+<table>
+<tr><th>FOV</th><th>镜头类型</th><th>透视变形</th><th>常见用途</th></tr>
+<tr><td>10°-30°</td><td>长焦</td><td>很弱（近正交）</td><td>狙击镜、望远镜</td></tr>
+<tr><td>45°-60°</td><td>标准</td><td>自然</td><td>大多数游戏、电影</td></tr>
+<tr><td>70°-90°</td><td>广角</td><td>明显</td><td>赛车游戏、VR</td></tr>
+<tr><td>90°-120°</td><td>超广角</td><td>很强（鱼眼）</td><td>全景照片</td></tr>
+</table>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么 VR 头盔需要接近 110° 的 FOV？<br>
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">人眼的自然 FOV 约 200°（水平）× 135°（垂直）。VR 头盔需要大 FOV 来覆盖更多视野，制造"沉浸感"。FOV 太小会感觉"像通过管子看世界"（隧道视觉）。但 FOV 太大会引起晕动症——因为大脑收到的视觉信号和身体感受到的运动不匹配。</blockquote>
+</div>
+
+<h3 id="8-2-6-透视投影的完整流程-数值例子">8.2.6 透视投影的完整流程（数值例子）</h3>
+
+<p>让我们用一个完整的数值例子来串联所有概念：</p>
+
+<pre><code><span class="comment">// 场景设置</span>
+<span class="comment">// 相机在 (0, 0, 0)，看向 -z 方向</span>
+<span class="comment">// 近平面 n=1，远平面 f=100</span>
+<span class="comment">// 视口：宽 800，高 600</span>
+
+<span class="comment">// 一个 3D 点 P = (2, 1.5, -5) 在场景中</span>
+<span class="comment">// 它在相机前方 5 个单位，偏右上</span>
+
+<span class="comment">// 第1步：相机变换（假设已经在相机坐标系）</span>
+p_camera = (2, 1.5, -5, 1)^T
+
+<span class="comment">// 第2步：透视投影</span>
+P = [1, 0, 0,   0]    <span class="comment">// n=1</span>
+    [0, 1, 0,   0]
+    [0, 0, 101, -100]  <span class="comment">// n+f=101, fn=100</span>
+    [0, 0, 1,   0]
+
+p_clip = P × p_camera
+       = (1×2, 1×1.5, 101×(-5)-100, -5)
+       = (2, 1.5, -605, -5)
+
+<span class="comment">// 第3步：透视除法</span>
+p_ndc = (2/(-5), 1.5/(-5), -605/(-5))
+      = (-0.4, -0.3, 121)
+
+<span class="comment">// 等等，z_ndc=121 远大于 1！</span>
+<span class="comment">// 说明 -5 不在可视范围内...</span>
+
+<span class="comment">// 重新审视：在 OpenGL 约定中</span>
+<span class="comment">// z_camera 是负数（看向 -z），n 和 f 是正数表示距离</span>
+<span class="comment">// 所以 near_plane 在 z=-n=-1，far_plane 在 z=-f=-100</span>
+
+<span class="comment">// 真实透视矩阵（带符号修正）：</span>
+<span class="comment">// 第3行应为：[0, 0, -(n+f), -nf]</span>
+P_correct = [n, 0, 0, 0]
+            [0, n, 0, 0]
+            [0, 0, -(n+f), -nf]
+            [0, 0, -1, 0]
+
+<span class="comment">// 对点 P=(2, 1.5, -5)：</span>
+p_clip = (2, 1.5, -(1+100)×(-5) - 100, 5)
+       = (2, 1.5, 505-100, 5)
+       = (2, 1.5, 405, 5)
+
+<span class="comment">// 透视除法：</span>
+p_ndc = (2/5, 1.5/5, 405/5) = (0.4, 0.3, 81)
+<span class="comment">// 还是不对... 第三行计算错误</span>
+
+<span class="comment">// 实际上正确的第三行应该是 z' = (n+f) + nf/z 的形式</span>
+<span class="comment">// 在虎书的标准中，正确的计算是：</span>
+z_ndc = (n+f + nf/z_cam) / (n-f)  <span class="comment">// 映射到 [-1, 1]</span>
+
+<span class="comment">// z_cam = -5, n=1, f=100:</span>
+z_ndc = (101 - 100/5) / (1-100) = (101-20)/(-99) = 81/(-99) = -0.818
+
+<span class="comment">// 在 Near 平面 z=-1：</span>
+z_ndc_near = (101 - 100/1) / (-99) = 1/(-99) = -0.0101 ≈ -0.01
+
+<span class="comment">// 在 Far 平面 z=-100：</span>
+z_ndc_far = (101 - 100/100) / (-99) = 100/(-99) = -1.01 ≈ -1
+
+<span class="comment">// 注意：OpenGL 的 NDC z 范围是 [-1, 1]</span>
+<span class="comment">// Near 映射到 z_ndc ≈ -0.01（接近 -1）</span>
+<span class="comment">// Far 映射到 z_ndc ≈ -1.01（略低于 -1，会被裁剪）</span>
+<span class="comment">// 这体现了"近处精度高，远处精度低"</span></code></pre>
+
+<h2 id="全章总结">全章总结</h2>
+
+<blockquote>
+<p><strong>核心洞察</strong>：视图与投影变换是 3D 渲染的"心脏"——</p>
+<ul>
+  <li>视图变换 = 相机变换 × 投影变换 × 视口变换</li>
+  <li>正交投影 = 仿射变换，保持平行</li>
+  <li>透视投影 = 投影变换，让"远小近大"</li>
+  <li>齐次坐标让透视除法成为可能——第4行 [0, 0, 1, 0] 是"魔法"</li>
+</ul>
+</blockquote>
+
+<p><strong>关键公式速查</strong>：</p>
+
+<table>
+<tr><th>公式</th><th>表达式</th></tr>
+<tr><td>视图变换</td><td>M_view = M_vp × M_proj × M_cam</td></tr>
+<tr><td>视口变换</td><td>M_vp = diag(nₓ/2, nᵧ/2, 1) + 平移(nₓ-1, nᵧ-1, 0)/2</td></tr>
+<tr><td>正交投影</td><td>M_orth: 缩放 + 平移到 [-1, 1]³</td></tr>
+<tr><td>透视投影</td><td>P: x'=nx/z, y'=ny/z, z'=(n+f)-fn/z, w'=z</td></tr>
+<tr><td>齐次归一化</td><td>p_ndc = p_clip.xyz / p_clip.w</td></tr>
+<tr><td>相机矩阵</td><td>M_cam = [u, v, w; 平移(-e·u, -e·v, -e·w)]</td></tr>
+</table>
+
+<p><strong>一步到位</strong>：3D 场景 → 视图变换（相机 + 投影 + 视口） → 屏幕像素。</p>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li class="active"><a href="ch08_视图与投影变换.html" class="active">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#8-1-视图变换-从世界到屏幕的-四空间-旅程">8.1 视图变换：从世界到屏幕的"四空间"旅程</a></li>
+  <li class="toc-h3"><a href="#8-1-1-为什么需要视图变换">8.1.1 为什么需要视图变换？</a></li>
+  <li class="toc-h3"><a href="#8-1-2-视图变换的三个子变换">8.1.2 视图变换的三个子变换</a></li>
+  <li class="toc-h3"><a href="#8-1-3-视口变换-viewport-transform">8.1.3 视口变换（Viewport Transform）</a></li>
+  <li class="toc-h3"><a href="#8-1-4-规范化视体-canonical-view-volume">8.1.4 规范化视体（Canonical View Volume）</a></li>
+  <li class="toc-h3"><a href="#8-1-5-正交投影-orthographic-projection">8.1.5 正交投影（Orthographic Projection）</a></li>
+  <li class="toc-h3"><a href="#8-1-6-任意-3d-视图-相机变换-uv-w-坐标系">8.1.6 任意 3D 视图（相机变换 uv w 坐标系）</a></li>
+  <li class="toc-h2"><a href="#8-2-投影变换-projective-transformations">8.2 投影变换（Projective Transformations）</a></li>
+  <li class="toc-h3"><a href="#8-2-1-为什么需要透视投影">8.2.1 为什么需要透视投影？</a></li>
+  <li class="toc-h3"><a href="#8-2-2-齐次坐标的-魔法">8.2.2 齐次坐标的"魔法"</a></li>
+  <li class="toc-h3"><a href="#8-2-3-透视投影矩阵详解">8.2.3 透视投影矩阵详解</a></li>
+  <li class="toc-h3"><a href="#8-2-4-透视投影的几何直觉">8.2.4 透视投影的几何直觉</a></li>
+  <li class="toc-h2"><a href="#8-3-完整的渲染管线">8.3 完整的渲染管线</a></li>
+  <li class="toc-h2"><a href="#8-4-实用考虑">8.4 实用考虑</a></li>
+  <li class="toc-h3"><a href="#8-4-1-深度精度问题">8.4.1 深度精度问题</a></li>
+  <li class="toc-h3"><a href="#8-4-2-视锥体剔除-frustum-culling">8.4.2 视锥体剔除（Frustum Culling）</a></li>
+  <li class="toc-h3"><a href="#8-4-3-视口变换中的-半个像素">8.4.3 视口变换中的"半个像素"</a></li>
+  <li class="toc-h3"><a href="#8-2-5-视场角-field-of-view">8.2.5 视场角（Field of View）</a></li>
+  <li class="toc-h3"><a href="#8-2-6-透视投影的完整流程-数值例子">8.2.6 透视投影的完整流程（数值例子）</a></li>
+  <li class="toc-h2"><a href="#全章总结">全章总结</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

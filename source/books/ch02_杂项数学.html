@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch02: 杂项数学</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch02 杂项数学</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第2章：杂项数学 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第2章（p.13-62）。<br>
+本章是全书最"杂"的一章——它涵盖了图形学中用到的各种数学工具，从集合映射到蒙特卡洛积分。<br>
+作者建议：<strong>先快速浏览，了解各节内容，需要时回头查阅</strong>。本讲义旨在帮你建立直观理解，而非追求数学严谨性。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s21">2.1 集合与映射</a></li>
+  <li><a href="#s22">2.2 解二次方程</a></li>
+  <li><a href="#s23">2.3 三角学</a></li>
+  <li><a href="#s24">2.4 向量</a></li>
+  <li><a href="#s25">2.5 积分</a></li>
+  <li><a href="#s26">2.6 密度函数</a></li>
+  <li><a href="#s27">2.7 曲线与曲面</a></li>
+  <li><a href="#s28">2.8 线性插值</a></li>
+  <li><a href="#s29">2.9 三角形与重心坐标</a></li>
+  <li><a href="#s210">2.10 离散概率</a></li>
+  <li><a href="#s211">2.11 连续概率</a></li>
+  <li><a href="#s212">2.12 蒙特卡洛积分</a></li>
+</ul>
+</div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+  <li>理解集合与映射的数学记号，并能与编程概念对应</li>
+  <li>用二次方程求根公式解决光线-球体求交等图形学问题</li>
+  <li>理解三角函数在图形学中的几何含义</li>
+  <li>掌握向量加减、点积、叉积的几何意义和编程实现</li>
+  <li>理解"隐式 vs 参数化"两种曲线/曲面表示的核心区别</li>
+  <li>解释重心坐标是什么，以及为什么它对图形学如此重要</li>
+  <li>理解期望、方差、蒙特卡洛积分的基本思想</li>
+</ol>
+
+<hr>
+
+<h2 id="2-1-集合与映射-sets-and-mappings">2.1 集合与映射（Sets and Mappings）</h2>
+
+<h3 id="2-1-1-为什么图形学需要集合和映射">2.1.1 为什么图形学需要集合和映射？</h3>
+
+<p><strong>它解决什么问题？</strong>图形学是"把数学转换成图像"的过程。而数学的"语言"就是集合和映射。如果你不理解这些符号，你就看不懂图形学论文、读不懂图形学代码的注释。集合和映射就是"数学和编程之间的翻译官"。</p>
+
+<h3 id="2-1-2-数学记号----编程语言翻译">2.1.2 数学记号 ←→ 编程语言翻译</h3>
+
+<p>很多初学者觉得数学记号可怕——说实话，我第一次看到 <code>f : ℝ → ℤ</code> 也觉得"这什么鬼"。但只要把它翻译成编程语言，就豁然开朗了：</p>
+
+<table>
+<tr><th>数学记号</th><th>读法</th><th>编程翻译</th></tr>
+<tr><td><code>a ∈ S</code></td><td>"a 是集合 S 的元素"</td><td><code>S.contains(a)</code></td></tr>
+<tr><td><code>A × B</code></td><td>"A 和 B 的笛卡尔积"</td><td>所有 (a, b) 对的集合，其中 a∈A, b∈B</td></tr>
+<tr><td><code>f : ℝ → ℤ</code></td><td>"f 是从实数集到整数集的映射"</td><td><code>int f(float x) { ... }</code></td></tr>
+<tr><td><code>f(a)</code></td><td>"a 在 f 下的像"</td><td><code>f(a)</code> 的返回值</td></tr>
+</table>
+
+<p>关键等价关系：</p>
+<pre><code>int f(real x)    ↔    f : ℝ → ℤ
+↓↓↓                  ↓↓↓
+函数名叫 f            函数名叫 f
+接收一个实数          定义域 domain 是 ℝ（实数集）
+返回一个整数          目标域 target 是 ℤ（整数集）</code></pre>
+
+<p><strong>逐词翻译</strong>：</p>
+<ul>
+  <li><strong>Domain（定义域）</strong>：函数能接受的所有输入值的集合。 = 编程中的"参数类型"</li>
+  <li><strong>Target（目标域）</strong>：函数可能输出的值的集合。 = 编程中的"返回值类型"</li>
+  <li><strong>Range（值域）</strong>：Target 中<strong>实际</strong>被映射到的子集——不是所有目标域的值都会被用到。</li>
+</ul>
+
+<p><strong>数字例子</strong>：</p>
+<pre><code>f : ℝ → ℤ,  f(x) = floor(x)
+    定义域 = ℝ          若 x = 3.14，则 f(x) = 3
+                        值域 = ℤ 的子集（只有整数，不会输出 2.5）
+    target 是 ℤ，但 range 只是 ℤ 的一部分</code></pre>
+
+<h3 id="2-1-3-图形学中常用的集合">2.1.3 图形学中常用的集合</h3>
+
+<table>
+<tr><th>记号</th><th>含义</th><th>图形学用途</th></tr>
+<tr><td><strong>ℝ</strong></td><td>实数集</td><td>所有连续数值——颜色强度、距离、时间</td></tr>
+<tr><td><strong>ℝ⁺</strong></td><td>非负实数（含0）</td><td>距离、颜色值——这些永远不会是负数</td></tr>
+<tr><td><strong>ℝ²</strong></td><td>二维平面的有序对</td><td>2D屏幕坐标 (x, y), UV纹理坐标</td></tr>
+<tr><td><strong>ℝⁿ</strong></td><td>n维笛卡尔空间</td><td>3D坐标用 ℝ³，齐次坐标用 ℝ⁴</td></tr>
+<tr><td><strong>ℤ</strong></td><td>整数集</td><td>像素坐标 (0, 1, 2...)、顶点索引</td></tr>
+<tr><td><strong>𝕊²</strong></td><td>单位球面上的3D点</td><td>法线方向、光线方向——"所有单位长度的3D向量"</td></tr>
+</table>
+
+<div class="info-box">
+<strong>💡 关键理解</strong>：𝕊² 很有趣——它由 3D 点组成（每个点都有 x,y,z 三个坐标），但表面只需要两个参数就可以描述（经度 + 纬度），所以它本质上是一个"2D 集合"（2-manifold / 二维流形）。
+</div>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：<code>f : ℝ → ℝ, f(x) = x²</code> 的值域是什么？和它的 target（ℝ）一样吗？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">值域是 <strong>[0, ∞)</strong>——所有非负实数。因为 x² 不可能是负数。target 是 ℝ（全部实数），但 range 只是 ℝ 的一个子集。所以 range ≠ target。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="2-2-解二次方程-solving-quadratic-equations">2.2 解二次方程（Solving Quadratic Equations）</h2>
+
+<h3 id="2-2-1-为什么图形学需要这个">2.2.1 为什么图形学需要这个？</h3>
+
+<p><strong>它解决什么问题？</strong>在光线追踪中，最常见的一个操作是"判断一条光线是否碰到了某个球体"。光线的路径是一条直线，球体是一个完美的球面。把直线方程代入球面方程，你会得到一个<strong>二次方程</strong>。解这个二次方程，你就知道了光线什么时候碰到球面。</p>
+
+<p>这不是一个"理论上需要"的东西——写光线追踪器的每一行代码，你都在解二次方程。</p>
+
+<h3 id="2-2-2-标准形式">2.2.2 标准形式</h3>
+
+<div class="formula">Ax² + Bx + C = 0</div>
+
+<p>解（求根公式）：</p>
+
+<div class="formula">x = [-B ± √(B² - 4AC)] / (2A)</div>
+
+<p><strong>每个符号的含义：</strong></p>
+<ul>
+  <li><strong>A, B, C</strong>：已知系数（在光线-球体求交中，它们来自光线方向和球体位置）</li>
+  <li><strong>x</strong> ：未知数（在光线追踪中，x 就是光线参数 t——光线上距离起点的距离）</li>
+  <li><strong>±</strong>：表示有两个可能的解（"正解"和"负解"）</li>
+</ul>
+
+<h3 id="2-2-3-判别式-d---b²---4ac">2.2.3 判别式 D = B² - 4AC</h3>
+
+<p>判别式决定了方程有多少个<strong>实数解</strong>：</p>
+
+<table>
+<tr><th>判别式 D</th><th>解的数量</th><th>图形学含义</th></tr>
+<tr><td><strong>D > 0</strong></td><td>两个不同实根</td><td>光线穿过球体——先碰到前面（较小根），再穿出后面（较大根）</td></tr>
+<tr><td><strong>D = 0</strong></td><td>一个实根（重根）</td><td>光线擦着球体表面经过——"刚好碰到"</td></tr>
+<tr><td><strong>D < 0</strong></td><td>无实根</td><td>光线完全没碰到球体——"错过"</td></tr>
+</table>
+
+<h3 id="2-2-4-数值稳定性问题-为什么计算机计算时还会出错">2.2.4 数值稳定性问题（为什么计算机计算时还会出错？）</h3>
+
+<p>直接套求根公式在计算机中可能因为 <strong>B² 远大于 4AC</strong> 而导致精度丢失。如果 B² 很大，√(B² - 4AC) 和 |B| 几乎相等，那么 -B + √D 或者 -B - √D 中会有一个涉及"两个几乎相等的数相减"，这会导致浮点数精度问题<strong>（catastrophic cancellation）</strong>。</p>
+
+<p>更鲁棒的方法是：</p>
+<pre><code>// 先算判别式
+double discriminant = B*B - 4*A*C;
+if (discriminant < 0) return 0; // 无解
+
+double sqrtD = sqrt(discriminant);
+// 先用"减法版本"算一个根（更稳定）
+double x1 = (-B - sqrtD) / (2*A);
+double x2 = (-B + sqrtD) / (2*A);</code></pre>
+
+<div class="key-box">
+<strong>🔑 关键洞察</strong>：在光线追踪中，你要的是<strong>最小的正根</strong>（光线最先碰到的那一面）。
+<pre><code>光线 →  ●══════●
+         x1    x2
+从摄像机出发，先碰到 x1 处（进入球体），后碰到 x2 处（穿出球体）
+我们要的是 x1（最小的正数）</code></pre>
+</div>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么浮点数计算中，<code>(-B - sqrtD)</code> 比 <code>(-B + sqrtD)</code> 更稳定？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">当 B 为正时，-B - sqrtD 是两个<strong>同号</strong>的负数相加，不会损失精度。而 -B + sqrtD 是两个接近的数相减（-B 和 +sqrtD 绝对值接近），会导致有效数字丢失。这个策略选择取决于 B 的符号，推荐查阅数值分析教材了解更完整的处理方法。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="2-3-三角学-trigonometry">2.3 三角学（Trigonometry）</h2>
+
+<h3 id="2-3-1-为什么图形学需要三角函数">2.3.1 为什么图形学需要三角函数？</h3>
+
+<p><strong>它解决什么问题？</strong>图形学中到处是"角度"：</p>
+<ul>
+  <li>光线碰到表面时，入射角决定了反射强度</li>
+  <li>相机看场景时，视角决定了能看到什么</li>
+  <li>旋转一个物体时，你需要知道旋转角度对应的正弦和余弦</li>
+</ul>
+
+<p>三角函数就是把"角度"和"坐标"联系起来的桥梁。</p>
+
+<h3 id="2-3-2-单位圆定义-最重要的理解方式">2.3.2 单位圆定义（最重要的理解方式）</h3>
+
+<div class="guizang-figure">
+<img src="images/ch02/trig_unit_circle.png" alt="三角函数与单位圆">
+<div class="guizang-caption">图2-1：单位圆上的三角函数——任意角θ对应的点（cosθ, sinθ）</div>
+</div>
+
+<p><strong>单位圆</strong>是理解三角函数的金钥匙：画一个半径为1的圆，圆心在原点。从圆心出发，沿着某个角度 θ 画一条射线，这条射线与圆的交点就是 <strong>(cos θ, sin θ)</strong>。</p>
+
+<p>就是这么简单。cos θ 就是交点的 x 坐标，sin θ 就是交点的 y 坐标。</p>
+
+<div class="formula">sin²θ + cos²θ = 1</div>
+
+<p><strong>为什么这个等式总是成立？</strong>因为单位圆的方程就是 x² + y² = 1，而 (cos θ, sin θ) 在单位圆上。所以 cos²θ + sin²θ = 1 永远成立。</p>
+
+<h3 id="2-3-3-余弦定理">2.3.3 余弦定理</h3>
+
+<p>给定三角形边长 a、b、c，夹角 θ（c的对边），那么：</p>
+
+<div class="formula">c² = a² + b² - 2ab·cos θ</div>
+
+<p>当 θ = 90°（直角）时，cos θ = 0，公式退化为：</p>
+
+<div class="formula">c² = a² + b²（勾股定理）</div>
+
+<p>所以勾股定理只是余弦定理的一个特殊情况（90°角的情况）。</p>
+
+<h3 id="2-3-4-图形学中最常用的三角函数用途">2.3.4 图形学中最常用的三角函数用途</h3>
+
+<table>
+<tr><th>用途</th><th>说明</th><th>出现章节</th></tr>
+<tr><td><strong>旋转</strong></td><td>绕轴旋转用 sin/cos 构造旋转矩阵</td><td>Ch7 变换矩阵</td></tr>
+<tr><td><strong>光照</strong></td><td>Lambertian 漫反射依赖 cos θ（法线与光线夹角）</td><td>Ch5 表面着色</td></tr>
+<tr><td><strong>球面坐标</strong></td><td>经度/纬度映射到 (x, y, z)</td><td>Ch4 光线追踪</td></tr>
+<tr><td><strong>波形函数</strong></td><td>sin/cos 用于产生波浪、动画曲线</td><td>Ch15 曲线</td></tr>
+</table>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：<code>atan2(y, x)</code> 和 <code>atan(y/x)</code> 有什么区别？为什么图形学中我们总是用 <code>atan2</code>？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;"><code>atan(y/x)</code> 无法区分 x 为正还是负——它只返回 [-π/2, π/2] 的值。<code>atan2(y, x)</code> 根据 x 和 y 的符号判断象限，返回 [-π, π] 的完整角度。比如 atan2(1, -1) = 135°，而 atan(1/ -1) = -45°——出错了！图形学中方向判断经常涉及所有四个象限，所以必须用 atan2。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="2-4-向量-vectors">2.4 向量（Vectors）</h2>
+
+<h3 id="2-4-1-图形学最基本的数据类型">2.4.1 图形学最基本的数据类型</h3>
+
+<p><strong>它解决什么问题？</strong>在3D世界中，一切都需要位置和方向。物体在哪？它往哪看？光线往哪走？法线朝哪？——这些都是用"向量"表示的。</p>
+
+<p>向量可以看作是"带箭头的线段"，有两个核心属性：</p>
+<ul>
+  <li><strong>方向</strong>：箭头指向哪</li>
+  <li><strong>大小（长度）</strong>：箭头有多长</li>
+</ul>
+
+<p><strong>最重要的理解</strong>：向量只有"方向和大小"，没有"位置"。向量 (1,2,3) 可以从原点出发，也可以从 (100, 200, 300) 出发——它们都是同一个向量。因为方向和大小没变。</p>
+
+<h3 id="2-4-2-基本操作">2.4.2 基本操作</h3>
+
+<table>
+<tr><th>操作</th><th>公式</th><th>几何意义</th></tr>
+<tr><td><strong>加法</strong></td><td>(x₁, y₁) + (x₂, y₂) = (x₁+x₂, y₁+y₂)</td><td>平行四边形法则——两个向量首尾相接</td></tr>
+<tr><td><strong>减法</strong></td><td>(x₁, y₁) - (x₂, y₂) = (x₁-x₂, y₁-y₂)</td><td>得到"从第二个到第一个"的向量</td></tr>
+<tr><td><strong>标量乘</strong></td><td>k · (x, y) = (k·x, k·y)</td><td>缩放向量长度（k>1拉长，k<1缩短）</td></tr>
+<tr><td><strong>长度</strong></td><td>|v| = √(x² + y² + z²)</td><td>向量的"大小"——三维勾股定理</td></tr>
+</table>
+
+<div class="guizang-figure">
+<img src="images/ch02/coordinates_vectors.png" alt="二维坐标系与向量">
+<div class="guizang-caption">图2-2：二维坐标系与向量加减——向量的平行四边形法则，向量a与向量b的和等于以它们为邻边的平行四边形的对角线</div>
+</div>
+
+<h3 id="2-4-3-点积-dot-product---图形学最重要的运算">2.4.3 点积（Dot Product）——图形学最重要的运算</h3>
+
+<div class="guizang-figure">
+<img src="images/ch02/dot_product.png" alt="点积的几何意义——投影与夹角">
+<div class="guizang-caption">图2-3：点积的几何意义——向量a在向量b上的投影长度为|a|cosθ, a·b = |a||b|cosθ</div>
+</div>
+
+<div class="formula">a · b = |a||b| cos θ</div>
+
+<p><strong>每个符号的含义：</strong></p>
+<ul>
+  <li><strong>a, b</strong>：两个向量</li>
+  <li><strong>|a|, |b|</strong>：它们的长度</li>
+  <li><strong>θ</strong>：两个向量之间的夹角</li>
+  <li><strong>a · b</strong>：点积的结果是一个<strong>标量</strong>（一个数），不是一个向量</li>
+</ul>
+
+<p><strong>几何含义</strong>：点积衡量两个向量的"对齐程度"。</p>
+
+<table>
+<tr><th>点积值</th><th>夹角θ</th><th>含义</th><th>图形学应用</th></tr>
+<tr><td><strong>a · b > 0</strong></td><td>θ < 90°</td><td>方向相近</td><td>光线朝向光源 → 被照亮</td></tr>
+<tr><td><strong>a · b = 0</strong></td><td>θ = 90°</td><td>垂直</td><td>检测光线是否平行于平面</td></tr>
+<tr><td><strong>a · b < 0</strong></td><td>θ > 90°</td><td>方向相反</td><td>表面背对光源 → 阴影中</td></tr>
+</table>
+
+<h4 id="为什么点积如此重要-用一个真实代码来理解">为什么点积如此重要？用一个真实代码来理解：</h4>
+
+<pre><code>// 1. 漫反射光照——图形学中最基本的着色计算
+// 问题的第1行：法线 normal 和光线方向 lightDir 的夹角决定了亮度
+float diffuse = dot(normalize(normal), normalize(lightDir));
+// diff = cosθ，θ是法线和光线的夹角
+// cosθ = 1.0 时（0°角），光线直射表面，最亮
+// cosθ = 0.0 时（90°角），光线擦过表面，全暗
+
+// 2. 判断法线朝向
+if (diffuse > 0) {
+    color = baseColor * diffuse;  // 照亮
+} else {
+    color = Color(0, 0, 0);       // 阴影
+}
+
+// 3. 检测光线是否平行于平面
+if (abs(dot(rayDir, planeNormal)) < 1e-6) {
+    // 光线平行于平面，无交点
+}</code></pre>
+
+<h3 id="2-4-4-叉积-cross-product">2.4.4 叉积（Cross Product）</h3>
+
+<div class="formula">a × b = |a||b| sin θ · n</div>
+
+<p><strong>每个符号的含义：</strong></p>
+<ul>
+  <li><strong>n</strong>：垂直于 a 和 b 的单位向量（右手定则确定方向）</li>
+  <li><strong>|a||b| sin θ</strong>：叉积结果的<strong>长度</strong> = a 和 b 张成的平行四边形面积</li>
+  <li><strong>a × b 的结果是一个向量</strong>（不是标量！）——这是和点积最大的区别</li>
+</ul>
+
+<p><strong>几何含义</strong>：叉积生成一个<strong>同时垂直于两个输入向量的新向量</strong>。</p>
+
+<pre><code>// 最常见的叉积应用：从三角形的两条边计算法线
+vector3 a = (1, 0, 0), b = (0, 1, 0), c = (0, 0, 0);
+// 三角形 abc 的两条边：
+vector3 edge1 = b - a;  // (-1, 1, 0)
+vector3 edge2 = c - a;  // (-1, 0, 0)
+// 法线 = 两条边的叉积
+vector3 normal = cross(edge1, edge2);
+normal = normalize(normal); // 归一化为单位向量
+// 结果应该是 (0, 0, 1) ——垂直于 xy 平面</code></pre>
+
+<div class="key-box">
+<strong>🔑 注意</strong>：叉积<strong>不满足交换律</strong>！<code>a × b = -(b × a)</code>
+</div>
+
+<h3 id="2-4-5-左右手坐标系">2.4.5 左右手坐标系</h3>
+
+<table>
+<tr><th>坐标系</th><th>叉积方向</th><th>使用</th></tr>
+<tr><td><strong>右手系</strong></td><td>cross(a, b) 由右手定则决定</td><td>OpenGL, Unity</td></tr>
+<tr><td><strong>左手系</strong></td><td>cross(a, b) 由左手定则决定</td><td>Direct3D</td></tr>
+</table>
+
+<hr>
+
+<h2 id="2-5-积分-integration">2.5 积分（Integration）</h2>
+
+<h3 id="2-5-1-图形学为什么需要积分">2.5.1 图形学为什么需要积分？</h3>
+
+<p><strong>它解决什么问题？</strong>渲染的核心就是"计算每个像素接收到的光线总量"。光线是从无数个方向来的——你需要对所有这些方向的贡献"累加起来"。这个"累加"的过程就是积分。</p>
+
+<p>用黑箱思考积分：</p>
+
+<div class="formula">积分 = "在某个区域上累加某个函数的值"</div>
+
+<p>图形学家的实用视角：</p>
+<pre><code>                  ┌──────────┐
+                  │          │
+  f(x), [a,b] ───→│ integrate │───→ 数值结果
+                  │          │
+                  └──────────┘
+
+更直观的理解：
+   ┌───┐
+  ┌┤   ├┐
+ ┌┤   ├┤├┐
+ │   │││├┤
+┌┤   ├┤├┤├┐
+┴┴───┴┴┴┴┴┴──
+a             b
+
+积分 = 曲线下方的面积 ≈ 切成很多小条，加起来</code></pre>
+
+<hr>
+
+<h2 id="2-6-密度函数-density-functions">2.6 密度函数（Density Functions）</h2>
+
+<h3 id="2-6-1-从概率密度到图形学">2.6.1 从概率密度到图形学</h3>
+
+<p><strong>它解决什么问题？</strong>在渲染中，光线在场景中的分布是不均匀的——有些方向来很多光，有些方向来很少。你需要知道光线的"概率密度"来高效地采样。</p>
+
+<p><strong>生活类比</strong>：</p>
+<ul>
+  <li><strong>质量密度</strong> = 单位体积内的质量（kg/m³）——拿在手里感觉"沉不沉"</li>
+  <li><strong>概率密度</strong> = 单位长度/面积/体积内的概率——"你更可能在这里找到这个值"</li>
+</ul>
+
+<hr>
+
+<h2 id="2-7-曲线与曲面-curves-and-surfaces">2.7 曲线与曲面（Curves and Surfaces）</h2>
+
+<h3 id="2-7-1-两种根本不同的世界观">2.7.1 两种根本不同的世界观</h3>
+
+<p><strong>它解决什么问题？</strong>在图形学中，你需要描述物体的"形状"。一个球体、一个平面、一条曲线——怎么用数学描述它们？有两种完全不同的思路，每一种都有自己的优势和劣势。</p>
+
+<table>
+<tr><th>特性</th><th>隐式（Implicit）</th><th>参数化（Parametric）</th></tr>
+<tr><td><strong>形式</strong></td><td>f(x, y) = 0</td><td>(x, y) = (f(t), g(t))</td></tr>
+<tr><td><strong>生活类比</strong></td><td>像"会员验证"<br>告诉我一个点，我能验证它是否在曲线上</td><td>像"路径导航"<br>告诉我 t 值，我带你到曲线上的对应点</td></tr>
+<tr><td><strong>生成点</strong></td><td>难（需解方程）</td><td>易（代入参数即可）</td></tr>
+<tr><td><strong>判断点是否在上面</strong></td><td>易（代入验证=0？）</td><td>难（需解方程组）</td></tr>
+</table>
+
+<p><strong>关键理解</strong>：在光线追踪中，光线用参数化表示（p = o + td），物体用隐式表示（f(p) = 0）。两者联立求解 t。这就是为什么你<strong>既需要参数化、又需要隐式</strong>！</p>
+
+<hr>
+
+<h2 id="2-8-线性插值-linear-interpolation">2.8 线性插值（Linear Interpolation）</h2>
+
+<h3 id="2-8-1-图形学中最常用的操作">2.8.1 图形学中最常用的操作</h3>
+
+<p><strong>它解决什么问题？</strong>你只知道两个值（比如动画第0帧和第24帧的位置），但你需要中间每一帧的值。线性插值就是"在两个值之间匀着走"。</p>
+
+<div class="formula">lerp(a, b, t) = (1 - t)·a + t·b</div>
+
+<p><strong>理解公式：</strong></p>
+<ul>
+  <li>当 t = 0 时，结果是 a（还没出发）</li>
+  <li>当 t = 1 时，结果是 b（到达终点）</li>
+  <li>当 t = 0.5 时，结果是 a 和 b 的中点</li>
+  <li>t 就像是一个"进度条"——从 0 走到 1</li>
+</ul>
+
+<hr>
+
+<h2 id="2-9-三角形与重心坐标-triangles---barycentric-coordinates">2.9 三角形与重心坐标（Triangles & Barycentric Coordinates）</h2>
+
+<h3 id="2-9-1-为什么三角形这么重要">2.9.1 为什么三角形这么重要？</h3>
+
+<p><strong>它解决什么问题？</strong>在图形学中，我们需要给三角形内部的每个像素赋一个颜色。但颜色只定义在三角形的三个顶点上——那么中间的像素颜色是什么？重心坐标就是回答这个问题的工具。</p>
+
+<p>三角形是图形学中的<strong>基本建模图元</strong>。三点确定一个平面，三角形永远是平的，GPU 专门为画三角形优化。</p>
+
+<div class="guizang-figure">
+<img src="images/ch02/barycentric.png" alt="重心坐标——三角形内点的插值方法">
+<div class="guizang-caption">图2-4：重心坐标——三角形内任一点可表示为三个顶点的加权混合，权重 α+β+γ=1</div>
+</div>
+
+<h3 id="2-9-2-重心坐标的定义">2.9.2 重心坐标的定义</h3>
+
+<p>给定三角形三个顶点 a、b、c，三角形内任意一点 p 可以写成：</p>
+
+<div class="formula">p(α, β, γ) = α·a + β·b + γ·c</div>
+<div class="formula">约束：α + β + γ = 1，且 α, β, γ ≥ 0</div>
+
+<p><strong>每个符号的含义：</strong></p>
+<ul>
+  <li><strong>α, β, γ</strong>：三个顶点的"权重"，称为重心坐标</li>
+  <li><strong>α + β + γ = 1</strong>：权重之和为1（"百分百"属于这个三角形）</li>
+  <li><strong>α, β, γ ≥ 0</strong>：权重不能是负的——负权重点在三角形外部</li>
+</ul>
+
+<p><strong>直观理解</strong>：</p>
+<pre><code>         a
+        /\
+       /  \
+      /    \
+     /      \
+    b────────c
+
+    靠近a: α 大（离a近 = a的权重大）
+    靠近b: β 大
+    靠近c: γ 大
+    中心点: α = β = γ = 1/3（三个顶点权重相等）
+    在ab边上: γ = 0（不靠近c）</code></pre>
+
+<h3 id="2-9-3-判断点是否在三角形内">2.9.3 判断点是否在三角形内</h3>
+
+<pre><code>如果 0 < α < 1 AND 0 < β < 1 AND 0 < γ < 1
+    → 点在三角形内部
+
+如果其中一个坐标 = 0，其他两个在 (0,1) 之间
+    → 点在边上
+
+如果其中两个坐标 = 0
+    → 点在顶点上</code></pre>
+
+<h3 id="2-9-4-重心坐标的神奇性质">2.9.4 重心坐标的神奇性质</h3>
+
+<blockquote><strong>同样的 (α, β, γ) 不仅用于混合位置，也用于混合颜色、法线、UV坐标——一切都能插值！</strong></blockquote>
+
+<pre><code>// 三角形的三个顶点各有颜色
+color ca = RED;    // 顶点a：红色
+color cb = GREEN;  // 顶点b：绿色
+color cc = BLUE;   // 顶点c：蓝色
+
+// 三角形内部任一点 p 的颜色
+// 注意：α, β, γ 和混合位置时用的完全一样！
+color cp = α * ca + β * cb + γ * cc;
+// 这就是 Gouraud 着色和纹理映射的基础！</code></pre>
+
+<div class="key-box">
+<strong>🔑 关键洞察</strong>：重心坐标本质上就是<strong>"子三角形面积 / 大三角形面积"</strong>的比例。点 P 将大三角形分成三个小三角形，α = (area Pbc) / (area abc)，以此类推。
+</div>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么四边形的插值比三角形复杂得多？为什么图形学不用四边形作为基本图元？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">四边形的四个顶点<strong>不一定共面</strong>——在3D空间中，四个点可能形成一个"折叠"的形状。而三角形的三个点<strong>总是共面</strong>。此外，四边形沿着对角线划分有两个不同的三角剖分方案，插值结果不唯一。所以 GPU 只处理三角形。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="2-10-离散概率-discrete-probability">2.10 离散概率（Discrete Probability）</h2>
+
+<h3 id="2-10-1-图形学为什么需要概率">2.10.1 图形学为什么需要概率？</h3>
+
+<p><strong>它解决什么问题？</strong>很多图形学效果是"随机"的——比如蒙特卡洛渲染需要随机采样光线方向，游戏中的暴击/掉宝是随机事件。不理解概率，就无法理解这些技术。</p>
+
+<h3 id="2-10-2-从骰子开始">2.10.2 从骰子开始</h3>
+
+<p>掷一个六面骰子，结果 X ∈ {1, 2, 3, 4, 5, 6}，每面概率 1/6。</p>
+
+<pre><code>在编程中：
+    int X = rand_from(1, 6);   // X就是随机变量
+    // 运行时才知道X的值，但知道分布</code></pre>
+
+<h3 id="2-10-3-期望值">2.10.3 期望值</h3>
+
+<div class="formula">E[X] = Σ(结果 × 概率)</div>
+
+<pre><code>骰子的期望值：
+E[X] = 1·(1/6) + 2·(1/6) + 3·(1/6) + 4·(1/6) + 5·(1/6) + 6·(1/6)
+     = 3.5</code></pre>
+
+<p><strong>注意</strong>：期望值不一定是可能的结果（骰子不可能掷出3.5）。它是一种"长期趋势"——掷100万次骰子，平均值会非常接近3.5。</p>
+
+<hr>
+
+<h2 id="2-11-连续概率-continuous-probability">2.11 连续概率（Continuous Probability）</h2>
+
+<h3 id="2-11-1-和离散概率的关键区别">2.11.1 和离散概率的关键区别</h3>
+
+<p><strong>离散随机变量</strong>：取值是"一个点"（如骰子的1点），某特定值的概率 > 0。</p>
+<p><strong>连续随机变量</strong>：取值在"一个区间"（如[0, 10]的均匀分布），某特定值的概率 = 0！</p>
+
+<p><strong>为什么特定值的概率是0？</strong>因为无限多个可能值，每个值的"份额"趋近于0。就像一条线段——你不可能说"恰好在这一个点上的概率是多少"，因为点是无限细的。</p>
+
+<hr>
+
+<h2 id="2-12-蒙特卡洛积分-monte-carlo-integration">2.12 蒙特卡洛积分（Monte Carlo Integration）</h2>
+
+<h3 id="2-12-1-图形学的-杀手锏">2.12.1 图形学的"杀手锏"</h3>
+
+<p><strong>它解决什么问题？</strong>渲染的核心——计算"到达每个像素的光线总量"——本质上是一个积分。很多积分你无法用手算出精确值（因为场景太复杂）。蒙特卡洛积分就是"算不出精确值，我们就用随机采样来估计它"。</p>
+
+<h3 id="2-12-2-最简单的理解">2.12.2 最简单的理解</h3>
+
+<pre><code>// 伪代码——这就是蒙特卡洛积分！
+float sum = 0.0;
+int N = 10000; // 样本数——越多越精确
+
+for (int i = 0; i < N; i++) {
+    vec3 v = random_point_on_hemisphere(); // 随机选方向
+    sum += f(v);                          // 计算这个方向的光线贡献
+}
+float average = sum / N;                  // 取平均</code></pre>
+
+<p><strong>这就是蒙特卡洛积分的全部核心</strong>：随机采样 → 计算贡献 → 取平均。</p>
+
+<h3 id="2-12-3-从平均值到积分">2.12.3 从平均值到积分</h3>
+
+<div class="formula">∫f(x)dx ≈ average(f) × 面积</div>
+
+<p><strong>为什么这个成立？</strong></p>
+<pre><code>average(f, domain) = ∫f(x)dx / ∫1·dx
+                   = ∫f(x)dx / size(domain)
+
+所以：
+∫f(x)dx = average(f, domain) × size(domain)
+
+半球面积 = 2π，所以：
+半球上的积分 = average × 2π</code></pre>
+
+<h3 id="2-12-4-重要性采样">2.12.4 重要性采样</h3>
+
+<p><strong>它解决什么问题？</strong>基础的蒙特卡洛是"在全域均匀采样"——但大多数方向的光线贡献很小，浪费了很多样本。重要性采样就是"在光线贡献大的方向多采样，在贡献小的方向少采样"。</p>
+
+<pre><code>基础蒙特卡洛：在全域均匀采样 → 收敛慢
+重要性采样：  按概率密度采样 → 收敛快
+
+关键公式：
+∫f(x)dx ≈ (1/N) Σ f(xᵢ) / p(xᵢ)
+                                  ↑
+                            用概率密度"修正"非均匀采样</code></pre>
+
+<table>
+<tr><th>方法</th><th>采样策略</th><th>收敛速度</th><th>实现复杂度</th></tr>
+<tr><td>均匀采样</td><td>全域等概率</td><td>慢（O(1/√N)）</td><td>最简单</td></tr>
+<tr><td>重要性采样</td><td>按f(x)分布</td><td>快（O(1/N)）</td><td>需要设计采样分布</td></tr>
+</table>
+
+<div class="key-box">
+<strong>🔑 核心洞察</strong>：蒙特卡洛积分 = 随机采样取平均 = 积分估计。任何 p(x) 都能收敛到正确答案——只要 p(x) ≠ 0 的地方 f(x) 也不为 0。p(x) 只影响收敛速度，不影响最终结果。
+</div>
+
+<hr>
+
+<h2 id="全章总结">全章总结</h2>
+
+<h3 id="知识地图">知识地图</h3>
+
+<pre><code>                第2章：杂项数学
+                      │
+       ┌──────────────┼──────────────┐
+       │              │              │
+    基础工具         几何工具       数值方法
+       │              │              │
+   ┌───┼───┐     ┌────┼────┐    ┌───┼───────┐
+   │   │   │     │    │    │    │   │       │
+ 集合  三角  二次 向量  曲线  三角  概率  连续  蒙特卡洛
+ 映射  函数  方程              重心    概率   积分
+                            坐标
+
+各小节一句话总结：</code></pre>
+
+<table>
+<tr><th>小节</th><th>一句话</th><th>图形学应用</th></tr>
+<tr><td>2.1 集合与映射</td><td>数学记号↔编程语言的翻译</td><td>Domain/codomain 对应函数签名</td></tr>
+<tr><td>2.2 二次方程</td><td>求根公式是最基础的求解工具</td><td>光线-球体求交、碰撞检测</td></tr>
+<tr><td>2.3 三角学</td><td>sin/cos 描述角度和旋转</td><td>旋转矩阵、光照、球面坐标</td></tr>
+<tr><td>2.4 向量</td><td>图形学的"基本数据类型"</td><td>所有位置、方向、法线的表示</td></tr>
+<tr><td>2.5 积分</td><td>把积分当成黑箱函数</td><td>渲染方程的核心</td></tr>
+<tr><td>2.6 密度函数</td><td>PDF = 单位长度/面积上的概率</td><td>采样理论的基础</td></tr>
+<tr><td>2.7 曲线/曲面</td><td>隐式 vs 参数化——两种世界观</td><td>隐式适合求交，参数化适合生成</td></tr>
+<tr><td>2.8 线性插值</td><td>lerp：图形学最常用的操作</td><td>关键帧插值、纹理映射</td></tr>
+<tr><td>2.9 三角形/重心坐标</td><td>α+β+γ=1，混合一切属性</td><td>Gouraud着色、纹理采样</td></tr>
+<tr><td>2.10 离散概率</td><td>期望值=长期平均</td><td>游戏掉率、随机事件</td></tr>
+<tr><td>2.11 连续概率</td><td>连续PDF=单位长度概率密度</td><td>光照采样分布</td></tr>
+<tr><td>2.12 蒙特卡洛积分</td><td>随机采样取平均=积分估计</td><td>路径追踪的核心！</td></tr>
+</table>
+
+<div class="key-box">
+<strong>🔑 讲义核心洞察</strong>：第2章是全书的"数学弹药库"。</strong>你不需要一次记住所有内容——但你需要知道每个工具在图形学中的<strong>定位</strong>。<br>
+<ul>
+  <li><strong>向量（2.4）</strong>是图形学的基本数据类型——"图形学的int和float"</li>
+  <li><strong>重心坐标（2.9）</strong>是三角形插值的灵魂——"一切属性的混合器"</li>
+  <li><strong>蒙特卡洛积分（2.12）</strong>是现代渲染的核心引擎——"用随机算出精确"</li>
+</ul>
+这三节值得<strong>深入理解</strong>。其他小节可以先建立直觉，遇到具体问题时回来查阅。<br><br>
+记住作者的原话：<strong>"多干净的数学，多干净的代码"</strong>（The cleaner the math, the cleaner the resulting code）。
+</div>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li class="active"><a href="ch02_杂项数学.html" class="active">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#2-1-集合与映射-sets-and-mappings">2.1 集合与映射（Sets and Mappings）</a></li>
+  <li class="toc-h3"><a href="#2-1-1-为什么图形学需要集合和映射">2.1.1 为什么图形学需要集合和映射？</a></li>
+  <li class="toc-h3"><a href="#2-1-2-数学记号----编程语言翻译">2.1.2 数学记号 ←→ 编程语言翻译</a></li>
+  <li class="toc-h3"><a href="#2-1-3-图形学中常用的集合">2.1.3 图形学中常用的集合</a></li>
+  <li class="toc-h2"><a href="#2-2-解二次方程-solving-quadratic-equations">2.2 解二次方程（Solving Quadratic Equations）</a></li>
+  <li class="toc-h3"><a href="#2-2-1-为什么图形学需要这个">2.2.1 为什么图形学需要这个？</a></li>
+  <li class="toc-h3"><a href="#2-2-2-标准形式">2.2.2 标准形式</a></li>
+  <li class="toc-h3"><a href="#2-2-3-判别式-d---b²---4ac">2.2.3 判别式 D = B² - 4AC</a></li>
+  <li class="toc-h3"><a href="#2-2-4-数值稳定性问题-为什么计算机计算时还会出错">2.2.4 数值稳定性问题（为什么计算机计算时还会出错？）</a></li>
+  <li class="toc-h2"><a href="#2-3-三角学-trigonometry">2.3 三角学（Trigonometry）</a></li>
+  <li class="toc-h3"><a href="#2-3-1-为什么图形学需要三角函数">2.3.1 为什么图形学需要三角函数？</a></li>
+  <li class="toc-h3"><a href="#2-3-2-单位圆定义-最重要的理解方式">2.3.2 单位圆定义（最重要的理解方式）</a></li>
+  <li class="toc-h3"><a href="#2-3-3-余弦定理">2.3.3 余弦定理</a></li>
+  <li class="toc-h3"><a href="#2-3-4-图形学中最常用的三角函数用途">2.3.4 图形学中最常用的三角函数用途</a></li>
+  <li class="toc-h2"><a href="#2-4-向量-vectors">2.4 向量（Vectors）</a></li>
+  <li class="toc-h3"><a href="#2-4-1-图形学最基本的数据类型">2.4.1 图形学最基本的数据类型</a></li>
+  <li class="toc-h3"><a href="#2-4-2-基本操作">2.4.2 基本操作</a></li>
+  <li class="toc-h3"><a href="#2-4-3-点积-dot-product---图形学最重要的运算">2.4.3 点积（Dot Product）——图形学最重要的运算</a></li>
+  <li class="toc-h3"><a href="#2-4-4-叉积-cross-product">2.4.4 叉积（Cross Product）</a></li>
+  <li class="toc-h3"><a href="#2-4-5-左右手坐标系">2.4.5 左右手坐标系</a></li>
+  <li class="toc-h2"><a href="#2-5-积分-integration">2.5 积分（Integration）</a></li>
+  <li class="toc-h3"><a href="#2-5-1-图形学为什么需要积分">2.5.1 图形学为什么需要积分？</a></li>
+  <li class="toc-h2"><a href="#2-6-密度函数-density-functions">2.6 密度函数（Density Functions）</a></li>
+  <li class="toc-h3"><a href="#2-6-1-从概率密度到图形学">2.6.1 从概率密度到图形学</a></li>
+  <li class="toc-h2"><a href="#2-7-曲线与曲面-curves-and-surfaces">2.7 曲线与曲面（Curves and Surfaces）</a></li>
+  <li class="toc-h3"><a href="#2-7-1-两种根本不同的世界观">2.7.1 两种根本不同的世界观</a></li>
+  <li class="toc-h2"><a href="#2-8-线性插值-linear-interpolation">2.8 线性插值（Linear Interpolation）</a></li>
+  <li class="toc-h3"><a href="#2-8-1-图形学中最常用的操作">2.8.1 图形学中最常用的操作</a></li>
+  <li class="toc-h2"><a href="#2-9-三角形与重心坐标-triangles---barycentric-coordinates">2.9 三角形与重心坐标（Triangles & Barycentric Coordinates）</a></li>
+  <li class="toc-h3"><a href="#2-9-1-为什么三角形这么重要">2.9.1 为什么三角形这么重要？</a></li>
+  <li class="toc-h3"><a href="#2-9-2-重心坐标的定义">2.9.2 重心坐标的定义</a></li>
+  <li class="toc-h3"><a href="#2-9-3-判断点是否在三角形内">2.9.3 判断点是否在三角形内</a></li>
+  <li class="toc-h3"><a href="#2-9-4-重心坐标的神奇性质">2.9.4 重心坐标的神奇性质</a></li>
+  <li class="toc-h2"><a href="#2-10-离散概率-discrete-probability">2.10 离散概率（Discrete Probability）</a></li>
+  <li class="toc-h3"><a href="#2-10-1-图形学为什么需要概率">2.10.1 图形学为什么需要概率？</a></li>
+  <li class="toc-h3"><a href="#2-10-2-从骰子开始">2.10.2 从骰子开始</a></li>
+  <li class="toc-h3"><a href="#2-10-3-期望值">2.10.3 期望值</a></li>
+  <li class="toc-h2"><a href="#2-11-连续概率-continuous-probability">2.11 连续概率（Continuous Probability）</a></li>
+  <li class="toc-h3"><a href="#2-11-1-和离散概率的关键区别">2.11.1 和离散概率的关键区别</a></li>
+  <li class="toc-h2"><a href="#2-12-蒙特卡洛积分-monte-carlo-integration">2.12 蒙特卡洛积分（Monte Carlo Integration）</a></li>
+  <li class="toc-h3"><a href="#2-12-1-图形学的-杀手锏">2.12.1 图形学的"杀手锏"</a></li>
+  <li class="toc-h3"><a href="#2-12-2-最简单的理解">2.12.2 最简单的理解</a></li>
+  <li class="toc-h3"><a href="#2-12-3-从平均值到积分">2.12.3 从平均值到积分</a></li>
+  <li class="toc-h3"><a href="#2-12-4-重要性采样">2.12.4 重要性采样</a></li>
+  <li class="toc-h2"><a href="#全章总结">全章总结</a></li>
+  <li class="toc-h3"><a href="#知识地图">知识地图</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

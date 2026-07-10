@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch15: 曲线</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch15 曲线</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第15章：曲线（Curves）— 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第15章（p.383-422）。<br>
+<strong>本章是图形学的"曲线几何"</strong>——它告诉你：怎么用参数化曲线描述物体的轮廓和运动路径。<br>
+学完本章，你将真正理解 Bézier、B-Spline、Catmull-Rom、NURBS 等核心曲线概念。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s15-1">15.1 参数化曲线基础</a></li>
+  <li><a href="#s15-2">15.2 连续性等级</a></li>
+  <li><a href="#s15-3">15.3 曲线属性</a></li>
+  <li><a href="#s15-4">15.4 插值曲线</a></li>
+  <li><a href="#s15-5">15.5 三次插值</a></li>
+  <li><a href="#s15-6">15.6 逼近曲线：Bézier</a></li>
+  <li><a href="#s15-7">15.7 逼近曲线：B-Spline</a></li>
+  <li><a href="#s15-8">15.8 3D曲线与总结</a></li>
+</ul>
+</div>
+
+<hr>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+  <li>理解参数化曲线 vs 隐式曲线的区别</li>
+  <li>掌握连续性条件：C⁰ / C¹ / C² / G¹ / G²</li>
+  <li>理解插值（Interpolation）vs 逼近（Approximation）</li>
+  <li>掌握3种插值曲线：Natural Cubic / Hermite / Cardinal（Catmull-Rom）</li>
+  <li>掌握2种逼近曲线：Bézier / B-Spline</li>
+  <li>理解de Casteljau算法——Bézier的核心</li>
+  <li>掌握B-Spline——工业标准曲线</li>
+</ol>
+
+<hr>
+
+<h2 id="15-1-参数化曲线基础">15.1 参数化曲线基础</h2>
+
+<h3 id="15-1-1-什么是参数化曲线">15.1.1 什么是参数化曲线</h3>
+
+<div class="term-box">
+<strong>核心定义</strong>：参数化曲线 = "从1D区间到2D/3D空间的映射"
+</div>
+
+<div class="formula">f(u) = (x(u), y(u), z(u)) &emsp; u ∈ [0, 1]</div>
+
+<p><strong>逐符号拆解</strong>：</p>
+<ul>
+  <li><strong>u</strong> = 参数（通常在0到1之间）。把它想象成"进度条"——0是起点，1是终点</li>
+  <li><strong>x(u)</strong> = 参数u处的x坐标</li>
+  <li><strong>y(u)</strong> = 参数u处的y坐标</li>
+  <li><strong>z(u)</strong> = 参数u处的z坐标（如果是3D曲线）</li>
+</ul>
+
+<p><strong>参数化 vs 隐式曲线</strong>：</p>
+<table>
+<tr><th>特性</th><th>参数化曲线</th><th>隐式曲线</th></tr>
+<tr><td>核心问题</td><td>给定u→求点P</td><td>给定P→判断是否在线上</td></tr>
+<tr><td>表示</td><td>f(u) = (x(u), y(u))</td><td>F(x,y) = 0</td></tr>
+<tr><td>采样点</td><td>容易（给u值即可）</td><td>困难（需要解方程）</td></tr>
+<tr><td>求切线</td><td>直接求f'(u)</td><td>需要隐函数求导</td></tr>
+<tr><td>动画/运动</td><td>天然支持（u=时间）</td><td>不直观</td></tr>
+<tr><td>举例</td><td>f(u)=(u², u³), u∈[0,1]</td><td>x²+y²-R²=0（圆）</td></tr>
+</table>
+
+<div class="info-box">
+<strong>💡 核心优势</strong>：参数化曲线适合<strong>生成</strong>点（渲染、动画），隐式曲线适合<strong>判断</strong>点（碰撞检测）。
+</div>
+
+<h3 id="15-1-2-复合曲线">15.1.2 复合曲线</h3>
+
+<p>现实中的曲线通常不是由单个函数定义的——而是<strong>分段定义的不同函数</strong>拼接而成。</p>
+
+<p><strong>例子</strong>：门的轮廓 = 直线 + 圆弧 + 直线 + 圆弧</p>
+
+<p><strong>分段表示</strong>：</p>
+<pre><code>f(u) = f₁(2u)          if 0 ≤ u ≤ 0.5    (前半段：直线)
+       f₂(2u - 1)       if 0.5 < u ≤ 1    (后半段：圆弧)</code></pre>
+
+<p>每个fᵢ称为一个<strong>段（segment或piece）</strong>，段与段之间的连接叫做<strong>结点（knot）</strong>。</p>
+
+<hr>
+
+<h2 id="15-2-连续性等级">15.2 连续性等级</h2>
+
+<div class="guizang-figure">
+<img src="images/ch15/ch15_continuity.png" alt="连续性C⁰/C¹/C²对比">
+<div class="guizang-caption">图15-1：连续性C⁰/C¹/C²对比——C⁰位置连续（有缺口），C¹切线连续（平滑），C²曲率连续（完全平滑）</div>
+</div>
+
+<h3 id="15-2-1-cⁿ连续性的定义">15.2.1 Cⁿ连续性的定义</h3>
+
+<div class="term-box">
+<strong>核心定义</strong>：Cⁿ = 曲线在拼接点处n阶导数连续
+</div>
+
+<p>对于两条曲线段f₁(u)和f₂(u)，在拼接点u=1（f₁的终点=f₂的起点）：</p>
+
+<table>
+<tr><th>等级</th><th>条件</th><th>几何意义</th><th>视觉表现</th></tr>
+<tr><td><strong>C⁰</strong></td><td>f₁(1) = f₂(0)</td><td>位置连续</td><td>没有缺口</td></tr>
+<tr><td><strong>C¹</strong></td><td>f'₁(1) = f'₂(0)</td><td>切线方向+大小都相同</td><td>平滑无折角</td></tr>
+<tr><td><strong>C²</strong></td><td>f''₁(1) = f''₂(0)</td><td>曲率连续</td><td>完全平滑</td></tr>
+<tr><td><strong>C³</strong></td><td>三阶导数连续</td><td>曲率变化率连续</td><td>几乎察觉不到</td></tr>
+</table>
+
+<p><strong>关键区分：Cⁿ vs Gⁿ（几何连续）</strong></p>
+<table>
+<tr><th>等级</th><th>条件</th><th>等同于</th></tr>
+<tr><td><strong>C¹</strong></td><td>f'₁(1) = f'₂(0)</td><td>切线方向+大小都相同（强条件）</td></tr>
+<tr><td><strong>G¹</strong></td><td>f'₁(1) ∥ f'₂(0)</td><td>切线方向相同即可，大小可以不同（弱条件）</td></tr>
+</table>
+
+<div class="trans-box">
+<strong>用中文说就是</strong>：C¹要求两段曲线在拼接处"方向一致、速度一致"，G¹只要求"方向一致"——就像两辆车的车头指向同一个方向，但可以一辆速度快一辆慢。G¹更容易实现，因为对切线大小没有要求。
+</div>
+
+<h3 id="15-2-2-图形学中的实际选择">15.2.2 图形学中的实际选择</h3>
+
+<table>
+<tr><th>应用场景</th><th>所需连续性</th><th>原因</th></tr>
+<tr><td>动画运动路径</td><td><strong>C²</strong></td><td>避免突然加速/减速（视觉上更平滑）</td></tr>
+<tr><td>3D模型轮廓线</td><td><strong>C¹</strong></td><td>足够平滑，锐利边缘用折角</td></tr>
+<tr><td>字体/标志设计</td><td><strong>G¹</strong></td><td>视觉效果OK，实现简单</td></tr>
+<tr><td>空气动力学形状</td><td><strong>C³+</strong></td><td>避免湍流产生</td></tr>
+</table>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么字体设计只需要G¹就够了？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">因为我们的眼睛对切线方向的突变很敏感（能看出"折角"），但对切线大小的变化不敏感。G¹确保了两段曲线方向的连续性，看起来就是平滑的。而C¹要求切线大小也相同——这在字体设计中是不必要的限制。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="15-3-曲线属性">15.3 曲线属性</h2>
+
+<h3 id="15-3-1-局部控制-locality">15.3.1 局部控制（Locality）</h3>
+
+<p><strong>局部控制 = "改1个控制点只影响附近区域，不影响整条曲线"</strong></p>
+
+<p>这是图形学中极为重要的性质。为什么？</p>
+<ul>
+  <li><strong>设计师体验</strong>：拖动一个控制点，只想微调曲线的一小段，不想整条曲线都变</li>
+  <li><strong>编辑效率</strong>：局部修改不需要重新计算整条曲线</li>
+  <li><strong>协作</strong>：多个人可以同时编辑不同区域</li>
+</ul>
+
+<table>
+<tr><th>曲线类型</th><th>局部控制？</th><th>移动1个点影响</th></tr>
+<tr><td>单条高次插值多项式</td><td>✗ 非局部</td><td>整条曲线</td></tr>
+<tr><td>分段三次Hermite</td><td>✓ 局部（但需指定切线）</td><td>≤2段</td></tr>
+<tr><td>Catmull-Rom样条</td><td>✓ 局部</td><td>≤4段</td></tr>
+<tr><td>Bézier曲线</td><td>✗ 分段局部</td><td>1段（每段独立）</td></tr>
+<tr><td>B-Spline</td><td>✓ 局部</td><td>k段（k=阶数）</td></tr>
+</table>
+
+<h3 id="15-3-2-为什么用分段三次曲线">15.3.2 为什么用分段三次曲线？</h3>
+
+<table>
+<tr><th>方案</th><th>优势</th><th>劣势</th></tr>
+<tr><td><strong>单条高次多项式</strong></td><td>数学简单</td><td>非局部、易振荡（Runge现象）</td></tr>
+<tr><td><strong>多段低次多项式</strong></td><td>局部控制、灵活、稳定</td><td>需要处理段间连续性</td></tr>
+</table>
+
+<p>为什么是<strong>三次（Cubic）</strong>？</p>
+<ul>
+  <li>次数太低（线性）→ 只有C⁰，不平滑</li>
+  <li>次数太高 → 振荡、非局部</li>
+  <li><strong>三次 = "最小曲率" + 数值稳定 + 简单</strong> ——黄金平衡点</li>
+</ul>
+
+<hr>
+
+<h2 id="15-4-插值曲线-interpolating-curves">15.4 插值曲线（Interpolating Curves）</h2>
+
+<h3 id="15-4-1-插值-vs-逼近">15.4.1 插值 vs 逼近</h3>
+
+<div class="guizang-figure">
+<img src="images/ch15/ch15_interp_vs_approx.png" alt="插值vs逼近对比">
+<div class="guizang-caption">图15-2：插值（上）通过所有控制点 vs 逼近（下）靠近但不通过控制点</div>
+</div>
+
+<table>
+<tr><th>特性</th><th>插值（Interpolation）</th><th>逼近（Approximation）</th></tr>
+<tr><td>是否通过控制点</td><td>✓ 精确通过</td><td>✗ 只受控制点"吸引"</td></tr>
+<tr><td>平滑性</td><td>可能振荡</td><td>通常更平滑</td></tr>
+<tr><td>局部控制</td><td>差（高次）或好（分段低次）</td><td>好（如B-Spline）</td></tr>
+<tr><td>典型应用</td><td>动画路径（必须通过关键点）</td><td>CAD建模（平滑外形）</td></tr>
+<tr><td>例子</td><td>Catmull-Rom, Hermite</td><td>Bézier, B-Spline</td></tr>
+</table>
+
+<h3 id="15-4-2-lagrange插值">15.4.2 Lagrange插值</h3>
+
+<p>给定n个点，存在唯一的n-1次多项式通过所有点。</p>
+
+<div class="formula">b_i(t) = ∏_{j≠i} (t - t_j) / (t_i - t_j) &emsp; f(t) = Σ p_i · b_i(t)</div>
+
+<p><strong>问题</strong>：n较大时，曲线会剧烈振荡——这叫<strong>Runge现象</strong>。比如用10次多项式通过10个均匀点，两端会剧烈摆动。</p>
+
+<div class="info-box">
+<strong>💡 教训</strong>：不要用高次多项式做插值！用分段低次（三次）替代。
+</div>
+
+<hr>
+
+<h2 id="15-5-三次插值">15.5 三次插值</h2>
+
+<h3 id="15-5-1-hermite三次曲线">15.5.1 Hermite三次曲线</h3>
+
+<p>4个参数确定一条三次曲线：</p>
+<ul>
+  <li>起点位置 p₀</li>
+  <li>起点切线 f'(0) = m₀</li>
+  <li>终点位置 p₃</li>
+  <li>终点切线 f'(1) = m₁</li>
+</ul>
+
+<p><strong>Hermite形式</strong>：</p>
+<div class="formula">f(t) = (2t³ - 3t² + 1)p₀ + (t³ - 2t² + t)m₀ + (-2t³ + 3t²)p₃ + (t³ - t²)m₁</div>
+
+<p><strong>逐项拆解——这四个基函数的含义</strong>：</p>
+<table>
+<tr><th>基函数</th><th>在t=0的值</th><th>在t=1的值</th><th>导数t=0</th><th>导数t=1</th><th>作用</th></tr>
+<tr><td>H₀(t)=2t³-3t²+1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>控制起点位置</td></tr>
+<tr><td>H₁(t)=t³-2t²+t</td><td>0</td><td>0</td><td>1</td><td>0</td><td>控制起点切线</td></tr>
+<tr><td>H₂(t)=-2t³+3t²</td><td>0</td><td>1</td><td>0</td><td>0</td><td>控制终点位置</td></tr>
+<tr><td>H₃(t)=t³-t²</td><td>0</td><td>0</td><td>0</td><td>1</td><td>控制终点切线</td></tr>
+</table>
+
+<div class="trans-box">
+<strong>用中文说就是</strong>：Hermite曲线让你直接指定起点位置、起点切线方向、终点位置、终点切线方向。就像画一条弧线——你指定了起点和终点，以及从起点出发的方向和到达终点的方向。非常直观。
+</div>
+
+<h3 id="15-5-2-自然三次样条-natural-cubic-spline">15.5.2 自然三次样条（Natural Cubic Spline）</h3>
+
+<p><strong>C²连续 + 通过所有点</strong>——这是工业级插值曲线的标准。</p>
+
+<p><strong>约束分析</strong>：</p>
+<ul>
+  <li>n段三次曲线 → 4n个系数需要确定</li>
+  <li>段间C⁰：n-1个约束</li>
+  <li>段间C¹：n-1个约束</li>
+  <li>段间C²：n-1个约束</li>
+  <li>总约束：3(n-1) = 3n-3</li>
+  <li>自由度：4n - 3(n-1) = n+3</li>
+</ul>
+
+<p><strong>自然边界条件</strong>：起点二阶导=0，终点二阶导=0 → 还剩余n+1个自由度 = n个点 ✓</p>
+
+<div class="key-box">
+<strong>⚡ 核心洞察</strong>：自然三次样条 = "经过所有点 + 两次可微（C²）+ 两端自然（二阶导=0）"。它是完美的插值曲线——但<strong>非局部</strong>。改变任意一个点都会影响整条曲线。这就是为什么游戏和动画不用它。
+</div>
+
+<h3 id="15-5-3-catmull-rom样条-cardinal样条">15.5.3 Catmull-Rom样条（Cardinal样条）</h3>
+
+<p><strong>Catmull-Rom = 游戏行业的默认插值曲线</strong></p>
+
+<p><strong>思想</strong>：切线由相邻点的连线自动计算——用户不需要手动指定切线。</p>
+
+<div class="formula">切线_i = (1-tension)/2 × (p_{i+1} - p_{i-1})</div>
+
+<p><strong>逐符号拆解</strong>：</p>
+<ul>
+  <li><strong>p_{i+1} - p_{i-1}</strong> = 前一个点到后一个点的向量——穿过当前点的"趋势"</li>
+  <li><strong>(1-tension)/2</strong> = tension=0时，切线大小=相邻点距离的一半（标准Catmull-Rom）</li>
+  <li><strong>tension</strong> = 曲线的"紧绷度"参数（0=标准，越大越松，越小越紧）</li>
+</ul>
+
+<p><strong>为什么Catmull-Rom这么流行？</strong></p>
+<ul>
+  <li>✓ C¹连续（足够平滑）</li>
+  <li>✓ 局部控制（移动1个点影响≤4段）</li>
+  <li>✓ 不需要指定切线（自动计算）</li>
+  <li>✓ 计算简单</li>
+</ul>
+
+<div class="info-box">
+<strong>💡 游戏开发实战</strong>：Catmull-Rom是Unity / Unreal引擎的默认插值曲线——用于相机路径、物体运动轨迹、动画关键帧插值。
+</div>
+
+<hr>
+
+<h2 id="15-6-逼近曲线--bézier">15.6 逼近曲线——Bézier</h2>
+
+<div class="guizang-figure">
+<img src="images/ch15/ch15_bezier.png" alt="Bézier de Casteljau算法">
+<div class="guizang-caption">图15-3：Bézier de Casteljau算法——取中点→连中点→重复→极限得到平滑曲线</div>
+</div>
+
+<h3 id="15-6-1-bézier曲线的核心性质">15.6.1 Bézier曲线的核心性质</h3>
+
+<div class="term-box">
+<strong>核心定义</strong>：Bézier = "用n+1个控制点定义n次曲线"
+</div>
+
+<table>
+<tr><th>性质</th><th>含义</th><th>为什么重要</th></tr>
+<tr><td><strong>端点插值</strong></td><td>起点=第一个控制点，终点=最后一个</td><td>容易控制曲线的起点和终点</td></tr>
+<tr><td><strong>切线方向</strong></td><td>起点切线 = p₁-p₀，终点切线 = pₙ-p_{n₋₁}</td><td>容易控制段间连续性（共享切向量）</td></tr>
+<tr><td><strong>凸包性质</strong></td><td>整条曲线在控制点的凸包内</td><td>碰撞检测、裁剪加速</td></tr>
+<tr><td><strong>仿射不变性</strong></td><td>变换控制点 = 变换曲线（先变换后求值=先求值后变换）</td><td>物体变换时曲线自动跟着变</td></tr>
+<tr><td><strong>变化减小性质</strong></td><td>直线与曲线的交点 ≤ 直线与控制多边形的交点</td><td>曲线的波动不会比控制多边形更剧烈</td></tr>
+</table>
+
+<h3 id="15-6-2-bernstein基函数">15.6.2 Bernstein基函数</h3>
+
+<div class="formula">B_{i,n}(u) = C(n,i) · uⁱ · (1-u)^{n-i} &emsp; f(u) = Σ_{i=0}^{n} pᵢ · B_{i,n}(u)</div>
+
+<p><strong>逐符号拆解</strong>：</p>
+<ul>
+  <li><strong>C(n,i)</strong> = 组合数 "n选i" = n!/(i!(n-i)!)</li>
+  <li><strong>uⁱ</strong> = 参数u的i次方</li>
+  <li><strong>(1-u)^{n-i}</strong> = 互补参数的n-i次方</li>
+  <li><strong>B_{i,n}(u)</strong> = 第i个控制点在参数u处的权重</li>
+</ul>
+
+<p><strong>举例：三次Bézier（n=3）的4个基函数</strong>：</p>
+<table>
+<tr><th>i</th><th>B_{i,3}(u)</th><th>在u=0的值</th><th>在u=1的值</th></tr>
+<tr><td>0</td><td>(1-u)³</td><td>1</td><td>0</td></tr>
+<tr><td>1</td><td>3u(1-u)²</td><td>0</td><td>0</td></tr>
+<tr><td>2</td><td>3u²(1-u)</td><td>0</td><td>0</td></tr>
+<tr><td>3</td><td>u³</td><td>0</td><td>1</td></tr>
+</table>
+
+<h3 id="15-6-3-de-casteljau算法">15.6.3 de Casteljau算法</h3>
+
+<p><strong>核心思想——几何直觉</strong>：</p>
+<ol>
+  <li>在每对相邻控制点的连线上取比例为u的点</li>
+  <li>得到n个新点（原n+1个点变成n个点）</li>
+  <li>重复步骤1-2，直到只剩1个点</li>
+  <li>这个最后的点就是f(u)</li>
+</ol>
+
+<pre><code><span class="comment"># de Casteljau算法——计算Bézier曲线上的点</span>
+<span class="function">def</span> decasteljau(control_points, u):
+    pts = control_points.copy()       <span class="comment"># 复制控制点（不修改原数据）</span>
+    <span class="keyword">while</span> len(pts) &gt; <span class="number">1</span>:               <span class="comment"># 直到只剩一个点（结果点）</span>
+        new_pts = []                   <span class="comment"># 本轮插值生成的点</span>
+        <span class="keyword">for</span> i <span class="keyword">in</span> range(len(pts) - <span class="number">1</span>):  <span class="comment"># 对每对相邻点</span>
+            x = (<span class="number">1</span>-u) * pts[i].x + u * pts[i+<span class="number">1</span>].x  <span class="comment"># 线性插值x</span>
+            y = (<span class="number">1</span>-u) * pts[i].y + u * pts[i+<span class="number">1</span>].y  <span class="comment"># 线性插值y</span>
+            new_pts.append((x, y))     <span class="comment"># 保存新点</span>
+        pts = new_pts                  <span class="comment"># 下一轮用新点继续</span>
+    <span class="keyword">return</span> pts[<span class="number">0</span>]                     <span class="comment"># 返回最终曲线上的点</span></code></pre>
+
+<p><strong>时间复杂度</strong>：O(n²) —— n+1个控制点，每轮减少1个，共n轮，每轮做O(n)次操作。</p>
+
+<div class="info-box">
+<strong>💡 优势</strong>：de Casteljau算法<strong>数值稳定</strong>——它只做线性插值（加减乘除），没有高次幂计算。这比直接计算Bernstein多项式更稳定，尤其是对于高次Bézier曲线。
+</div>
+
+<h3 id="15-6-4-分段bézier曲线的连续性">15.6.4 分段Bézier曲线的连续性</h3>
+
+<p>两段Bézier曲线（控制点分别为p₀,p₁,p₂,p₃和q₀,q₁,q₂,q₃）拼接：</p>
+<ul>
+  <li><strong>C⁰</strong>：p₃ = q₀（共享端点）</li>
+  <li><strong>C¹</strong>：p₃ - p₂ = q₁ - q₀（切线方向+大小相同）即 p₃ - p₂ = q₁ - q₀</li>
+  <li><strong>G¹</strong>：p₃ - p₂ ∥ q₁ - q₀（切线方向相同即可）</li>
+</ul>
+
+<div class="trans-box">
+<strong>用中文说就是</strong>：C¹要求前一段的"手柄"（p₂到p₃）和后一段的"手柄"（q₀到q₁）方向相同、长度相同。G¹只要求方向相同。这就是为什么Adobe Illustrator的钢笔工具可以拉长"手柄"来调整曲率。
+</div>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：Bézier曲线为什么是设计（Adobe）的标准，而B-Spline是CAD的标准？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">
+Bézier的控制点就是曲线上的点（端点特性和凸包性质），设计师可以直观地看到"拖动这个点，曲线往这边弯"。B-Spline有更好的局部控制和任意连续性，但数学更复杂——设计师不需要想这些。CAD需要精确的C²连续和局部控制（修改一个区域不影响整个零件），所以用B-Spline。
+</blockquote>
+</div>
+
+<hr>
+
+<h2 id="15-7-逼近曲线--b-spline">15.7 逼近曲线——B-Spline</h2>
+
+<div class="guizang-figure">
+<img src="images/ch15/ch15_bspline.png" alt="B-Spline基函数">
+<div class="guizang-caption">图15-4：B-Spline基函数的局部控制特性——每个基函数只影响k段，局部vs全局对比</div>
+</div>
+
+<h3 id="15-7-1-b-spline的核心特性">15.7.1 B-Spline的核心特性</h3>
+
+<div class="term-box">
+<strong>核心定义</strong>：B-Spline = "Bézier的局部版本"——工业标准曲线
+</div>
+
+<table>
+<tr><th>性质</th><th>Bézier</th><th>B-Spline</th></tr>
+<tr><td>局部控制</td><td>✗ 移动1个点影响整条曲线</td><td>✓ 移动1个点只影响k段</td></tr>
+<tr><td>连续性</td><td>需要手动保证（共享端点+切线）</td><td>自动C^{k-2}</td></tr>
+<tr><td>凸包性质</td><td>✓ 整体凸包</td><td>✓ 局部凸包（每个段在相应控制点的凸包内）</td></tr>
+<tr><td>变化减小</td><td>✓</td><td>✓</td></tr>
+<tr><td>通过控制点</td><td>首尾点通过</td><td>一般不通过</td></tr>
+</table>
+
+<h3 id="15-7-2-b-spline的阶数k">15.7.2 B-Spline的阶数k</h3>
+
+<table>
+<tr><th>k（阶）</th><th>段内次数</th><th>连续性</th><th>应用</th></tr>
+<tr><td>2</td><td>1（线性）</td><td>C⁰</td><td>折线/多边形</td></tr>
+<tr><td>3</td><td>2（二次）</td><td>C¹</td><td>简单平滑曲线</td></tr>
+<tr><td><strong>4</strong></td><td><strong>3（三次）</strong></td><td><strong>C²</strong></td><td><strong>工业标准（最常用）</strong></td></tr>
+<tr><td>5</td><td>4</td><td>C³</td><td>高要求应用</td></tr>
+</table>
+
+<h3 id="15-7-3-cox-de-boor递归公式">15.7.3 Cox-de Boor递归公式</h3>
+
+<p>B-Spline基函数的定义：</p>
+<div class="formula">b_{i,1}(t) = 1 if tᵢ ≤ t < t_{i+1}, else 0</div>
+<div class="formula">b_{i,k}(t) = (t-tᵢ)/(t_{i+k-1}-tᵢ) · b_{i,k-1}(t) + (t_{i+k}-t)/(t_{i+k}-t_{i+1}) · b_{i+1,k-1}(t)</div>
+
+<div class="trans-box">
+<strong>用中文说就是</strong>：B-Spline基函数是"递归定义的"。最低层（k=1）是阶梯函数（要么0要么1）。高层（k=2,3,4）由低层线性插值得到。这种递归定义保证了每个基函数只在局部区域非零——这就是局部控制的核心。
+</div>
+
+<h3 id="15-7-4-均匀b-spline-vs-非均匀b-spline-nurbs">15.7.4 均匀B-Spline vs 非均匀B-Spline（NURBS）</h3>
+
+<table>
+<tr><th>类型</th><th>结点分布</th><th>优势</th><th>劣势</th></tr>
+<tr><td><strong>均匀B-Spline</strong></td><td>所有结点等距（0,1,2,3,...）</td><td>简单、计算快</td><td>不能控制局部细节密度</td></tr>
+<tr><td><strong>非均匀B-Spline</strong></td><td>结点可不等距（0,0,0,1,2,3,3,3）</td><td>灵活、可制造尖角</td><td>实现复杂</td></tr>
+<tr><td><strong>NURBS</strong></td><td>非均匀 + 带权</td><td>可精确表示圆/圆锥</td><td>更复杂</td></tr>
+</table>
+
+<p><strong>结点塞紧（Knot Insertion）制造尖角</strong>：</p>
+<p>在B-Spline中，如果多个结点在同一个位置（重复结点），曲线在该点的连续性会降低。<strong>3次重复 → C⁰</strong>（产生尖角）。这是B-Spline制造尖角的标准方法。</p>
+
+<div class="key-box">
+<strong>⚡ 核心洞察</strong>：B-Spline是图形学的"瑞士军刀"——它统一了分段多项式曲线的表示。
+<ul>
+  <li>k=2 → 折线</li>
+  <li>k=4，均匀 → 平滑曲线</li>
+  <li>k=4，非均匀 → 可制造尖角</li>
+  <li>NURBS → 精确表示圆锥曲线</li>
+</ul>
+</div>
+
+<hr>
+
+<h2 id="15-8-3d曲线与总结">15.8 3D曲线与总结</h2>
+
+<h3 id="15-8-1-3d曲线">15.8.1 3D曲线</h3>
+
+<p><strong>核心思想</strong>：所有2D曲线理论直接推广到3D——只是控制点从2D向量变成3D向量。</p>
+
+<p><strong>应用场景</strong>：</p>
+<ul>
+  <li><strong>3D动画路径</strong>：相机沿曲线运动（如过山车视角）</li>
+  <li><strong>3D模型轮廓</strong>：头发、布料、绳索的曲线表示</li>
+  <li><strong>3D网格编辑</strong>：用曲线驱动网格变形</li>
+</ul>
+
+<h3 id="15-8-2-术语对照表">15.8.2 术语对照表</h3>
+<table>
+<tr><th>英文</th><th>中文</th><th>一句话</th></tr>
+<tr><td>Parametric Curve</td><td>参数化曲线</td><td>f(u) = (x(u), y(u))</td></tr>
+<tr><td>Continuity Cⁿ</td><td>Cⁿ连续性</td><td>n阶导数连续</td></tr>
+<tr><td>Interpolation</td><td>插值</td><td>曲线通过控制点</td></tr>
+<tr><td>Approximation</td><td>逼近</td><td>曲线靠近控制点</td></tr>
+<tr><td>Hermite Curve</td><td>Hermite曲线</td><td>指定位置+切线</td></tr>
+<tr><td>Catmull-Rom</td><td>Catmull-Rom样条</td><td>自动切线插值，游戏首选</td></tr>
+<tr><td>Bézier Curve</td><td>Bézier曲线</td><td>逼近型，设计首选</td></tr>
+<tr><td>De Casteljau</td><td>de Casteljau算法</td><td>Bézier的核心算法</td></tr>
+<tr><td>B-Spline</td><td>B样条</td><td>局部控制，CAD首选</td></tr>
+<tr><td>NURBS</td><td>非均匀有理B样条</td><td>CAD工业标准</td></tr>
+<tr><td>Knot</td><td>结点</td><td>曲线段的拼接点</td></tr>
+<tr><td>Convex Hull</td><td>凸包</td><td>控制点的最小凸多边形</td></tr>
+</table>
+
+<h3 id="15-8-3-核心选择指南">15.8.3 核心选择指南</h3>
+
+<table>
+<tr><th>需求</th><th>推荐的曲线</th><th>原因</th></tr>
+<tr><td>通过所有关键点 + 简单</td><td><strong>Catmull-Rom</strong></td><td>自动切线，C¹，局部</td></tr>
+<tr><td>交互式设计（PS/AI）</td><td><strong>Bézier</strong></td><td>直观的"手柄"控制</td></tr>
+<tr><td>CAD/CAM精确建模</td><td><strong>B-Spline / NURBS</strong></td><td>C²，局部控制，任意连续性</td></tr>
+<tr><td>动画曲线编辑</td><td><strong>Hermite + TCB</strong></td><td>Maya/Blender切线编辑器</td></tr>
+<tr><td>字体/矢量图形</td><td><strong>分段Bézier</strong></td><td>PostScript/TrueType标准</td></tr>
+</table>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么几乎所有矢量字体都使用Bézier而不是B-Spline？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">历史原因 + 计算简单。PostScript（1984年）选择了Bézier作为标准，之后TrueType（苹果）也选择了Bézier。Bézier只需要G¹连续就能看起来平滑，而且求值可以用de Casteljau（稳定、简单）。B-Spline虽然更好的局部控制，但实现更复杂，80年代的硬件吃不消。</blockquote>
+</div>
+
+<h3 id="15-8-4-关键公式速查">15.8.4 关键公式速查</h3>
+
+<table>
+<tr><th>名称</th><th>公式</th></tr>
+<tr><td>参数化曲线</td><td>f(u) = (x(u), y(u), z(u))</td></tr>
+<tr><td>Hermite三次</td><td>f(t) = H₀(t)p₀ + H₁(t)m₀ + H₂(t)p₃ + H₃(t)m₁</td></tr>
+<tr><td>Catmull-Rom切线</td><td>mᵢ = (1-t)/2 · (p_{i+1} - p_{i-1})</td></tr>
+<tr><td>Bernstein基</td><td>B_{i,n}(u) = C(n,i) · uⁱ · (1-u)^{n-i}</td></tr>
+<tr><td>Bézier曲线</td><td>f(u) = Σ pᵢ · B_{i,n}(u)</td></tr>
+<tr><td>de Casteljau</td><td>递归线性插值直到1个点</td></tr>
+<tr><td>B-Spline</td><td>f(t) = Σ pᵢ · b_{i,k}(t)</td></tr>
+<tr><td>Cox-de Boor</td><td>b_{i,k}(t) = 加权组合b_{i,k-1}和b_{i+1,k-1}</td></tr>
+</table>
+
+<h3 id="15-8-5-数值例子-de-casteljau逐步计算">15.8.5 数值例子：de Casteljau逐步计算</h3>
+
+<p>假设有4个控制点：p₀=(0,0), p₁=(2,4), p₂=(4,0), p₃=(6,2)，计算u=0.5处的曲线点：</p>
+
+<p><strong>第1轮（4个点→3个点）</strong>：</p>
+<pre><code>q₀ = (1-0.5)·p₀ + 0.5·p₁ = 0.5·(0,0) + 0.5·(2,4) = (1, 2)
+q₁ = (1-0.5)·p₁ + 0.5·p₂ = 0.5·(2,4) + 0.5·(4,0) = (3, 2)
+q₂ = (1-0.5)·p₂ + 0.5·p₃ = 0.5·(4,0) + 0.5·(6,2) = (5, 1)</code></pre>
+
+<p><strong>第2轮（3个点→2个点）</strong>：</p>
+<pre><code>r₀ = (1-0.5)·q₀ + 0.5·q₁ = 0.5·(1,2) + 0.5·(3,2) = (2, 2)
+r₁ = (1-0.5)·q₁ + 0.5·q₂ = 0.5·(3,2) + 0.5·(5,1) = (4, 1.5)</code></pre>
+
+<p><strong>第3轮（2个点→1个点——结果）</strong>：</p>
+<pre><code>f(0.5) = (1-0.5)·r₀ + 0.5·r₁ = 0.5·(2,2) + 0.5·(4,1.5) = (3, 1.75)</code></pre>
+
+<p>所以Bézier曲线在u=0.5处的点是(3, 1.75)。验证Bernstein公式：</p>
+<pre><code>f(0.5) = p₀·(1-0.5)³ + p₁·3·0.5·(0.5)² + p₂·3·(0.5)²·0.5 + p₃·(0.5)³
+      = (0,0)·0.125 + (2,4)·0.375 + (4,0)·0.375 + (6,2)·0.125
+      = (0+0.75+1.5+0.75, 0+1.5+0+0.25)
+      = (3, 1.75) ✓</code></pre>
+
+<div class="info-box">
+<strong>💡 验证结果</strong>：两种方法得到相同结果(3,1.75)。但de Casteljau只用了线性插值（加法+乘法），数值稳定性远好于高次幂计算。
+</div>
+
+<h3 id="15-8-6-曲线求值的数值稳定性">15.8.6 曲线求值的数值稳定性</h3>
+
+<p>直接计算Bernstein多项式 vs de Casteljau算法：</p>
+
+<table>
+<tr><th>比较项</th><th>直接Bernstein</th><th>de Casteljau</th></tr>
+<tr><td>操作类型</td><td>高次幂（u⁵, u⁶,...）</td><td>仅线性插值（乘法+加法）</td></tr>
+<tr><td>高u时的精度</td><td>u接近1时uⁿ会丢失精度</td><td>始终稳定（只做(1-u)和u的组合）</td></tr>
+<tr><td>对控制点变化的敏感度</td><td>一次改变需要重新计算所有基函数</td><td>自然适应</td></tr>
+<tr><td>时间复杂度</td><td>O(n)</td><td>O(n²)</td></tr>
+<tr><td>数值稳定性</td><td>一般（高次不稳定）</td><td><strong>优异</strong></td></tr>
+</table>
+
+<div class="trans-box">
+<strong>用中文说就是</strong>：直接算高次方的数字（比如0.99的10次方=0.904）在计算机里会有精度问题。de Casteljau只做"取一部分+取另一部分"这样的简单操作，不会丢失精度。这就是为什么所有专业图形软件都用de Casteljau。
+</div>
+
+<h3 id="15-8-7-从曲线到曲面">15.8.7 从曲线到曲面</h3>
+
+<p>所有曲线概念都可以推广到曲面：</p>
+
+<table>
+<tr><th>曲线概念</th><th>曲面推广</th></tr>
+<tr><td>参数化曲线 f(u)</td><td>参数化曲面 f(u,v)</td></tr>
+<tr><td>曲线段</td><td>曲面片（Patch）</td></tr>
+<tr><td>Bézier曲线</td><td>Bézier曲面（张量积）</td></tr>
+<tr><td>de Casteljau（1D）</td><td>de Casteljau（2D：先u方向再v方向）</td></tr>
+<tr><td>B-Spline曲线</td><td>B-Spline曲面（NURBS曲面）</td></tr>
+<tr><td>Catmull-Rom曲线</td><td>Catmull-Clark细分曲面</td></tr>
+</table>
+
+<p><strong>张量积曲面公式</strong>：</p>
+<div class="formula-small">f(u,v) = Σᵢ Σⱼ p_{i,j} · B_{i,n}(u) · B_{j,m}(v)</div>
+
+<p>这是一个二维的"网格"控制点加上两个方向（u和v）的Bézier基函数。</p>
+
+<h3 id="15-8-8-常见问题-faq">15.8.8 常见问题（FAQ）</h3>
+
+<h4 id="q1-c¹和g¹到底有什么区别--什么时候用哪个">Q1：C¹和G¹到底有什么区别——什么时候用哪个？</h4>
+<p><strong>A</strong>：C¹要求切线方向+大小都相同。G¹只要求方向相同。如果你在做动画路径（物体以恒定速度运动），需要C¹以确保速度连续。如果你做静态建模（如字体轮廓），G¹就够了——人眼看不出来。</p>
+
+<h4 id="q2-什么是-runge现象">Q2：什么是"Runge现象"？</h4>
+<p><strong>A</strong>：用高次多项式通过一组均匀分布的点时，曲线两端会剧烈振荡。例如用10次多项式通过10个点——曲线在第一个点和最后一个点附近会"甩出去"再绕回来。这就是图形学避免高次插值的原因。</p>
+
+<h4 id="q3-catmull-rom和b-spline有什么区别">Q3：Catmull-Rom和B-Spline有什么区别？</h4>
+<p><strong>A</strong>：Catmull-Rom是<strong>插值</strong>曲线（通过所有点），B-Spline是<strong>逼近</strong>曲线（靠近但不通过）。Catmull-Rom更适合动画路径（必须经过关键点），B-Spline更适合CAD建模（平滑外形）。Catmull-Rom是C¹，三次B-Spline是C²。</p>
+
+<h4 id="q4-bézier的-凸包性质-有什么用">Q4：Bézier的"凸包性质"有什么用？</h4>
+<p><strong>A</strong>：凸包性质保证了曲线不会"跑出"控制点围成的区域。这在渲染中用于<strong>裁剪</strong>——如果一条Bézier曲线的整个凸包都不在屏幕上，就不用画它了。这是加速矢量图形渲染的关键。</p>
+
+<h4 id="q5-nurbs中的-r--rational-是什么意思">Q5：NURBS中的"R"（Rational）是什么意思？</h4>
+<p><strong>A</strong>：Rational = 有理数 = 每个控制点带一个权重（w）。通过调整权重，可以精确表示圆、椭圆、圆锥曲线——而普通的B-Spline只能近似。这就是为什么CAD系统都用NURBS——因为需要精确的圆。</p>
+
+<h4 id="q6-为什么三次曲线-cubic-这么特殊">Q6：为什么三次曲线（Cubic）这么特殊？</h4>
+<p><strong>A</strong>：三次曲线是"最小曲率+最大可控性"的平衡点。线性（一次）太平滑，二次曲率恒定（抛物线），三次可以有变化的曲率。同时三次曲线的计算非常简单（4个系数）。在图形学中，三次Bézier和三次B-Spline是最常用的。</p>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：如果你有100个控制点要画一条平滑曲线，你会用什么方法？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">
+绝对不要用100次Bézier或100次多项式！正确做法是：用Catmull-Rom样条（C¹+插值）或三次B-Spline（C²+逼近）。每个段只用4个控制点，段间自动保持连续性。100个控制点 → 约97个三次曲线段 → 平滑、稳定、局部控制。
+</blockquote>
+</div>
+
+<h3 id="15-8-9-工程实战参考">15.8.9 工程实战参考</h3>
+
+<table>
+<tr><th>领域</th><th>曲线类型</th><th>工具/库</th></tr>
+<tr><td>字体渲染</td><td>二次/三次 Bézier</td><td>FreeType, HarfBuzz</td></tr>
+<tr><td>矢量图形</td><td>三次 Bézier</td><td>Skia, Cairo, NanoVG</td></tr>
+<tr><td>3D建模</td><td>NURBS</td><td>OpenCASCADE, Rhino</td></tr>
+<tr><td>游戏引擎</td><td>Catmull-Rom</td><td>Unity AnimationCurve, UE4 Spline Component</td></tr>
+<tr><td>CAD/CAM</td><td>NURBS</td><td>STEP, IGES 工业标准</td></tr>
+<tr><td>数据可视化</td><td>Catmull-Rom / 三次B-Spline</td><td>D3.js, Chart.js</td></tr>
+</table>
+
+<h3 id="15-8-11-曲线在工程软件中的具体实现">15.8.11 曲线在工程软件中的具体实现</h3>
+
+<p><strong>Adobe Illustrator中的钢笔工具</strong>：</p>
+<pre><code><span class="comment">// 三次Bézier在AI中的数据结构</span>
+<span class="keyword">struct</span> BezierSegment {
+    Point anchor_in;    <span class="comment">// 入点（前一段的终点）</span>
+    Point handle_in;    <span class="comment">// 入点手柄方向</span>
+    Point handle_out;   <span class="comment">// 出点手柄方向</span>
+    Point anchor_out;   <span class="comment">// 出点</span>
+};
+
+<span class="comment">// G¹连续条件：handle_out和下一个handle_in在一条直线上</span>
+<span class="comment">// C¹连续条件：handle_out和下一个handle_in方向相同、长度相同</span>
+<span class="comment">// AI允许用户独立拉长手柄长度（改变曲率，保持G¹）</span></code></pre>
+
+<p><strong>Unity中的AnimationCurve</strong>：</p>
+<pre><code><span class="comment">// Unity使用Catmull-Rom/Cubic Bézier作为动画曲线</span>
+AnimationCurve curve = <span class="keyword">new</span> AnimationCurve();
+curve.AddKey(<span class="number">0.0f</span>, <span class="number">0.0f</span>);    <span class="comment">// 时间0，值0</span>
+curve.AddKey(<span class="number">1.0f</span>, <span class="number">1.0f</span>);    <span class="comment">// 时间1，值1</span>
+curve.AddKey(<span class="number">2.0f</span>, <span class="number">0.0f</span>);    <span class="comment">// 时间2，值0</span>
+
+<span class="comment">// 在t=1.5秒时求值（自动Catmull-Rom插值）</span>
+<span class="keyword">float</span> value = curve.Evaluate(<span class="number">1.5f</span>);</code></pre>
+
+<p><strong>CSS中的cubic-bezier()</strong>：</p>
+<pre><code><span class="comment">/* CSS动画中的三次Bézier缓动函数 */</span>
+<span class="comment">/* cubic-bezier(x1, y1, x2, y2) 其中(x1,y1)和(x2,y2)是两个手柄 */</span>
+transition: transform <span class="number">0.3</span>s cubic-bezier(<span class="number">0.42</span>, <span class="number">0.0</span>, <span class="number">0.58</span>, <span class="number">1.0</span>);  <span class="comment">/* ease-in-out */</span>
+transition: opacity <span class="number">0.5</span>s cubic-bezier(<span class="number">0.25</span>, <span class="number">0.1</span>, <span class="number">0.25</span>, <span class="number">1.0</span>);   <span class="comment">/* ease */</span></code></pre>
+
+<h3 id="15-8-12-曲线学习的-路线图">15.8.12 曲线学习的"路线图"</h3>
+
+<table>
+<tr><th>学习阶段</th><th>要掌握的内容</th><th>练习项目</th></tr>
+<tr><td><strong>入门</strong></td><td>参数化曲线概念、C⁰/C¹/C²区别</td><td>用纸笔画三种连续曲线</td></tr>
+<tr><td><strong>基础</strong></td><td>Catmull-Rom实现、Bézier实现</td><td>用Python/JS实现交互式曲线编辑器</td></tr>
+<tr><td><strong>进阶</strong></td><td>de Casteljau算法、B-Spline原理</td><td>实现de Casteljau细分、B-Spline求值</td></tr>
+<tr><td><strong>高级</strong></td><td>NURBS、Cox-de Boor递归</td><td>实现NURBS曲线编辑器</td></tr>
+<tr><td><strong>专业</strong></td><td>曲面（Bézier Patch / NURBS Surface）</td><td>实现Bézier曲面求值（张量积）</td></tr>
+</table>
+
+<h3 id="15-8-13-全章总结">15.8.13 全章总结</h3>
+
+<div class="key-box">
+<strong>讲义核心洞察</strong>：曲线是图形学的"骨架"——
+<ul>
+  <li><strong>3种连续性</strong>：C⁰（位置）/ C¹（切线）/ C²（曲率）</li>
+  <li><strong>3种插值</strong>：Natural Cubic / Hermite / Cardinal（Catmull-Rom）</li>
+  <li><strong>2种逼近</strong>：Bézier（设计）/ B-Spline（CAD）</li>
+  <li><strong>de Casteljau</strong> = 数值稳定的Bézier算法</li>
+  <li><strong>Cox-de Boor</strong> = 构造B-Spline基函数</li>
+  <li><strong>Catmull-Rom</strong> = "插值过点+局部+简单"——游戏首选</li>
+  <li><strong>Bézier</strong> = "逼近+凸包+仿射不变"——设计首选</li>
+  <li><strong>B-Spline</strong> = "任意连续性+局部+通用"——CAD首选</li>
+</ul>
+</div>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li class="active"><a href="ch15_曲线.html" class="active">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#15-1-参数化曲线基础">15.1 参数化曲线基础</a></li>
+  <li class="toc-h3"><a href="#15-1-1-什么是参数化曲线">15.1.1 什么是参数化曲线</a></li>
+  <li class="toc-h3"><a href="#15-1-2-复合曲线">15.1.2 复合曲线</a></li>
+  <li class="toc-h2"><a href="#15-2-连续性等级">15.2 连续性等级</a></li>
+  <li class="toc-h3"><a href="#15-2-1-cⁿ连续性的定义">15.2.1 Cⁿ连续性的定义</a></li>
+  <li class="toc-h3"><a href="#15-2-2-图形学中的实际选择">15.2.2 图形学中的实际选择</a></li>
+  <li class="toc-h2"><a href="#15-3-曲线属性">15.3 曲线属性</a></li>
+  <li class="toc-h3"><a href="#15-3-1-局部控制-locality">15.3.1 局部控制（Locality）</a></li>
+  <li class="toc-h3"><a href="#15-3-2-为什么用分段三次曲线">15.3.2 为什么用分段三次曲线？</a></li>
+  <li class="toc-h2"><a href="#15-4-插值曲线-interpolating-curves">15.4 插值曲线（Interpolating Curves）</a></li>
+  <li class="toc-h3"><a href="#15-4-1-插值-vs-逼近">15.4.1 插值 vs 逼近</a></li>
+  <li class="toc-h3"><a href="#15-4-2-lagrange插值">15.4.2 Lagrange插值</a></li>
+  <li class="toc-h2"><a href="#15-5-三次插值">15.5 三次插值</a></li>
+  <li class="toc-h3"><a href="#15-5-1-hermite三次曲线">15.5.1 Hermite三次曲线</a></li>
+  <li class="toc-h3"><a href="#15-5-2-自然三次样条-natural-cubic-spline">15.5.2 自然三次样条（Natural Cubic Spline）</a></li>
+  <li class="toc-h3"><a href="#15-5-3-catmull-rom样条-cardinal样条">15.5.3 Catmull-Rom样条（Cardinal样条）</a></li>
+  <li class="toc-h2"><a href="#15-6-逼近曲线--bézier">15.6 逼近曲线——Bézier</a></li>
+  <li class="toc-h3"><a href="#15-6-1-bézier曲线的核心性质">15.6.1 Bézier曲线的核心性质</a></li>
+  <li class="toc-h3"><a href="#15-6-2-bernstein基函数">15.6.2 Bernstein基函数</a></li>
+  <li class="toc-h3"><a href="#15-6-3-de-casteljau算法">15.6.3 de Casteljau算法</a></li>
+  <li class="toc-h3"><a href="#15-6-4-分段bézier曲线的连续性">15.6.4 分段Bézier曲线的连续性</a></li>
+  <li class="toc-h2"><a href="#15-7-逼近曲线--b-spline">15.7 逼近曲线——B-Spline</a></li>
+  <li class="toc-h3"><a href="#15-7-1-b-spline的核心特性">15.7.1 B-Spline的核心特性</a></li>
+  <li class="toc-h3"><a href="#15-7-2-b-spline的阶数k">15.7.2 B-Spline的阶数k</a></li>
+  <li class="toc-h3"><a href="#15-7-3-cox-de-boor递归公式">15.7.3 Cox-de Boor递归公式</a></li>
+  <li class="toc-h3"><a href="#15-7-4-均匀b-spline-vs-非均匀b-spline-nurbs">15.7.4 均匀B-Spline vs 非均匀B-Spline（NURBS）</a></li>
+  <li class="toc-h2"><a href="#15-8-3d曲线与总结">15.8 3D曲线与总结</a></li>
+  <li class="toc-h3"><a href="#15-8-1-3d曲线">15.8.1 3D曲线</a></li>
+  <li class="toc-h3"><a href="#15-8-2-术语对照表">15.8.2 术语对照表</a></li>
+  <li class="toc-h3"><a href="#15-8-3-核心选择指南">15.8.3 核心选择指南</a></li>
+  <li class="toc-h3"><a href="#15-8-4-关键公式速查">15.8.4 关键公式速查</a></li>
+  <li class="toc-h3"><a href="#15-8-5-数值例子-de-casteljau逐步计算">15.8.5 数值例子：de Casteljau逐步计算</a></li>
+  <li class="toc-h3"><a href="#15-8-6-曲线求值的数值稳定性">15.8.6 曲线求值的数值稳定性</a></li>
+  <li class="toc-h3"><a href="#15-8-7-从曲线到曲面">15.8.7 从曲线到曲面</a></li>
+  <li class="toc-h3"><a href="#15-8-8-常见问题-faq">15.8.8 常见问题（FAQ）</a></li>
+  <li class="toc-h3"><a href="#15-8-9-工程实战参考">15.8.9 工程实战参考</a></li>
+  <li class="toc-h3"><a href="#15-8-11-曲线在工程软件中的具体实现">15.8.11 曲线在工程软件中的具体实现</a></li>
+  <li class="toc-h3"><a href="#15-8-12-曲线学习的-路线图">15.8.12 曲线学习的"路线图"</a></li>
+  <li class="toc-h3"><a href="#15-8-13-全章总结">15.8.13 全章总结</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

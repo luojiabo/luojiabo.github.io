@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch07: 变换矩阵</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch07 变换矩阵</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第7章：变换矩阵 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第7章（p.145-166）。<br>
+变换矩阵是计算机图形学的"语法"——它是描述物体如何移动、旋转、缩放的统一数学语言。不理解变换矩阵，就无法理解观察、投影、裁剪等后续所有内容。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s71">7.1 什么是变换矩阵</a></li>
+  <li><a href="#s72">7.2 2D线性变换基础</a></li>
+  <li><a href="#s73">7.3 旋转矩阵的五步推导（极坐标法）</a></li>
+  <li><a href="#s74">7.4 齐次坐标与平移</a></li>
+  <li><a href="#s75">7.5 坐标变换：从局部到世界到相机</a></li>
+  <li><a href="#s76">7.6 三维变换矩阵的完整推导</a></li>
+  <li><a href="#s77">7.7 法线变换——初学者最容易犯的错误</a></li>
+  <li><a href="#s78">7.8 窗口变换（完整变换管线）</a></li>
+  <li><a href="#s79">7.9 矩阵组合与顺序</a></li>
+  <li><a href="#s710">7.10 变换矩阵总结</a></li>
+</ul>
+</div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+  <li>掌握2D和3D的线性变换矩阵</li>
+  <li>理解齐次坐标的作用——为什么需要它</li>
+  <li>掌握旋转矩阵的五步推导过程——<strong>核心重点</strong></li>
+  <li>理解法线变换与顶点变换的区别——<strong>极易出错</strong></li>
+  <li>掌握从模型到屏幕的完整变换管线</li>
+  <li>学会通过矩阵组合实现任意变换</li>
+</ol>
+
+<hr>
+
+<h2 id="7-1-什么是变换矩阵">7.1 什么是变换矩阵？</h2>
+
+<h3 id="7-1-1-核心概念">7.1.1 核心概念</h3>
+
+<blockquote>
+<strong>变换矩阵 = 用乘法统一描述几何变换的数学工具</strong>
+</blockquote>
+
+<p>基本思想极其直观：</p>
+
+<div class="formula">v' = M × v</div>
+
+<p>把变换前的坐标向量 v 乘以变换矩阵 M，得到变换后的坐标 v'。就这样——所有的几何变换（移动、旋转、缩放、扭曲）都可以用矩阵乘法来描述。</p>
+
+<table>
+<tr><th>变换类型</th><th>矩阵形式</th><th>例子</th></tr>
+<tr><td>缩放</td><td>对角矩阵</td><td>diag(sx, sy, sz)</td></tr>
+<tr><td>旋转</td><td>正交矩阵</td><td>绕x/y/z轴旋转θ角</td></tr>
+<tr><td>平移</td><td>齐次矩阵</td><td>第四列包含位移量</td></tr>
+<tr><td>剪切</td><td>非对角元素</td><td>改变形状但不改变面积</td></tr>
+</table>
+
+<hr>
+
+<h2 id="7-2-2d线性变换基础">7.2 2D线性变换基础</h2>
+
+<h3 id="7-2-1-2d缩放">7.2.1 2D缩放</h3>
+
+<div class="formula">S(sx, sy) = [sx 0; 0 sy]</div>
+
+<pre><code><span class="comment">// 缩放变换应用</span>
+[x']   [sx  0 ] [x]
+[y'] = [0  sy ] [y]
+
+x' = sx · x
+y' = sy · y</code></pre>
+
+<table>
+<tr><th>符号</th><th>含义</th><th>例子</th></tr>
+<tr><td>sx</td><td>x方向缩放因子</td><td>sx=0.5 → 水平缩小一半</td></tr>
+<tr><td>sy</td><td>y方向缩放因子</td><td>sy=2 → 垂直放大一倍</td></tr>
+<tr><td>均匀缩放</td><td>sx = sy</td><td>S(2,2) → 整体放大2倍，保持比例</td></tr>
+<tr><td>非均匀缩放</td><td>sx ≠ sy</td><td>S(2,1) → 水平拉长，垂直不变</td></tr>
+</table>
+
+<pre><code><span class="comment">// 数值例子：将矩形缩小一半</span>
+S(<span class="number">0.5</span>, <span class="number">0.5</span>) = [<span class="number">0.5</span>  <span class="number">0</span>]
+              [<span class="number">0</span>   <span class="number">0.5</span>]
+
+点 (<span class="number">2</span>, <span class="number">4</span>) → (2×<span class="number">0.5</span>, 4×<span class="number">0.5</span>) = (<span class="number">1</span>, <span class="number">2</span>)  <span class="comment">// 坐标减半</span></code></pre>
+
+<div class="guizang-figure">
+<img src="images/ch07/scale_shear.png" alt="缩放与错切——单位正方形的变换">
+<div class="guizang-caption">图7-1：缩放与错切——单位正方形经过缩放（拉伸）和错切（倾斜）后的变化</div>
+</div>
+
+<h3 id="7-2-2-2d旋转-标准公式">7.2.2 2D旋转（标准公式）</h3>
+
+<div class="formula">R(θ) = [cosθ -sinθ; sinθ cosθ]</div>
+
+<pre><code><span class="comment">// 绕原点逆时针旋转θ角</span>
+x' = x·cosθ - y·sinθ
+y' = x·sinθ + y·cosθ</code></pre>
+
+<p>这个公式看起来简单，但它不是凭空产生的。下一节我们完整推导它。</p>
+
+<blockquote>
+<strong>关键记忆</strong>：cosθ在对角线，sinθ在反对角线带符号。第一行是cosθ和-sinθ，第二行是sinθ和cosθ。
+</blockquote>
+
+<hr>
+
+<h2 id="7-3-旋转矩阵的五步推导-极坐标法">7.3 旋转矩阵的五步推导（极坐标法）</h2>
+
+<p>这是本章最重要的内容。我们从零开始，逐步推导出旋转矩阵。这不是一个要死记硬背的公式——理解推导过程后，你可以随时"重新发明"它。</p>
+
+<div class="guizang-figure">
+<img src="images/ch07/rotation_derivation.png" alt="2D旋转的极坐标推导">
+<div class="guizang-caption">图7-2：旋转矩阵的极坐标推导——从(x,y) = (r·cosα, r·sinα)出发，旋转θ后坐标由三角恒等式导出</div>
+</div>
+
+<h3 id="第一步-用极坐标表示点">第一步：用极坐标表示点</h3>
+
+<p>任意向量 (x, y) 可以用极坐标表示：</p>
+
+<div class="formula">x = r·cosα, y = r·sinα</div>
+
+<pre><code>    y
+    ↑
+    │     / (x, y)
+    │    /
+    │   /    r = √(x²+y²)  ← 向量长度
+    │  /     α = atan2(y, x) ← 与x轴夹角
+    │ /
+    │/α
+    └────────────→ x</code></pre>
+
+<p>解释：向量 (x, y) 就像从原点射出的箭，长度 r，与x轴夹角 α。</p>
+
+<h3 id="第二步-写出旋转后的坐标">第二步：写出旋转后的坐标</h3>
+
+<p>将向量逆时针旋转 θ 角度后，新向量与x轴的夹角变为 α + θ：</p>
+
+<div class="formula">x' = r·cos(α + θ), y' = r·sin(α + θ)</div>
+
+<h3 id="第三步-三角恒等式展开">第三步：三角恒等式展开</h3>
+
+<p>使用和角公式（三角恒等的核心）：</p>
+
+<div class="formula">cos(α + θ) = cosα·cosθ - sinα·sinθ</div>
+<div class="formula">sin(α + θ) = sinα·cosθ + cosα·sinθ</div>
+
+<p>代入：</p>
+
+<pre><code>x' = r·(cosα·cosθ - sinα·sinθ)
+   = r·cosα·cosθ - r·sinα·sinθ
+
+y' = r·(sinα·cosθ + cosα·sinθ)
+   = r·sinα·cosθ + r·cosα·sinθ</code></pre>
+
+<h3 id="第四步-代回原始坐标">第四步：代回原始坐标</h3>
+
+<p>因为 x = r·cosα, y = r·sinα，所以：</p>
+
+<div class="formula">x' = x·cosθ - y·sinθ</div>
+<div class="formula">y' = x·sinθ + y·cosθ</div>
+
+<h3 id="第五步-写成矩阵形式">第五步：写成矩阵形式</h3>
+
+<div class="formula">R(θ) = [cosθ -sinθ; sinθ cosθ]</div>
+
+<pre><code><span class="comment">// 验证矩阵形式</span>
+[x']   [cosθ  -sinθ] [x]
+[y'] = [sinθ   cosθ] [y]
+
+x' = x·cosθ + y·(-sinθ) = x·cosθ - y·sinθ  ✓
+y' = x·sinθ + y·cosθ                       ✓</code></pre>
+
+<h3 id="验证-旋转90">验证：旋转90°</h3>
+
+<p>θ = 90° ⇒ cos90°=0, sin90°=1：</p>
+
+<pre><code>R(90°) = [<span class="number">0</span>  -<span class="number">1</span>]
+         [<span class="number">1</span>   <span class="number">0</span>]
+
+点 (<span class="number">1</span>, <span class="number">0</span>) → (<span class="number">0</span>·<span class="number">1</span> + (-<span class="number">1</span>)·<span class="number">0</span>, <span class="number">1</span>·<span class="number">1</span> + <span class="number">0</span>·<span class="number">0</span>) = (<span class="number">0</span>, <span class="number">1</span>)  ✓  <span class="comment">// x轴→y轴</span>
+点 (<span class="number">0</span>, <span class="number">1</span>) → (<span class="number">0</span>·<span class="number">0</span> + (-<span class="number">1</span>)·<span class="number">1</span>, <span class="number">1</span>·<span class="number">0</span> + <span class="number">0</span>·<span class="number">1</span>) = (-<span class="number">1</span>, <span class="number">0</span>) ✓  <span class="comment">// y轴→-x轴</span></code></pre>
+
+<p>验证通过！(1,0) 逆时针转90° 到 (0,1)，再转到 (-1,0)——完美符合直觉。</p>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么顺时针旋转的矩阵是逆时针的转置？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">
+顺时针转θ = 逆时针转(-θ)，而 cos(-θ)=cosθ, sin(-θ)=-sinθ。所以 R_cw(θ) = [cosθ sinθ; -sinθ cosθ] = R_ccw(θ)ᵀ。对于旋转矩阵，转置 = 逆矩阵——这就是为什么顺时针旋转是逆时针旋转的逆！
+</blockquote>
+</div>
+
+<h3 id="3d旋转矩阵">3D旋转矩阵</h3>
+
+<p>从2D扩展到3D：每个基本旋转保持一个轴不变，在其他两个轴上做2D旋转。</p>
+
+<table>
+<tr><th>旋转轴</th><th>矩阵</th><th>不变量</th></tr>
+<tr><td>绕x轴</td><td>[1 0 0; 0 cosθ -sinθ; 0 sinθ cosθ]</td><td>x坐标不变</td></tr>
+<tr><td>绕y轴</td><td>[cosθ 0 sinθ; 0 1 0; -sinθ 0 cosθ]</td><td>y坐标不变</td></tr>
+<tr><td>绕z轴</td><td>[cosθ -sinθ 0; sinθ cosθ 0; 0 0 1]</td><td>z坐标不变</td></tr>
+</table>
+
+<blockquote>
+<strong>规律记忆</strong>：保持哪个轴，那行/列就是单位向量。其余4个元素就是2D旋转矩阵。注意绕y轴时sinθ符号是反的（因为右手坐标系中y轴方向特殊）。
+</blockquote>
+
+<hr>
+
+<h2 id="7-4-齐次坐标与平移">7.4 齐次坐标与平移</h2>
+
+<h3 id="7-4-1-线性变换的致命局限">7.4.1 线性变换的致命局限</h3>
+
+<p>2×2矩阵（以及3×3矩阵）只能表示<strong>线性变换</strong>——旋转、缩放、剪切。它<strong>不能表示平移</strong>：</p>
+
+<pre><code>没办法用2×2矩阵写出：
+x' = x + tx
+y' = y + ty
+
+因为这是加法（+tx），不是乘法（×某系数）。
+线性变换要求输出是输入的线性组合（只有乘法，没有加法）。</code></pre>
+
+<blockquote>
+<strong>平移不是线性变换</strong>！它需要加法，而矩阵只能做乘法。解决方法是"升维"——引入齐次坐标。
+</blockquote>
+
+<h3 id="7-4-2-齐次坐标的定义">7.4.2 齐次坐标的定义</h3>
+
+<p>齐次坐标的核心思想：给向量增加一个维度 w，把平移"伪装"成矩阵乘法。</p>
+
+<div class="guizang-figure">
+<img src="images/ch07/homogeneous_coord.png" alt="齐次坐标——点w=1,向量w=0的几何意义">
+<div class="guizang-caption">图7-3：齐次坐标——点（w=1）可被平移，向量（w=0）不受平移影响</div>
+</div>
+
+<table>
+<tr><th>类型</th><th>2D表示</th><th>3D表示</th><th>原因</th></tr>
+<tr><td><strong>点</strong></td><td>(x, y, 1)</td><td>(x, y, z, 1)</td><td>w=1表示这是一个位置，平移时应移动</td></tr>
+<tr><td><strong>向量</strong></td><td>(x, y, 0)</td><td>(x, y, z, 0)</td><td>w=0表示这是一个方向，平移不影响方向</td></tr>
+</table>
+
+<p><strong>为什么向量w=0？</strong>因为平移一个向量不应该改变它：</p>
+
+<pre><code>[<span class="number">1</span> <span class="number">0</span> tx] [x]   [x + tx·<span class="number">0</span>]   [x]
+[<span class="number">0</span> <span class="number">1</span> ty] [y] = [y + ty·<span class="number">0</span>] = [y]   ← 向量不变！
+[<span class="number">0</span> <span class="number">0</span>  <span class="number">1</span>] [<span class="number">0</span>]   [   <span class="number">1</span>    ]   [<span class="number">0</span>]</code></pre>
+
+<p>注意 w 分量乘以平移量 tx 和 ty 后，因为 w=0，平移贡献被"清零"——向量不受平移影响。</p>
+
+<h3 id="7-4-3-齐次形式的变换矩阵">7.4.3 齐次形式的变换矩阵</h3>
+
+<p><strong>2D平移矩阵：</strong></p>
+<div class="formula">T(tx, ty) = [1 0 tx; 0 1 ty; 0 0 1]</div>
+
+<p><strong>3D平移矩阵：</strong></p>
+<div class="formula">T(tx, ty, tz) = [1 0 0 tx; 0 1 0 ty; 0 0 1 tz; 0 0 0 1]</div>
+
+<p><strong>3D缩放矩阵（齐次形式）：</strong></p>
+<div class="formula">S(sx, sy, sz) = [sx 0 0 0; 0 sy 0 0; 0 0 sz 0; 0 0 0 1]</div>
+
+<pre><code><span class="comment">// 数值例子：平移(5, 3) 应用到点 (2, 1)</span>
+[<span class="number">1</span> <span class="number">0</span> <span class="number">5</span>] [<span class="number">2</span>]   [<span class="number">2</span> + <span class="number">5</span>]   [<span class="number">7</span>]
+[<span class="number">0</span> <span class="number">1</span> <span class="number">3</span>] [<span class="number">1</span>] = [<span class="number">1</span> + <span class="number">3</span>] = [<span class="number">4</span>]
+[<span class="number">0</span> <span class="number">0</span> <span class="number">1</span>] [<span class="number">1</span>]   [   <span class="number">1</span>  ]   [<span class="number">1</span>]  ← w=1保持不变</code></pre>
+
+<h3 id="7-4-4-仿射变换的性质">7.4.4 仿射变换的性质</h3>
+
+<p>所有仿射变换（线性变换+平移）都可以用齐次矩阵表示：</p>
+
+<div class="formula">M_affine = [A t; 0 1]</div>
+
+<p>其中A是3×3线性部分，t是3×1平移向量。</p>
+
+<table>
+<tr><th>性质</th><th>说明</th><th>是否保持</th></tr>
+<tr><td>保直性</td><td>直线变换后仍是直线</td><td>是</td></tr>
+<tr><td>保平行性</td><td>平行线变换后仍是平行线</td><td>是</td></tr>
+<tr><td>保距离</td><td>两点之间距离不变</td><td>否（缩放会改变距离）</td></tr>
+<tr><td>保角度</td><td>向量间夹角不变</td><td>否（缩放和剪切会改变角度）</td></tr>
+</table>
+
+<hr>
+
+<h2 id="7-5-坐标变换-从局部到世界到相机">7.5 坐标变换：从局部到世界到相机</h2>
+
+<h3 id="7-5-1-从局部到世界-模型变换">7.5.1 从局部到世界（模型变换）</h3>
+
+<p>物体在自己的局部坐标系中定义，通过模型矩阵放入世界坐标系：</p>
+
+<div class="formula">p_world = M_model · p_local</div>
+
+<pre><code><span class="comment">// 例子：立方体局部坐标中的顶点 (1,1,1)</span>
+<span class="comment">// 变换到世界坐标（缩放2倍 + 平移到(5,0,0)）</span>
+
+M_model = [<span class="number">2</span>  <span class="number">0</span>  <span class="number">0</span> <span class="number">5</span>]    p_local = [<span class="number">1</span>]
+          [<span class="number">0</span>  <span class="number">2</span>  <span class="number">0</span> <span class="number">0</span>]              [<span class="number">1</span>]
+          [<span class="number">0</span>  <span class="number">0</span>  <span class="number">2</span> <span class="number">0</span>]              [<span class="number">1</span>]
+          [<span class="number">0</span>  <span class="number">0</span>  <span class="number">0</span> <span class="number">1</span>]              [<span class="number">1</span>]
+
+p_world = [<span class="number">2</span>×<span class="number">1</span> + <span class="number">5</span>]   [<span class="number">7</span>]
+          [<span class="number">2</span>×<span class="number">1</span> + <span class="number">0</span>] = [<span class="number">2</span>]
+          [<span class="number">2</span>×<span class="number">1</span> + <span class="number">0</span>]   [<span class="number">2</span>]
+          [   <span class="number">1</span>    ]   [<span class="number">1</span>]</code></pre>
+
+<h3 id="7-5-2-从世界到相机-视图变换">7.5.2 从世界到相机（视图变换）</h3>
+
+<p>视图变换将场景从世界坐标转换到以相机为原点的坐标：</p>
+
+<div class="formula">p_camera = M_view · p_world</div>
+
+<pre><code><span class="comment">// 相机定义</span>
+camera_pos = (ex, ey, ez)      <span class="comment">// 相机在世界的坐标</span>
+target     = (tx, ty, tz)      <span class="comment">// 相机注视的位置</span>
+up         = (ux, uy, uz)      <span class="comment">// 相机的"头顶"方向</span>
+
+<span class="comment">// 构建相机坐标系基向量</span>
+w = normalize(camera_pos - target)          <span class="comment">// -视线方向（z轴）</span>
+u = normalize(cross(up, w))                 <span class="comment">// 右方向（x轴）</span>
+v = cross(w, u)                             <span class="comment">// 上方向（y轴）</span>
+
+<span class="comment">// 视图矩阵 = 旋转到相机坐标系 + 平移到原点</span>
+M_view = [ux  uy  uz  -dot(u, camera_pos)]
+         [vx  vy  vz  -dot(v, camera_pos)]
+         [wx  wy  wz  -dot(w, camera_pos)]
+         [ 0   0   0       1           ]</code></pre>
+
+<hr>
+
+<h2 id="7-6-三维变换矩阵的完整推导">7.6 三维变换矩阵的完整推导</h2>
+
+<h3 id="7-6-1-点绕任意轴旋转-rodrigues公式">7.6.1 点绕任意轴旋转（Rodrigues公式）</h3>
+
+<p>不是所有旋转都绕坐标轴。绕任意单位向量 a 旋转 θ 角的公式称为<strong>Rodrigues旋转公式</strong>：</p>
+
+<div class="formula">v_rot = v·cosθ + (a×v)·sinθ + a·(a·v)·(1-cosθ)</div>
+
+<p>这个公式由三部分组成：</p>
+<ul>
+  <li><strong>v·cosθ</strong>：v在垂直于旋转轴方向的分量，旋转后的"直接投影"</li>
+  <li><strong>(a×v)·sinθ</strong>：垂直方向旋转产生的分量</li>
+  <li><strong>a·(a·v)·(1-cosθ)</strong>：v沿旋转轴的分量不变，这里补充了变化的部分</li>
+</ul>
+
+<p>矩阵形式：</p>
+
+<div class="formula">R(a, θ) = I·cosθ + [a]ₓ·sinθ + a·aᵀ·(1-cosθ)</div>
+
+<pre><code><span class="comment">// 其中 [a]ₓ 是a的叉积矩阵（反对称矩阵）</span>
+[a]ₓ = [  <span class="number">0</span>  -az   ay]
+       [  az   <span class="number">0</span>  -ax]
+       [ -ay   ax    <span class="number">0</span>]</code></pre>
+
+<h3 id="7-6-2-旋转矩阵的性质验证">7.6.2 旋转矩阵的性质验证</h3>
+
+<table>
+<tr><th>性质</th><th>公式</th><th>含义</th></tr>
+<tr><td>正交性</td><td>Rᵀ·R = I</td><td>旋转矩阵的逆 = 转置</td></tr>
+<tr><td>行列式</td><td>det(R) = +1</td><td>旋转是保定向的（不包含镜像）</td></tr>
+<tr><td>长度保持</td><td>||Rv|| = ||v||</td><td>旋转不改变向量长度</td></tr>
+<tr><td>角度保持</td><td>(Ru)·(Rv) = u·v</td><td>旋转保持向量间夹角不变</td></tr>
+</table>
+
+<pre><code><span class="comment">// 验证2D旋转的正交性</span>
+R(θ) = [cosθ  -sinθ]
+       [sinθ   cosθ]
+
+Rᵀ·R = [cosθ  sinθ] [cosθ  -sinθ] = [cos²θ+sin²θ     0      ] = [<span class="number">1</span>  <span class="number">0</span>] = I  ✓
+        [-sinθ cosθ] [sinθ   cosθ]   [   0      cos²θ+sin²θ]   [<span class="number">0</span>  <span class="number">1</span>]</code></pre>
+
+<h3 id="7-6-3-欧拉角与万向锁">7.6.3 欧拉角与万向锁</h3>
+
+<p>欧拉角用三个绕基本轴的旋转组合表示任意旋转：</p>
+
+<div class="formula">R_euler = Rx(α) · Ry(β) · Rz(γ)  （ZYX顺序，最常用）</div>
+
+<table>
+<tr><th>旋转顺序</th><th>应用场景</th><th>备注</th></tr>
+<tr><td>ZYX（偏航-俯仰-翻滚）</td><td>飞行器/相机</td><td>最常见的约定</td></tr>
+<tr><td>XYZ</td><td>一般物体</td><td>欧拉角顺序不同，结果不同</td></tr>
+<tr><td>ZXZ</td><td>机器人</td><td>避免万向锁问题</td></tr>
+</table>
+
+<blockquote>
+<strong>万向锁（Gimbal Lock）</strong>：当第二次旋转为±90°时，第一次和第三次的旋转轴对齐，导致自由度从3丢失到2。这是欧拉角的固有问题，用矩阵组合或四元数可以避免。
+</blockquote>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么欧拉角有万向锁但矩阵组合没有？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">
+欧拉角的三个旋转是"顺序依赖的级联"——先做A再做B再做C。当B=90°时，A和C的旋转轴重合了。矩阵组合直接使用Rodrigues公式表示单一旋转，不存在分解成三个基本旋转的问题——整个旋转就是一个矩阵乘法。
+</blockquote>
+</div>
+
+<hr>
+
+<h2 id="7-7-法线变换--初学者最容易犯的错误">7.7 法线变换——初学者最容易犯的错误</h2>
+
+<div class="key-box">
+<strong>⚠️ 核心警告</strong>：千万不能用模型矩阵直接变换法线！
+</div>
+
+<div class="guizang-figure">
+<img src="images/ch07/normal_transform_error.png" alt="法线变换——非均匀缩放导致法线错误">
+<div class="guizang-caption">图7-4：法线变换错误——非均匀缩放后，直接使用模型矩阵变换的法线不再垂直于表面</div>
+</div>
+
+<h3 id="7-7-1-错误示范">7.7.1 错误示范</h3>
+
+<pre><code><span class="comment">// ❌ 错误！这是初学者最常见的错误</span>
+incorrect_normal = model_matrix * vertex_normal</code></pre>
+
+<p><strong>为什么错了？</strong>因为法线是<strong>方向</strong>，不是<strong>位置</strong>。更准确地说：法线是垂直于表面的方向，但顶点变换后，表面的朝向可能改变。特别是非均匀缩放时，直接用模型矩阵变换法线会得到错误的结果。</p>
+
+<h3 id="7-7-2-正确推导">7.7.2 正确推导</h3>
+
+<p>假设模型矩阵 M 包含缩放和旋转：</p>
+<ul>
+  <li>表面上两点构成切线 t，变换后 t' = M · t（因为t是方向向量，w=0不受平移影响）</li>
+  <li>法线 n 满足 n · t = 0（法线垂直于表面，即垂直于切线）</li>
+  <li>变换后的法线 n' 应满足 n' · t' = 0</li>
+</ul>
+
+<pre><code>n' · t' = <span class="number">0</span>
+n' · (M·t) = <span class="number">0</span>                     <span class="comment">// t' = M·t</span>
+
+假设 n' = X·n（存在某个矩阵X将法线变换到正确方向）：
+(X·n) · (M·t) = <span class="number">0</span>
+(X·n)ᵀ · (M·t) = <span class="number">0</span>                  <span class="comment">// 点积写成矩阵乘法</span>
+nᵀ · Xᵀ · M · t = <span class="number">0</span>
+
+<span class="comment">// 因为 nᵀ · t = 0（变换前法线垂直于切线），所以：</span>
+Xᵀ · M = I  →  X = (M⁻¹)ᵀ</code></pre>
+
+<div class="formula">正确法线变换 = 模型矩阵的逆转置矩阵</div>
+
+<pre><code><span class="comment">// ✅ 正确做法</span>
+correct_normal = normalize(transpose(inverse(model_matrix)) * vertex_normal)
+
+<span class="comment">// 简化形式（仅当M只有旋转和平移，没有非均匀缩放时）</span>
+<span class="comment">// 旋转矩阵的逆 = 转置，所以逆转置 = 原始矩阵</span>
+correct_normal = model_matrix * vertex_normal  <span class="comment">// 仅限纯旋转或均匀缩放！</span></code></pre>
+
+<h3 id="7-7-3-经典例子">7.7.3 经典例子</h3>
+
+<p>NVIDIA开发者文档中的经典例子：一个斜面（45°倾角），在x方向拉伸2倍。</p>
+
+<pre><code>原始法线 (归一化前)：n = (<span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>)
+模型矩阵 M = S(<span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>)  <span class="comment">// 非均匀缩放</span>
+
+<span class="comment">// ❌ 直接用M变换法线</span>
+n'_wrong = M·n = (<span class="number">2</span>, <span class="number">1</span>, <span class="number">0</span>)  ← 不再垂直于新表面！
+
+<span class="comment">// ✅ 用逆转置变换法线</span>
+(M⁻¹)ᵀ = [<span class="number">1</span>/<span class="number">2</span>  <span class="number">0</span>; <span class="number">0</span>  <span class="number">1</span>]
+n'_correct = (M⁻¹)ᵀ·n = (<span class="number">0.5</span>, <span class="number">1</span>, <span class="number">0</span>) ← 正确垂直于新表面！</code></pre>
+
+<h3 id="7-7-4-实践技巧">7.7.4 实践技巧</h3>
+
+<table>
+<tr><th>变换类型</th><th>法线矩阵</th><th>可否简化</th></tr>
+<tr><td>纯旋转</td><td>R</td><td>= R（旋转矩阵逆=转置，所以逆转置=R）✓</td></tr>
+<tr><td>旋转+平移</td><td>R（3×3部分）</td><td>= R（平移不影响方向）✓</td></tr>
+<tr><td>均匀缩放+旋转</td><td>S·R</td><td>= (1/s)·R（归一化后可抵消缩放）✓</td></tr>
+<tr><td>非均匀缩放+旋转</td><td>(M⁻¹)ᵀ</td><td>必须完全计算 ✗</td></tr>
+</table>
+
+<pre><code><span class="comment">// 在CPU上预计算法线矩阵</span>
+mat3 normal_matrix = transpose(inverse(mat3(model_matrix)));
+
+<span class="comment">// 在GPU着色器中</span>
+vec3 world_normal = normalize(normal_matrix * vertex_normal);</code></pre>
+
+<hr>
+
+<h2 id="7-8-窗口变换-完整变换管线">7.8 窗口变换（完整变换管线）</h2>
+
+<h3 id="7-8-1-总览">7.8.1 总览</h3>
+
+<p>从3D场景最终显示到屏幕窗口，经历了多步变换。这就是图形学中的"变换管线"：</p>
+
+<div class="formula">p_screen = M_viewport · M_projection · M_view · M_model · p_local</div>
+
+<div class="guizang-figure">
+<img src="images/ch07/viewport_transform.png" alt="窗口变换管线——从局部坐标到屏幕像素">
+<div class="guizang-caption">图7-5：窗口变换管线——局部坐标 → 世界坐标 → 相机视野 → NDC → 屏幕像素</div>
+</div>
+
+<h3 id="7-8-2-各步骤详解">7.8.2 各步骤详解</h3>
+
+<p><strong>第一步：模型变换（局部 → 世界）</strong></p>
+<div class="formula">M_model = T(tx, ty, tz) · R(θ) · S(sx, sy, sz)</div>
+<p>将物体的局部坐标变换到世界坐标。通常按"先缩放、再旋转、再平移"的顺序组合。</p>
+
+<p><strong>第二步：视图变换（世界 → 相机）</strong></p>
+<div class="formula">M_view = [u⃗, v⃗, w⃗, -e]（将相机移到原点，视线对齐到-z轴）</div>
+
+<p><strong>第三步：投影变换（相机 → 标准化设备坐标NDC）</strong></p>
+
+<p>透视投影（将视锥体映射到 [-1, 1]³ 立方体）：</p>
+
+<pre><code>M_perspective = 
+[<span class="number">2</span>n/(r-l)    <span class="number">0</span>      (r+l)/(r-l)       <span class="number">0</span>    ]
+[   <span class="number">0</span>      <span class="number">2</span>n/(t-b)  (t+b)/(t-b)       <span class="number">0</span>    ]
+[   <span class="number">0</span>         <span class="number">0</span>      -(f+n)/(f-n)  -<span class="number">2</span>fn/(f-n)]
+[   <span class="number">0</span>         <span class="number">0</span>          -<span class="number">1</span>           <span class="number">0</span>    ]</code></pre>
+
+<table>
+<tr><th>符号</th><th>含义</th><th>示例值</th></tr>
+<tr><td>l, r</td><td>近平面左右边界</td><td>-0.1, 0.1</td></tr>
+<tr><td>b, t</td><td>近平面上下边界</td><td>-0.1, 0.1</td></tr>
+<tr><td>n</td><td>近裁剪面距离</td><td>0.1</td></tr>
+<tr><td>f</td><td>远裁剪面距离</td><td>100</td></tr>
+</table>
+
+<blockquote>
+<p><strong>为什么投影矩阵第4行是 (0, 0, -1, 0)？</strong></p>
+<p>因为透视需要"除以z"来完成近大远小。矩阵将z值存入w分量，后续<a href="#perspective-divide">透视除法</a>时：w' = -z，远物（|z|大）→ w'大 → 屏幕坐标小（近大远小效果）。这就是透视投影的"魔法"。</p>
+</blockquote>
+
+<p><strong>正交投影（不产生透视效果）：</strong></p>
+
+<pre><code>M_orthographic =
+[<span class="number">2</span>/(r-l)    <span class="number">0</span>        <span class="number">0</span>     -(r+l)/(r-l)]
+[   <span class="number">0</span>     <span class="number">2</span>/(t-b)     <span class="number">0</span>     -(t+b)/(t-b)]
+[   <span class="number">0</span>        <span class="number">0</span>     <span class="number">2</span>/(n-f)  -(n+f)/(n-f)]
+[   <span class="number">0</span>        <span class="number">0</span>        <span class="number">0</span>          <span class="number">1</span>      ]</code></pre>
+
+<p><strong>第四步：视口变换（NDC → 屏幕坐标）</strong></p>
+
+<p>将 [-1, 1]³ 的NDC坐标映射到屏幕像素坐标：</p>
+
+<pre><code>M_viewport = 
+[nx/<span class="number">2</span>    <span class="number">0</span>     <span class="number">0</span>   (nx-<span class="number">1</span>)/<span class="number">2</span>]
+[ <span class="number">0</span>   ny/<span class="number">2</span>    <span class="number">0</span>   (ny-<span class="number">1</span>)/<span class="number">2</span>]
+[ <span class="number">0</span>     <span class="number">0</span>    <span class="number">1</span>/<span class="number">2</span>     <span class="number">1</span>/<span class="number">2</span>   ]
+[ <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>       <span class="number">1</span>     ]</code></pre>
+
+<table>
+<tr><th>符号</th><th>含义</th><th>示例值</th></tr>
+<tr><td>nx</td><td>屏幕宽度（像素）</td><td>1920</td></tr>
+<tr><td>ny</td><td>屏幕高度（像素）</td><td>1080</td></tr>
+</table>
+
+<h3 id="7-8-3-完整变换例子">7.8.3 完整变换例子</h3>
+
+<p>点 (2, 3, 4) 在局部坐标系，经过各步变换到屏幕：</p>
+
+<pre><code><span class="comment">// 步骤0：局部坐标</span>
+p_local = (<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">1</span>)ᵀ
+
+<span class="comment">// 步骤1：模型变换（平移(1,0,0) + 缩放(2,2,2)）</span>
+M_model = [<span class="number">2</span> <span class="number">0</span> <span class="number">0</span> <span class="number">1</span>; <span class="number">0</span> <span class="number">2</span> <span class="number">0</span> <span class="number">0</span>; <span class="number">0</span> <span class="number">0</span> <span class="number">2</span> <span class="number">0</span>; <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">1</span>]
+p_world = (<span class="number">5</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">1</span>)ᵀ
+
+<span class="comment">// 步骤2：视图变换（相机在(10,0,0)，注视原点）</span>
+p_camera = (-<span class="number">5</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">1</span>)ᵀ
+
+<span class="comment">// 步骤3：透视投影（l=-0.1,r=0.1,b=-0.1,t=0.1,n=0.1,f=100）</span>
+p_clip = (... , ..., ..., <span class="number">5</span>)ᵀ  <span class="comment">// w=-z ⇒ w=5</span>
+<span class="comment">// 透视除法：p_ndc = p_clip / w</span>
+p_ndc = (.../<span class="number">5</span>, .../<span class="number">5</span>, .../<span class="number">5</span>)ᵀ
+
+<span class="comment">// 步骤4：视口变换（1920×1080）</span>
+p_screen = (..., ..., ..., <span class="number">1</span>)ᵀ</code></pre>
+
+<hr>
+
+<h2 id="7-9-矩阵组合与顺序">7.9 矩阵组合与顺序</h2>
+
+<h3 id="7-9-1-变换的顺序很重要">7.9.1 变换的顺序很重要</h3>
+
+<div class="formula">M_total = M_n · ... · M_2 · M_1</div>
+
+<p>应用顺序：从M₁开始（最右边），到M_n结束（最左边）。<strong>先做的变换在右边，后做的在左边。</strong></p>
+
+<blockquote>
+<strong>非常重要</strong>：矩阵乘法<strong>不交换</strong>！先旋转再平移 ≠ 先平移再旋转。
+</blockquote>
+
+<pre><code><span class="comment">// 先旋转再平移：点绕原点旋转后再移动</span>
+M = T(<span class="number">5</span>, <span class="number">0</span>) · R(<span class="number">90</span>°)
+  = [<span class="number">1</span> <span class="number">0</span> <span class="number">5</span>] [<span class="number">0</span> -<span class="number">1</span> <span class="number">0</span>]   [<span class="number">0</span> -<span class="number">1</span> <span class="number">5</span>]
+    [<span class="number">0</span> <span class="number">1</span> <span class="number">0</span>] [<span class="number">1</span>  <span class="number">0</span> <span class="number">0</span>] = [<span class="number">1</span>  <span class="number">0</span> <span class="number">0</span>]
+    [<span class="number">0</span> <span class="number">0</span> <span class="number">1</span>] [<span class="number">0</span>  <span class="number">0</span> <span class="number">1</span>]   [<span class="number">0</span>  <span class="number">0</span> <span class="number">1</span>]
+
+<span class="comment">// 先平移再旋转：点平移后在新的位置绕原点旋转</span>
+M' = R(<span class="number">90</span>°) · T(<span class="number">5</span>, <span class="number">0</span>)
+   = [<span class="number">0</span> -<span class="number">1</span> <span class="number">0</span>] [<span class="number">1</span> <span class="number">0</span> <span class="number">5</span>]   [<span class="number">0</span> -<span class="number">1</span> <span class="number">0</span>]
+     [<span class="number">1</span>  <span class="number">0</span> <span class="number">0</span>] [<span class="number">0</span> <span class="number">1</span> <span class="number">0</span>] = [<span class="number">1</span>  <span class="number">0</span> <span class="number">5</span>]
+     [<span class="number">0</span>  <span class="number">0</span> <span class="number">1</span>] [<span class="number">0</span> <span class="number">0</span> <span class="number">1</span>]   [<span class="number">0</span>  <span class="number">0</span> <span class="number">1</span>]
+
+<span class="comment">// 两者结果不同！</span>
+<span class="comment">// 先旋转再平移：点(0,0)→旋转后还在(0,0)→平移后到(5,0)</span>
+<span class="comment">// 先平移再旋转：点(0,0)→平移后到(5,0)→旋转后到(0,5)</span></code></pre>
+
+<h3 id="7-9-2-标准组合模式">7.9.2 标准组合模式</h3>
+
+<pre><code><span class="comment">// 模式1：围绕自身中心旋转（自转）</span>
+<span class="comment">// 1. 移动到原点   2. 旋转    3. 移动回去</span>
+M = T(position) · R(θ) · T(-position)
+
+<span class="comment">// 模式2：围绕任意点 p 旋转（公转）</span>
+M = T(p) · R(θ) · T(-p)    <span class="comment">// 公式和上面一样！</span>
+
+<span class="comment">// 模式3：在指定方向缩放</span>
+<span class="comment">// 1. 旋转对齐轴   2. 缩放      3. 旋转回去</span>
+M = R(-θ) · S(<span class="number">1</span>, sy, <span class="number">1</span>) · R(θ)</code></pre>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么"围绕自身中心旋转"要先平移到原点？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">
+旋转矩阵总是绕<strong>原点</strong>旋转。如果物体不在原点，直接旋转会使物体围绕原点做圆弧运动（公转）而不是自转。先平移到原点→旋转→再平移回去=自转。这是图形学中最常用的变换技巧之一。
+</blockquote>
+</div>
+
+<hr>
+
+<h2 id="7-10-变换矩阵总结">7.10 变换矩阵总结</h2>
+
+<table>
+<tr><th>矩阵</th><th>3D齐次形式</th><th>逆矩阵</th></tr>
+<tr><td>平移</td><td>[I t; 0 1]</td><td>[I -t; 0 1]</td></tr>
+<tr><td>缩放</td><td>[S 0; 0 1]</td><td>[1/s 0; 0 1]</td></tr>
+<tr><td>旋转</td><td>[R 0; 0 1]</td><td>[Rᵀ 0; 0 1]（正交矩阵逆=转置）</td></tr>
+<tr><td>透视投影</td><td>见7.8节</td><td>复杂</td></tr>
+</table>
+
+<blockquote>
+<strong>核心洞察</strong>：变换矩阵是计算机图形学的"语法"——它用数学表达式统一描述了所有几何变换。从物体建模（局部坐标）到最终屏幕显示，每一步都是矩阵乘法。
+</blockquote>
+
+<table>
+<tr><th>变换阶段</th><th>从 → 到</th><th>矩阵</th><th>作用</th></tr>
+<tr><td>模型变换</td><td>局部 → 世界</td><td>M_model</td><td>放置物体到场景中</td></tr>
+<tr><td>视图变换</td><td>世界 → 相机</td><td>M_view</td><td>从相机视角观察</td></tr>
+<tr><td>投影变换</td><td>相机 → NDC</td><td>M_projection</td><td>透视/正交投影（近大远小）</td></tr>
+<tr><td>视口变换</td><td>NDC → 屏幕</td><td>M_viewport</td><td>映射到像素坐标</td></tr>
+</table>
+
+<p><strong>一句话总结</strong>：变换 = 矩阵乘法组合，法线变换要用逆转置（非均匀缩放时必须），旋转矩阵来自极坐标→三角恒等式的推导，窗口变换从局部到屏幕经历四次矩阵乘法。</p>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li class="active"><a href="ch07_变换矩阵.html" class="active">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#7-1-什么是变换矩阵">7.1 什么是变换矩阵？</a></li>
+  <li class="toc-h3"><a href="#7-1-1-核心概念">7.1.1 核心概念</a></li>
+  <li class="toc-h2"><a href="#7-2-2d线性变换基础">7.2 2D线性变换基础</a></li>
+  <li class="toc-h3"><a href="#7-2-1-2d缩放">7.2.1 2D缩放</a></li>
+  <li class="toc-h3"><a href="#7-2-2-2d旋转-标准公式">7.2.2 2D旋转（标准公式）</a></li>
+  <li class="toc-h2"><a href="#7-3-旋转矩阵的五步推导-极坐标法">7.3 旋转矩阵的五步推导（极坐标法）</a></li>
+  <li class="toc-h3"><a href="#第一步-用极坐标表示点">第一步：用极坐标表示点</a></li>
+  <li class="toc-h3"><a href="#第二步-写出旋转后的坐标">第二步：写出旋转后的坐标</a></li>
+  <li class="toc-h3"><a href="#第三步-三角恒等式展开">第三步：三角恒等式展开</a></li>
+  <li class="toc-h3"><a href="#第四步-代回原始坐标">第四步：代回原始坐标</a></li>
+  <li class="toc-h3"><a href="#第五步-写成矩阵形式">第五步：写成矩阵形式</a></li>
+  <li class="toc-h3"><a href="#验证-旋转90">验证：旋转90°</a></li>
+  <li class="toc-h3"><a href="#3d旋转矩阵">3D旋转矩阵</a></li>
+  <li class="toc-h2"><a href="#7-4-齐次坐标与平移">7.4 齐次坐标与平移</a></li>
+  <li class="toc-h3"><a href="#7-4-1-线性变换的致命局限">7.4.1 线性变换的致命局限</a></li>
+  <li class="toc-h3"><a href="#7-4-2-齐次坐标的定义">7.4.2 齐次坐标的定义</a></li>
+  <li class="toc-h3"><a href="#7-4-3-齐次形式的变换矩阵">7.4.3 齐次形式的变换矩阵</a></li>
+  <li class="toc-h3"><a href="#7-4-4-仿射变换的性质">7.4.4 仿射变换的性质</a></li>
+  <li class="toc-h2"><a href="#7-5-坐标变换-从局部到世界到相机">7.5 坐标变换：从局部到世界到相机</a></li>
+  <li class="toc-h3"><a href="#7-5-1-从局部到世界-模型变换">7.5.1 从局部到世界（模型变换）</a></li>
+  <li class="toc-h3"><a href="#7-5-2-从世界到相机-视图变换">7.5.2 从世界到相机（视图变换）</a></li>
+  <li class="toc-h2"><a href="#7-6-三维变换矩阵的完整推导">7.6 三维变换矩阵的完整推导</a></li>
+  <li class="toc-h3"><a href="#7-6-1-点绕任意轴旋转-rodrigues公式">7.6.1 点绕任意轴旋转（Rodrigues公式）</a></li>
+  <li class="toc-h3"><a href="#7-6-2-旋转矩阵的性质验证">7.6.2 旋转矩阵的性质验证</a></li>
+  <li class="toc-h3"><a href="#7-6-3-欧拉角与万向锁">7.6.3 欧拉角与万向锁</a></li>
+  <li class="toc-h2"><a href="#7-7-法线变换--初学者最容易犯的错误">7.7 法线变换——初学者最容易犯的错误</a></li>
+  <li class="toc-h3"><a href="#7-7-1-错误示范">7.7.1 错误示范</a></li>
+  <li class="toc-h3"><a href="#7-7-2-正确推导">7.7.2 正确推导</a></li>
+  <li class="toc-h3"><a href="#7-7-3-经典例子">7.7.3 经典例子</a></li>
+  <li class="toc-h3"><a href="#7-7-4-实践技巧">7.7.4 实践技巧</a></li>
+  <li class="toc-h2"><a href="#7-8-窗口变换-完整变换管线">7.8 窗口变换（完整变换管线）</a></li>
+  <li class="toc-h3"><a href="#7-8-1-总览">7.8.1 总览</a></li>
+  <li class="toc-h3"><a href="#7-8-2-各步骤详解">7.8.2 各步骤详解</a></li>
+  <li class="toc-h3"><a href="#7-8-3-完整变换例子">7.8.3 完整变换例子</a></li>
+  <li class="toc-h2"><a href="#7-9-矩阵组合与顺序">7.9 矩阵组合与顺序</a></li>
+  <li class="toc-h3"><a href="#7-9-1-变换的顺序很重要">7.9.1 变换的顺序很重要</a></li>
+  <li class="toc-h3"><a href="#7-9-2-标准组合模式">7.9.2 标准组合模式</a></li>
+  <li class="toc-h2"><a href="#7-10-变换矩阵总结">7.10 变换矩阵总结</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

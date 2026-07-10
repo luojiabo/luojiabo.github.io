@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch11: 纹理映射</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch11 纹理映射</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第11章：纹理映射 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第11章（p.255-290）。<br>
+<strong>本章是图形学的"皮肤"——它告诉你：怎么把一张 2D 图像"贴"到 3D 物体表面。</strong><br>
+学完本章，你将真正理解 mipmap、立方体贴图、阴影贴图、Bump Map、过程纹理等核心概念。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s110">11.0 本章动机：为什么需要纹理？</a></li>
+  <li><a href="#s111">11.1 查找纹理值</a></li>
+  <li><a href="#s112">11.2 纹理坐标函数</a></li>
+  <li><a href="#s113">11.3 抗锯齿纹理查找</a></li>
+  <li><a href="#s114">11.4 纹理映射的应用</a></li>
+  <li><a href="#s115">11.5 过程化 3D 纹理</a></li>
+  <li><a href="#ssummary">全章总结</a></li>
+</ul>
+</div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+  <li>理解<strong>纹理查找的"3 个空间"</strong>：物体/世界/相机/纹理空间的关系</li>
+  <li>掌握<strong>纹理坐标函数</strong>——怎么把 3D 点映射到 2D 纹理</li>
+  <li>掌握<strong>插值纹理坐标</strong>——三角形内部怎么插值</li>
+  <li>理解<strong>抗锯齿纹理查找</strong>——为什么纹理会出现锯齿</li>
+  <li>掌握<strong>mipmap</strong>——纹理的金字塔采样</li>
+  <li>理解<strong>各向异性过滤</strong>——为什么远处的地板要特别处理</li>
+  <li>掌握<strong>常见纹理应用</strong>：Bump/Normal Map、Displacement、Shadow、Environment</li>
+  <li>理解<strong>3D 过程纹理</strong>：noise、turbulence、stripe</li>
+</ol>
+
+<hr>
+
+<h2 id="11-0-本章动机-为什么需要纹理">11.0 本章动机：为什么需要纹理？</h2>
+
+<h3 id="11-0-1-一切从-丑陋的色块-开始">11.0.1 一切从"丑陋的色块"开始</h3>
+
+<p>想象你渲染了一个 3D 球。光照、阴影都对——但球的表面就是<strong>一个均匀的红色</strong>，没有任何细节。你永远不会相信这是一个"真实"的球。为什么会这样？因为现实世界的物体表面<strong>几乎都不是单一颜色</strong>——木头有纹路、布料有纤维、皮肤有毛孔、石头有凹凸。</p>
+
+<p>最简单的解决办法是什么？</p>
+
+<blockquote>
+<p><strong>答</strong>：把一个高分辨率的 2D 图像（"纹理图"）"贴"到 3D 物体表面。这个过程就叫<strong>纹理映射（Texture Mapping）</strong>。</p>
+</blockquote>
+
+<h3 id="11-0-2-三个空间的-翻译游戏">11.0.2 三个空间的"翻译游戏"</h3>
+
+<p>纹理映射本质上是一个<strong>翻译游戏</strong>——把 3D 世界坐标翻译成 2D 纹理坐标。这个翻译函数的名字叫 <code>φ</code>（phi）：</p>
+
+<div class="guizang-figure">
+<img src="images/ch11/uv_mapping.png" alt="UV坐标映射">
+<div class="guizang-caption">图11-1：UV坐标映射——2D纹理平面的格子通过 φ 函数"贴"到 3D 三角形表面</div>
+</div>
+
+<pre><code>世界物体 S → 视图投影 π → 屏幕 → 纹理坐标函数 φ → 纹理 T
+
+    3D 点 (x,y,z)  ───π───→  屏幕像素 (i,j)
+                          │
+                          └──φ──→  纹理坐标 (u,v) → 颜色 RGB</code></pre>
+
+<table>
+<tr><th>符号</th><th>名称</th><th>含义</th></tr>
+<tr><td><code>S</code></td><td>场景物体</td><td>3D 世界中的几何体（球、人物、地面）</td></tr>
+<tr><td><code>π</code></td><td>视图投影</td><td>把 3D 点投影到 2D 屏幕的相机变换（已知）</td></tr>
+<tr><td><code>φ</code></td><td>纹理坐标函数</td><td>把 3D 点映射到 2D 纹理坐标的函数（待设计）</td></tr>
+<tr><td><code>T</code></td><td>纹理</td><td>2D 图像（一堆像素，每个像素有颜色）</td></tr>
+</table>
+
+<div class="key-box">
+<strong>核心洞察</strong>：<code>π</code> 是已知的（视图投影），<code>φ</code> 是<strong>待设计</strong>的（纹理坐标）。<strong>纹理映射的核心问题就是：怎么把表面点 (x, y, z) 映射到 (u, v)？</strong>
+</div>
+
+<h3 id="11-0-3-简单映射为什么不够用">11.0.3 简单映射为什么不够用？</h3>
+
+<p>最笨的办法：直接把 3D 点的 x, y 当成纹理坐标 u, v。</p>
+
+<pre><code>// 简单映射
+u = x
+v = y</code></pre>
+
+<p>这个方法在<strong>轴对齐的平面</strong>上能用，但只要物体倾斜一下，纹理就会"拉伸"——比如一面斜放的墙上，砖块都被拉成了平行四边形。弯曲表面就更没救了。</p>
+
+<blockquote>
+<p><strong>根本原因</strong>：简单映射只对"轴对齐的平面"有效。任意朝向的表面，需要更聪明的 φ 函数。</p>
+</blockquote>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么你小时候玩的"贴纸"贴在曲面上会起皱？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">因为贴纸的格子是正方形的，但曲面（如球面）的"自然网格"是弯曲的。强行把方形格子贴到曲面上，就会有"拉伸"和"褶皱"。纹理映射本质上就是解决"如何把平的东西贴到曲的东西上"的数学问题。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="11-1-查找纹理值">11.1 查找纹理值</h2>
+
+<h3 id="11-1-1-纹理查找的代码">11.1.1 纹理查找的代码</h3>
+
+<p>假设我们已经知道表面点的纹理坐标 (u, v)，怎么从纹理图上取出对应的颜色？</p>
+
+<pre><code><span class="comment">// 最简单的纹理查找（不考虑抗锯齿）</span>
+<span class="function">function</span> texture_lookup(Texture t, float u, float v):
+  <span class="comment">// 把 [0,1] 的纹理坐标映射到像素索引</span>
+  <span class="comment">// 减 0.5 是因为像素中心位于 i+0.5</span>
+  int i = round(u * t.width()  - <span class="number">0.5</span>)
+  int j = round(v * t.height() - <span class="number">0.5</span>)
+  <span class="keyword">return</span> t.get_pixel(i, j)</code></pre>
+
+<table>
+<tr><th>符号</th><th>含义</th></tr>
+<tr><td><code>u, v</code></td><td>归一化的纹理坐标，范围通常 [0, 1]</td></tr>
+<tr><td><code>t.width(), t.height()</code></td><td>纹理的像素分辨率（如 1024×1024）</td></tr>
+<tr><td><code>i, j</code></td><td>像素的整数索引（从 0 开始）</td></tr>
+<tr><td><code>round(... - 0.5)</code></td><td>四舍五入到最近的像素中心</td></tr>
+<tr><td><code>get_pixel(i, j)</code></td><td>取出该像素的颜色（RGB）</td></tr>
+</table>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么是 <code>u * W - 0.5</code>，而不是 <code>u * W</code>？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">因为像素是一个"区域"，不是"点"。像素 (i, j) 覆盖的范围是 [i, i+1) × [j, j+1)，中心位于 (i+0.5, j+0.5)。当 u=0 时，对应纹理图最左边一列像素的中心 (0.5/W)；当 u=1 时对应最右边一列像素的中心 (1-0.5/W)。减 0.5 保证这个对应关系正确。如果不减 0.5，u=0 会取到像素 (0, j) 的左边缘（而不是中心）。</blockquote>
+</div>
+
+<h3 id="11-1-2-这是-最近邻采样---会有锯齿">11.1.2 这是"最近邻采样"——会有锯齿</h3>
+
+<p>上面这段代码就是<strong>点采样（Point Sampling）</strong>，也叫<strong>最近邻采样（Nearest Neighbor）</strong>。它有两个致命问题：</p>
+
+<ol>
+<li><strong>锯齿（Aliasing）</strong>：远处的物体会出现明显的"马赛克"，因为一个像素只采了 1 个纹素（texel）</li>
+<li><strong>摩尔纹（Moiré Patterns）</strong>：当纹理的频率接近屏幕采样频率时，会出现奇怪的干涉条纹</li>
+</ol>
+
+<blockquote>
+<p><strong>为什么会有锯齿？</strong> Ch10 已经讲过——<strong>采样率不足</strong>。当 1 个屏幕像素覆盖了多个纹素（远处物体）时，我们只取了 1 个纹素的值，丢掉了其他纹素的信息。这种"欠采样"是所有视觉锯齿的根源。</p>
+</blockquote>
+
+<div class="info-box">
+<strong>💡 关键术语</strong>：<br>
+- <strong>texel（纹素）</strong>：纹理图像中的单个像素，区别于"屏幕像素"（pixel）<br>
+- <strong>采样（sampling）</strong>：从连续函数中取出离散值<br>
+- <strong>重建（reconstruction）</strong>：从离散样本恢复连续信号
+</div>
+
+<hr>
+
+<h2 id="11-2-纹理坐标函数">11.2 纹理坐标函数</h2>
+
+<h3 id="11-2-1-几何确定的坐标--φ-的-5-种实现">11.2.1 几何确定的坐标——φ 的 5 种实现</h3>
+
+<p>φ 函数的 5 种"现成"实现方式——每种都基于物体的几何形状：</p>
+
+<h4 id="方法-1-平面投影-planar-projection">方法 1：平面投影（Planar Projection）</h4>
+
+<p><strong>适用</strong>：表面大致平面的物体（地板、墙、广告牌）。</p>
+
+<pre><code>// 把 3D 点直接当成 2D 坐标
+φ(x, y, z) = (u, v) where [u, v, *, 1]ᵀ = M_t · [x, y, z, 1]ᵀ</code></pre>
+
+<div class="guizang-figure">
+<img src="images/ch11/uv_mapping.png" alt="UV坐标映射示例">
+<div class="guizang-caption">图11-2：UV坐标映射的实际例子——2D 网格上的每个格子对应 3D 表面上的一个小面片</div>
+</div>
+
+<div class="key-box">
+<strong>致命问题</strong>：<strong>对闭合物体不单射</strong>——前后两个点会映射到同一位置（一个篮球的"前"和"后"会被贴上同一张图的同一块）。
+</div>
+
+<h4 id="方法-2-投影纹理-projective-texture">方法 2：投影纹理（Projective Texture）</h4>
+
+<p><strong>核心思想</strong>：用 4×4 矩阵（投影矩阵）做透视投影——和相机投影场景的原理完全一样！</p>
+
+<pre><code>// 4×4 投影矩阵
+φ(x, y, z) = (u/w, v/w) where [u, v, *, w]ᵀ = P_t · [x, y, z, 1]ᵀ</code></pre>
+
+<p><strong>应用</strong>：投影纹理（projector）、阴影贴图（shadow map）。</p>
+
+<table>
+<tr><th>场景</th><th>用途</th></tr>
+<tr><td>投影仪</td><td>把一张图"投影"到任何表面上</td></tr>
+<tr><td>阴影贴图</td><td>从光源视角"看"场景，记录深度</td></tr>
+<tr><td>环境光照</td><td>从某点"看"环境贴图，模拟间接光</td></tr>
+</table>
+
+<h4 id="方法-3-球面坐标-spherical-coordinates">方法 3：球面坐标（Spherical Coordinates）</h4>
+
+<p><strong>适用</strong>：球形 / 近球形物体（地球仪、星球、灯泡）。</p>
+
+<pre><code>// 把 3D 点转换成 (经度, 纬度)
+φ(x, y, z) = ((π + atan2(y, x)) / 2π,    <span class="comment">// u = 经度 [0,1]</span>
+              (π - acos(z / ||x||)) / π)   <span class="comment">// v = 纬度 [0,1]</span></code></pre>
+
+<table>
+<tr><th>符号</th><th>含义</th></tr>
+<tr><td><code>atan2(y, x)</code></td><td>点 (x,y) 的极角（范围 [-π, π]）</td></tr>
+<tr><td><code>acos(z / ||x||)</code></td><td>从 z 轴算起的极角（范围 [0, π]）</td></tr>
+<tr><td><code>||x||</code></td><td>向量长度 <code>sqrt(x² + y² + z²)</code></td></tr>
+</table>
+
+<div class="key-box">
+<strong>问题</strong>：<strong>极点处有严重失真</strong>（一片区域压缩到点）。地球的南极附近，国家会被压扁成奇怪的形状。
+</div>
+
+<h4 id="方法-4-圆柱坐标-cylindrical-coordinates">方法 4：圆柱坐标（Cylindrical Coordinates）</h4>
+
+<p><strong>适用</strong>：柱形物体（杯子、树干、铅笔）。</p>
+
+<pre><code>φ(x, y, z) = ((1 / 2π) · (π + atan2(y, x)),    <span class="comment">// u = 角度 [0,1]</span>
+              ½ · [1 + z])                       <span class="comment">// v = 高度 [0,1]</span></code></pre>
+
+<p>圆柱坐标和球面坐标很像，但 v 方向直接用 z（线性），不会有极点失真问题。</p>
+
+<h4 id="方法-5-立方体贴图-cubemap">方法 5：立方体贴图（Cubemap）</h4>
+
+<p><strong>适用</strong>：环境光照、反射（最常用）。</p>
+
+<p>核心思想：用 6 个正方形纹理分别对应立方体的 6 个面。查找时，根据光线方向判断用哪个面：</p>
+
+<pre><code>// 6 个面的投影
+φ_±x(x, y, z) = ½ [1 ± (-y, -z) / |x|]
+φ_±y(x, y, z) = ½ [1 ± (x, -z) / |y|]
+φ_±z(x, y, z) = ½ [1 ± (x, -y) / |z|]
+
+// 选择 |·| 最大的那一面
+chosen_face = argmax(|x|, |y|, |z|)</code></pre>
+
+<div class="info-box">
+<strong>💡 OpenGL 约定</strong>：u 顺时针，v 反时针。环境贴图、光照探针、反射贴图都用 cubemap。
+</div>
+
+<h3 id="11-2-2-插值纹理坐标-最常用的方法">11.2.2 插值纹理坐标（最常用的方法）</h3>
+
+<p>对于复杂的任意形状物体（如恐龙模型），几何方法难以构造纹理坐标。怎么办？</p>
+
+<blockquote>
+<p><strong>答案</strong>：<strong>在顶点存储纹理坐标</strong>，三角形内部用<strong>重心插值</strong>。这就是 OpenGL/UE/Unreal 的标准做法。</p>
+</blockquote>
+
+<pre><code><span class="comment">// 三角形三个顶点 (u₀, v₀), (u₁, v₁), (u₂, v₂)</span>
+<span class="comment">// 内部点 (α, β, γ) 的纹理坐标</span>
+u = α · u₀ + β · u₁ + γ · u₂
+v = α · v₀ + β · v₁ + γ · v₂
+
+<span class="comment">// 其中 α + β + γ = 1，且都 ≥ 0</span></code></pre>
+
+<table>
+<tr><th>符号</th><th>含义</th></tr>
+<tr><td><code>(u₀, v₀), (u₁, v₁), (u₂, v₂)</code></td><td>三个顶点的纹理坐标（顶点属性）</td></tr>
+<tr><td><code>α, β, γ</code></td><td>重心坐标（决定内部点位置）</td></tr>
+<tr><td><code>α + β + γ = 1</code></td><td>重心坐标的归一化条件</td></tr>
+</table>
+
+<div class="analogy-box">
+<strong>🏠 生活类比：贴地砖</strong>
+<blockquote>
+<p>想象你在贴地砖。每块地砖的"位置"就是 (u, v) 坐标——左下角是 (0,0)，右上角是 (1,1)。当你知道地砖的四个角落在房间的什么位置时，房间内任何一点的地砖颜色都可以通过插值算出来。<br>
+<strong>重心插值 = "我离这个角 30%，离那个角 50%，离第三个角 20%，所以颜色 = 30%×角1 + 50%×角2 + 20%×角3"</strong>。</p>
+</blockquote>
+</div>
+
+<h3 id="11-2-3-uv-展开-把-3d-摊成-2d">11.2.3 UV 展开：把 3D 摊成 2D</h3>
+
+<p>对于任意形状的 3D 物体，怎么决定每个顶点的 UV 坐标？这就是 <strong>UV 展开（UV Unwrapping）</strong>——把 3D 表面"剪开"成 2D 平面。</p>
+
+<p><strong>例子：20 面体（Icosahedron）的 UV 展开</strong></p>
+
+<ul>
+<li><strong>优点</strong>：失真为零（每个三角形大小相同）</li>
+<li><strong>缺点</strong>：接缝多（每个三角形都要接到下一行）</li>
+</ul>
+
+<div class="key-box">
+<strong>接缝处理的关键</strong>：接缝处<strong>复制顶点</strong>（同位置不同 UV）。这样能避免接缝两侧用"错误路径"插值，导致纹理扭曲。
+</div>
+
+<p><strong>UV 展开品质的 3 个评估指标：</strong></p>
+
+<table>
+<tr><th>指标</th><th>含义</th></tr>
+<tr><td><strong>连续性（continuity）</strong></td><td>相邻三角形共享 UV → 自动满足</td></tr>
+<tr><td><strong>单射性（injectivity）</strong></td><td>UV 区域内不重叠（无"自交"）</td></tr>
+<tr><td><strong>失真最小</strong></td><td>3D 和 2D 三角形面积/形状比例接近 1</td></tr>
+</table>
+
+<h3 id="11-2-4-平铺-包裹和纹理变换">11.2.4 平铺、包裹和纹理变换</h3>
+
+<p><strong>3 种 wrap mode（包裹模式）</strong>：</p>
+
+<table>
+<tr><th>模式</th><th>行为</th><th>应用</th></tr>
+<tr><td><strong>Tiling（平铺）</strong></td><td>超出 [0,1] 后取模（重复）</td><td>棋盘、墙砖、地面</td></tr>
+<tr><td><strong>Clamping（钳制）</strong></td><td>超出 [0,1] 后固定为 0 或 1</td><td>单一图像（贴 logo）</td></tr>
+<tr><td><strong>Hybrid（混合）</strong></td><td>边缘 wrap + 内部 tile</td><td>棋盘的边框</td></tr>
+</table>
+
+<p><strong>纹理变换</strong>：在原 UV 上叠加 2D 仿射变换</p>
+
+<pre><code>φ'(x) = M_T · φ_model(x)
+
+其中 M_T 是一个 3×3 矩阵：
+| cosθ  -sinθ  tx |
+| sinθ   cosθ  ty |
+|  0      0     1 |</code></pre>
+
+<div class="key-box">
+<strong>核心洞察</strong>：<code>M_T</code> 是一个 3×3 矩阵（2D 仿射变换），让你可以<strong>动态调整</strong> UV 而不改原模型。在游戏里这非常常用——比如水面纹理流动、UI 动画。
+</div>
+
+<hr>
+
+<h2 id="11-3-抗锯齿纹理查找">11.3 抗锯齿纹理查找</h2>
+
+<h3 id="11-3-1-像素的-足迹--footprint">11.3.1 像素的"足迹"（Footprint）</h3>
+
+<p>抗锯齿的核心思想：<strong>不要只采 1 个纹素</strong>，要采一片纹素并加权平均。这一片纹素就叫像素的"足迹"（footprint）。</p>
+
+<div class="guizang-figure">
+<img src="images/ch11/filtering_comparison.png" alt="纹理过滤对比">
+<div class="guizang-caption">图11-3：三种纹理过滤——点采样（像素化）、双线性（模糊）、三线性（清晰）</div>
+</div>
+
+<p><strong>关键问题</strong>：不同位置的像素，对应的纹理区域<strong>大小和形状都不同</strong>！</p>
+
+<table>
+<tr><th>位置</th><th>足迹大小</th><th>形状</th></tr>
+<tr><td>近处物体</td><td>小（只覆盖少量 texel）</td><td>近似正方形</td></tr>
+<tr><td>远处物体</td><td>大（覆盖很多 texel）</td><td>近似正方形</td></tr>
+<tr><td>斜视的地面/墙壁</td><td>大</td><td>长条形</td></tr>
+</table>
+
+<p><strong>足迹的数学表达</strong>：</p>
+
+<pre><code>ψ = φ ∘ π⁻¹     <span class="comment">// 把屏幕坐标映射回纹理坐标</span>
+footprint(x) = ψ(像素面积)   <span class="comment">// 像素的 1×1 正方形 → 纹理的某个区域</span></code></pre>
+
+<h3 id="11-3-2-足迹的线性近似-jacobian-矩阵">11.3.2 足迹的线性近似（Jacobian 矩阵）</h3>
+
+<p>用 <strong>Jacobian 矩阵 J</strong> 近似足迹：</p>
+
+<pre><code>J = [ ∂u/∂x  ∂u/∂y ]
+    [ ∂v/∂x  ∂v/∂y ]</code></pre>
+
+<p><strong>几何意义</strong>：单位像素面积 → J 决定的<strong>平行四边形</strong>（足迹）</p>
+
+<p><strong>filter 宽度 D</strong>：</p>
+
+<div class="formula">D = max{ ||u_x||, ||u_y|| }</div>
+
+<table>
+<tr><th>符号</th><th>含义</th></tr>
+<tr><td><code>u_x, u_y</code></td><td>J 的两列向量（足迹的两个主方向）</td></tr>
+<tr><td><code>||·||</code></td><td>向量的长度</td></tr>
+<tr><td><code>D</code></td><td>足迹的"直径"——需要采样的纹素数</td></tr>
+</table>
+
+<div class="key-box">
+<strong>核心洞察</strong>：<strong>J 是 GPU 抗锯齿纹理查找的核心</strong>。在着色器里，GPU 自动计算屏幕空间 (x, y) 对纹理 (u, v) 的导数（也叫 screen-space derivatives）。
+</div>
+
+<h3 id="11-3-3-重建-reconstruction---放大情况">11.3.3 重建（Reconstruction）——放大情况</h3>
+
+<p><strong>当足迹 &lt; 1 个 texel</strong>（放大）：</p>
+
+<blockquote>
+<p>重建 = 插值 = 卷积 with reconstruction filter。最常用：<strong>双线性插值</strong>（4 个 texel 加权平均）</p>
+</blockquote>
+
+<pre><code><span class="function">def</span> tex_sample_bilinear(Texture t, float u, float v):
+    <span class="comment"># 1. 把 [0,1] 纹理坐标缩放到像素坐标</span>
+    u_p = u * t.width  - 0.5
+    v_p = v * t.height - 0.5
+    
+    <span class="comment"># 2. 找到周围 4 个像素</span>
+    iu0 = floor(u_p); iu1 = iu0 + 1   <span class="comment"># 左、右</span>
+    iv0 = floor(v_p); iv1 = iv0 + 1   <span class="comment"># 下、上</span>
+    
+    <span class="comment"># 3. 计算权重（距离 4 个像素的距离）</span>
+    a_u = iu1 - u_p; b_u = 1 - a_u     <span class="comment"># 水平权重</span>
+    a_v = iv1 - v_p; b_v = 1 - a_v     <span class="comment"># 垂直权重</span>
+    
+    <span class="comment"># 4. 加权平均 4 个 texel</span>
+    <span class="keyword">return</span> a_u * a_v * t[iu0][iv0]   <span class="comment"># 左下</span> \
+         + a_u * b_v * t[iu0][iv1]   <span class="comment"># 左上</span> \
+         + b_u * a_v * t[iu1][iv0]   <span class="comment"># 右下</span> \
+         + b_u * b_v * t[iu1][iv1]   <span class="comment"># 右上</span></code></pre>
+
+<table>
+<tr><th>变量</th><th>含义</th></tr>
+<tr><td><code>u_p, v_p</code></td><td>像素空间的浮点坐标</td></tr>
+<tr><td><code>iu0, iu1</code></td><td>左、右两个像素索引（整数）</td></tr>
+<tr><td><code>a_u, b_u</code></td><td>对左、右两个像素的权重（距离反比）</td></tr>
+<tr><td><code>a_u + b_u = 1</code></td><td>权重和为 1（凸组合）</td></tr>
+</table>
+
+<div class="info-box">
+<strong>💡 重要性能考虑</strong>：双线性插值 = <strong>4 次纹理采样</strong>。在现代 GPU 中，<strong>纹理采样是性能瓶颈</strong>（受 memory latency 限制）。尽量避免不必要的纹理读取。
+</div>
+
+<h3 id="11-3-4-mipmap----缩小情况">11.3.4 Mipmap —— 缩小情况</h3>
+
+<p><strong>问题</strong>：当足迹 &gt; 1 个 texel 时（缩小），直接采样会<strong>锯齿/混叠</strong>。</p>
+
+<blockquote>
+<p><strong>Mipmap 解决方案</strong> = <strong>预计算的多分辨率纹理</strong>。每层都是上一层的 1/2 缩放。</p>
+</blockquote>
+
+<div class="guizang-figure">
+<img src="images/ch11/mipmap_pyramid.png" alt="Mipmap金字塔">
+<div class="guizang-caption">图11-4：Mipmap金字塔——从 1024×1024（底层）到 1×1（顶层），每层都是上一层的 1/2 缩放</div>
+</div>
+
+<pre><code>M0:  1024×1024   (原图)
+M1:   512×512    (1/2)
+M2:   256×256
+M3:   128×128
+...
+M10:    1×1</code></pre>
+
+<p><strong>Mipmap 的 3 大优势</strong>：</p>
+
+<ol>
+<li><strong>内存可控</strong>：多 33% 内存（1 + 1/4 + 1/16 + ... &lt; 4/3）</li>
+<li><strong>采样时根据足迹大小选择层</strong>：自动适配远近物体</li>
+<li><strong>抗锯齿效果立竿见影</strong>：比点采样好 10 倍</li>
+</ol>
+
+<p><strong>Mipmap 层选择公式</strong>：</p>
+
+<div class="formula">k = log₂(D)  (D = filter 宽度)</div>
+
+<pre><code>k0 = floor(k); k1 = k0 + 1
+<span class="comment"># 在两层间线性插值（trilinear 过滤）</span>
+result = a · M[k0] + b · M[k1]</code></pre>
+
+<table>
+<tr><th>参数</th><th>含义</th></tr>
+<tr><td><code>D</code></td><td>filter 宽度（足迹直径）</td></tr>
+<tr><td><code>k</code></td><td>目标 mipmap 层级（连续值）</td></tr>
+<tr><td><code>k0, k1</code></td><td>夹住 k 的两个整数层</td></tr>
+<tr><td><code>a, b</code></td><td>两层间的插值权重，a + b = 1</td></tr>
+</table>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么 Mipmap 只用 33% 额外内存？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">几何级数：1 + 1/4 + 1/16 + 1/64 + ... = 1 / (1 - 1/4) = 4/3。也就是原图内存的 1.33 倍。这是 Mipmap 在内存上"经济"的数学原因。</blockquote>
+</div>
+
+<h3 id="11-3-5-各向异性过滤">11.3.5 各向异性过滤</h3>
+
+<p><strong>问题</strong>：当足迹是<strong>长条形</strong>（如远处的地面），mipmap 会<strong>过度模糊</strong>。</p>
+
+<blockquote>
+<p><strong>原因</strong>：mipmap 只考虑<strong>方形</strong>区域。对于长条形足迹，它只能选一个"最坏"的方形 mip 层，结果是垂直方向模糊、水平方向也模糊——但我们其实只想要垂直方向模糊。</p>
+</blockquote>
+
+<p><strong>各向异性过滤 = 沿长条形方向多次采样</strong></p>
+
+<pre><code><span class="comment"># 各向异性过滤伪代码</span>
+<span class="comment"># 1. 计算足迹的长宽比</span>
+λ = max(||u_x||, ||u_y||) / min(||u_x||, ||u_y||)
+
+<span class="comment"># 2. 沿长边方向采 N 次（向上取整到 1, 2, 4, 8, 16）</span>
+N = clamp(round(λ), 1, 16)
+
+<span class="comment"># 3. 在长条形上等距采 N 个样本并平均</span>
+color = 0
+<span class="keyword">for</span> i <span class="keyword">in</span> 0..N-1:
+    t = (i + 0.5) / N
+    pos = center + t * (long_axis)
+    color += sample_mipmap(pos)
+<span class="keyword">return</span> color / N</code></pre>
+
+<table>
+<tr><th>质量</th><th>样本数</th><th>适用</th></tr>
+<tr><td><strong>point</strong></td><td>1</td><td>最差，1 个纹素</td></tr>
+<tr><td><strong>bilinear</strong></td><td>4</td><td>基本无锯齿</td></tr>
+<tr><td><strong>trilinear</strong></td><td>8（2 层 × 4 像素）</td><td>远近过渡平滑</td></tr>
+<tr><td><strong>anisotropic 2x</strong></td><td>2 × 4 = 8</td><td>地面/墙面的标准</td></tr>
+<tr><td><strong>anisotropic 16x</strong></td><td>16 × 4 = 64</td><td>极限质量</td></tr>
+</table>
+
+<div class="info-box">
+<strong>💡 质量对比</strong>：<code>point &lt; bilinear &lt; trilinear &lt; anisotropic</code>。质量越好，<strong>代价是采样数增加</strong>。现代游戏一般开 4x~8x 各向异性。
+</div>
+
+<hr>
+
+<h2 id="11-4-纹理映射的应用">11.4 纹理映射的应用</h2>
+
+<h3 id="11-4-1-控制着色参数">11.4.1 控制着色参数</h3>
+
+<p>纹理<strong>不只能控制漫反射颜色</strong>——它能控制几乎任何着色参数：</p>
+
+<table>
+<tr><th>用途</th><th>纹理内容</th><th>图11.x</th></tr>
+<tr><td>漫反射颜色</td><td>砖墙、木纹、布料图案</td><td>图11.18</td></tr>
+<tr><td>镜面反射率</td><td>抛光区（白色=高光，黑色=粗糙）</td><td>图11.20</td></tr>
+<tr><td>粗糙度</td><td>磨砂区</td><td>—</td></tr>
+<tr><td>环境贴图</td><td>模拟天空/灯光</td><td>图11.32</td></tr>
+<tr><td>凹凸/法线</td><td>表面细节（不真改几何）</td><td>图11.24</td></tr>
+<tr><td>位移</td><td>真凹凸（改顶点）</td><td>图11.25</td></tr>
+<tr><td>阴影</td><td>光源视角的深度图</td><td>图11.27</td></tr>
+</table>
+
+<blockquote>
+<p><strong>例子</strong>：图11.20 陶瓷马克杯的镜面粗糙度由<strong>反相的漫反射纹理</strong>控制——白色部分代表高光，黑色部分代表粗糙。这种"用一个纹理的不同颜色通道"的做法在游戏里非常常见。</p>
+</blockquote>
+
+<h3 id="11-4-2-法线贴图和凹凸贴图">11.4.2 法线贴图和凹凸贴图</h3>
+
+<p><strong>法线贴图</strong> = 存储 3D 法线（扰动后的）。</p>
+
+<div class="guizang-figure">
+<img src="images/ch11/normal_mapping.png" alt="法线贴图原理">
+<div class="guizang-caption">图11-5：法线贴图原理——左边是"假凹凸"（平面 + 扰动法线），右边是"真几何"（实际 3D 凹凸）</div>
+</div>
+
+<p><strong>为什么需要法线贴图？</strong></p>
+
+<blockquote>
+<p>直接在着色时改 normal = 看起来像有凹凸。<strong>比真实几何便宜 1000 倍</strong>。一块砖墙的法线贴图只需要 4 KB，但 1 千万个真实的砖头三角形要 1 GB。</p>
+</blockquote>
+
+<p><strong>凹凸贴图（Bump Map）</strong> = 高度场（1D 标量）</p>
+
+<p><strong>从高度场到法线的推导</strong>：</p>
+
+<pre><code>∂h/∂x → 沿 x 方向的斜率
+∂h/∂y → 沿 y 方向的斜率
+
+扰动后的法线:
+n_perturbed = n + (-∂h/∂x) · t + (-∂h/∂y) · b
+
+其中 t 和 b 是切线空间基向量（TBN 矩阵）</code></pre>
+
+<table>
+<tr><th>符号</th><th>含义</th></tr>
+<tr><td><code>h(x, y)</code></td><td>高度场（凹凸贴图）</td></tr>
+<tr><td><code>∂h/∂x, ∂h/∂y</code></td><td>沿两个切线方向的斜率</td></tr>
+<tr><td><code>n</code></td><td>原始法线（未扰动）</td></tr>
+<tr><td><code>t, b</code></td><td>切线空间的两个基向量（tangent, bitangent）</td></tr>
+<tr><td><code>n_perturbed</code></td><td>扰动后的法线</td></tr>
+</table>
+
+<div class="key-box">
+<strong>关键洞察</strong>：<strong>法线贴图是"假凹凸"</strong>——边缘还是平的。真正的凹凸需要 <strong>displacement mapping</strong>（修改顶点）。
+</div>
+
+<p><strong>切线空间（TBN 矩阵）</strong>：</p>
+
+<ul>
+<li>存储在<strong>切线空间</strong>（相对表面）而非世界空间</li>
+<li>原因：法线贴图需要随物体表面"一起动"</li>
+<li>需要切线向量（T, B, N）</li>
+</ul>
+
+<h3 id="11-4-3-位移贴图-displacement-maps---真凹凸">11.4.3 位移贴图（Displacement Maps）——真凹凸</h3>
+
+<p><strong>真凹凸 = 移动顶点位置</strong>：</p>
+
+<pre><code>vertex.position += h(uv) · normal</code></pre>
+
+<p><strong>优点</strong>：</p>
+
+<ol>
+<li>边缘和轮廓都正确（不是平面）</li>
+<li>能做自阴影（凹凸贴图做不到）</li>
+<li>光线交互是真实的</li>
+</ol>
+
+<p><strong>缺点</strong>：</p>
+
+<ol>
+<li>需要<strong>高密度网格</strong>（否则形变不够）</li>
+<li>内存和计算成本高</li>
+<li>不适合实时渲染（常用在离线渲染）</li>
+</ol>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：法线贴图 vs 位移贴图如何选择？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">实时（游戏）→ 法线贴图。物体不需要太复杂的几何细节，但表面光照要"看起来"对。离线（电影）→ 位移贴图。物体边缘的轮廓必须真实，即使需要几亿三角形。</blockquote>
+</div>
+
+<h3 id="11-4-4-阴影贴图-shadow-maps">11.4.4 阴影贴图（Shadow Maps）</h3>
+
+<p><strong>核心思想</strong>：<strong>从光源视角渲染一次深度图</strong>。</p>
+
+<pre><code><span class="comment"># Pass 1: 从光源看</span>
+shadow_map[每个像素] = 最近表面的深度
+
+<span class="comment"># Pass 2: 从相机看</span>
+<span class="keyword">for</span> each fragment:
+    <span class="comment"># 1. 把 fragment 投影到光源的"屏幕"</span>
+    light_space_pos = light_proj × fragment_pos
+    
+    <span class="comment"># 2. 查 shadow_map</span>
+    closest = shadow_map[light_space_pos]
+    
+    <span class="comment"># 3. 比较</span>
+    <span class="keyword">if</span> fragment.depth > closest + bias:
+        in_shadow = True</code></pre>
+
+<table>
+<tr><th>参数</th><th>含义</th></tr>
+<tr><td><code>light_proj</code></td><td>光源的视图-投影矩阵（和相机类似）</td></tr>
+<tr><td><code>light_space_pos</code></td><td>fragment 在光源"屏幕"上的位置</td></tr>
+<tr><td><code>closest</code></td><td>shadow_map 在该位置记录的最近深度</td></tr>
+<tr><td><code>bias</code></td><td>阴影偏移（避免自影）</td></tr>
+</table>
+
+<p><strong>关键技术点</strong>：</p>
+
+<ul>
+<li><strong>shadow bias</strong>：避免自影（self-shadowing）</li>
+<li><strong>percentage closer filtering (PCF)</strong>：多次采样平均，让阴影边缘更柔和</li>
+<li><strong>shadow acne</strong>：bias 不够大会出现斑点</li>
+</ul>
+
+<blockquote>
+<p><strong>💡 实战</strong>：UE / Unity 的实时光照基本都是用 shadow map（加 PCF）。</p>
+</blockquote>
+
+<h3 id="11-4-5-环境贴图-environment-maps">11.4.5 环境贴图（Environment Maps）</h3>
+
+<p><strong>问题</strong>：漫反射光来自<strong>所有方向</strong>——不能用点光源或面光源近似。</p>
+
+<p><strong>环境贴图</strong> = 整个 360° 颜色图</p>
+
+<p><strong>2 种表示</strong>：</p>
+
+<table>
+<tr><th>类型</th><th>存储</th><th>优点</th><th>缺点</th></tr>
+<tr><td>球面贴图（Spherical）</td><td>6 个面展开成"十字"形</td><td>连续</td><td>极点失真</td></tr>
+<tr><td>立方体贴图（Cubemap）</td><td>6 个正方形</td><td>无失真</td><td>需要 6 张图</td></tr>
+</table>
+
+<p><strong>应用</strong>：</p>
+
+<ol>
+<li><strong>反射贴图（Reflection Mapping）</strong>：镜面反射</li>
+<li><strong>环境光照（Environment Lighting）</strong>：漫反射光</li>
+</ol>
+
+<pre><code><span class="comment"># 反射贴图伪代码</span>
+<span class="function">def</span> shade_fragment(view_dir, normal):
+    reflect = reflect(view_dir, normal)
+    (u, v) = spheremap_coords(reflect)
+    <span class="keyword">return</span> texture_lookup(env_map, u, v)</code></pre>
+
+<div class="key-box">
+<strong>核心洞察</strong>：<strong>环境贴图 = 烘焙的环境光照</strong>——不需要实时计算每个方向的漫反射光。这是离线渲染的"圣杯"——把整个光照预算成一张 6 面图。
+</div>
+
+<hr>
+
+<h2 id="11-5-过程化-3d-纹理">11.5 过程化 3D 纹理</h2>
+
+<h3 id="11-5-1-为什么需要-3d-纹理">11.5.1 为什么需要 3D 纹理？</h3>
+
+<p><strong>2D 纹理的限制</strong>：</p>
+
+<ul>
+<li>必须有 UV 参数化（很多时候很复杂）</li>
+<li>有接缝和失真</li>
+<li>不能"雕刻"立体感</li>
+</ul>
+
+<p><strong>3D 纹理</strong> = 在 3D 空间定义的纹理</p>
+
+<blockquote>
+<p><strong>关键优势</strong>：<strong>直接在 3D 坐标取样</strong>——不需要 UV！把一个 3D 纹理函数 f(x, y, z) 想象成一个"无限延伸的纹理云"，无论你的表面在哪里，都直接用世界坐标取样。</p>
+</blockquote>
+
+<h3 id="11-5-2-3d-条纹">11.5.2 3D 条纹</h3>
+
+<p><strong>最简单的 3D 纹理</strong> = 周期性切换两种颜色：</p>
+
+<pre><code><span class="function">def</span> RGB_stripe(point p):
+    <span class="keyword">if</span> sin(x_p) > <span class="number">0</span>:
+        <span class="keyword">return</span> c0    <span class="comment"># 第一种颜色</span>
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> c1    <span class="comment"># 第二种颜色</span></code></pre>
+
+<p><strong>可控宽度</strong>：</p>
+
+<pre><code><span class="function">def</span> RGB_stripe(point p, real w):
+    <span class="keyword">if</span> sin(π · x_p / w) > <span class="number">0</span>:
+        <span class="keyword">return</span> c0
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> c1</code></pre>
+
+<p>其中 w 控制条纹的"宽度"——w 越大，条纹越宽。</p>
+
+<h3 id="11-5-3-perlin-噪声---平滑的随机">11.5.3 Perlin 噪声——"平滑的随机"</h3>
+
+<p><strong>什么是"平滑噪声"？</strong></p>
+
+<table>
+<tr><th>特性</th><th>描述</th></tr>
+<tr><td>在每个点是<strong>伪随机</strong>的</td><td>看起来杂乱无章</td></tr>
+<tr><td>但<strong>相邻点相似</strong>（不跳跃）</td><td>看起来"自然"</td></tr>
+<tr><td>类似 TV static 但更平滑</td><td>有"质感"</td></tr>
+</table>
+
+<p><strong>Perlin 噪声的实现</strong>：</p>
+
+<ul>
+<li>3D 网格，<strong>每个格点有随机梯度</strong></li>
+<li>用 Hermite 三次插值（不是线性）</li>
+</ul>
+
+<pre><code><span class="comment"># Perlin 噪声数学公式</span>
+n(x, y, z) = Σᵢ Σⱼ Σₖ ω(x-i, y-j, z-k) · Γᵢⱼₖ
+
+其中：
+ω(t) = 2|t|³ - 3|t|² + 1   <span class="comment"># Hermite 三次权重</span>
+Γᵢⱼₖ = 预计算的随机单位向量</code></pre>
+
+<table>
+<tr><th>符号</th><th>含义</th></tr>
+<tr><td><code>ω(t)</code></td><td>Hermite 三次权重函数（保证 C¹ 连续）</td></tr>
+<tr><td><code>Γᵢⱼₖ</code></td><td>网格点 (i, j, k) 的随机单位梯度向量</td></tr>
+<tr><td><code>n(x, y, z)</code></td><td>Perlin 噪声函数值（通常 [-1, 1]）</td></tr>
+</table>
+
+<p><strong>应用</strong>：</p>
+
+<ul>
+<li>石头、木纹、云、皮肤</li>
+<li><strong>modular noise</strong> = 同一函数，不同参数</li>
+</ul>
+
+<h3 id="11-5-4-湍流-turbulence---多个频率的噪声叠加">11.5.4 湍流（Turbulence）——多个频率的噪声叠加</h3>
+
+<p><strong>湍流 = 多个频率的噪声叠加</strong></p>
+
+<pre><code><span class="comment"># 湍流公式</span>
+n_t(x) = Σ |n(2ⁱ · x)| / 2ⁱ
+
+i 从 0 到 N（典型 N = 6 ~ 8）</code></pre>
+
+<table>
+<tr><th>符号</th><th>含义</th></tr>
+<tr><td><code>2ⁱ · x</code></td><td>第 i 层频率翻倍（2×, 4×, 8×, ...）</td></tr>
+<tr><td><code>|n(...)|</code></td><td>取绝对值（避免负值抵消）</td></tr>
+<tr><td><code>1 / 2ⁱ</code></td><td>每层的权重（高频贡献小）</td></tr>
+<tr><td><code>n_t(x)</code></td><td>叠加后的湍流值</td></tr>
+</table>
+
+<p><strong>为什么用湍流？</strong></p>
+
+<blockquote>
+<p>单个 noise 太"平滑"（像鹅卵石）。湍流有"分形"感（细节无处不在）——像云、烟、火焰这种自然现象。原因是它把多个尺度的细节叠加起来：从大轮廓到小细节都有。</p>
+</blockquote>
+
+<p><strong>应用</strong>：云、烟、火焰、地形</p>
+
+<p><strong>Turbstripe 例子</strong>：</p>
+
+<pre><code><span class="function">def</span> RGB_turbstripe(point p, double w):
+    double t = (<span class="number">1</span> + sin(k1 · z_p + turbulence(k2 · p))) / w
+    <span class="keyword">return</span> t · s0 + (<span class="number">1</span>-t) · s1</code></pre>
+
+<p>把湍流作为正弦函数的相位扰动——条纹变得"扭曲"，模拟自然纹理（如大理石、木纹）。</p>
+
+<div class="analogy-box">
+<strong>🏠 生活类比：做云</strong>
+<blockquote>
+<p>想象你在画一朵云。如果你只画一个大圆形，它会显得很"卡通"（像 Photoshop 的圆）。如果你先画几个大圆形作为云的"骨架"，再在每个大圆形上画几个中圆形，最后在每个中圆形上画几个小圆点——<strong>这种"层层叠叠"就是湍流的思路</strong>。每一层都是噪声，但频率不同，叠加后才有"云"的质感。</p>
+</blockquote>
+</div>
+
+<hr>
+
+<h2 id="全章总结">全章总结</h2>
+
+<blockquote>
+<p><strong>讲义核心洞察</strong>：纹理映射是图形学的"皮肤"——</p>
+<ul>
+<li><strong>3 个空间</strong>：物体/世界/相机/纹理空间，<strong>φ 函数</strong>是核心</li>
+<li><strong>纹理坐标函数</strong>：平面/球面/圆柱/立方体/插值 UV</li>
+<li><strong>抗锯齿</strong>：足迹（footprint）→ mipmap → 各向异性</li>
+<li><strong>应用</strong>：Bump/Normal/Displacement/Shadow/Environment</li>
+<li><strong>3D 纹理</strong>：noise、turbulence、stripe</li>
+</ul>
+</blockquote>
+
+<table>
+<tr><th>主题</th><th>核心公式/方法</th><th>关键洞察</th></tr>
+<tr><td>纹理查找</td><td><code>t.get_pixel(round(u*W - 0.5), round(v*H - 0.5))</code></td><td>中心点采样，减 0.5 校正</td></tr>
+<tr><td>几何 φ</td><td>平面 / 球面 / 圆柱 / 立方体</td><td>各有限制，闭合物体不单射</td></tr>
+<tr><td>重心插值</td><td><code>u = α·u₀ + β·u₁ + γ·u₂</code></td><td>三角形内任意点的纹理坐标</td></tr>
+<tr><td>双线性插值</td><td>4 texel 加权平均</td><td>放大情况的标准方案</td></tr>
+<tr><td>Mipmap 层</td><td><code>k = log₂(D)</code></td><td>33% 内存换抗锯齿</td></tr>
+<tr><td>各向异性</td><td>沿长边多次采样</td><td>长条形足迹的最佳方案</td></tr>
+<tr><td>Bump 法线</td><td><code>n' = n + (-∂h/∂x)t + (-∂h/∂y)b</code></td><td>假凹凸，边缘还是平面</td></tr>
+<tr><td>阴影判定</td><td><code>if (d > shadow_map[uv] + bias) 阴影</code></td><td>shadow bias 避免自影</td></tr>
+<tr><td>Turbulence</td><td><code>n_t(x) = Σ |n(2ⁱ x)| / 2ⁱ</code></td><td>多个频率的噪声叠加</td></tr>
+</table>
+
+<div class="info-box">
+<strong>📚 关键术语速查</strong>：
+<ul>
+<li><strong>φ (phi)</strong>：纹理坐标函数，3D → 2D 的映射</li>
+<li><strong>Texel</strong>：纹素（纹理图像中的单个像素）</li>
+<li><strong>Footprint</strong>：足迹（屏幕像素覆盖的纹理区域）</li>
+<li><strong>Mipmap</strong>：多分辨率纹理金字塔</li>
+<li><strong>Trilinear</strong>：在两层 mipmap 间线性插值</li>
+<li><strong>Anisotropic</strong>：各向异性过滤（针对长条形足迹）</li>
+<li><strong>TBN</strong>：切线空间基向量（Tangent, Bitangent, Normal）</li>
+<li><strong>Perlin Noise</strong>：伪随机但平滑的噪声函数</li>
+<li><strong>Turbulence</strong>：多频率噪声叠加</li>
+</ul>
+</div>
+
+<p><strong>一句话总结</strong>：纹理映射 = 用 φ 函数把 3D 表面点映射到 2D 纹理 → 抗锯齿采样（双线性 + mipmap + 各向异性）→ 应用于漫反射/法线/位移/阴影/环境光 → 高级用 3D 过程纹理（noise + turbulence）。</p>
+
+<p><strong>下一步</strong>：第 12 章将讲解<strong>图形学的数据结构</strong>——mesh 怎么存？空间查询怎么做？这是所有游戏引擎的基础。</p>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li class="active"><a href="ch11_纹理映射.html" class="active">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#11-0-本章动机-为什么需要纹理">11.0 本章动机：为什么需要纹理？</a></li>
+  <li class="toc-h3"><a href="#11-0-1-一切从-丑陋的色块-开始">11.0.1 一切从"丑陋的色块"开始</a></li>
+  <li class="toc-h3"><a href="#11-0-2-三个空间的-翻译游戏">11.0.2 三个空间的"翻译游戏"</a></li>
+  <li class="toc-h3"><a href="#11-0-3-简单映射为什么不够用">11.0.3 简单映射为什么不够用？</a></li>
+  <li class="toc-h2"><a href="#11-1-查找纹理值">11.1 查找纹理值</a></li>
+  <li class="toc-h3"><a href="#11-1-1-纹理查找的代码">11.1.1 纹理查找的代码</a></li>
+  <li class="toc-h3"><a href="#11-1-2-这是-最近邻采样---会有锯齿">11.1.2 这是"最近邻采样"——会有锯齿</a></li>
+  <li class="toc-h2"><a href="#11-2-纹理坐标函数">11.2 纹理坐标函数</a></li>
+  <li class="toc-h3"><a href="#11-2-1-几何确定的坐标--φ-的-5-种实现">11.2.1 几何确定的坐标——φ 的 5 种实现</a></li>
+  <li class="toc-h3"><a href="#11-2-2-插值纹理坐标-最常用的方法">11.2.2 插值纹理坐标（最常用的方法）</a></li>
+  <li class="toc-h3"><a href="#11-2-3-uv-展开-把-3d-摊成-2d">11.2.3 UV 展开：把 3D 摊成 2D</a></li>
+  <li class="toc-h3"><a href="#11-2-4-平铺-包裹和纹理变换">11.2.4 平铺、包裹和纹理变换</a></li>
+  <li class="toc-h2"><a href="#11-3-抗锯齿纹理查找">11.3 抗锯齿纹理查找</a></li>
+  <li class="toc-h3"><a href="#11-3-1-像素的-足迹--footprint">11.3.1 像素的"足迹"（Footprint）</a></li>
+  <li class="toc-h3"><a href="#11-3-2-足迹的线性近似-jacobian-矩阵">11.3.2 足迹的线性近似（Jacobian 矩阵）</a></li>
+  <li class="toc-h3"><a href="#11-3-3-重建-reconstruction---放大情况">11.3.3 重建（Reconstruction）——放大情况</a></li>
+  <li class="toc-h3"><a href="#11-3-4-mipmap----缩小情况">11.3.4 Mipmap —— 缩小情况</a></li>
+  <li class="toc-h3"><a href="#11-3-5-各向异性过滤">11.3.5 各向异性过滤</a></li>
+  <li class="toc-h2"><a href="#11-4-纹理映射的应用">11.4 纹理映射的应用</a></li>
+  <li class="toc-h3"><a href="#11-4-1-控制着色参数">11.4.1 控制着色参数</a></li>
+  <li class="toc-h3"><a href="#11-4-2-法线贴图和凹凸贴图">11.4.2 法线贴图和凹凸贴图</a></li>
+  <li class="toc-h3"><a href="#11-4-3-位移贴图-displacement-maps---真凹凸">11.4.3 位移贴图（Displacement Maps）——真凹凸</a></li>
+  <li class="toc-h3"><a href="#11-4-4-阴影贴图-shadow-maps">11.4.4 阴影贴图（Shadow Maps）</a></li>
+  <li class="toc-h3"><a href="#11-4-5-环境贴图-environment-maps">11.4.5 环境贴图（Environment Maps）</a></li>
+  <li class="toc-h2"><a href="#11-5-过程化-3d-纹理">11.5 过程化 3D 纹理</a></li>
+  <li class="toc-h3"><a href="#11-5-1-为什么需要-3d-纹理">11.5.1 为什么需要 3D 纹理？</a></li>
+  <li class="toc-h3"><a href="#11-5-2-3d-条纹">11.5.2 3D 条纹</a></li>
+  <li class="toc-h3"><a href="#11-5-3-perlin-噪声---平滑的随机">11.5.3 Perlin 噪声——"平滑的随机"</a></li>
+  <li class="toc-h3"><a href="#11-5-4-湍流-turbulence---多个频率的噪声叠加">11.5.4 湍流（Turbulence）——多个频率的噪声叠加</a></li>
+  <li class="toc-h2"><a href="#全章总结">全章总结</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

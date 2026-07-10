@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch10: 信号处理</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch10 信号处理</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第10章：信号处理 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第10章（p.205-252）。<br>
+<strong>本章是图形学的"数学骨架"</strong>——它解释为什么"采样率太低"会让远处物体消失、为什么"纹理过滤"能消除锯齿、为什么"mipmap"是 GPU 的标配。<br>
+学完本章你将理解抗锯齿、纹理过滤、傅里叶变换等核心概念。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s101">10.1 数字音频：1D 采样入门</a>
+    <ul>
+      <li><a href="#s1011">10.1.1 采样流程</a></li>
+      <li><a href="#s1012">10.1.2 混叠（Aliasing）</a></li>
+    </ul>
+  </li>
+  <li><a href="#s102">10.2 卷积（Convolution）</a>
+    <ul>
+      <li><a href="#s1021">10.2.1 卷积的定义</a></li>
+      <li><a href="#s1022">10.2.2 移动平均</a></li>
+      <li><a href="#s1023">10.2.3 两个等价视角</a></li>
+      <li><a href="#s1024">10.2.4 卷积的性质</a></li>
+      <li><a href="#s1025">10.2.5 离散-连续卷积</a></li>
+    </ul>
+  </li>
+  <li><a href="#s103">10.3 卷积滤波器</a>
+    <ul>
+      <li><a href="#s1031">10.3.1 滤波器本质</a></li>
+      <li><a href="#s1032">10.3.2 常用滤波器对比</a></li>
+      <li><a href="#s1033">10.3.3 关键概念</a></li>
+      <li><a href="#s1034">10.3.4 2D 可分离滤波器</a></li>
+    </ul>
+  </li>
+  <li><a href="#s104">10.4 图像的信号处理</a>
+    <ul>
+      <li><a href="#s1041">10.4.1 图像滤波应用</a></li>
+      <li><a href="#s1042">10.4.2 图像混叠</a></li>
+      <li><a href="#s1043">10.4.3 重采样</a></li>
+    </ul>
+  </li>
+  <li><a href="#s105">10.5 采样理论</a>
+    <ul>
+      <li><a href="#s1051">10.5.1 傅里叶变换</a></li>
+      <li><a href="#s1052">10.5.2 关键性质</a></li>
+      <li><a href="#s1053">10.5.3 傅里叶画廊</a></li>
+      <li><a href="#s1054">10.5.4 采样与混叠（频域视角）</a></li>
+      <li><a href="#s1055">10.5.5 理想 vs 实用滤波器</a></li>
+    </ul>
+  </li>
+  <li><a href="#s106">10.6 实用考虑</a>
+    <ul>
+      <li><a href="#s1061">10.6.1 Mipmap</a></li>
+      <li><a href="#s1062">10.6.2 各向异性过滤</a></li>
+      <li><a href="#s1063">10.6.3 边界处理</a></li>
+    </ul>
+  </li>
+</ul>
+</div>
+
+<p><strong>学习目标</strong>
+<ol>
+  <li>理解采样和混叠——连续信号变成离散信号的核心问题</li>
+  <li>掌握卷积——图形学最核心的数学运算</li>
+  <li>理解常用卷积滤波器：box、tent、Gaussian、B-spline</li>
+  <li>掌握可分离滤波器——2D 卷积的高效实现</li>
+  <li>理解采样理论：Nyquist 定理、抗混叠、重采样</li>
+  <li>理解傅里叶变换——频域的"魔法"</li>
+  <li>掌握 mipmap 和各向异性过滤的原理</li>
+</ol>
+</p>
+
+<hr>
+
+<h2 id="10-1-数字音频-1d-采样入门">10.1 数字音频：1D 采样入门</h2>
+
+<h3 id="10-1-1-采样流程">10.1.1 采样流程</h3>
+
+<p><strong>为什么先讲音频？</strong> 音频信号是 1D 的（时间→振幅），比 2D 图像简单得多。所有图像处理的核心概念（采样、混叠、滤波）都可以先在 1D 音频中理解，再推广到 2D。</p>
+
+<div class="guizang-figure">
+<img src="images/ch10/sampling.png" alt="连续→离散采样">
+<div class="guizang-caption">图10-1：连续正弦波信号被离散采样——采样脉冲在特定时间点"捕捉"信号值</div>
+</div>
+
+<p><strong>数字音频流程</strong>：</p>
+
+<pre><code>麦克风 → 连续电压信号 → A/D 转换器（采样）→ 离散数字存储 → D/A 转换器（重建）→ 扬声器</code></pre>
+
+<p><strong>A/D 转换器</strong>（Analog-to-Digital）：把连续电压变成离散数字。采样率（每秒采样次数）决定"能录多高的频率"。</p>
+
+<p><strong>D/A 转换器</strong>（Digital-to-Analog）：把离散数字变回连续电压。输出是"阶梯形"——需要低通滤波器平滑。</p>
+
+<table>
+<tr><th>组件</th><th>输入</th><th>输出</th><th>关键问题</th></tr>
+<tr><td>麦克风</td><td>声波（空气振动）</td><td>连续电压</td><td>频率响应范围</td></tr>
+<tr><td>A/D 转换器</td><td>连续电压</td><td>离散数字（每秒 f_s 个样本）</td><td>采样率 f_s 是多少？</td></tr>
+<tr><td>D/A 转换器</td><td>离散数字</td><td>连续电压（阶梯形）</td><td>需要平滑滤波</td></tr>
+</table>
+
+<p><strong>采样率多少才够？</strong> 人耳能听到的最高频率约 20 KHz。根据奈奎斯特定理，采样率必须 > 2 × 最高频率 = 40 KHz。CD 标准的 44.1 KHz 就是基于这个——留了一些余量。</p>
+
+<blockquote>
+<p><strong>核心洞察</strong>：采样前用低通滤波器去掉高于奈奎斯特频率的成分（防混叠）；采样后用低通滤波器平滑阶梯形输出（重建）。两个滤波器缺一不可。</p>
+</blockquote>
+
+<h3 id="10-1-2-混叠-aliasing">10.1.2 混叠（Aliasing）</h3>
+
+<div class="guizang-figure">
+<img src="images/ch10/aliasing.png" alt="混叠现象">
+<div class="guizang-caption">图10-2：混叠——高频信号被采样后"伪装"成低频信号</div>
+</div>
+
+<p><strong>混叠 = "高频信号假装成低频信号"</strong></p>
+
+<p><strong>经典例子</strong>：</p>
+<ul>
+  <li>钟表以 8 KHz 录音后听起来是 6 KHz 的"钟"——因为 8 KHz 以上的频率被"折叠"到低频</li>
+  <li>电影中车轮"倒转"效应——车轮旋转频率超过帧率时，看起来像在反转</li>
+  <li>摩尔纹（Moiré pattern）——细密的网格图案在屏幕上出现奇怪的波纹</li>
+</ul>
+
+<p><strong>混叠的根本原因</strong>：</p>
+
+<pre><code>原始信号频率 f，采样率 f_s
+如果 f > f_s / 2（奈奎斯特频率），高频部分会被"折叠"到 [0, f_s/2] 范围内
+
+<span class="comment">// 数值例子</span>
+f_s = 100 Hz（每秒采 100 个样本）
+奈奎斯特频率 = 50 Hz
+
+<span class="comment">// 情况 1：f = 30 Hz（低于奈奎斯特频率）→ 正确采样</span>
+30 Hz 的正弦波被正确记录
+
+<span class="comment">// 情况 2：f = 80 Hz（高于奈奎斯特频率）→ 发生混叠</span>
+80 Hz 的正弦波被采样后"伪装"成 20 Hz
+因为：采样得到的离散点恰好和 20 Hz 的波一样！
+80 Hz - 100 Hz = -20 Hz → 绝对值 = 20 Hz</code></pre>
+
+<p><strong>数学解释</strong>：</p>
+
+<div class="formula">频率 f 的信号经采样率 f_s 采样后，所有 f ± k·f_s 的频率都不可区分（k 为整数）</div>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么音乐 CD 用 44.1 KHz 采样率？为什么不是 40 KHz 或 48 KHz？<br>
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">人耳最高听到约 20 KHz。44.1 > 2×20 = 40，技术上已足够。44.1 这个数字的由来很"历史"——Sony 和 Philips 在制定 CD 标准时，选择了一个既能兼容 PAL/NTSC 视频信号又留有余量的数值。实际上 48 KHz（专业音频标准）也常用。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="10-2-卷积-convolution">10.2 卷积（Convolution）</h2>
+
+<h3 id="10-2-1-卷积的定义">10.2.1 卷积的定义</h3>
+
+<p><strong>为什么卷积是图形学最重要的运算？</strong> 任何形式的<strong>滤波</strong>（模糊、锐化、边缘检测）、<strong>采样</strong>、<strong>重建</strong>本质上都是卷积。理解卷积 = 理解信号处理的一半。</p>
+
+<p><strong>生活类比：煮汤</strong></p>
+
+<blockquote>
+<p>做一锅汤，你不断加调料。每次加调料的影响会"扩散"到之后的汤里——加得越久，扩散得越广。最终的汤味 = 每次加料量 × 该料随时间扩散的函数 的累加。这就是卷积！</p>
+</blockquote>
+
+<p><strong>离散卷积公式</strong>：</p>
+
+<div class="formula">(a * b)[i] = Σⱼ a[j] · b[i - j]</div>
+
+<p><strong>连续卷积公式</strong>：</p>
+
+<div class="formula">(f * g)(x) = ∫ f(t) · g(x - t) dt</div>
+
+<p><strong>公式拆解（离散版）</strong>：</p>
+
+<table>
+<tr><th>符号</th><th>含义</th><th>类比</th></tr>
+<tr><td>a</td><td>输入信号（要处理的数组）</td><td>食材清单</td></tr>
+<tr><td>b</td><td>滤波器（卷积核）</td><td>调料"扩散"函数</td></tr>
+<tr><td>i</td><td>输出位置</td><td>尝汤的时间点</td></tr>
+<tr><td>j</td><td>遍历所有位置</td><td>回顾所有加料时间</td></tr>
+<tr><td>b[i-j]</td><td>位置 j 的输入对位置 i 的贡献权重</td><td>j 时刻加的料在 i 时刻还剩多少</td></tr>
+</table>
+
+<h3 id="10-2-2-移动平均---卷积的最简形式">10.2.2 移动平均 = 卷积的最简形式</h3>
+
+<p><strong>如果看不懂公式，先看这个</strong>：</p>
+
+<p><strong>移动平均</strong>：对附近 N 个值求平均，这就是卷积：</p>
+
+<div class="formula">c[i] = (1 / (2r + 1)) × Σ_{j=i-r}^{i+r} a[j]</div>
+
+<p>这就是 <strong>box 滤波器</strong>的卷积形式——每个输出点是对称窗口内输入点的等权平均。</p>
+
+<p><strong>数值例子</strong>：</p>
+
+<pre><code>输入信号 a = [1, 4, 2, 6, 3, 5]
+滤波器 b = [1/3, 1/3, 1/3]（半径 r=1 的 box 滤波器）
+
+c[1] = a[0]×b[1] + a[1]×b[0] + a[2]×b[-1]
+  <span class="comment">// 等等，索引有点绕。用 i=1 代入公式 (a*b)[i]=Σⱼa[j]·b[i-j]</span>
+c[1] = a[0]×b[1] + a[1]×b[0] + a[2]×b[-1]
+  <span class="comment">// b 的索引从 0 开始，所以 b[-1] 不存在</span>
+  <span class="comment">// 简化方式：输出 c[1] = a[0]×1/3 + a[1]×1/3 + a[2]×1/3</span>
+      = 1/3 + 4/3 + 2/3 = 7/3 ≈ 2.33
+
+c[2] = a[1]×1/3 + a[2]×1/3 + a[3]×1/3
+      = 4/3 + 2/3 + 6/3 = 12/3 = 4.0
+
+c[3] = a[2]×1/3 + a[3]×1/3 + a[4]×1/3
+      = 2/3 + 6/3 + 3/3 = 11/3 ≈ 3.67
+
+<span class="comment">// 输出：c = [?, 2.33, 4.0, 3.67, ?, ?]</span>
+<span class="comment">// 边缘处的 ? 需要"边界处理"（见 10.6.3）</span></code></pre>
+
+<h3 id="10-2-3-卷积----滤波器翻转---滑动加权">10.2.3 卷积 = "滤波器翻转 + 滑动加权"</h3>
+
+<p><strong>视角 1（从输出看）</strong>：c[i] = "用滤波器 b 对 a 在 i 处求加权平均"</p>
+<ul>
+  <li>在每个输出位置 i 处"放置"滤波器</li>
+  <li>滤波器覆盖的输入值乘上对应的滤波器权重</li>
+  <li>求和得到输出</li>
+</ul>
+
+<p><strong>视角 2（从输入看）</strong>：(a * b) = "把 b 复制多份，按 a 的值加权后叠加"</p>
+<ul>
+  <li>每个输入值 a[j] 在输出中"扩散"成滤波器的形状</li>
+  <li>所有扩散结果叠加</li>
+  <li>GPU 实际用的是这个视角（多个采样求和）</li>
+</ul>
+
+<div class="key-box">
+<strong>重要洞察</strong>：两种视角数学上完全等价，但实现效率不同。视角 1 适合<strong>均匀采样</strong>（图像处理中的卷积），视角 2 适合<strong>非均匀采样</strong>（光线追踪中的重建）。理解这两种视角 = 理解一半的信号处理。
+</div>
+
+<div class="guizang-figure">
+<img src="images/ch10/convolution.png" alt="卷积运算">
+<div class="guizang-caption">图10-3：滑动窗口卷积——滤波器沿着信号移动，在每个位置计算加权求和</div>
+</div>
+
+<h3 id="10-2-4-卷积的关键性质">10.2.4 卷积的关键性质</h3>
+
+<table>
+<tr><th>性质</th><th>公式</th><th>物理意义</th><th>为什么重要</th></tr>
+<tr><td><strong>交换律</strong></td><td>a * b = b * a</td><td>滤波器和信号可互换</td><td>可以选择更容易实现的一方</td></tr>
+<tr><td><strong>结合律</strong></td><td>(a * b) * c = a * (b * c)</td><td>可分步滤波</td><td>多个滤波器可以合并为一个</td></tr>
+<tr><td><strong>分配律</strong></td><td>(a + b) * c = a*c + b*c</td><td>线性性质</td><td>可以分开处理再合并</td></tr>
+<tr><td><strong>恒等元</strong></td><td>a * δ = a</td><td>δ = 单位脉冲（一个 1 其余 0）</td><td>卷积的"零"</td></tr>
+</table>
+
+<pre><code><span class="comment">// 为什么交换律很重要？</span>
+<span class="comment">// 如果你有两个滤波器，一个简单一个复杂</span>
+<span class="comment">// 可以先卷简单的，再卷复杂的 = 先卷复杂的，再卷简单的</span>
+<span class="comment">// 选择计算量小的顺序！</span>
+
+<span class="comment">// 为什么结合律很重要？</span>
+<span class="comment">// 高斯模糊 = box * box * box * box （4次box近似高斯）</span>
+<span class="comment">// 结合律允许先合并为一个大滤波器：gaussian_approx = box * box * box * box</span>
+<span class="comment">// 然后一次卷积搞定：result = image * gaussian_approx</span></code></pre>
+
+<h3 id="10-2-4b-卷积的数值计算示例-完整手算">10.2.4b 卷积的数值计算示例（完整手算）</h3>
+
+<p>为了彻底理解卷积，让我们手算一个完整例子：</p>
+
+<pre><code><span class="comment">// 输入信号 a = [0, 1, 0, 1, 0, 1, 0, 1]（交替 0/1 信号）</span>
+<span class="comment">// 滤波器 b = [0.25, 0.5, 0.25]（三角形权重，r=1）</span>
+<span class="comment">// 输出 c = a * b</span>
+
+<span class="comment">// 手算每个输出位置（假设零填充边界）：</span>
+
+c[0] = a[-1]×0 + a[0]×0.5 + a[1]×0.25
+     = 0 + 1×0.5 + 0×0.25 = 0.5
+
+c[1] = a[0]×0.25 + a[1]×0.5 + a[2]×0.25
+     = 0×0.25 + 1×0.5 + 0×0.25 = 0.5
+
+c[2] = a[1]×0.25 + a[2]×0.5 + a[3]×0.25
+     = 1×0.25 + 0×0.5 + 1×0.25 = 0.5
+
+c[3] = a[2]×0.25 + a[3]×0.5 + a[4]×0.25
+     = 0×0.25 + 1×0.5 + 0×0.25 = 0.5
+
+<span class="comment">// ... 实际上全部输出都是 0.5！</span>
+<span class="comment">// 因为"交替 0/1"的高频信号被滤波器完全"抹平"了</span>
+<span class="comment">// 这证明了：滤波 = 低频通过（低通滤波）</span>
+
+<span class="comment">// 如果改用更宽的滤波器 b = [0.2, 0.2, 0.2, 0.2, 0.2]（r=2）：</span>
+c[2] = 1×0.2 + 0×0.2 + 1×0.2 + 0×0.2 + 1×0.2 = 0.6
+<span class="comment">// 稍微高了一点的 0.6 — 还是被抹平了，因为滤波器比信号周期宽</span>
+
+<span class="comment">// 结论：滤波器越宽，抹平效果越强（频率越低）</span></code></pre>
+
+<h3 id="10-2-5-离散-连续卷积-混合域">10.2.5 离散-连续卷积（混合域）</h3>
+
+<p><strong>图形学中最常用的卷积形式</strong>——一边是离散采样，一边是连续函数：</p>
+
+<div class="formula">(a * f)(x) = Σ_i a[i] · f(x - i)</div>
+
+<p><strong>这就是图形学中重采样（resampling）的核心公式</strong>：</p>
+<ul>
+  <li>a[i]：离散的像素值/纹理值</li>
+  <li>f(x)：连续的滤波器函数</li>
+  <li>(a * f)(x)：重建出的连续信号在 x 处的值</li>
+</ul>
+
+<p><strong>生活类比</strong>：你在听 CD（离散样本），但耳朵需要连续的声音（连续信号）。播放器的 D/A 转换器就是用"卷积"把离散样本变回连续波形。</p>
+
+<hr>
+
+<h2 id="10-3-卷积滤波器">10.3 卷积滤波器</h2>
+
+<h3 id="10-3-1-滤波器的本质">10.3.1 滤波器的本质</h3>
+
+<p><strong>滤波器 = 一个"小函数"</strong>，它的形状决定了"什么频率的信号被保留/抑制"。</p>
+
+<p><strong>关键权衡</strong>：</p>
+
+<blockquote>
+<p>滤波器越平滑 → 越能消除高频混叠 → 但输出越模糊<br>
+滤波器越锐利 → 细节保留越好 → 但越容易产生混叠和振铃</p>
+</blockquote>
+
+<h3 id="10-3-2-常用滤波器对比">10.3.2 常用滤波器对比</h3>
+
+<table>
+<tr><th>滤波器</th><th>形状</th><th>表达式</th><th>特点</th><th>自然半径</th><th>主要用途</th></tr>
+<tr><td><strong>Box</strong></td><td>□ 方波</td><td>1 if |x|&lt;0.5 else 0</td><td>最简单，但有振铃</td><td>1/2</td><td>最快的滤波，预览</td></tr>
+<tr><td><strong>Tent</strong></td><td>△ 三角形</td><td>1-|x| if |x|&lt;1 else 0</td><td>比 box 平滑</td><td>1</td><td>中等质量，双线性插值</td></tr>
+<tr><td><strong>Gaussian</strong></td><td>∩ 钟形</td><td>exp(-x²/(2σ²))</td><td>最平滑，无振铃</td><td>无固定（σ 控制）</td><td>高质量模糊</td></tr>
+<tr><td><strong>B-spline</strong></td><td>⌒ 立方多项式</td><td>分段三次多项式</td><td>比 Gaussian 还平滑</td><td>2</td><td>高质量重采样</td></tr>
+</table>
+
+<div class="guizang-figure">
+<img src="images/ch10/convolution.png" alt="卷积滤波器示意图">
+<div class="guizang-caption">图10-4：不同滤波器的形状——从方波（box）到钟形（Gaussian），越平滑的滤波器对高频的抑制越好</div>
+</div>
+
+<p><strong>数值例子：不同滤波器对同一信号的卷积效果</strong></p>
+
+<pre><code>输入信号 a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+位置 i=5 处的输出：
+
+<span class="comment">// Box 滤波器（半径 r=1）：等权平均</span>
+c_box[5] = (a[4] + a[5] + a[6]) / 3 = (4 + 5 + 6) / 3 = 5.0
+
+<span class="comment">// Tent 滤波器（半径 r=1）：线性衰减权重</span>
+c_tent[5] = a[4]×0.5 + a[5]×1.0 + a[6]×0.5
+          = 2.0 + 5.0 + 3.0 = 10.0 → 归一化：10 / 2 = 5.0
+<span class="comment">// 注意：Tent 的权重和是 2（0.5+1.0+0.5），需要归一化</span>
+
+<span class="comment">// Gaussian 滤波器（σ=1，半径 r=2）</span>
+权重: w[3]=exp(-4/2)=0.135, w[4]=exp(-1/2)=0.607, w[5]=exp(0)=1.0
+      w[6]=0.607, w[7]=0.135
+c_gauss[5] = (3×0.135 + 4×0.607 + 5×1.0 + 6×0.607 + 7×0.135)
+           / (0.135 + 0.607 + 1.0 + 0.607 + 0.135)
+          = (0.405 + 2.428 + 5.0 + 3.642 + 0.945) / 2.484
+          = 12.42 / 2.484 ≈ 5.0
+<span class="comment">// 对于线性信号，所有滤波器输出相同（因为信号本身是线性的）</span>
+<span class="comment">// 对于非线性的真实图像，不同滤波器的效果差异会非常明显</span></code></pre>
+
+<h3 id="10-3-3-关键概念">10.3.3 关键概念</h3>
+
+<p><strong>1. 积分 = 1 的归一化</strong>：</p>
+
+<div class="formula">∫ f(x) dx = 1 或 Σ b[j] = 1</div>
+
+<p>如果滤波器积分不是 1，它会<strong>改变信号的整体亮度</strong>（图像变亮或变暗）。</p>
+
+<p><strong>2. 连续滤波器 vs 离散滤波器</strong>：</p>
+<table>
+<tr><th>类型</th><th>优点</th><th>缺点</th></tr>
+<tr><td>离散滤波器</td><td>有限个值，精确控制，快速</td><td>精度受分辨率限制</td></tr>
+<tr><td>连续滤波器</td><td>任意形状，无限精度</td><td>计算需要积分/采样</td></tr>
+</table>
+
+<p><strong>3. 插值滤波器</strong>：<em>f(0) = 1, f(i) = 0</em>（对所有非零整数 i）。重建后的函数<strong>精确通过样本点</strong>。</p>
+
+<p><strong>4. 纹波自由（ripple-free）</strong>：滤波器在所有整数偏移处<strong>累加 = 1</strong>。对常数信号无影响。</p>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么 box 滤波器有"振铃"？<br>
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">Box 滤波器在频域是 sinc 函数（sin(πω)/πω）。sinc 有"副瓣"（side lobes）——在截止频率之外还有振荡。这些副瓣会让某些频率成分被错误地保留或抑制，在图像上表现为"振铃"（ringing artifact）。越平滑的滤波器（如 Gaussian）副瓣越小。</blockquote>
+</div>
+
+<h3 id="10-3-4-2d-滤波器与可分离性">10.3.4 2D 滤波器与可分离性</h3>
+
+<p><strong>问题</strong>：图像是 2D 的，2D 卷积复杂度是 O(r² × N²)，太大！</p>
+
+<p><strong>解决</strong>：如果滤波器是<strong>可分离的</strong>，就能分解成两次 1D 卷积：</p>
+
+<div class="formula">b₂(i, j) = b₁(i) × b₁(j)</div>
+
+<div class="formula">(a * b₂)[i, j] = Σᵢ' Σⱼ' a[i', j'] × b₁(i-i') × b₁(j-j')</div>
+
+<p><strong>先卷积行，再卷积列</strong>：</p>
+
+<pre><code><span class="comment">// 不可分离的 2D 卷积：O(r² × N²)</span>
+for each pixel (i, j):
+    for each offset (di, dj) in [-r, r]²:
+        sum += a[i+di][j+dj] * b_2d[di][dj]
+
+<span class="comment">// 可分离的 2D 卷积：O(r × N²) —— 快多了！</span>
+<span class="comment">// 先对每行做 1D 卷积</span>
+for each row j:
+    temp[i][j] = Σ a[i+di][j] * b_1d[di]
+<span class="comment">// 再对每列做 1D 卷积</span>
+for each column i:
+    result[i][j] = Σ temp[i][j+dj] * b_1d[dj]
+
+<span class="comment">// 性能对比：半径 r=10</span>
+<span class="comment">// 不可分离：每个像素需要 (2×10+1)² = 441 次乘加</span>
+<span class="comment">// 可分离：每个像素只需要 2×(2×10+1) = 42 次乘加</span>
+<span class="comment">// 加速比：441/42 ≈ 10.5 倍！</span></code></pre>
+
+<p><strong>只有 Gaussian 同时是"可分离"和"径向对称"的</strong>：</p>
+
+<div class="formula">G₂(x, y) = (1/2π)·exp(-(x²+y²)/2) = G₁(x) · G₁(y)</div>
+
+<p>这让 Gaussian 在 2D 图像处理中最高效——一次处理行，一次处理列，效果完全等价于 2D 高斯模糊。</p>
+
+<h3 id="10-3-5-滤波器的实际选择指南">10.3.5 滤波器的实际选择指南</h3>
+
+<p>在实际图形学应用中，如何选择合适的滤波器？以下是实用建议：</p>
+
+<table>
+<tr><th>场景</th><th>推荐滤波器</th><th>理由</th></tr>
+<tr><td><strong>纹理采样（最近邻）</strong></td><td>Box</td><td>速度最快，像素风格效果</td></tr>
+<tr><td><strong>纹理采样（双线性）</strong></td><td>Tent</td><td>速度与质量平衡，硬件直接支持</td></tr>
+<tr><td><strong>高质量模糊</strong></td><td>Gaussian</td><td>最平滑，无振铃</td></tr>
+<tr><td><strong>图像放大（上采样）</strong></td><td>B-spline / Mitchell</td><td>比双线性更平滑，不会产生方块感</td></tr>
+<tr><td><strong>图像缩小（下采样）</strong></td><td>Gaussian + 降采样</td><td>预模糊后再采样，抗混叠效果好</td></tr>
+<tr><td><strong>抗锯齿（采样前）</strong></td><td>Gaussian</td><td>频域衰减快，混叠抑制好</td></tr>
+<tr><td><strong>光线追踪重建</strong></td><td>Gaussian / Mitchell</td><td>平衡锐度和平滑</td></tr>
+</table>
+
+<div class="key-box">
+<strong>重要洞察</strong>：没有"万能"滤波器。每种滤波器在不同维度上有不同的权衡：
+<ul>
+  <li><strong>速度 vs 质量</strong>：Box → Tent → B-spline → Gaussian（越来越慢，但质量越来越高）</li>
+  <li><strong>锐度 vs 平滑</strong>：Gaussian → B-spline → Tent → Box（Box 最锐但也最容易混叠）</li>
+  <li><strong>频域特性</strong>：Gaussian → B-spline → Tent → Box（Gaussian 的频域最干净）</li>
+</ul>
+</div>
+
+<hr>
+
+<h2 id="10-4-图像的信号处理">10.4 图像的信号处理</h2>
+
+<h3 id="10-4-1-图像滤波的应用">10.4.1 图像滤波的应用</h3>
+
+<p><strong>1. 模糊（Blur）</strong>：</p>
+<pre><code><span class="comment">// box 模糊 → 块状效果，有锯齿</span>
+<span class="comment">// tent 模糊 → 中等平滑</span>
+<span class="comment">// Gaussian 模糊 → 自然平滑（最常用）</span></code></pre>
+
+<p><strong>2. 锐化（Sharpening）</strong>：</p>
+<div class="formula">锐化 = 原图 + α × (原图 - 模糊图)</div>
+<p>先做模糊，再从原图减去模糊结果得到"高频细节"，再加回原图。α 控制锐化强度。</p>
+
+<p><strong>3. 软阴影（Soft Drop Shadow）</strong>：</p>
+<div class="formula">阴影 = (原图 × 偏移脉冲) * Gaussian</div>
+<p>先把原图偏移（模拟阴影偏移），再做高斯模糊（让阴影边缘柔和）。</p>
+
+<p><strong>4. 抗混叠（Antialiasing）</strong>：</p>
+<pre><code><span class="comment">// 先模糊再采样 = 抗混叠的本质</span>
+anti_aliased = downsample(blur(image, kernel_size))</code></pre>
+
+<div class="key-box">
+<strong>重要洞察</strong>：图像处理中几乎所有"效果"都是卷积的变体。模糊 = 低通滤波（保留低频，抑制高频）。锐化 = 高频增强（从原图中提取并加强高频）。边缘检测 = 高通滤波（只保留高频）。卷积是图形学的"万能工具"。
+</div>
+
+<h3 id="10-4-2-图像混叠">10.4.2 图像混叠</h3>
+
+<p><strong>图像混叠 = "采样率不足以表达图像"</strong></p>
+
+<p><strong>两种典型表现</strong>：</p>
+<table>
+<tr><th>现象</th><th>原因</th><th>例子</th></tr>
+<tr><td><strong>Moiré 图案</strong></td><td>周期纹理和采样网格"打架"</td><td>细条纹衬衫在屏幕上出现彩色波纹</td></tr>
+<tr><td><strong>锯齿（Jaggies）</strong></td><td>高频边缘被离散化成"楼梯"形</td><td>斜线看起来像阶梯</td></tr>
+</table>
+
+<p><strong>解决方案</strong>：在采样前用低通滤波器（抗混叠）去掉高于奈奎斯特频率的高频成分。</p>
+
+<h3 id="10-4-3-重采样-resampling">10.4.3 重采样（Resampling）</h3>
+
+<p><strong>重采样 = 改变图像的分辨率</strong>（放大/缩小）</p>
+
+<p><strong>两步法</strong>：</p>
+<ol>
+  <li><strong>重建</strong>：用连续滤波器把离散样本变成连续函数</li>
+  <li><strong>采样</strong>：在新网格上采样这个连续函数</li>
+</ol>
+
+<p><strong>"采样间距"决定滤波器大小</strong>：</p>
+
+<ul>
+  <li><strong>下采样（缩小）</strong>：滤波器应基于<strong>输出间距</strong>——需要更大的滤波器来避免混叠</li>
+  <li><strong>上采样（放大）</strong>：滤波器应基于<strong>输入间距</strong>——只需平滑插值</li>
+</ul>
+
+<pre><code><span class="comment">// 可分离重采样——先处理所有行，再处理所有列</span>
+<span class="comment">// 把 2D 重采样变成 2 次 1D 重采样，效率极高</span>
+
+<span class="function">function</span> resample(image, new_width, new_height):
+    <span class="comment">// 第一步：水平方向重采样</span>
+    temp = new Image(new_width, image.height)
+    for each pixel (x, y) in temp:
+        temp[x][y] = <span class="function">sample_1d</span>(image, x, y, direction=<span class="string">"horizontal"</span>)
+
+    <span class="comment">// 第二步：垂直方向重采样</span>
+    result = new Image(new_width, new_height)
+    for each pixel (x, y) in result:
+        result[x][y] = <span class="function">sample_1d</span>(temp, x, y, direction=<span class="string">"vertical"</span>)
+
+    <span class="keyword">return</span> result</code></pre>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：最简单的"缩小"方法是什么？直接扔掉多余的像素行不行？<br>
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">这就是"像素丢弃"（pixel dropping）——扔掉不需要的像素。速度最快，但会产生严重的锯齿。仅用于预览或缩略图。正确做法是：先做低通滤波（模糊）再采样，即抗混叠。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="10-5-采样理论">10.5 采样理论</h2>
+
+<h3 id="10-5-1-傅里叶变换-fourier-transform">10.5.1 傅里叶变换（Fourier Transform）</h3>
+
+<div class="guizang-figure">
+<img src="images/ch10/fourier_transform.png" alt="傅里叶变换">
+<div class="guizang-caption">图10-5：傅里叶变换——时域中的复杂波形可以分解为频域中不同频率的简单正弦波</div>
+</div>
+
+<p><strong>核心思想</strong>：<em>任何函数都可以表示为不同频率正弦波的叠加</em></p>
+
+<div class="formula">f(x) = ∫ f̂(ω) · e^{2πiωx} dω</div>
+
+<p><strong>公式拆解</strong>：</p>
+
+<table>
+<tr><th>符号</th><th>含义</th><th>直觉</th></tr>
+<tr><td>f(x)</td><td>时域信号</td><td>随时间变化的信号值</td></tr>
+<tr><td>f̂(ω)</td><td>傅里叶变换（频域）</td><td>频率 ω 处的"成分"强度</td></tr>
+<tr><td>ω</td><td>频率</td><td>每秒振荡次数</td></tr>
+<tr><td>e^{2πiωx}</td><td>复正弦波</td><td>频率为 ω 的"纯净"正弦波</td></tr>
+</table>
+
+<p><strong>生活类比：食谱</strong></p>
+
+<blockquote>
+<p>一道菜（时域信号 f）可以用"配方"（频域 f̂）来描述——面粉多少克（低频成分）、盐多少克（中频）、辣椒多少克（高频）。傅里叶变换就是从"成品菜"反推出"配方"。</p>
+</blockquote>
+
+<h3 id="10-5-2-傅里叶变换的关键性质">10.5.2 傅里叶变换的关键性质</h3>
+
+<table>
+<tr><th>性质</th><th>公式</th><th>含义</th></tr>
+<tr><td><strong>能量守恒</strong></td><td>∫|f(x)|²dx = ∫|f̂(ω)|²dω</td><td>时域和频域的能量总和相等</td></tr>
+<tr><td><strong>卷积定理</strong></td><td>F{f*g} = f̂·ĝ</td><td>时域卷积 = 频域乘法</td></tr>
+<tr><td><strong>对偶性</strong></td><td>F{f·g} = f̂*ĝ</td><td>时域乘法 = 频域卷积</td></tr>
+</table>
+
+<div class="key-box">
+<strong>重要洞察</strong>：卷积定理是图形学中最"强大"的公式之一。<strong>频域让卷积变成乘法</strong>。这意味着：在频域中分析滤波器效果非常简单——只需看滤波器的傅里叶变换即可。这也是为什么"傅里叶变换"是图形学的"魔法"。
+</div>
+
+<h3 id="10-5-3-傅里叶变换的-画廊">10.5.3 傅里叶变换的"画廊"</h3>
+
+<p>不同函数在时域和频域的对应关系：</p>
+
+<table>
+<tr><th>时域函数</th><th>时域形状</th><th>频域函数</th><th>频域形状</th></tr>
+<tr><td><strong>Box</strong></td><td>方波</td><td>sinc（sin(πω)/πω）</td><td>振荡衰减，有副瓣</td></tr>
+<tr><td><strong>Tent</strong></td><td>三角形</td><td>sinc²</td><td>比 sinc 平滑，副瓣更小</td></tr>
+<tr><td><strong>Gaussian</strong></td><td>钟形</td><td>还是 Gaussian！</td><td>指数衰减，无副瓣</td></tr>
+<tr><td><strong>B-spline</strong></td><td>平滑多项式</td><td>sinc⁴</td><td>更平滑，副瓣极小</td></tr>
+<tr><td><strong>δ（脉冲）</strong></td><td>单根竖线</td><td>常数（所有频率等强）</td><td>水平直线</td></tr>
+</table>
+
+<pre><code><span class="comment">// 为什么 Gaussian 的傅里叶变换还是 Gaussian？</span>
+<span class="comment">// 这是数学上的一个巧妙的巧合（固定点性质）</span>
+<span class="comment">// 这意味着 Gaussian 在时域和频域都是"最平滑"的——</span>
+<span class="comment">// 没有副瓣（sinc 的问题），没有振铃（box 的问题）</span>
+
+<span class="comment">// 方波 → sinc 的直观理解：</span>
+<span class="comment">// 一个"方"的脉冲包含了很多高频成分（突然跳变）</span>
+<span class="comment">// 所以频域中除了主瓣还有副瓣——"振铃"的来源</span></code></pre>
+
+<h3 id="10-5-4-采样和混叠-频域视角">10.5.4 采样和混叠（频域视角）</h3>
+
+<p><strong>采样在频域中是什么？</strong> 乘法变卷积：</p>
+
+<div class="formula">时域：f(t) × s_T(t)    (s_T = 脉冲串，每隔 T 一个脉冲)</div>
+<div class="formula">频域：f̂(ω) * ŝ_T(ω)  (ŝ_T 也是脉冲串，每隔 1/T 一个脉冲)</div>
+
+<p><strong>这意味着</strong>：</p>
+
+<pre><code><span class="comment">// 采样在频域中的效果：复制+平移</span>
+<span class="comment">// 原始频谱 f̂(ω) 被"复制"了无数份，每份中心在 k×f_s 处（k 为整数）</span>
+
+<span class="comment">// 如果原始信号的最高频率 f_max &lt; f_s/2：</span>
+  f̂(ω)        ŝ_T(ω)        结果
+  ____         | | |         ____  ____  ____
+ /    \        | | |  →     /    \/    \/    \
+/      \       | | |       /      \/  ^  \/    \
+  原始频谱    采样脉冲      复制频谱不重叠  → 可恢复！
+
+<span class="comment">// 如果原始信号的最高频率 f_max &gt; f_s/2：</span>
+  f̂(ω)        ŝ_T(ω)        结果 = 混叠！
+  __/\__       | | |        __/\__/\__/\__
+ /      \      | | |  →    /  \  /  \  /  \
+/        \     | | |       /    \/ {} \/    \
+  太宽的频谱                  ↑ 重叠部分 = 混叠！</code></pre>
+
+<div class="key-box">
+<strong>重要洞察</strong>：采样 = 频域中"复制频谱"。每个复制 = "奈奎斯特幽灵" = 潜在混叠。如果原始信号超过奈奎斯特频率，复制频谱<strong>重叠</strong> → 无法区分哪些成分来自哪个副本 → 混叠。
+</div>
+
+<h3 id="10-5-5-理想滤波器-vs-实用滤波器">10.5.5 理想滤波器 vs 实用滤波器</h3>
+
+<p><strong>理想滤波器 = sinc 函数</strong>：</p>
+<ul>
+  <li>频域是完美的 box（截止频率 f_c 之外全为 0）</li>
+  <li>时域无限延伸（从 -∞ 到 +∞）——不实用！</li>
+</ul>
+
+<p><strong>实用滤波器</strong>（box、tent、Gaussian、B-spline）：</p>
+<ul>
+  <li>都是<strong>有限支撑</strong>（在有限范围内≠0，之外=0）</li>
+  <li>频域<strong>有泄漏</strong>（不能完全截止高频）</li>
+  <li>但<strong>实际可计算</strong></li>
+</ul>
+
+<table>
+<tr><th>滤波器</th><th>时域支撑</th><th>频域泄漏</th><th>混叠抑制</th><th>模糊程度</th></tr>
+<tr><td>理想 sinc</td><td>无限（不实用）</td><td>无</td><td>完美</td><td>无</td></tr>
+<tr><td>Box</td><td>有限（1）</td><td>大（副瓣多）</td><td>差</td><td>轻微</td></tr>
+<tr><td>Tent</td><td>有限（2）</td><td>中等</td><td>中等</td><td>中等</td></tr>
+<tr><td>Gaussian</td><td>近似有限（3σ）</td><td>极小（指数衰减）</td><td>好</td><td>明显</td></tr>
+<tr><td>B-spline</td><td>有限（4）</td><td>极小</td><td>好</td><td>明显</td></tr>
+</table>
+
+<hr>
+
+<h2 id="10-6-实用考虑">10.6 实用考虑</h2>
+
+<h3 id="10-6-1-mipmap----纹理的金字塔">10.6.1 Mipmap = "纹理的金字塔"</h3>
+
+<div class="guizang-figure">
+<img src="images/ch10/mipmap.png" alt="Mipmap纹理金字塔">
+<div class="guizang-caption">图10-6：Mipmap 金字塔——同一纹理的多个分辨率版本，从 1024² 到 1²</div>
+</div>
+
+<p><strong>为什么需要 mipmap？</strong></p>
+
+<ul>
+  <li>远处的物体在屏幕上只占几个像素</li>
+  <li>用高分辨率纹理采样 → 浪费计算和内存</li>
+  <li>用低分辨率版本 → 够用且快</li>
+</ul>
+
+<p><strong>Mipmap 层级</strong>：</p>
+
+<pre><code>M0: 1024 × 1024（原始纹理，最精细）
+M1: 512 × 512（1/2 宽高，1/4 像素数）
+M2: 256 × 256
+M3: 128 × 128
+...
+M10: 1 × 1（单个像素）</code></pre>
+
+<p><strong>选择规则</strong>：根据<strong>屏幕投影大小</strong>选择 mipmap 层级。</p>
+
+<div class="formula">层级 = log₂(纹理像素数 / 屏幕像素数)</div>
+
+<pre><code><span class="comment">// 数值例子</span>
+<span class="comment">// 一个纹理在屏幕上占 200 像素宽，纹理本身 1024 像素宽</span>
+<span class="comment">// 层级 = log₂(1024 / 200) = log₂(5.12) ≈ 2.36</span>
+<span class="comment">// → 在 M2（256²）和 M3（128²）之间插值（三线性过滤）</span>
+
+<span class="comment">// 如果只占 2 个像素：</span>
+<span class="comment">// 层级 = log₂(1024 / 2) = log₂(512) = 9</span>
+<span class="comment">// → 直接用 M9（2²=4像素? 不对，M9=1024/2⁹≈2，所以是 2×2 版本）</span></code></pre>
+
+<h3 id="10-6-2-各向异性过滤-anisotropic-filtering">10.6.2 各向异性过滤（Anisotropic Filtering）</h3>
+
+<p><strong>问题</strong>：远处倾斜的表面在屏幕上投影成"长方形"——水平方向和垂直方向需要的采样密度不同。</p>
+
+<ul>
+  <li>水平方向需要<strong>更多采样</strong>（纹理压缩得更严重的一个方向）</li>
+  <li>垂直方向需要<strong>更少采样</strong></li>
+</ul>
+
+<p><strong>各向异性 = "在水平/垂直方向用不同大小的滤波器"</strong></p>
+
+<p><strong>实现</strong>：从 mipmap 中采样多个点，沿倾斜方向做非均匀采样。</p>
+
+<pre><code><span class="comment">// 各向异性过滤采样模式</span>
+<span class="comment">// 从 mipmap 沿椭圆形区域采样多个点并加权平均</span>
+
+ anisotropic_samples = 4  <span class="comment">// 采样点数（质量参数）</span>
+ for i = 0 to anisotropic_samples:
+   offset = compute_anisotropic_offset(i, anisotropic_samples)
+   color += sample_mipmap(uv + offset, mip_level)
+ color /= anisotropic_samples</code></pre>
+
+<div class="key-box">
+<strong>重要洞察</strong>：各向异性过滤是 mipmap 的"升级版"——它解决了 mipmap 的一个假设：屏幕投影是正方形的。对于倾斜表面，各向异性过滤显著提升纹理质量，是现代 GPU 的标配。
+</div>
+
+<h3 id="10-6-3-边界处理">10.6.3 边界处理</h3>
+
+<p><strong>问题</strong>：滤波时，图像边缘的滤波器会"伸出"图像边界——外面的像素是什么？</p>
+
+<table>
+<tr><th>方法</th><th>规则</th><th>适用场景</th></tr>
+<tr><td><strong>零填充</strong></td><td>超出边界的像素 = 0</td><td>科学计算，纯学术</td></tr>
+<tr><td><strong>夹紧（Clamp）</strong></td><td>超出边界的像素 = 边界像素值</td><td>大多数图像处理（现代 GPU 默认模式）</td></tr>
+<tr><td><strong>环绕（Wrap）</strong></td><td>超出边界的像素 = 对侧像素</td><td>无缝纹理（可平铺的贴图）</td></tr>
+</table>
+
+<pre><code><span class="comment">// 以 1D 信号 [1, 4, 2, 6, 3] 为例，半径 r=1 的 box 滤波器</span>
+<span class="comment">// 在 i=0 处卷积：</span>
+
+<span class="comment">// 零填充：c[0] = (0 + 1 + 4) / 3 = 1.67</span>
+<span class="comment">// 夹紧：c[0] = (1 + 1 + 4) / 3 = 2.0</span>
+<span class="comment">// 环绕：c[0] = (3 + 1 + 4) / 3 = 2.67</span>
+
+<span class="comment">// 三种方式在 i=2（中间）处输出相同：c[2] = (4 + 2 + 6) / 3 = 4.0</span>
+<span class="comment">// 差异只在边缘出现</span></code></pre>
+
+<hr>
+
+<h2 id="全章总结">全章总结</h2>
+
+<blockquote>
+<p><strong>核心洞察</strong>：信号处理是图形学的"数学骨架"——</p>
+<ul>
+  <li>卷积 = 滤波（平滑/锐化/阴影/抗锯齿）</li>
+  <li>采样定理：奈奎斯特频率 = 采样率 / 2</li>
+  <li>混叠：高频信号"假装"成低频信号</li>
+  <li>抗混叠：采样前必须用低通滤波器</li>
+  <li>可分离卷积：2D 滤波器 = 两次 1D 滤波器</li>
+  <li>傅里叶变换：把卷积变成乘法</li>
+  <li>mipmap：远距离物体的"金字塔"采样</li>
+</ul>
+</blockquote>
+
+<p><strong>关键公式速查</strong>：</p>
+
+<table>
+<tr><th>公式</th><th>表达式</th></tr>
+<tr><td>离散卷积</td><td>(a * b)[i] = Σⱼ a[j]·b[i-j]</td></tr>
+<tr><td>连续卷积</td><td>(f * g)(x) = ∫ f(t)·g(x-t) dt</td></tr>
+<tr><td>傅里叶变换</td><td>f̂(ω) = ∫ f(x)·e^{-2πiωx} dx</td></tr>
+<tr><td>奈奎斯特定理</td><td>f_max &lt; f_sampling / 2</td></tr>
+<tr><td>可分离 Gaussian</td><td>G₂(x,y) = G₁(x)·G₁(y)</td></tr>
+<tr><td>卷积定理</td><td>F{f*g} = f̂·ĝ</td></tr>
+</table>
+
+<p><strong>一步到位</strong>：连续信号 → 采样（奈奎斯特定理约束） → 离散表示 → 卷积滤波 → 重建 → 连续输出。图形学中处处是这个过程。</p>
+
+<p><strong>下一步</strong>：第11章将讲解<strong>纹理映射</strong>——把图像"贴"到 3D 物体表面。配合本章的卷积和采样理论，你将真正理解 mipmap、各向异性过滤等核心概念。</p>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li class="active"><a href="ch10_信号处理.html" class="active">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#10-1-数字音频-1d-采样入门">10.1 数字音频：1D 采样入门</a></li>
+  <li class="toc-h3"><a href="#10-1-1-采样流程">10.1.1 采样流程</a></li>
+  <li class="toc-h3"><a href="#10-1-2-混叠-aliasing">10.1.2 混叠（Aliasing）</a></li>
+  <li class="toc-h2"><a href="#10-2-卷积-convolution">10.2 卷积（Convolution）</a></li>
+  <li class="toc-h3"><a href="#10-2-1-卷积的定义">10.2.1 卷积的定义</a></li>
+  <li class="toc-h3"><a href="#10-2-2-移动平均---卷积的最简形式">10.2.2 移动平均 = 卷积的最简形式</a></li>
+  <li class="toc-h3"><a href="#10-2-3-卷积----滤波器翻转---滑动加权">10.2.3 卷积 = "滤波器翻转 + 滑动加权"</a></li>
+  <li class="toc-h3"><a href="#10-2-4-卷积的关键性质">10.2.4 卷积的关键性质</a></li>
+  <li class="toc-h3"><a href="#10-2-4b-卷积的数值计算示例-完整手算">10.2.4b 卷积的数值计算示例（完整手算）</a></li>
+  <li class="toc-h3"><a href="#10-2-5-离散-连续卷积-混合域">10.2.5 离散-连续卷积（混合域）</a></li>
+  <li class="toc-h2"><a href="#10-3-卷积滤波器">10.3 卷积滤波器</a></li>
+  <li class="toc-h3"><a href="#10-3-1-滤波器的本质">10.3.1 滤波器的本质</a></li>
+  <li class="toc-h3"><a href="#10-3-2-常用滤波器对比">10.3.2 常用滤波器对比</a></li>
+  <li class="toc-h3"><a href="#10-3-3-关键概念">10.3.3 关键概念</a></li>
+  <li class="toc-h3"><a href="#10-3-4-2d-滤波器与可分离性">10.3.4 2D 滤波器与可分离性</a></li>
+  <li class="toc-h3"><a href="#10-3-5-滤波器的实际选择指南">10.3.5 滤波器的实际选择指南</a></li>
+  <li class="toc-h2"><a href="#10-4-图像的信号处理">10.4 图像的信号处理</a></li>
+  <li class="toc-h3"><a href="#10-4-1-图像滤波的应用">10.4.1 图像滤波的应用</a></li>
+  <li class="toc-h3"><a href="#10-4-2-图像混叠">10.4.2 图像混叠</a></li>
+  <li class="toc-h3"><a href="#10-4-3-重采样-resampling">10.4.3 重采样（Resampling）</a></li>
+  <li class="toc-h2"><a href="#10-5-采样理论">10.5 采样理论</a></li>
+  <li class="toc-h3"><a href="#10-5-1-傅里叶变换-fourier-transform">10.5.1 傅里叶变换（Fourier Transform）</a></li>
+  <li class="toc-h3"><a href="#10-5-2-傅里叶变换的关键性质">10.5.2 傅里叶变换的关键性质</a></li>
+  <li class="toc-h3"><a href="#10-5-3-傅里叶变换的-画廊">10.5.3 傅里叶变换的"画廊"</a></li>
+  <li class="toc-h3"><a href="#10-5-4-采样和混叠-频域视角">10.5.4 采样和混叠（频域视角）</a></li>
+  <li class="toc-h3"><a href="#10-5-5-理想滤波器-vs-实用滤波器">10.5.5 理想滤波器 vs 实用滤波器</a></li>
+  <li class="toc-h2"><a href="#10-6-实用考虑">10.6 实用考虑</a></li>
+  <li class="toc-h3"><a href="#10-6-1-mipmap----纹理的金字塔">10.6.1 Mipmap = "纹理的金字塔"</a></li>
+  <li class="toc-h3"><a href="#10-6-2-各向异性过滤-anisotropic-filtering">10.6.2 各向异性过滤（Anisotropic Filtering）</a></li>
+  <li class="toc-h3"><a href="#10-6-3-边界处理">10.6.3 边界处理</a></li>
+  <li class="toc-h2"><a href="#全章总结">全章总结</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

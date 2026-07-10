@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch17: 使用图形硬件</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch17 使用图形硬件</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第17章：使用图形硬件 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第17章（p.461-501）。<br>
+<strong>核心故事</strong>：你作为一个程序员，<strong>怎么让 GPU 帮你画一个三角形？</strong><br>
+本章从这个问题出发，一步步拆解 GPU 的完整工作流程。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s17intro">17.0 故事线：我想画一个三角形</a></li>
+  <li><a href="#s171">17.1 异构多处理：CPU 和 GPU 怎么分工</a></li>
+  <li><a href="#s172">17.2 图形管线：三角形经历了什么？</a></li>
+  <li><a href="#s173">17.3 Shader 编程：两个可编程阶段</a></li>
+  <li><a href="#s174">17.4 顶点数据：怎么把顶点传给 GPU</a></li>
+  <li><a href="#s175">17.5 纹理：让表面有细节</a></li>
+  <li><a href="#s176">17.6 实例化：一次画一堆</a></li>
+  <li><a href="#s177">17.7 调试技巧：GPU 出错了怎么办</a></li>
+  <li><a href="#s178">17.8 面向对象封装：让代码可复用</a></li>
+  <li><a href="#s179">17.9 总结与速查</a></li>
+</ul>
+</div>
+
+<hr>
+
+<h2 id="17-0-故事线-我想画一个三角形">17.0 故事线：我想画一个三角形</h2>
+
+<h3 id="为什么需要这个">为什么需要这个？</h3>
+
+<p><strong>所有图形编程，都从这里开始：你有一个想法——画一个三角形在屏幕上。</strong></p>
+<p>但你的 CPU 不会画三角形。CPU 只会算数。你的 GPU 会画三角形，但它听不懂 C++。所以你需要：<strong>把"画三角形"翻译成 GPU 能听懂的命令</strong>。</p>
+
+<div class="guizang-figure">
+<img src="images/ch17/gpu_pipeline.png" alt="GPU管线与Host/Device交互">
+<div class="guizang-caption">图17-1：GPU管线全景——CPU（Host）通过PCIe总线与GPU（Device）交互，数据在系统内存和显存之间传输</div>
+</div>
+
+<h3 id="step-1-先定义三角形的三个点">Step 1：先定义三角形的三个点</h3>
+
+<pre><code>三角形 ABC：
+  A = (-0.5, -0.5, 0.0)   左下
+  B = ( 0.5, -0.5, 0.0)   右下
+  C = ( 0.0,  0.5, 0.0)   上</code></pre>
+
+<p>每个点的坐标是 (x, y, z)，范围在 [-1, 1] 之间。这是最简单的三角形——在屏幕中心。</p>
+
+<h3 id="step-2-这三个点怎么到-gpu">Step 2：这三个点怎么到 GPU？</h3>
+
+<pre><code>[C++ 代码]
+     ↓  编译、链接
+[应用程序]  ← 你在这
+     ↓
+[CPU 把顶点数据拷贝到显存]
+     ↓
+[GPU 拿到数据，开始画]  ← 本章剩下的篇幅全在讲这一步</code></pre>
+
+<h3 id="step-3-gpu-内部发生了什么">Step 3：GPU 内部发生了什么？</h3>
+
+<pre><code>[CPU] 说："画三角形，顶点是 A, B, C"
+     ↓
+[GPU 执行管线]：
+  ┌─────────────────────────────────────────────┐
+  │  1. 顶点处理 (Vertex Shader)                │
+  │     └─ 把 A, B, C 从"模型坐标"→"屏幕坐标"   │
+  │                                             │
+  │  2. 光栅化 (Rasterization)                  │
+  │     └─ "三角形变像素"                        │
+  │     └─ 算出三角形覆盖了哪些像素点            │
+  │                                             │
+  │  3. 片段处理 (Fragment Shader)              │
+  │     └─ 给每个像素算颜色                      │
+  │                                             │
+  │  4. 混合输出 (Blending)                     │
+  │     └─ 把颜色写到屏幕缓冲区                  │
+  └─────────────────────────────────────────────┘
+     ↓
+[屏幕上出现一个三角形]</code></pre>
+
+<div class="key-box">
+<strong>核心洞察</strong>：整个图形学管线 = 回答"三角形上的每个像素是什么颜色"这个问题。<strong>光栅化就是"三角形变像素"的那一步。</strong>
+</div>
+
+<hr>
+
+<h2 id="17-1-异构多处理-heterogeneous-multiprocessing">17.1 异构多处理（Heterogeneous Multiprocessing）</h2>
+
+<h3 id="17-1-1-为什么-cpu-和-gpu-要分开">17.1.1 为什么 CPU 和 GPU 要分开？</h3>
+
+<p><strong>CPU 是"总经理"——什么都懂但只有几个脑袋；GPU 是"流水线工人"——只做一件事但有几万个。</strong></p>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么不把 CPU 和 GPU 做成一个芯片算了？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">因为设计目标完全不同！CPU 要处理各种随机任务（打开网页、运行操作系统、响应键盘），所以需要复杂的控制逻辑、分支预测、大缓存。GPU 只做一件事——大规模并行计算，所以它可以把 80% 的芯片面积都用来做计算单元。合在一起的结果就是两者都做不好。</blockquote>
+</div>
+
+<table>
+<tr><th>维度</th><th>CPU（主机/Host）</th><th>GPU（设备/Device）</th></tr>
+<tr><td>核数</td><td>4~32 个</td><td>几千个（SM/CU）</td></tr>
+<tr><td>每核能力</td><td>强（乱序执行、大缓存、复杂分支预测）</td><td>弱（单指令多线程，分支昂贵）</td></tr>
+<tr><td>内存</td><td>系统 RAM（几十 GB）</td><td>显存 VRAM（几~几十 GB）</td></tr>
+<tr><td>通信</td><td>CPU ←PCIe总线→ GPU</td><td>GPU 内部极快</td></tr>
+<tr><td>擅长</td><td>控制流、数据管理、串行任务</td><td>数据并行大规模计算（矩阵乘法、光栅化）</td></tr>
+<tr><td>画三角形？</td><td>能画但极慢（CPU 渲染）</td><td>光栅化是硬件天生技能</td></tr>
+</table>
+
+<h3 id="17-1-2-工作模式-host---device">17.1.2 工作模式：Host ↔ Device</h3>
+
+<pre><code>Host (CPU) 内存                Device (GPU) 显存
+┌───────────┐                ┌────────────┐
+│ 顶点数据   │─────PCIe─────→│ 顶点缓冲    │
+│ 纹理图片   │─────PCIe─────→│ 纹理对象    │
+│ Shader代码 │─────编译─────→│ Shader程序  │
+│ 绘制命令   │─────PCIe─────→│ 命令队列    │
+└───────────┘                └────────────┘</code></pre>
+
+<div class="key-box">
+<strong>关键痛点</strong>：PCIe 传输是<strong>最慢的环节</strong>。一次纹理上传可能耗时几毫秒——所以游戏加载要等"Loading..."。在性能优化中，<strong>减少 CPU↔GPU 数据传输</strong>是所有优化策略的第一优先级。
+</div>
+
+<h3 id="17-1-3-为什么-pcie-这么慢-数字感知">17.1.3 为什么 PCIe 这么慢？数字感知</h3>
+
+<table>
+<tr><th>操作</th><th>大概耗时</th><th>类比</th></tr>
+<tr><td>CPU 执行一条指令</td><td>~0.3 ns</td><td>眨一下眼睛的十亿分之一</td></tr>
+<tr><td>CPU 读取 L1 缓存</td><td>~1 ns</td><td>心跳一次的百万分之一</td></tr>
+<tr><td>CPU 读取内存 RAM</td><td>~100 ns</td><td>一次呼吸的百万分之一</td></tr>
+<tr><td>PCIe 4.0 ×16 传输 1MB</td><td>~60 μs</td><td>苍蝇扇一下翅膀</td></tr>
+<tr><td>PCIe 传输整帧纹理 (8MB)</td><td>~0.5 ms</td><td>你能看清的时间</td></tr>
+<tr><td>一帧渲染时间 (60fps)</td><td>~16.7 ms</td><td>一帧动画的极限</td></tr>
+</table>
+
+<hr>
+
+<h2 id="17-2-图形管线-gpu-pipeline">17.2 图形管线（GPU Pipeline）</h2>
+
+<h3 id="17-2-1-为什么需要管线">17.2.1 为什么需要管线？</h3>
+
+<p>想象一家工厂：如果你让一个工人"先把铁矿石炼成铁，再把铁铸成形状，再打磨抛光"，他得一个一个来。但如果你把这些人排成一条线——第一个人炼铁、第二个人铸造、第三个人打磨——你可以同时处理多个工件。图形管线也是同样的道理：<strong>每个阶段可以同时处理不同的数据</strong>。</p>
+
+<h3 id="17-2-2-四个阶段全览">17.2.2 四个阶段全览</h3>
+
+<pre><code>┌─────────────────────────────────────────────────────────┐
+│  "我想画一个三角形"                                       │
+│       ↓                                                  │
+│  [应用程序]  ← 设置好顶点、Shader、状态                    │
+│       ↓                                                  │
+│  ╔═════════════════════════════════════════════════════╗  │
+│  ║  阶段1：顶点处理 (Vertex Shader)                     ║  │
+│  ║  输入：每个顶点 (位置、颜色、法线...)                  ║  │
+│  ║  输出：变换后的顶点（屏幕坐标）                        ║  │
+│  ║  可编程：是——你写 GLSL 代码                              ║  │
+│  ╚═════════════════════════════════════════════════════╝  │
+│       ↓                                                  │
+│  ╔═════════════════════════════════════════════════════╗  │
+│  ║  阶段2：光栅化 (Rasterization) — 硬件固定             ║  │
+│  ║  输入：3个屏幕坐标顶点                                 ║  │
+│  ║  输出：覆盖的所有像素（片段 Fragment）                ║  │
+│  ║  本质：三角形变像素                                    ║  │
+│  ║  可编程：否！这是硬件做好的                              ║  │
+│  ╚═════════════════════════════════════════════════════╝  │
+│       ↓                                                  │
+│  ╔═════════════════════════════════════════════════════╗  │
+│  ║  阶段3：片段处理 (Fragment Shader)                    ║  │
+│  ║  输入：每个像素的位置、插值后的属性 + 纹理采样         ║  │
+│  ║  输出：每个像素的颜色（RGBA）                          ║  │
+│  ║  可编程：是——你也写 GLSL 代码                           ║  │
+│  ╚═════════════════════════════════════════════════════╝  │
+│       ↓                                                  │
+│  ╔═════════════════════════════════════════════════════╗  │
+│  ║  阶段4：混合 (Blending) — 硬件固定                    ║  │
+│  ║  输入：新像素颜色 + 帧缓冲区已有颜色                   ║  │
+│  ║  输出：→ 帧缓冲区的最终颜色                            ║  │
+│  ║  公式：output = src × srcFactor + dst × dstFactor     ║  │
+│  ╚═════════════════════════════════════════════════════╝  │
+│       ↓                                                  │
+│  [屏幕上！]                                                │
+└─────────────────────────────────────────────────────────┘</code></pre>
+
+<h3 id="17-2-3-光栅化详解-三角形怎么变成像素">17.2.3 光栅化详解：三角形怎么变成像素？</h3>
+
+<p><strong>光栅化 = 回答一个问题："这个三角形覆盖了屏幕上的哪些像素点？"</strong></p>
+
+<pre><code>三角形三个顶点：
+  A(-0.5, -0.5)      B(0.5, -0.5)      C(0.0, 0.5)
+
+        屏幕像素网格:
+   ┌────┬────┬────┬────┬────┐
+   │    │    │    │    │    │
+   ├────┼────┼────┼────┼────┤
+   │    │    │ ██ │ ██ │    │   ██ = 被三角形覆盖的像素
+   ├────┼────┼────┼────┼────┤
+   │    │ ██ │ ██ │ ██ │    │   每个 ██ 会生成一个 Fragment（片段）
+   ├────┼────┼────┼────┼────┤
+   │    │ ██ │ ██ │    │    │   每个 Fragment 会执行一次 Fragment Shader
+   ├────┼────┼────┼────┼────┤
+   │    │    │    │    │    │
+   └────┴────┴────┴────┴────┘</code></pre>
+
+<p><strong>光栅化还做了一件重要的事：插值。</strong>三角形内部的每个像素的颜色不是随便算的——是根据三个顶点的值做<strong>重心坐标插值</strong>。</p>
+
+<pre><code>举例：三个顶点颜色不同
+  A=红色, B=绿色, C=蓝色
+
+  → 三角形内部的像素颜色是"从红渐变到绿再到蓝"
+  → 这叫 Gouraud Shading（高洛德着色）
+  → 插值是硬件做的，你不需要写代码</code></pre>
+
+<div class="key-box">
+<strong>一句话总结</strong>：<strong>光栅化 = 三角形变 像素，同时 插值属性。</strong>
+</div>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么光栅化是硬件固定的，不能让我们编程？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">因为光栅化的效率完全取决于硬件实现——判断像素在三角形内的算法（如边函数法 Edge Function）已经被研究了30年，所有 GPU 厂商都采用几乎相同的硬件电路。如果让程序员自己写，要么慢10倍，要么有 bug。所以 GPU 厂商把光栅化做成固定硬件，只给你留出"顶点处理"和"片段处理"两个可编程接口。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="17-3-shader-编程-shader-programming">17.3 Shader 编程（Shader Programming）</h2>
+
+<h3 id="17-3-1-为什么需要-shader">17.3.1 为什么需要 Shader？</h3>
+
+<p>早期 GPU 的管线是固定的（fixed-function pipeline）——每个阶段做什么是焊死在硬件里的。后来人们发现：<strong>不同的游戏需要不同的光照效果</strong>，固定的管线太死板了。于是 GPU 厂商开放了部分阶段的编程接口——这就是 Shader。</p>
+
+<h3 id="17-3-2-两个可编程阶段">17.3.2 两个可编程阶段</h3>
+
+<p><strong>Shader = 在 GPU 上运行的小程序</strong></p>
+
+<div class="guizang-figure">
+<img src="images/ch17/shader_flow.png" alt="Shader流程——Vertex到Fragment">
+<div class="guizang-caption">图17-2：Shader 执行流程——Vertex Shader 处理每个顶点，光栅化插值后，Fragment Shader 处理每个像素</div>
+</div>
+
+<table>
+<tr><th>Shader</th><th>执行次数</th><th>输入</th><th>输出</th><th>你写的代码做</th></tr>
+<tr><td><strong>Vertex Shader</strong></td><td>每个顶点一次</td><td>顶点属性（位置、颜色、法线）</td><td>变换后的坐标 + 传递给 Fragment 的数据</td><td>坐标变换、逐顶点计算</td></tr>
+<tr><td><strong>Fragment Shader</strong></td><td>每个像素一次</td><td>插值后的属性 + 纹理采样</td><td>最终颜色</td><td>光照计算、纹理混合、颜色输出</td></tr>
+</table>
+
+<h3 id="17-3-3-第一个-vertex-shader-让三角形动起来">17.3.3 第一个 Vertex Shader：让三角形动起来</h3>
+
+<p><strong>目标：把三角形从模型坐标系变换到屏幕坐标系</strong></p>
+
+<pre><code><span class="keyword">// ====== Vertex Shader ======</span>
+<span class="comment">// 执行次数：每帧对三角形的 3 个顶点各执行一次 = 3 次</span>
+
+<span class="comment">// 输入：in_ 开头的变量 = 每个顶点自带的数据</span>
+layout(location = 0) <span class="keyword">in</span> vec3 in_Position;  // 顶点位置（来自 CPU 传的 VBO）
+layout(location = 1) <span class="keyword">in</span> vec3 in_Color;      // 顶点颜色（来自 CPU 传的 VBO）
+
+<span class="comment">// 输出：out 关键字 = 传到 Fragment Shader 的数据</span>
+<span class="keyword">out</span> vec3 vColor;  // 顶点颜色 → 经过光栅化插值 → 到 Fragment
+
+<span class="comment">// Uniform = "一次绘制调用中不变"的全局变量</span>
+<span class="keyword">uniform</span> mat4 projMatrix;  // 投影矩阵（CPU 传入，把 3D 点映射到屏幕）
+
+<span class="comment">// main 函数：GPU 对每个顶点自动调用</span>
+<span class="function">void</span> main(<span class="function">void</span>)
+{
+    <span class="comment">// 把顶点颜色传递给 Fragment Shader</span>
+    vColor = in_Color;
+    <span class="comment">// 用投影矩阵把 3D 位置变换到屏幕坐标</span>
+    <span class="comment">// vec4(位置, 1.0) = 齐次坐标表示</span>
+    <span class="comment">// gl_Position = 内建变量，GPU 用这个值做光栅化</span>
+    gl_Position = projMatrix * vec4(in_Position, <span class="number">1.0</span>);
+}</code></pre>
+
+<h3 id="17-3-4-对应的-fragment-shader-给每个像素上色">17.3.4 对应的 Fragment Shader：给每个像素上色</h3>
+
+<pre><code><span class="comment">// ====== Fragment Shader ======</span>
+<span class="comment">// 执行次数：每帧对三角形覆盖的每个像素各执行一次</span>
+<span class="comment">// 如果三角形覆盖了 1000 个像素 = 执行 1000 次</span>
+
+<span class="comment">// 输入：从 Vertex Shader 传来的数据（经过光栅化插值）</span>
+<span class="comment">// 三个顶点的 vColor 分别是红、绿、蓝 → 三角形中间的 vColor 是渐变混合色</span>
+<span class="keyword">in</span> vec3 vColor;
+
+<span class="comment">// 输出：最终要显示的颜色</span>
+<span class="keyword">out</span> vec4 fragmentColor;  // RGBA 颜色
+
+<span class="function">void</span> main(<span class="function">void</span>)
+{
+    <span class="comment">// 直接使用插值后的颜色</span>
+    <span class="comment">// vec4(颜色, 透明度) — 透明度设为 1.0（不透明）</span>
+    fragmentColor = vec4(vColor, <span class="number">1.0</span>);
+}</code></pre>
+
+<div class="info-box">
+<strong>通俗理解</strong>：
+<ul>
+  <li>Vertex Shader = 定好三角形的<strong>三个角在哪里、什么颜色</strong></li>
+  <li>光栅化（硬件做）= 算出<strong>三角形内部有哪些像素</strong></li>
+  <li>Fragment Shader = 给<strong>每个像素</strong>最终决定颜色</li>
+</ul>
+</div>
+
+<h3 id="17-3-5-per-vertex-着色-vs-per-fragment-着色">17.3.5 Per-Vertex 着色 vs Per-Fragment 着色</h3>
+
+<p><strong>Per-Vertex 着色（Gouraud Shading）：</strong></p>
+
+<pre><code>顶点处算光照 → 光栅化插值 → 三角形内部平滑过渡
+  优点：快（每个顶点算一次，中间插值）
+  缺点：大三角形时中间的光照细节丢失
+
+  举例：一个大三角形，顶点处光源在左边
+    → 顶点算出来很亮
+    → 但三角形中心恰好有个高光 → 被插值抹平了 → 看不见</code></pre>
+
+<p><strong>Per-Fragment 着色（Phong Shading）：</strong></p>
+
+<pre><code>顶点处只传法线 → 光栅化插值法线 → 每个像素重新算光照
+  优点：每个像素的光照都准
+  缺点：慢一点（每个像素都要算一遍光照）</code></pre>
+
+<pre><code><span class="comment">// ====== Per-Fragment 着色的 Fragment Shader ======</span>
+<span class="comment">// 输入：插值后的法线、半向量、光方向</span>
+<span class="keyword">in</span> vec4 normal;       // 法线（已插值）
+<span class="keyword">in</span> vec3 half;         // 半向量 = 视线 + 光源方向 归一化
+<span class="keyword">in</span> vec3 lightdir;     // 光源方向
+
+<span class="comment">// Uniform 变量：一次 draw call 不变</span>
+<span class="keyword">uniform</span> vec3 Ia;      // 环境光强度
+<span class="keyword">uniform</span> vec3 ka;      // 环境光反射系数
+<span class="keyword">uniform</span> vec3 kd;      // 漫反射系数
+<span class="keyword">uniform</span> vec3 ks;      // 镜面反射系数
+<span class="keyword">uniform</span> <span class="keyword">float</span> phongExp;  // 镜面指数（越大高光越集中）
+<span class="keyword">uniform</span> vec3 lightIntensity;  // 光源强度
+
+<span class="function">void</span> main(<span class="function">void</span>)
+{
+    <span class="comment">// ---- 归一化：保证方向向量的长度 = 1 ----</span>
+    vec3 n = normalize(normal.xyz);
+    vec3 h = normalize(half);
+    vec3 l = normalize(lightdir);
+
+    <span class="comment">// ---- Blinn-Phong 光照模型（逐像素） ----</span>
+    <span class="comment">// 环境光：不管光源方向，保证背光面有基本亮度</span>
+    vec3 ambient = ka * Ia;
+
+    <span class="comment">// 漫反射：光源方向越正对表面越亮，*max(0, n·l) 保证背面不亮</span>
+    vec3 diffuse = kd * lightIntensity * max(<span class="number">0.0</span>, dot(n, l));
+
+    <span class="comment">// 镜面反射：半向量越接近法线越亮，pow(...) 控制高光大小</span>
+    vec3 specular = ks * lightIntensity * pow(max(<span class="number">0.0</span>, dot(n, h)), phongExp);
+
+    <span class="comment">// ---- 合成最终颜色 ----</span>
+    fragmentColor = vec4(ambient + diffuse + specular, <span class="number">1.0</span>);
+}</code></pre>
+
+<h3 id="17-3-6-uniform-变量的三种来源">17.3.6 Uniform 变量的三种来源</h3>
+
+<table>
+<tr><th>来源</th><th>关键字</th><th>谁提供</th><th>每次变化时机</th></tr>
+<tr><td>内建变量</td><td><code>gl_Position</code>, <code>gl_FragCoord</code></td><td>GPU</td><td>自动</td></tr>
+<tr><td>顶点属性（Attribute）</td><td><code>in_*</code>（如 <code>in_Position</code>）</td><td>VBO 数据</td><td>每个顶点不同</td></tr>
+<tr><td>Uniform</td><td><code>uniform</code>（如 <code>projMatrix</code>）</td><td>CPU 调用 <code>glUniform*()</code></td><td>一次 draw call 不变</td></tr>
+</table>
+
+<div class="key-box">
+<strong>核心记忆法</strong>：<strong>Attribute = 每个顶点不一样；Uniform = 这次画都一样。</strong>
+</div>
+
+<hr>
+
+<h2 id="17-4-顶点数据-vertex-data">17.4 顶点数据（Vertex Data）</h2>
+
+<h3 id="17-4-1-为什么需要-vbo">17.4.1 为什么需要 VBO？</h3>
+
+<p>你要画一个三角形，GPU 需要知道三个顶点的位置。但你不可能从 C++ 里每一帧都把这三个点"塞"给 GPU——那太慢了。解决方案：<strong>先把数据存在 GPU 的显存里，画的时候 GPU 直接读显存</strong>。这个存放顶点数据的显存缓冲区就是 VBO（Vertex Buffer Object）。</p>
+
+<h3 id="17-4-2-vbo---vertex-buffer-object">17.4.2 VBO = Vertex Buffer Object</h3>
+
+<p><strong>VBO = GPU 显存里的一块缓冲区，专门存顶点数据。</strong></p>
+
+<pre><code>1. 你的 C++ 程序定义了一个三角形（3 个顶点 = 位置 + 颜色 + 法线...）
+2. 这些数据在 CPU 内存里（系统 RAM）
+3. 你调 glBufferData() → 数据从 RAM 拷贝到 VRAM（VBO）
+4. 你调 glDrawArrays() → GPU 从 VBO 读数据执行管线</code></pre>
+
+<p><strong>C++ 端的顶点结构体：</strong></p>
+
+<pre><code><span class="comment">// 定义一个顶点的数据结构</span>
+<span class="keyword">struct</span> Vertex {
+    float pos[<span class="number">3</span>];     // 位置 x, y, z     (3 × 4 = 12 字节)
+    float color[<span class="number">3</span>];   // 颜色 r, g, b     (3 × 4 = 12 字节)
+    float uv[<span class="number">2</span>];      // 纹理坐标 u, v     (2 × 4 =  8 字节)
+    <span class="comment">// 每个顶点总共：12 + 12 + 8 = 32 字节</span>
+};</code></pre>
+
+<div class="guizang-figure">
+<img src="images/ch17/vbo_layout.png" alt="VBO交错布局">
+<div class="guizang-caption">图17-3：VBO交错内存布局——每个顶点的所有字段连续排列，相邻顶点首尾相接</div>
+</div>
+
+<p><strong>交错布局（Interleaved）的内存排列：</strong></p>
+
+<pre><code>显存中连续排列（每个顶点的所有字段挨着）：
+┌───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┐
+│ pos.x │ pos.y │ pos.z │ col.r │ col.g │ col.b │ uv.u  │ uv.v  │
+├───────┼───────┼───────┼───────┼───────┼───────┼───────┼───────┤
+│ &lt;----------- 顶点 0 的 8 个 float = 32 字节 ------------&gt; │
+├───────┼───────┼───────┼───────┼───────┼───────┼───────┼───────┤
+│ 顶点 1 ..............................................  │
+├───────┼───────┼───────┼───────┼───────┼───────┼───────┼───────┤
+│ 顶点 2 ..............................................  │
+└───────┴───────┴───────┴───────┴───────┴───────┴───────┴───────┘</code></pre>
+
+<h3 id="17-4-3-创建-vbo-的完整代码-每行中文注释">17.4.3 创建 VBO 的完整代码（每行中文注释）</h3>
+
+<pre><code><span class="comment">// ---- 步骤 1：定义三角形数据 ----</span>
+<span class="comment">// 三个顶点，每个顶点 8 个 float（位置3 + 颜色3 + 纹理2）</span>
+<span class="keyword">float</span> vertices[] = {
+    <span class="comment">// 位置 x,y,z       颜色 r,g,b       纹理 u,v</span>
+    <span class="number">-0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>,  // 顶点 A：左下，红色
+     <span class="number">0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">0.0f</span>,  // 顶点 B：右下，绿色
+     <span class="number">0.0f</span>,  <span class="number">0.5f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">0.5f</span>, <span class="number">1.0f</span>   // 顶点 C：顶上，蓝色
+};
+
+<span class="comment">// ---- 步骤 2：生成 VBO 对象 ----</span>
+GLuint vbo;                    // 声明 VBO 句柄（一个无符号整数 ID）
+glGenBuffers(<span class="number">1</span>, &amp;vbo);         // 让 OpenGL 分配一个 VBO，把 ID 存入 vbo
+
+<span class="comment">// ---- 步骤 3：绑定 VBO ----</span>
+glBindBuffer(GL_ARRAY_BUFFER, vbo);  // 把 vbo 绑定到"顶点数组缓冲"目标
+<span class="comment">// 绑定 = "接下来对这个目标的操作都是对 vbo 做的"</span>
+
+<span class="comment">// ---- 步骤 4：把数据从 RAM 传到 VRAM ----</span>
+glBufferData(
+    GL_ARRAY_BUFFER,                   // 目标：顶点数组缓冲
+    <span class="keyword">sizeof</span>(vertices),                   // 数据大小（字节数）：8个float×3顶点×4字节 = 96字节
+    vertices,                           // CPU 端数据指针
+    GL_STATIC_DRAW                      // 提示：数据不常改（静态），GPU 可以优化存储位置
+);
+
+<span class="comment">// ---- 步骤 5：生成 VAO（顶点数组对象） ----</span>
+<span class="comment">// VAO 像一个"数据线配置模板"——记住"位置在第 0 个槽位、颜色在第 1 个槽位..."</span>
+GLuint vao;
+glGenVertexArrays(<span class="number">1</span>, &amp;vao);
+glBindVertexArray(vao);  // 绑定 VAO，后续 VertexAttribPointer 配置都记在这个 VAO 里</code></pre>
+
+<h3 id="17-4-4-glvertexattribpointer-6-个参数逐项拆解">17.4.4 glVertexAttribPointer：6 个参数逐项拆解</h3>
+
+<p><strong>这个函数是 VBO 编程中最重要也是最容易搞错的地方。</strong></p>
+<p>它的作用：告诉 GPU "VBO 里的数据是怎么排列的，每个属性从哪里开始读"。</p>
+
+<pre><code><span class="comment">// 函数签名：</span>
+<span class="function">void</span> glVertexAttribPointer(
+    GLuint index,       // ① 属性索引（对应 Vertex Shader 里的 layout(location = x)）
+    GLint size,         // ② 每个属性由几个分量组成（1/2/3/4）
+    GLenum type,        // ③ 每个分量的数据类型
+    GLboolean normalized, // ④ 整数类型时是否归一化到 [0,1] 或 [-1,1]
+    GLsizei stride,     // ⑤ 两个相邻顶点之间间隔多少字节（步长）
+    <span class="keyword">const</span> <span class="function">void</span>* pointer // ⑥ 这个属性在顶点内的起始偏移（字节）
+);</code></pre>
+
+<p><strong>顶点数据布局（每个顶点 32 字节 = 8 个 float）：</strong></p>
+
+<pre><code>偏移量：         0          12         24       32
+               ↓           ↓           ↓        ↓
+           ┌──────────┬──────────┬──────────┐
+           │ 位置 xyz │ 颜色 rgb │ 纹理 uv  │
+           │ (3 float)│ (3 float)│ (2 float)│
+           └──────────┴──────────┴──────────┘
+            ←—— stride = 32 字节 ————→</code></pre>
+
+<table>
+<tr><th>参数</th><th>属性0：位置</th><th>属性1：颜色</th><th>属性2：纹理</th></tr>
+<tr><td><strong>① index</strong></td><td><code>0</code>（对应 <code>layout=0</code>）</td><td><code>1</code>（对应 <code>layout=1</code>）</td><td><code>2</code>（对应 <code>layout=2</code>）</td></tr>
+<tr><td><strong>② size</strong></td><td><code>3</code>（xyz 三个分量）</td><td><code>3</code>（rgb 三个分量）</td><td><code>2</code>（uv 两个分量）</td></tr>
+<tr><td><strong>③ type</strong></td><td><code>GL_FLOAT</code></td><td><code>GL_FLOAT</code></td><td><code>GL_FLOAT</code></td></tr>
+<tr><td><strong>④ normalized</strong></td><td><code>GL_FALSE</code></td><td><code>GL_FALSE</code></td><td><code>GL_FALSE</code></td></tr>
+<tr><td><strong>⑤ stride</strong></td><td><code>32</code> 字节</td><td><code>32</code> 字节</td><td><code>32</code> 字节</td></tr>
+<tr><td><strong>⑥ pointer</strong></td><td><code>(void*)0</code></td><td><code>(void*)12</code></td><td><code>(void*)24</code></td></tr>
+</table>
+
+<pre><code><span class="comment">// ---- 完整 VBO 属性和 VAO 配置代码（每行注释） ----</span>
+
+<span class="comment">// 启用顶点属性 0（位置）：默认是禁用的，必须先启用</span>
+glEnableVertexAttribArray(<span class="number">0</span>);
+
+<span class="comment">// 配置顶点属性 0（位置）</span>
+<span class="comment">// index=0: layout(location = 0) in vec3 in_Position;</span>
+<span class="comment">// size=3:  位置有 xyz 三个值</span>
+<span class="comment">// type=GL_FLOAT: 每个值是 32 位浮点数</span>
+<span class="comment">// normalized=GL_FALSE: 浮点数不需要归一化</span>
+<span class="comment">// stride=32: 每个顶点 32 字节</span>
+<span class="comment">// pointer=0: 位置在顶点数据的最开头，偏移 0</span>
+glVertexAttribPointer(<span class="number">0</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">32</span>, (<span class="function">void</span>*)<span class="number">0</span>);
+
+<span class="comment">// 启用顶点属性 1（颜色）</span>
+glEnableVertexAttribArray(<span class="number">1</span>);
+glVertexAttribPointer(<span class="number">1</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">32</span>, (<span class="function">void</span>*)<span class="number">12</span>);
+
+<span class="comment">// 启用顶点属性 2（纹理坐标）</span>
+glEnableVertexAttribArray(<span class="number">2</span>);
+glVertexAttribPointer(<span class="number">2</span>, <span class="number">2</span>, GL_FLOAT, GL_FALSE, <span class="number">32</span>, (<span class="function">void</span>*)<span class="number">24</span>);</code></pre>
+
+<h3 id="17-4-5-绘制三角形">17.4.5 绘制三角形</h3>
+
+<pre><code><span class="comment">// ---- 画！ ----</span>
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+glUseProgram(shaderProgram);
+glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">3</span>);
+
+<span class="comment">// 或者用索引画法（更常用，可以复用顶点）：</span>
+glDrawElements(GL_TRIANGLES, <span class="number">3</span>, GL_UNSIGNED_INT, <span class="number">0</span>);</code></pre>
+
+<hr>
+
+<h2 id="17-5-纹理对象-texture-objects">17.5 纹理对象（Texture Objects）</h2>
+
+<h3 id="17-5-1-为什么需要纹理">17.5.1 为什么需要纹理？</h3>
+
+<p>如果你只有顶点颜色，那你的三角形要么是纯色、要么是渐变色——永远做不出"砖墙"、"草地"、"木纹"这样的细节。纹理就是<strong>把一张图片"贴"到 3D 模型表面</strong>，让模型看起来有真实的细节。</p>
+
+<h3 id="17-5-2-纹理的本质">17.5.2 纹理的本质</h3>
+
+<pre><code>不需要纹理：三角形是单一颜色
+需要纹理：三角形上包含"砖墙图案"——把一张砖墙图片映射到每个像素上</code></pre>
+
+<p><strong>纹理坐标系统（UV）：</strong></p>
+
+<pre><code>纹理左上角 (0,1)               纹理右上角 (1,1)
+      ┌──────────────────┐
+      │                  │
+      │     纹理图片      │
+      │                  │
+      └──────────────────┘
+纹理左下角 (0,0)               纹理右下角 (1,0)
+
+每个顶点的纹理坐标告诉 GPU："这个顶点对应纹理图片上的哪个位置"
+三角形内部的像素 → 光栅化插值 UV → 从纹理中取色</code></pre>
+
+<h3 id="17-5-3-顶点数据---纹理的完整结构">17.5.3 顶点数据 + 纹理的完整结构</h3>
+
+<pre><code><span class="comment">// ---- 顶点结构体：带纹理坐标 ----</span>
+<span class="keyword">struct</span> vertexData {
+    glm::vec3 pos;        // 位置 x,y,z  → 12 字节
+    glm::vec3 normal;     // 法线 x,y,z  → 12 字节（用于光照计算）
+    glm::vec2 texCoord;   // 纹理坐标 u,v →  8 字节
+                          // 每个顶点合计 = 32 字节
+};
+
+<span class="comment">// ---- 加载纹理到 GPU ----</span>
+GLuint textureID;
+glGenTextures(<span class="number">1</span>, &amp;textureID);
+glBindTexture(GL_TEXTURE_2D, textureID);
+
+<span class="comment">// 把图片数据从 RAM 传到显存</span>
+glTexImage2D(GL_TEXTURE_2D, <span class="number">0</span>, GL_RGB, width, height, <span class="number">0</span>,
+             GL_RGB, GL_UNSIGNED_BYTE, imageData);
+
+<span class="comment">// 自动生成 mipmap 链</span>
+glGenerateMipmap(GL_TEXTURE_2D);</code></pre>
+
+<h3 id="17-5-4-mipmap-为什么远处的墙不需要-1024-1024-纹理">17.5.4 Mipmap：为什么远处的墙不需要 1024×1024 纹理？</h3>
+
+<p><strong>Mipmap 的核心直觉：远处的一面墙在屏幕上只占 4×4 像素，你根本不需要加载 1024×1024 的纹理来贴它。</strong></p>
+
+<pre><code>现实例子：你站在远处看一栋大楼
+  ① 大楼在屏幕上大约 100×200 像素
+  ② 墙壁上的砖头纹理是 2048×2048
+  ③ 每个砖头块在屏幕上只有 2 个像素
+  ④ 相邻像素的纹理颜色会剧烈跳变 → 屏幕上闪烁的噪点（"混叠 Aliasing"）
+  ⑤ 解决方案：预制 2048→1024→512→256→...→1 的纹理系列
+  ⑥ 远处的墙只用 4×4 的 mipmap 层级就行</code></pre>
+
+<div class="guizang-figure">
+<img src="images/ch17/mipmap.png" alt="Mipmap选层——远处小物体用小纹理">
+<div class="guizang-caption">图17-4：Mipmap 层级——从原图 2048×2048 逐级下采样到 1×1，GPU 自动选择适合当前屏幕大小的层级</div>
+</div>
+
+<pre><code>Mipmap 层级：
+原图 Level 0:  2048×2048  (4,194,304 像素)
+  Level 1:  1024×1024  (下采样 ½)
+  Level 2:   512×512
+  Level 3:   256×256
+  ...
+  Level 9:     4×4     ← 远处墙正好用这个！
+  ...
+  Level 11:    1×1     (最小的 mip，相当于平均颜色)
+
+总存储：比原图多约 33% 内存（4/3 倍率）
+好处：消除闪烁，提升缓存命中率</code></pre>
+
+<pre><code><span class="comment">// ---- Fragment Shader 中采样纹理 ----</span>
+<span class="keyword">uniform</span> sampler2D texture0;
+<span class="keyword">in</span> vec2 vTexCoord;
+
+<span class="function">void</span> main(<span class="function">void</span>)
+{
+    <span class="comment">// texture() 函数自动做：</span>
+    <span class="comment">//   1. 根据 UV 坐标从纹理中查找颜色</span>
+    <span class="comment">//   2. 自动处理 mipmap 选择</span>
+    <span class="comment">//   3. 双线性插值（4 个 texel 加权平均）</span>
+    vec4 texColor = texture(texture0, vTexCoord);
+    fragmentColor = texColor;
+}</code></pre>
+
+<div class="key-box">
+<strong>核心洞察</strong>：Mipmap = "远处的物体用小纹理，近处的用大纹理"。<strong>不是你选的，是 GPU 自动判断的。</strong>你只需要调 <code>glGenerateMipmap()</code> 生成好 mipmap 链。
+</div>
+
+<h3 id="17-5-5-纹理参数">17.5.5 纹理参数</h3>
+
+<pre><code><span class="comment">// 设置纹理环绕方式（UV 超出 [0,1] 时怎么办）</span>
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+<span class="comment">// GL_REPEAT: 重复纹理（瓷砖效果）</span>
+<span class="comment">// GL_CLAMP_TO_EDGE: 边缘颜色延伸</span>
+<span class="comment">// GL_MIRRORED_REPEAT: 镜像重复</span>
+
+<span class="comment">// 设置纹理过滤方式（放大/缩小时的插值方式）</span>
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+<span class="comment">// GL_LINEAR_MIPMAP_LINEAR: 三线性过滤（质量最好）</span>
+<span class="comment">// GL_LINEAR: 双线性过滤（不做 mipmap 切换）</span>
+<span class="comment">// GL_NEAREST: 最近邻（像素风）</span>
+
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+<span class="comment">// 放大过滤：GL_LINEAR（模糊平滑）或 GL_NEAREST（锯齿）</span></code></pre>
+
+<hr>
+
+<h2 id="17-6-实例化-instancing">17.6 实例化（Instancing）</h2>
+
+<h3 id="17-6-1-为什么需要实例化">17.6.1 为什么需要实例化？</h3>
+
+<p>想象你要画一片草地——10000 根草。每根草都是一个三角形（或者两个三角形组成的小四边形）。如果不实例化，你要调用 10000 次 <code>glDrawArrays</code>——每次都要重复设置状态、发送命令到 GPU，效率极低。</p>
+
+<p><strong>实例化：调一次 <code>glDrawArraysInstanced</code>，GPU 帮你画 1000 次。</strong></p>
+
+<div class="guizang-figure">
+<img src="images/ch17/instancing.png" alt="Instancing批量绘制——一次draw画多个物体">
+<div class="guizang-caption">图17-5：实例化绘制——一次 <code>glDrawArraysInstanced</code> 调用，GPU 自动复制管线绘制多个实例，每个实例有独立的位置和颜色</div>
+</div>
+
+<h3 id="17-6-2-何时用实例化">17.6.2 何时用实例化？</h3>
+
+<table>
+<tr><th>场景</th><th>实例化？</th><th>原因</th></tr>
+<tr><td>草地上 10000 根草</td><td>必须用</td><td>每根草形状相同，位置不同</td></tr>
+<tr><td>100 个敌人</td><td>强烈推荐</td><td>共享模型网格，位置/材质不同</td></tr>
+<tr><td>场景里唯一的 BOSS</td><td>不需要</td><td>只有一次绘制</td></tr>
+<tr><td>粒子系统 50000 个粒子</td><td>必须用</td><td>每个粒子是一个小四边形</td></tr>
+</table>
+
+<h3 id="17-6-3-实例化代码">17.6.3 实例化代码</h3>
+
+<pre><code><span class="comment">// ---- CPU 端 ----</span>
+<span class="keyword">struct</span> InstanceData {
+    glm::vec3 position;   // 位置偏移
+    glm::vec3 color;      // 颜色
+};
+
+GLuint instanceVBO;
+glGenBuffers(<span class="number">1</span>, &amp;instanceVBO);
+glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+glBufferData(GL_ARRAY_BUFFER, instanceCount * <span class="keyword">sizeof</span>(InstanceData),
+             instanceData, GL_STATIC_DRAW);
+
+<span class="comment">// 配置实例属性（注意 divisor = 1）</span>
+glEnableVertexAttribArray(<span class="number">3</span>);
+glVertexAttribPointer(<span class="number">3</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="keyword">sizeof</span>(InstanceData), (<span class="function">void</span>*)<span class="number">0</span>);
+glVertexAttribDivisor(<span class="number">3</span>, <span class="number">1</span>);   // ← 关键：每实例而非每顶点
+
+<span class="comment">// 画！</span>
+glDrawArraysInstanced(GL_TRIANGLES, <span class="number">0</span>, <span class="number">3</span>, instanceCount);
+<span class="comment">// GPU 内部复制 1000 次管线，每次用不同的实例数据</span></code></pre>
+
+<pre><code><span class="comment">// ---- Vertex Shader（实例化版） ----</span>
+layout(location = <span class="number">0</span>) <span class="keyword">in</span> vec3 in_Position;
+layout(location = <span class="number">1</span>) <span class="keyword">in</span> vec3 in_Color;
+layout(location = <span class="number">3</span>) <span class="keyword">in</span> vec3 in_InstancePos;
+layout(location = <span class="number">4</span>) <span class="keyword">in</span> vec3 in_InstanceColor;
+
+<span class="keyword">uniform</span> mat4 projMatrix;
+<span class="keyword">uniform</span> mat4 viewMatrix;
+
+<span class="keyword">out</span> vec3 vColor;
+
+<span class="function">void</span> main(<span class="function">void</span>)
+{
+    <span class="comment">// 把实例位置加到顶点坐标上</span>
+    vec3 worldPos = in_Position + in_InstancePos;
+    <span class="comment">// 每个实例用自己的颜色</span>
+    vColor = in_InstanceColor;
+    <span class="comment">// 标准坐标变换</span>
+    gl_Position = projMatrix * viewMatrix * vec4(worldPos, <span class="number">1.0</span>);
+}</code></pre>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：<code>glVertexAttribDivisor(3, 1)</code> 的 divisor=1 是什么意思？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">divisor 控制属性更新的频率：divisor=0 表示每个顶点更新一次（普通属性），divisor=1 表示每个实例更新一次（实例属性）。所以 3 个顶点×1000 个实例 = 位置属性读 3000 次，实例位置属性只读 1000 次。这保证了同一个实例的所有顶点共享同一份实例数据。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="17-7-调试-shader">17.7 调试 Shader</h2>
+
+<h3 id="17-7-1-为什么需要调试技巧">17.7.1 为什么需要调试技巧？</h3>
+
+<p>Shader 运行在 GPU 上——你不能像调试 C++ 那样打断点、看变量值。GPU 上<strong>没有 printf</strong>。所以你需要一些"曲线救国"的调试方法。<strong>最基本的原则：把你想看的值输出为颜色。</strong></p>
+
+<h3 id="17-7-2-三个最基本的调试技巧">17.7.2 三个最基本的调试技巧</h3>
+
+<table>
+<tr><th>问题</th><th>现象</th><th>调试手段</th></tr>
+<tr><td>顶点位置不对</td><td>三角形找不到或变形</td><td>把位置直接输出为颜色 → 看颜色图猜位置</td></tr>
+<tr><td>法线方向反了</td><td>光照看起来"凹进去"</td><td>用法线作为颜色输出 → 法线朝哪个方向一目了然</td></tr>
+<tr><td>纹理没看到</td><td>模型空白或黑色</td><td>输出 UV 坐标为颜色 → UV 范围对不对？</td></tr>
+</table>
+
+<h3 id="17-7-3--法线可视化-调试-shader">17.7.3 "法线可视化"调试 Shader</h3>
+
+<pre><code><span class="comment">// ---- Normal Shader ----</span>
+<span class="keyword">in</span> vec4 normal;           // 传入的法线（世界空间）
+<span class="keyword">out</span> vec4 fragmentColor;   // 输出颜色
+
+<span class="function">void</span> main(<span class="function">void</span>)
+{
+    <span class="comment">// normal.xyz 范围 [-1, 1]</span>
+    <span class="comment">// *0.5 + 0.5 映射到 [0, 1]</span>
+    vec3 intensity = normalize(normal.xyz) * <span class="number">0.5</span> + <span class="number">0.5</span>;
+
+    <span class="comment">// 红色 = X 正方向，绿色 = Y 正方向，蓝色 = Z 正方向</span>
+    fragmentColor = vec4(intensity, <span class="number">1.0</span>);
+}</code></pre>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么法线映射到颜色要 *0.5+0.5？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">法线分量范围是 [-1, 1]，而颜色分量范围是 [0, 1]。直接输出 [-1, 1] 的值会被 GPU 截断为 [0, 1]——所有负数变成 0，丢失信息。乘以 0.5 再加 0.5 后：-1→0, 0→0.5, 1→1，完整保留了方向信息。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="17-8-面向对象封装">17.8 面向对象封装</h2>
+
+<h3 id="17-8-1-为什么需要封装">17.8.1 为什么需要封装？</h3>
+
+<p>直接写裸的 OpenGL 调用——<code>glGenBuffers</code>、<code>glBindBuffer</code>、<code>glBufferData</code>——代码很快就变成一团乱麻。你需要<strong>把 GPU 资源封成类</strong>：构造函数创建资源，析构函数释放资源，render 函数封装绘制逻辑。</p>
+
+<h3 id="17-8-2-把-gpu-资源封成类">17.8.2 把 GPU 资源封成类</h3>
+
+<pre><code><span class="comment">// ---- 一个可复用的三角形类 ----</span>
+<span class="keyword">class</span> Triangle {
+<span class="keyword">private</span>:
+    GLuint vbo;         // 顶点缓冲对象
+    GLuint vao;         // 顶点数组对象
+    GLuint shader;      // Shader 程序
+    glm::mat4 model;    // 模型矩阵（位置、旋转、缩放）
+
+<span class="keyword">public</span>:
+    <span class="comment">// 构造：创建 VBO、编译 Shader</span>
+    Triangle() {
+        <span class="comment">// 创建 VBO...</span>
+        <span class="comment">// 编译 Vertex Shader + Fragment Shader...</span>
+        <span class="comment">// 链接成 Program...</span>
+    }
+
+    <span class="comment">// 析构：释放 GPU 资源</span>
+    ~Triangle() {
+        glDeleteBuffers(<span class="number">1</span>, &amp;vbo);
+        glDeleteProgram(shader);
+    }
+
+    <span class="comment">// 每帧绘制</span>
+    <span class="function">void</span> render(<span class="keyword">const</span> glm::mat4&amp; viewProj) {
+        glUseProgram(shader);
+        glBindVertexArray(vao);
+        glm::mat4 mvp = viewProj * model;
+        glUniformMatrix4fv(locMVP, <span class="number">1</span>, GL_FALSE, &amp;mvp[<span class="number">0</span>][<span class="number">0</span>]);
+        glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">3</span>);
+    }
+
+    <span class="function">void</span> setPosition(<span class="keyword">float</span> x, <span class="keyword">float</span> y, <span class="keyword">float</span> z) {
+        model = glm::translate(glm::mat4(<span class="number">1.0f</span>), glm::vec3(x, y, z));
+    }
+};</code></pre>
+
+<h3 id="17-8-3-实例化---oop">17.8.3 实例化 + OOP</h3>
+
+<pre><code><span class="comment">// ---- 敌人群体 ----</span>
+<span class="comment">// 所有敌人共享同一个 VBO（网格相同）</span>
+<span class="comment">// 每个敌人有自己的 Model Matrix</span>
+<span class="keyword">class</span> Enemy {
+<span class="keyword">public</span>:
+    <span class="keyword">static</span> GLuint sharedVBO;    // 敌人网格 VBO（只加载一次）
+    <span class="keyword">static</span> GLuint sharedShader; // 敌人 Shader（只编译一次）
+    glm::mat4 modelMatrix;
+
+    <span class="function">void</span> render(<span class="keyword">const</span> glm::mat4&amp; viewProj) {
+        glUseProgram(sharedShader);
+        glUniformMatrix4fv(locMVP, <span class="number">1</span>, GL_FALSE,
+                           glm::value_ptr(viewProj * modelMatrix));
+        glBindBuffer(GL_ARRAY_BUFFER, sharedVBO);
+        glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, vertexCount);
+    }
+};</code></pre>
+
+<hr>
+
+<h2 id="17-9-总结">17.9 总结</h2>
+
+<h3 id="核心管线回顾">核心管线回顾</h3>
+
+<pre><code>你（程序员）："我想画一个三角形"
+     ↓
+CPU：分配 VBO，上传顶点数据到显存
+CPU：编译 Shader（Vertex + Fragment），链接成 Program
+CPU：设置 Uniform（投影矩阵、光源...）
+CPU：调用 glDrawArrays → GPU 开始工作
+     ↓
+GPU 管线：
+  ① Vertex Shader（可编程）：坐标变换（模型→世界→视图→屏幕）
+  ② Rasterization（硬件固定）：三角形变像素 + 重心插值
+  ③ Fragment Shader（可编程）：光照计算、纹理采样
+  ④ Blending（硬件固定）：透明混合、深度测试
+     ↓
+屏幕上出现了你画的三角形！</code></pre>
+
+<h3 id="关键公式速查">关键公式速查</h3>
+
+<pre><code>顶点变换：
+  gl_Position = M_proj × M_view × M_model × vec4(pos, 1.0)
+
+Blinn-Phong 光照：
+  环境光  = ka × Ia
+  漫反射  = kd × I_light × max(0, n·l)
+  镜面光  = ks × I_light × pow(max(0, n·h), phongExp)
+
+VBO 上传：
+  glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW)
+
+VBO 属性配置（6 参数口诀：索引·维度·类型·归一化·步长·偏移）：
+  glVertexAttribPointer(index, size, type, normalized, stride, pointer)
+
+纹理上传：
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data)
+  glGenerateMipmap(GL_TEXTURE_2D)
+
+实例化绘制：
+  glDrawArraysInstanced(GL_TRIANGLES, 0, vertexCount, instanceCount)</code></pre>
+
+<h3 id="常见错误速查">常见错误速查</h3>
+
+<table>
+<tr><th>错误</th><th>表现</th><th>原因</th><th>解决方法</th></tr>
+<tr><td>黑屏</td><td>什么都看不到</td><td>Shader 编译失败</td><td>检查 <code>glGetShaderInfoLog()</code></td></tr>
+<tr><td>位置错乱</td><td>三角形飞到远处</td><td>stride/offset 算错</td><td>核对 <code>sizeof(Vertex)</code></td></tr>
+<tr><td>颜色不对</td><td>颜色"脏"</td><td>颜色值不在 [0,1] 范围</td><td>记得除以 255</td></tr>
+<tr><td>UV 不对</td><td>纹理拉伸/镜像</td><td>UV 坐标范围不对</td><td>输出 UV 为颜色调试</td></tr>
+<tr><td>深度混乱</td><td>前后关系反了</td><td>没开深度测试</td><td>加 <code>glEnable(GL_DEPTH_TEST)</code></td></tr>
+</table>
+
+<div class="key-box">
+<strong>一句话记住本章</strong>：<strong>GPU 管线 = 4 步（顶点→光栅化→片段→混合），你写两个 Shader（顶点+片段），其他硬件帮你搞定。</strong>
+</div>
+
+<blockquote>
+<p><strong>下一步</strong>：第18章《颜色》——颜色空间、色度学、视觉感知。理解"三角形变像素"之后，该理解"像素是什么颜色"了。</p>
+</blockquote>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li class="active"><a href="ch17_使用图形硬件.html" class="active">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#17-0-故事线-我想画一个三角形">17.0 故事线：我想画一个三角形</a></li>
+  <li class="toc-h3"><a href="#为什么需要这个">为什么需要这个？</a></li>
+  <li class="toc-h3"><a href="#step-1-先定义三角形的三个点">Step 1：先定义三角形的三个点</a></li>
+  <li class="toc-h3"><a href="#step-2-这三个点怎么到-gpu">Step 2：这三个点怎么到 GPU？</a></li>
+  <li class="toc-h3"><a href="#step-3-gpu-内部发生了什么">Step 3：GPU 内部发生了什么？</a></li>
+  <li class="toc-h2"><a href="#17-1-异构多处理-heterogeneous-multiprocessing">17.1 异构多处理（Heterogeneous Multiprocessing）</a></li>
+  <li class="toc-h3"><a href="#17-1-1-为什么-cpu-和-gpu-要分开">17.1.1 为什么 CPU 和 GPU 要分开？</a></li>
+  <li class="toc-h3"><a href="#17-1-2-工作模式-host---device">17.1.2 工作模式：Host ↔ Device</a></li>
+  <li class="toc-h3"><a href="#17-1-3-为什么-pcie-这么慢-数字感知">17.1.3 为什么 PCIe 这么慢？数字感知</a></li>
+  <li class="toc-h2"><a href="#17-2-图形管线-gpu-pipeline">17.2 图形管线（GPU Pipeline）</a></li>
+  <li class="toc-h3"><a href="#17-2-1-为什么需要管线">17.2.1 为什么需要管线？</a></li>
+  <li class="toc-h3"><a href="#17-2-2-四个阶段全览">17.2.2 四个阶段全览</a></li>
+  <li class="toc-h3"><a href="#17-2-3-光栅化详解-三角形怎么变成像素">17.2.3 光栅化详解：三角形怎么变成像素？</a></li>
+  <li class="toc-h2"><a href="#17-3-shader-编程-shader-programming">17.3 Shader 编程（Shader Programming）</a></li>
+  <li class="toc-h3"><a href="#17-3-1-为什么需要-shader">17.3.1 为什么需要 Shader？</a></li>
+  <li class="toc-h3"><a href="#17-3-2-两个可编程阶段">17.3.2 两个可编程阶段</a></li>
+  <li class="toc-h3"><a href="#17-3-3-第一个-vertex-shader-让三角形动起来">17.3.3 第一个 Vertex Shader：让三角形动起来</a></li>
+  <li class="toc-h3"><a href="#17-3-4-对应的-fragment-shader-给每个像素上色">17.3.4 对应的 Fragment Shader：给每个像素上色</a></li>
+  <li class="toc-h3"><a href="#17-3-5-per-vertex-着色-vs-per-fragment-着色">17.3.5 Per-Vertex 着色 vs Per-Fragment 着色</a></li>
+  <li class="toc-h3"><a href="#17-3-6-uniform-变量的三种来源">17.3.6 Uniform 变量的三种来源</a></li>
+  <li class="toc-h2"><a href="#17-4-顶点数据-vertex-data">17.4 顶点数据（Vertex Data）</a></li>
+  <li class="toc-h3"><a href="#17-4-1-为什么需要-vbo">17.4.1 为什么需要 VBO？</a></li>
+  <li class="toc-h3"><a href="#17-4-2-vbo---vertex-buffer-object">17.4.2 VBO = Vertex Buffer Object</a></li>
+  <li class="toc-h3"><a href="#17-4-3-创建-vbo-的完整代码-每行中文注释">17.4.3 创建 VBO 的完整代码（每行中文注释）</a></li>
+  <li class="toc-h3"><a href="#17-4-4-glvertexattribpointer-6-个参数逐项拆解">17.4.4 glVertexAttribPointer：6 个参数逐项拆解</a></li>
+  <li class="toc-h3"><a href="#17-4-5-绘制三角形">17.4.5 绘制三角形</a></li>
+  <li class="toc-h2"><a href="#17-5-纹理对象-texture-objects">17.5 纹理对象（Texture Objects）</a></li>
+  <li class="toc-h3"><a href="#17-5-1-为什么需要纹理">17.5.1 为什么需要纹理？</a></li>
+  <li class="toc-h3"><a href="#17-5-2-纹理的本质">17.5.2 纹理的本质</a></li>
+  <li class="toc-h3"><a href="#17-5-3-顶点数据---纹理的完整结构">17.5.3 顶点数据 + 纹理的完整结构</a></li>
+  <li class="toc-h3"><a href="#17-5-4-mipmap-为什么远处的墙不需要-1024-1024-纹理">17.5.4 Mipmap：为什么远处的墙不需要 1024×1024 纹理？</a></li>
+  <li class="toc-h3"><a href="#17-5-5-纹理参数">17.5.5 纹理参数</a></li>
+  <li class="toc-h2"><a href="#17-6-实例化-instancing">17.6 实例化（Instancing）</a></li>
+  <li class="toc-h3"><a href="#17-6-1-为什么需要实例化">17.6.1 为什么需要实例化？</a></li>
+  <li class="toc-h3"><a href="#17-6-2-何时用实例化">17.6.2 何时用实例化？</a></li>
+  <li class="toc-h3"><a href="#17-6-3-实例化代码">17.6.3 实例化代码</a></li>
+  <li class="toc-h2"><a href="#17-7-调试-shader">17.7 调试 Shader</a></li>
+  <li class="toc-h3"><a href="#17-7-1-为什么需要调试技巧">17.7.1 为什么需要调试技巧？</a></li>
+  <li class="toc-h3"><a href="#17-7-2-三个最基本的调试技巧">17.7.2 三个最基本的调试技巧</a></li>
+  <li class="toc-h3"><a href="#17-7-3--法线可视化-调试-shader">17.7.3 "法线可视化"调试 Shader</a></li>
+  <li class="toc-h2"><a href="#17-8-面向对象封装">17.8 面向对象封装</a></li>
+  <li class="toc-h3"><a href="#17-8-1-为什么需要封装">17.8.1 为什么需要封装？</a></li>
+  <li class="toc-h3"><a href="#17-8-2-把-gpu-资源封成类">17.8.2 把 GPU 资源封成类</a></li>
+  <li class="toc-h3"><a href="#17-8-3-实例化---oop">17.8.3 实例化 + OOP</a></li>
+  <li class="toc-h2"><a href="#17-9-总结">17.9 总结</a></li>
+  <li class="toc-h3"><a href="#核心管线回顾">核心管线回顾</a></li>
+  <li class="toc-h3"><a href="#关键公式速查">关键公式速查</a></li>
+  <li class="toc-h3"><a href="#常见错误速查">常见错误速查</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

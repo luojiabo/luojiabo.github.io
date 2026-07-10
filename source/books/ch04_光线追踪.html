@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch04: 光线追踪</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch04 光线追踪</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第4章：光线追踪 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第4章（p.79-96）。<br>
+光线追踪是生成照片级真实感图像的基础——从摄像机发射光线，追踪它们与场景中物体的交互。<br>
+本章是全书的"灵魂章节"，理解光线追踪就等于理解了计算机图形学的一半。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s41">4.1 基本光线追踪算法</a></li>
+  <li><a href="#s42">4.2 透视投影的几何基础</a></li>
+  <li><a href="#s43">4.3 光线生成</a></li>
+  <li><a href="#s44">4.4 光线与物体求交</a></li>
+  <li><a href="#s45">4.5 着色与阴影</a></li>
+  <li><a href="#s46">4.6 递归光线追踪</a></li>
+  <li><a href="#s47">4.7 加速结构</a></li>
+  <li><a href="#s48">4.8 完整光线追踪器实现框架</a></li>
+</ul>
+</div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+  <li>理解光线追踪的基本算法流程</li>
+  <li>掌握透视投影的几何原理</li>
+  <li>学会计算从摄像机出发的光线</li>
+  <li>掌握光线与球体求交的完整代数推导</li>
+  <li>掌握Möller-Trumbore三角形求交算法</li>
+  <li>理解反射、折射的几何推导</li>
+  <li>掌握Russian Roulette概率终止策略</li>
+  <li>理解BVH加速结构的原理</li>
+</ol>
+
+<hr>
+
+<h2 id="4-1-基本光线追踪算法">4.1 基本光线追踪算法</h2>
+
+<h3 id="4-1-1-核心思想">4.1.1 核心思想</h3>
+
+<p><strong>光线追踪 = 模拟光线在场景中的传播路径</strong></p>
+
+<p>基本流程出奇地简单——只有三步：</p>
+
+<div class="guizang-figure">
+<img src="images/ch04/ray_tracing_flow.png" alt="光线追踪基本流程">
+<div class="guizang-caption">图4-1：光线追踪三步流程——发射光线、求交点、输出像素</div>
+</div>
+
+<p><strong>生活类比</strong>：你站在一个黑暗的房间里，透过一个小孔看外面的世界。每根从你眼睛出发的"视线"都打到物体上，告诉你那个方向是什么颜色——这就是光线追踪的直观理解。</p>
+
+<h3 id="4-1-2-为什么光线追踪这么重要">4.1.2 为什么光线追踪这么重要？</h3>
+
+<p>因为核心逻辑只有三步：<strong>发射→求交→着色</strong>。几乎所有视觉效果（反射、折射、阴影）都是在这个框架上加"递归"实现的。这个框架的简洁性就是它的力量。</p>
+
+<pre><code><span class="function">function</span> ray_trace(ray, scene, depth):
+  hit = scene.intersect(ray)
+  if no hit:
+    <span class="keyword">return</span> background_color
+  
+  <span class="comment">// 第一步：局部着色</span>
+  color = local_shading(hit, scene.lights)
+  
+  <span class="comment">// 第二步：递归追踪</span>
+  if depth < max_depth:
+    <span class="comment">// 如果是反射表面</span>
+    if hit.material.reflective:
+      refl_ray = reflect(ray, hit.normal, hit.point)
+      color += hit.material.ks * ray_trace(refl_ray, scene, depth + <span class="number">1</span>)
+    
+    <span class="comment">// 如果是透明表面</span>
+    if hit.material.transparent:
+      refr_ray = refract(ray, hit.normal, hit.point, hit.material.ior)
+      color += hit.material.kt * ray_trace(refr_ray, scene, depth + <span class="number">1</span>)
+  
+  <span class="keyword">return</span> color</code></pre>
+
+<hr>
+
+<h2 id="4-2-透视投影的几何基础">4.2 透视投影的几何基础</h2>
+
+<h3 id="4-2-1-针孔相机模型">4.2.1 针孔相机模型</h3>
+
+<p>最简模型：一个<strong>点</strong>（相机位置）+ 一个<strong>平面</strong>（成像平面）。</p>
+
+<div class="guizang-figure">
+<img src="images/ch04/pinhole_camera.png" alt="针孔相机模型">
+<div class="guizang-caption">图4-2：针孔相机模型——光线通过针孔在成像平面上形成倒像</div>
+</div>
+
+<p>光线从相机位置出发，穿过成像平面上的对应点。越远的物体看起来越小——这就是<strong>透视</strong>效果。</p>
+
+<blockquote>
+<p><strong>关键理解</strong>：透视的本质是"把3D视线方向映射到2D像素坐标"。这是全部渲染的第一步。</p>
+</blockquote>
+
+<h3 id="4-2-2-相机坐标系">4.2.2 相机坐标系</h3>
+
+<p>定义相机需要<strong>三个向量</strong>和一个<strong>点</strong>：</p>
+
+<pre><code>e    = 相机位置 (eye point)
+g    = 视线方向 (gaze direction)
+v_up = 向上向量 (view up vector)
+
+// 右手坐标系
+w = -g / ||g||           // z轴（指向场景内部）
+u = (v_up × w) / ||v_up × w||  // x轴（向右）
+v = w × u                // y轴（向上）</code></pre>
+
+<table>
+<tr><th>符号</th><th>名称</th><th>含义</th></tr>
+<tr><td>e</td><td>眼睛位置</td><td>相机在世界坐标系中的位置点</td></tr>
+<tr><td>g</td><td>视线方向</td><td>从相机指向场景的方向向量</td></tr>
+<tr><td>v_up</td><td>向上方向</td><td>指示相机"头顶"的方向</td></tr>
+<tr><td>u</td><td>右方向</td><td>相机坐标系的x基向量</td></tr>
+<tr><td>v</td><td>上方向</td><td>相机坐标系的y基向量</td></tr>
+<tr><td>w</td><td>前方向（负z）</td><td>相机坐标系的z基向量</td></tr>
+</table>
+
+<h3 id="4-2-3-视平面参数">4.2.3 视平面参数</h3>
+
+<p>视平面（image plane）定义在相机坐标系的 <code>-d</code> 处（沿w轴负方向）：</p>
+
+<pre><code>          视平面（在z=-d处）
+    ┌─────────────┐
+    │  t          │  t = 上边界 (top)
+    │   │         │
+    │───┼───── r  │  r = 右边界 (right)
+    │   │         │
+    │  b          │  b = 下边界 (bottom)
+    └─────────────┘
+    l = 左边界 (left)
+
+d = 视平面到相机的距离（焦距的模拟）
+nx = 图像宽度（像素数）
+ny = 图像高度（像素数）</code></pre>
+
+<hr>
+
+<h2 id="4-3-光线生成">4.3 光线生成</h2>
+
+<h3 id="4-3-1-光线参数方程">4.3.1 光线参数方程</h3>
+
+<p>光线用参数方程表示：</p>
+
+<div class="formula">p(t) = o + t·d, t ≥ 0</div>
+
+<table>
+<tr><th>符号</th><th>含义</th></tr>
+<tr><td>o</td><td>光线原点（即相机位置 e）</td></tr>
+<tr><td>d</td><td>光线方向（单位向量，或至少归一化）</td></tr>
+<tr><td>t</td><td>沿光线的距离参数</td></tr>
+<tr><td>p(t)</td><td>光线在距离t处的点</td></tr>
+</table>
+
+<p><code>t</code> 的含义非常直观：t=0 时在相机位置，t=1 时沿方向d走了1个单位距离，t 越大走得越远。</p>
+
+<h3 id="4-3-2-像素坐标到视平面的映射-核心公式">4.3.2 像素坐标到视平面的映射（核心公式）</h3>
+
+<p>给定像素坐标 (i, j)，其中 i 是水平方向（0 到 nx-1），j 是垂直方向（0 到 ny-1）：</p>
+
+<div class="formula">u = l + (r - l) × (i + 0.5) / nx</div>
+<div class="formula">v = b + (t - b) × (j + 0.5) / ny</div>
+
+<p><strong>这个公式到底在做什么？逐项拆解：</strong></p>
+
+<table>
+<tr><th>项</th><th>含义</th><th>解释</th></tr>
+<tr><td><code>(r - l)</code></td><td>视平面的总宽度</td><td>右边界减左边界 = 视平面的水平范围</td></tr>
+<tr><td><code>(i + 0.5)</code></td><td>像素中心的偏移</td><td>i是像素序号（从0开始），+0.5取像素中心</td></tr>
+<tr><td><code>(i + 0.5) / nx</code></td><td>像素中心的相对位置</td><td>0~1之间的比值，表示该像素在总宽度中的位置比例</td></tr>
+<tr><td><code>l + (r - l) × 比例</code></td><td>映射到视平面坐标</td><td>从左边界的偏移量</td></tr>
+<tr><td><code>u</code></td><td>最终视平面x坐标</td><td>该像素中心在视平面上的x位置</td></tr>
+</table>
+
+<p><strong>为什么用 <code>i + 0.5</code> 而不是 <code>i</code>？</strong></p>
+
+<blockquote>
+<p>因为像素是一个<strong>区域</strong>，而不是一个点。每个像素的范围是从 i 到 i+1，像素中心就在 i+0.5 处。用像素中心采样是最自然的选择。</p>
+</blockquote>
+
+<pre><code>像素 (i, j) 在图像中：
+┌───────────┬───────────┬───────────┐
+│   (0,0)   │   (1,0)   │   (2,0)   │
+│     ·     │     ·     │     ·     │  · = 像素中心
+├───────────┼───────────┼───────────┤       (i+0.5, j+0.5)
+│   (0,1)   │   (1,1)   │   (2,1)   │
+│     ·     │     ·     │     ·     │
+├───────────┼───────────┼───────────┤
+│   (0,2)   │   (1,2)   │   (2,2)   │
+│     ·     │     ·     │     ·     │
+└───────────┴───────────┴───────────┘</code></pre>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：如果 (i+0.5) 换成 i 会怎样？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">图像会整体向左偏移半个像素，相当于"采样点"在像素的左上角而不是中心。极端情况下，图像边缘的像素可能只采样到一半区域，产生偏差。</blockquote>
+</div>
+
+<h3 id="4-3-3-从视平面到光线方向">4.3.3 从视平面到光线方向</h3>
+
+<p>有了 (u, v) 坐标后，在<strong>相机坐标系</strong>中计算光线方向：</p>
+
+<pre><code><span class="comment">// 在相机坐标系中的方向</span>
+ray_dir_cam = u·u + v·v - d·w
+
+<span class="comment">// 变换到世界坐标系</span>
+ray_dir_world = camera_to_world × ray_dir_cam
+ray_dir_world = normalize(ray_dir_world)
+
+<span class="comment">// 最终光线</span>
+ray = Ray(origin = camera_pos, direction = ray_dir_world)</code></pre>
+
+<p><strong>为什么是 <code>-d·w</code>？</strong></p>
+
+<blockquote>
+<p>视平面在相机坐标系中位于 z = -d 处（负z方向），所以视平面上的点的z坐标就是 -d。方向向量从相机原点指向视平面上的点，所以方向向量 = (u, v, -d) 在相机坐标系中。</p>
+</blockquote>
+
+<h3 id="4-3-4-特殊情况-正交投影">4.3.4 特殊情况：正交投影</h3>
+
+<p>正交投影没有透视效果——所有光线方向相同：</p>
+
+<pre><code><span class="comment">// 所有光线方向都相同，平行于 -w</span>
+ray_dir = -w（对所有像素都一样）
+
+<span class="comment">// 起点偏移到不同像素位置</span>
+origin = camera_pos + u·u_vec + v·v_vec</code></pre>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：透视和正交的区别是什么？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">透视 = 从一点发出不同方向的光线（看远处物体变小）。正交 = 所有光线平行（物体大小不随距离变化，用于工程制图）。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="4-4-光线与物体求交">4.4 光线与物体求交</h2>
+
+<h3 id="4-4-1-光线与球体求交-完整推导">4.4.1 光线与球体求交（完整推导）</h3>
+
+<p>这是最基本也是最重要的求交计算。我们从头开始推导：</p>
+
+<div class="guizang-figure">
+<img src="images/ch04/sphere_intersect.png" alt="光线与球体求交的几何图示">
+<div class="guizang-caption">图4-3：光线与球体求交——求解二次方程得到最近交点，法线垂直于球面</div>
+</div>
+
+<p><strong>第一步：写出两个方程</strong></p>
+
+<pre><code>光线方程（参数形式）：
+p(t) = o + t·d,  t ≥ 0
+
+球体方程（隐式形式）：
+||p - c||² = R²
+其中 c 是球心，R 是半径，p 是球面上的点。</code></pre>
+
+<p><strong>第二步：代入</strong></p>
+
+<p>把光线方程代入球体方程：</p>
+
+<pre><code>||o + t·d - c||² = R²</code></pre>
+
+<p><strong>第三步：展开</strong></p>
+
+<p>定义向量 <code>m = o - c</code>（从球心指向光线原点）：</p>
+
+<pre><code>||m + t·d||² = R²
+
+展开点积：
+(m + t·d)·(m + t·d) = R²
+(m·m) + 2t(m·d) + t²(d·d) = R²</code></pre>
+
+<p><strong>第四步：整理为标准二次方程</strong></p>
+
+<div class="formula">(d·d)t² + 2(m·d)t + (m·m - R²) = 0</div>
+
+<p>这就是标准的 <code>At² + Bt + C = 0</code> 形式：</p>
+
+<pre><code>A = d·d           // 方向向量长度的平方
+B = 2(m·d)        // 2 × (从球心到光线原点的向量与方向的点积)
+C = m·m - R²      // 光线原点到球心距离的平方 - 半径平方</code></pre>
+
+<table>
+<tr><th>系数</th><th>几何意义</th></tr>
+<tr><td>A</td><td>光线方向长度的平方（通常 d 为单位向量时 A=1）</td></tr>
+<tr><td>B</td><td>与光线方向和球心相对位置有关</td></tr>
+<tr><td>C</td><td>光线原点相对于球体的位置（负值表示原点在球内）</td></tr>
+</table>
+
+<p><strong>第五步：求判别式</strong></p>
+
+<pre><code>D = B² - 4AC
+
+- D &lt; 0：无实根 → 光线与球无交点
+- D = 0：一个根 → 光线与球相切（只交于一点）
+- D &gt; 0：两个根 → 光线穿过球体（两个交点）</code></pre>
+
+<p><strong>第六步：求解t值</strong></p>
+
+<pre><code>t₁ = (-B - sqrt(D)) / (2A)
+t₂ = (-B + sqrt(D)) / (2A)
+
+选择规则：选<strong>最小正</strong>的 t 值（即最早碰到的交点）。</code></pre>
+
+<pre><code>if D &lt; 0: return NO_HIT
+t1 = (-B - sqrt(D)) / (2A)
+t2 = (-B + sqrt(D)) / (2A)
+if t1 &gt; 0: t_hit = t1
+else if t2 &gt; 0: t_hit = t2
+else: return NO_HIT
+
+// 交点位置
+p_hit = o + t_hit·d
+
+// 法线方向（单位向量）
+n = (p_hit - c) / R</code></pre>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：如果光线原点在球体内部，会是什么情况？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">此时 C &lt; 0，但判别式 D = B² - 4AC &gt; 0（因为 A&gt;0, C&lt;0 所以 -4AC &gt; 0），所以有两个实根。t₁ 是负数（因为从球内发出的光线，"向后"碰到的球面），t₂ 是正数（向前碰到的球面）。这可以用于渲染半透明材质或参与介质。</blockquote>
+</div>
+
+<p><strong>完整的球体求交函数：</strong></p>
+
+<pre><code><span class="function">function</span> intersect_sphere(ray, sphere):
+  <span class="comment">// 从球心到光线原点的向量</span>
+  m = ray.o - sphere.center
+  R = sphere.radius
+  
+  <span class="comment">// A系数</span>
+  A = dot(ray.d, ray.d)
+  
+  <span class="comment">// B系数（注意2被提出到判别式中）</span>
+  B = <span class="number">2</span> * dot(m, ray.d)
+  
+  <span class="comment">// C系数</span>
+  C = dot(m, m) - R * R
+  
+  <span class="comment">// 判别式</span>
+  D = B * B - <span class="number">4</span> * A * C
+  
+  if D &lt; <span class="number">0</span>:
+    <span class="keyword">return</span> NO_HIT
+  
+  sqrt_D = sqrt(D)
+  t1 = (-B - sqrt_D) / (<span class="number">2</span> * A)
+  t2 = (-B + sqrt_D) / (<span class="number">2</span> * A)
+  
+  <span class="comment">// 选择最小的正t</span>
+  if t1 &gt; <span class="number">1e-6</span>:
+    <span class="keyword">return</span> make_hit(t1, ray.o + t1 * ray.d)
+  if t2 &gt; <span class="number">1e-6</span>:
+    <span class="keyword">return</span> make_hit(t2, ray.o + t2 * ray.d)
+  
+  <span class="keyword">return</span> NO_HIT</code></pre>
+
+<h3 id="4-4-2-光线与三角形求交-möller-trumbore算法">4.4.2 光线与三角形求交（Möller-Trumbore算法）</h3>
+
+<p>Möller-Trumbore算法是计算机图形学中使用最广泛的光线-三角形求交算法。它的优势在于<strong>不需要预先计算平面方程</strong>，只需要三角形的三个顶点和光线参数即可求解。</p>
+
+<p><strong>第一步：重心坐标基础</strong></p>
+
+<p>三角形由三个顶点 a, b, c 定义。三角形内任意一点 p 可以用重心坐标（barycentric coordinates）表示：</p>
+
+<pre><code><span class="comment">// 重心坐标表示</span>
+p = α·a + β·b + γ·c</code></pre>
+
+<p>其中三个系数满足 α + β + γ = 1，且三个数都非负时 p 在三角形内部。</p>
+
+<p>等价写法：</p>
+
+<pre><code>p = a + β·(b - a) + γ·(c - a)
+= (1 - β - γ)·a + β·b + γ·c</code></pre>
+
+<table>
+<tr><th>符号</th><th>含义</th><th>约束</th></tr>
+<tr><td>α</td><td>顶点a的权重</td><td>α = 1 - β - γ</td></tr>
+<tr><td>β</td><td>顶点b的权重</td><td>β ≥ 0</td></tr>
+<tr><td>γ</td><td>顶点c的权重</td><td>γ ≥ 0</td></tr>
+<tr><td>β + γ</td><td>必须在 [0, 1] 之间</td><td>β + γ ≤ 1</td></tr>
+</table>
+
+<p><strong>第二步：联立方程</strong></p>
+
+<p>光线方程：</p>
+
+<pre><code>p = o + t·d</code></pre>
+
+<p>三角形方程：</p>
+
+<pre><code>p = a + β·(b - a) + γ·(c - a)</code></pre>
+
+<p>联立得：</p>
+
+<pre><code>o + t·d = a + β·(b - a) + γ·(c - a)</code></pre>
+
+<p>整理：</p>
+
+<pre><code>t·d + β·(a - b) + γ·(a - c) = a - o</code></pre>
+
+<p>写成矩阵形式：</p>
+
+<pre><code>[-d,  b-a,  c-a] × [t, β, γ]^T = o - a</code></pre>
+
+<p>也就是用三个向量组成一个3×3矩阵，求解三个未知数 t, β, γ。</p>
+
+<p><strong>第三步：Cramer法则求解</strong></p>
+
+<p>利用Cramer法则和向量混合积性质，可以高效求解：</p>
+
+<pre><code>e1 = b - a         <span class="comment">// 三角形边1</span>
+e2 = c - a         <span class="comment">// 三角形边2</span>
+s  = o - a         <span class="comment">// 从顶点a到光线原点的向量</span>
+
+<span class="comment">// 计算行列式</span>
+p_vec = cross(d, e2)
+det = dot(e1, p_vec)
+
+<span class="comment">// 如果行列式接近0，光线平行于三角形</span>
+if |det| &lt; ε: <span class="keyword">return</span> NO_HIT
+
+inv_det = <span class="number">1</span> / det
+
+<span class="comment">// 计算β（代码中的u）</span>
+t_vec = s
+u = dot(t_vec, p_vec) × inv_det
+if u &lt; <span class="number">0</span> or u &gt; <span class="number">1</span>: <span class="keyword">return</span> NO_HIT    <span class="comment">// β不在[0,1]内</span>
+
+<span class="comment">// 计算γ（代码中的v）</span>
+q_vec = cross(t_vec, e1)
+v = dot(d, q_vec) × inv_det
+if v &lt; <span class="number">0</span> or u + v &gt; <span class="number">1</span>: <span class="keyword">return</span> NO_HIT  <span class="comment">// γ&lt;0 或 β+γ&gt;1</span>
+
+<span class="comment">// 计算t（交点距离）</span>
+t_hit = dot(e2, q_vec) × inv_det
+if t_hit &lt; <span class="number">0</span>: <span class="keyword">return</span> NO_HIT
+
+<span class="keyword">return</span> make_hit(t_hit, u, v)</code></pre>
+
+<p><strong>第四步：逐行代码翻译</strong></p>
+
+<pre><code><span class="function">function</span> ray_triangle_intersect(ray, a, b, c):
+  <span class="comment">// === 第1步：计算三角形的两条边向量 ===</span>
+  e1 = b - a
+  e2 = c - a
+  
+  <span class="comment">// === 第2步：计算p_vec = d × e2 ===</span>
+  <span class="comment">// 这是光线方向与三角形一条边的叉积</span>
+  <span class="comment">// 用于后续计算行列式和β</span>
+  p_vec = cross(ray.d, e2)
+  
+  <span class="comment">// === 第3步：计算行列式 det = e1 · (d × e2) ===</span>
+  <span class="comment">// 这个行列式实际上就是  |d, e1, e2| 的标量三重积</span>
+  <span class="comment">// 它衡量的是由d, e1, e2三个向量构成的平行六面体的体积</span>
+  det = dot(e1, p_vec)
+  
+  <span class="comment">// === 第4步：检查光线是否平行于三角形 ===</span>
+  <span class="comment">// 如果行列式接近0，说明d, e1, e2三个向量共面</span>
+  <span class="comment">// 即光线方向与三角形所在平面平行</span>
+  if |det| &lt; <span class="number">1e-6</span>:
+    <span class="keyword">return</span> NO_HIT
+  
+  inv_det = <span class="number">1.0</span> / det
+  
+  <span class="comment">// === 第5步：计算β坐标 ===</span>
+  <span class="comment">// t_vec = o - a 是从顶点a到光线起点的向量</span>
+  t_vec = ray.o - a
+  
+  <span class="comment">// u = (t_vec · (d × e2)) / det = β</span>
+  <span class="comment">// 这是重心坐标公式中顶点b的权重</span>
+  u = dot(t_vec, p_vec) * inv_det
+  
+  <span class="comment">// β必须位于[0,1]范围内</span>
+  if u &lt; <span class="number">0.0</span> or u &gt; <span class="number">1.0</span>:
+    <span class="keyword">return</span> NO_HIT
+  
+  <span class="comment">// === 第6步：计算γ坐标 ===</span>
+  <span class="comment">// q_vec = t_vec × e1 = (o - a) × (b - a)</span>
+  q_vec = cross(t_vec, e1)
+  
+  <span class="comment">// v = (d · ((o - a) × e1)) / det = γ</span>
+  <span class="comment">// 这是重心坐标公式中顶点c的权重</span>
+  v = dot(ray.d, q_vec) * inv_det
+  
+  <span class="comment">// γ必须≥0，且β+γ≤1（保证α=1-β-γ≥0）</span>
+  if v &lt; <span class="number">0.0</span> or u + v &gt; <span class="number">1.0</span>:
+    <span class="keyword">return</span> NO_HIT
+  
+  <span class="comment">// === 第7步：计算交点距离t ===</span>
+  <span class="comment">// t = (e2 · ((o - a) × e1)) / det</span>
+  t = dot(e2, q_vec) * inv_det
+  
+  <span class="comment">// t必须为正（光线在相机前方）</span>
+  if t &lt; <span class="number">1e-6</span>:
+    <span class="keyword">return</span> NO_HIT
+  
+  <span class="comment">// === 第8步：命中！返回交点信息 ===</span>
+  <span class="comment">// 重心坐标：α = 1 - u - v, β = u, γ = v</span>
+  <span class="comment">// 法线可用重心坐标插值顶点法线</span>
+  hit_point = ray.o + t * ray.d
+  barycentric = (<span class="number">1</span> - u - v, u, v)
+  
+  <span class="keyword">return</span> make_hit(t, hit_point, barycentric)</code></pre>
+
+<p><strong>表格总结Möller-Trumbore每一步的几何意义：</strong></p>
+
+<table>
+<tr><th>步骤</th><th>计算内容</th><th>几何意义</th></tr>
+<tr><td>1</td><td>e1, e2</td><td>三角形的两条边向量</td></tr>
+<tr><td>2</td><td>p_vec = d × e2</td><td>光线方向与e2张成的平面的法线</td></tr>
+<tr><td>3</td><td>det = e1·p_vec</td><td>标量三重积，检测光线是否平行于三角形</td></tr>
+<tr><td>4</td><td>检查det</td><td>若|det|&lt;ε，光线平行于三角形平面，无交点</td></tr>
+<tr><td>5</td><td>u = (o-a)·p_vec / det</td><td>重心坐标β</td></tr>
+<tr><td>6</td><td>v = d·((o-a)×e1) / det</td><td>重心坐标γ</td></tr>
+<tr><td>7</td><td>t = e2·((o-a)×e1) / det</td><td>光线参数t，即交点到原点的距离</td></tr>
+<tr><td>8</td><td>检查t &gt; 0</td><td>确保交点在光线正方向上</td></tr>
+</table>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么Möller-Trumbore算法比"先求平面交点再判断是否在三角形内"快？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">传统方法需要先算平面方程（4次乘除法求交），再投影到2D判断点是否在三角形内（至少3次叉积）。M-T算法只用一次Cramer法则直接求出t, β, γ，避免了重复计算，且β和γ可直接用于纹理坐标插值，一举多得。</blockquote>
+</div>
+
+<h3 id="4-4-3-光线与平面求交-扩展">4.4.3 光线与平面求交（扩展）</h3>
+
+<p>平面隐式方程：</p>
+
+<pre><code>n·p = c</code></pre>
+
+<p>其中 n 是法线，c 是常数（从原点到平面的有符号距离）。</p>
+
+<p>代入光线 p = o + t·d：</p>
+
+<pre><code>n·(o + t·d) = c
+n·o + t(n·d) = c
+t = (c - n·o) / (n·d)</code></pre>
+
+<table>
+<tr><th>符号</th><th>含义</th></tr>
+<tr><td>n</td><td>平面的法线方向（单位向量）</td></tr>
+<tr><td>c</td><td>平面方程的常数项</td></tr>
+<tr><td>o</td><td>光线原点</td></tr>
+<tr><td>d</td><td>光线方向</td></tr>
+</table>
+
+<p>注意：n·d = 0 时，光线与平面平行，无交点。</p>
+
+<hr>
+
+<h2 id="4-5-着色与阴影">4.5 着色与阴影</h2>
+
+<h3 id="4-5-1-局部光照">4.5.1 局部光照</h3>
+
+<p>在光线击中点计算颜色，考虑：</p>
+<ul>
+  <li>光源位置和强度</li>
+  <li>表面法线</li>
+  <li>材质属性（漫反射、高光、镜面反射色）</li>
+</ul>
+
+<blockquote>这一部分在第5章中有完整详述，这里只做简要概述。</blockquote>
+
+<h3 id="4-5-2-阴影测试">4.5.2 阴影测试</h3>
+
+<p><strong>阴影 = 从击中点向光源发射"阴影光线"（shadow ray）</strong></p>
+
+<div class="guizang-figure">
+<img src="images/ch04/shadow_test.png" alt="阴影光线测试">
+<div class="guizang-caption">图4-4：阴影光线测试——从击中点向光源发射阴影光线，检测是否被遮挡</div>
+</div>
+
+<pre><code><span class="comment">// 检查点 p 是否在阴影中</span>
+<span class="function">function</span> test_shadow(hit_point, normal, light_pos, scene):
+  <span class="comment">// 从击中点向光源方向发射光线</span>
+  <span class="comment">// 注意：加一个小偏移ε避免"自相交"</span>
+  shadow_ray_dir = normalize(light_pos - hit_point)
+  shadow_ray = Ray(hit_point + ε·normal, shadow_ray_dir)
+  
+  <span class="comment">// 光源距离</span>
+  light_dist = distance(hit_point, light_pos)
+  
+  <span class="comment">// 如果中间有物体挡住，就在阴影中</span>
+  hit = scene.intersect(shadow_ray)
+  if hit and hit.t &lt; light_dist:
+    <span class="keyword">return</span> <span class="number">true</span>    <span class="comment">// 被遮挡 → 阴影</span>
+  <span class="keyword">return</span> <span class="number">false</span></code></pre>
+
+<p><strong>关于 ε 偏移</strong>：</p>
+
+<blockquote>
+浮点运算有精度误差，交点 p 可能实际上位于表面的"内部"。如果不做偏移，从 p 出发的阴影光线可能重新与自己相交（自相交），造成奇怪的条纹/黑点。通常取 ε = 1e-4 到 1e-6。
+</blockquote>
+
+<hr>
+
+<h2 id="4-6-递归光线追踪">4.6 递归光线追踪</h2>
+
+<h3 id="4-6-1-反射光线的几何推导-三段式">4.6.1 反射光线的几何推导（三段式）</h3>
+
+<p>反射公式 <code>r = d - 2(d·n)n</code> 可以从几何角度分三步理解：</p>
+
+<div class="guizang-figure">
+<img src="images/ch04/reflection_refraction.png" alt="反射光线的几何推导">
+<div class="guizang-caption">图4-5：反射定律——入射角θ等于反射角θ，反射公式 r = d - 2(d·n)n</div>
+</div>
+
+<p><strong>第一步：分解入射方向</strong></p>
+
+<p>入射方向 d 可以分解为平行于法线 n 的分量和垂直于法线 n 的分量：</p>
+
+<pre><code>d_parallel = (d·n)·n     <span class="comment">// 沿法线方向的分量</span>
+d_perp = d - (d·n)·n     <span class="comment">// 垂直于法线的分量</span></code></pre>
+
+<pre><code>     d
+      ↘
+       │ d_perp
+       │
+   ────┼────→ 表面（水平）
+       │
+      ↑ d_parallel（指向表面内部）
+      n</code></pre>
+
+<p><strong>第二步：反射改变法线分量方向</strong></p>
+
+<p>反射时：</p>
+<ul>
+  <li><strong>平行分量</strong>反转方向（因为反射"弹回"）</li>
+  <li><strong>垂直分量</strong>方向不变（因为表面是平的）</li>
+</ul>
+
+<pre><code>r_parallel = -(d·n)·n    <span class="comment">// 法线分量反向</span>
+r_perp = d - (d·n)·n     <span class="comment">// 垂直分量不变</span></code></pre>
+
+<p><strong>第三步：合成反射方向</strong></p>
+
+<div class="formula">r = r_parallel + r_perp = d - 2(d·n)·n</div>
+
+<pre><code>      ↙ r
+     /
+    │ r_perp（不变）
+    │
+   ────┼────→ 表面（水平）
+    │
+   r_parallel ↑ 反向</code></pre>
+
+<p><strong>验证：</strong></p>
+
+<blockquote>
+<p>反射光线的性质：</p>
+<ul>
+  <li><code>r·n = -d·n</code>（反射后法线分量方向相反）</li>
+  <li><code>||r|| = ||d||</code>（反射不改变长度）</li>
+  <li><code>r_perp = d_perp</code>（保持垂直分量不变）</li>
+</ul>
+</blockquote>
+
+<pre><code><span class="comment">// 验证 r·n = -d·n</span>
+r·n = (d - 2(d·n)·n)·n
+    = d·n - 2(d·n)·(n·n)
+    = d·n - 2(d·n)
+    = -d·n   ✓</code></pre>
+
+<p><strong>完整的反射着色代码：</strong></p>
+
+<pre><code><span class="comment">// 递归追踪反射</span>
+<span class="function">function</span> trace_reflection(ray, hit, scene, depth):
+  if depth &gt;= max_depth:
+    <span class="keyword">return</span> Color(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)
+  
+  <span class="comment">// 计算反射方向</span>
+  n = hit.normal
+  d = ray.direction
+  r = d - <span class="number">2</span> * dot(d, n) * n
+  r = normalize(r)
+  
+  <span class="comment">// 发射反射光线（加ε偏移避免自相交）</span>
+  refl_ray = Ray(hit.point + ε * n, r)
+  
+  <span class="comment">// 递归追踪</span>
+  refl_color = trace(refl_ray, scene, depth + <span class="number">1</span>)
+  
+  <span class="comment">// 乘以反射系数</span>
+  <span class="keyword">return</span> hit.material.ks * refl_color</code></pre>
+
+<h3 id="4-6-2-折射-斯涅尔定律">4.6.2 折射（斯涅尔定律）</h3>
+
+<p>折射比反射复杂，因为光线进入不同介质时会发生偏折：</p>
+
+<pre><code><span class="comment">// Snell定律</span>
+η₁·sinθ₁ = η₂·sinθ₂
+
+<span class="comment">// 折射光线方向（完整公式）</span>
+t = (η₁/η₂)·(d - (d·n)·n) - n·sqrt(<span class="number">1</span> - (η₁/η₂)²·(<span class="number">1</span> - (d·n)²))</code></pre>
+
+<table>
+<tr><th>符号</th><th>含义</th></tr>
+<tr><td>η₁</td><td>入射介质的折射率（空气 η≈1.0003 ≈ 1）</td></tr>
+<tr><td>η₂</td><td>折射介质的折射率（水 η≈1.33，玻璃 η≈1.5）</td></tr>
+<tr><td>θ₁</td><td>入射角（光线与法线夹角）</td></tr>
+<tr><td>θ₂</td><td>折射角</td></tr>
+<tr><td>d</td><td>入射方向</td></tr>
+<tr><td>n</td><td>表面法线</td></tr>
+<tr><td>t</td><td>折射方向</td></tr>
+</table>
+
+<p>根号内为负时发生<strong>全反射</strong>（光不从介质中射出）。</p>
+
+<h3 id="4-6-3-终止策略-俄罗斯轮盘赌-russian-roulette">4.6.3 终止策略：俄罗斯轮盘赌（Russian Roulette）</h3>
+
+<blockquote>
+<p><strong>问题</strong>：递归光线追踪深度无限，但实际计算资源有限。简单地设最大深度（如5层）效率低——有些路径需要更多递归，有些不需要。</p>
+</blockquote>
+
+<p><strong>俄罗斯轮盘赌</strong>是一种无偏的随机终止策略，核心思想是：</p>
+
+<blockquote>
+<p>每条光线以概率 q 终止，以概率 (1-q) 继续，但继续时颜色结果要除以 (1-q) 以保持期望值不变。</p>
+</blockquote>
+
+<p><strong>公式表达：</strong></p>
+
+<pre><code><span class="comment">// 俄罗斯轮盘赌</span>
+P = survival_prob（生存概率，如 <span class="number">0.7</span>）
+
+if random() &gt; P:
+  <span class="comment">// 光线"死亡"——终止追踪</span>
+  <span class="keyword">return</span> Color(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)
+<span class="keyword">else</span>:
+  <span class="comment">// 光线继续追踪，但颜色要除以P补偿</span>
+  color = trace_recur(ray, scene, depth + <span class="number">1</span>)
+  <span class="keyword">return</span> color / P</code></pre>
+
+<p><strong>为什么这保持了期望不变？</strong></p>
+
+<p>期望值计算：</p>
+
+<div class="formula">E[result] = P × (E[color] / P) + (1-P) × 0 = E[color]</div>
+
+<p><strong>数字例子：</strong></p>
+
+<p>假设到第5次反射时：</p>
+<ul>
+  <li>生存概率 P = 0.7</li>
+  <li>如果继续追踪，返回的颜色贡献为 (0.3, 0.5, 0.2)</li>
+  <li>random() = 0.52（活着!） → 最终返回 (0.3/0.7, 0.5/0.7, 0.2/0.7) = (0.429, 0.714, 0.286)</li>
+</ul>
+
+<p>第6次反射时：</p>
+<ul>
+  <li>生存概率 P = 0.7</li>
+  <li>random() = 0.88（死了!）→ 返回 (0, 0, 0)，这条路径终止</li>
+</ul>
+
+<p>长期来看，有70%的光线会继续，30%会终止，但蒙特卡洛期望值等于真实值。</p>
+
+<p><strong>结合最大深度的完整策略：</strong></p>
+
+<pre><code><span class="function">function</span> trace(ray, scene, depth):
+  if depth &gt; max_depth:
+    <span class="comment">// 一定深度后使用俄罗斯轮盘赌</span>
+    P = <span class="number">0.7</span>
+    if random() &gt; P:
+      <span class="keyword">return</span> Color(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)
+  <span class="keyword">else</span>:
+    <span class="comment">// 浅层递归直接继续</span>
+    P = <span class="number">1.0</span>
+  
+  hit = scene.intersect(ray)
+  if no hit:
+    <span class="keyword">return</span> background_color
+  
+  color = local_shading(hit)
+  
+  <span class="comment">// 反射</span>
+  if hit.material.reflective:
+    refl_ray = make_reflection(ray, hit)
+    refl_color = trace(refl_ray, scene, depth + <span class="number">1</span>)
+    color += hit.material.ks * refl_color / P
+  
+  <span class="keyword">return</span> color</code></pre>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：俄罗斯轮盘赌和普通最大深度截断相比有什么好处？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">普通截断会在固定深度处粗暴截断，造成"能量丢失"（看起来暗）。轮盘赌使终止变得平滑，能量损失为0（期望意义上），同时平均计算量可控。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="4-7-加速结构">4.7 加速结构</h2>
+
+<h3 id="4-7-1-为什么要加速">4.7.1 为什么要加速？</h3>
+
+<p>暴力测试所有三角形是不现实的：</p>
+
+<pre><code>100万三角形 × 1920×1080像素 × 每条光线测试所有三角形 = 2万亿次求交！
+即使每次求交只要1纳秒，也需要2000秒（半小时以上）渲染一帧。</code></pre>
+
+<p><strong>解决方案</strong>：空间加速结构——快速排除不可能相交的区域。</p>
+
+<h3 id="4-7-2-包围盒层次结构-bvh">4.7.2 包围盒层次结构（BVH）</h3>
+
+<blockquote>
+<p><strong>生活类比：俄罗斯套娃（Matryoshka）</strong></p>
+<p>想象一套俄罗斯套娃——最小的娃娃放在稍大的娃娃里面，稍大的再放在更大的里面……你要找某个特定的娃娃时：</p>
+<ul>
+  <li>先打开最大的娃娃，里面有一堆中等的娃娃</li>
+  <li>你知道要找的娃娃在左边那个中等娃娃里，所以右边的不用管了</li>
+  <li>打开左边中等娃娃，里面有几个更小的</li>
+  <li>如此反复，直到找到你要的娃娃</li>
+</ul>
+<p>BVH的工作原理完全一样：场景被组织成一棵树，每个节点是一个"娃娃"（包围盒），里面装着"更小的娃娃"（子节点）或"真正的娃娃"（三角形）。遍历时，如果光线没碰到大娃娃，它里面的所有小娃娃都不用检查。</p>
+</blockquote>
+
+<div class="guizang-figure">
+<img src="images/ch04/bvh_acceleration.png" alt="BVH 包围盒层次结构">
+<div class="guizang-caption">图4-6：BVH层次结构——场景被递归划分为包围盒，光线测试时快速排除不相交的区域</div>
+</div>
+
+<pre><code>BVH结构示意图：
+
+        场景（最大的套娃）
+        /             \
+  左半场景          右半场景
+   (中等娃娃)       (中等娃娃)
+    /      \          /      \
+  物体A    物体B    物体C    物体D
+ (小娃娃)  (小娃娃) (小娃娃)  (小娃娃)</code></pre>
+
+<p><strong>BVH节点数据结构：</strong></p>
+
+<pre><code><span class="keyword">struct</span> BVHNode:
+  bbox: AABB         <span class="comment">// 包围盒（大娃娃的外壳）</span>
+  left: BVHNode*     <span class="comment">// 左子节点</span>
+  right: BVHNode*    <span class="comment">// 右子节点</span>
+  triangles: List    <span class="comment">// 只有叶子节点有三角形</span>
+  is_leaf: bool      <span class="comment">// 是否为叶子节点</span></code></pre>
+
+<p><strong>BVH遍历算法（递归版本）：</strong></p>
+
+<pre><code><span class="function">function</span> intersect_bvh(node, ray):
+  <span class="comment">// 第1步：如果光线没碰到当前节点的包围盒，直接返回</span>
+  <span class="comment">// 这就好比打开大娃娃发现连外壳都碰不到，根本不用继续拆</span>
+  if <span class="keyword">not</span> intersect_bbox(node.bbox, ray):
+    <span class="keyword">return</span> NO_HIT
+  
+  <span class="comment">// 第2步：如果是叶子节点，测试所有三角形</span>
+  if node.is_leaf:
+    closest = NO_HIT
+    <span class="keyword">for</span> tri <span class="keyword">in</span> node.triangles:
+      hit = intersect_triangle(tri, ray)
+      if hit <span class="keyword">and</span> hit.t &lt; closest.t:
+        closest = hit
+    <span class="keyword">return</span> closest
+  
+  <span class="comment">// 第3步：如果是内部节点，递归测试子节点</span>
+  <span class="comment">// 注意：先测近的子节点，这样可以利用"近处裁剪"加速</span>
+  hit_left = intersect_bvh(node.left, ray)
+  hit_right = intersect_bvh(node.right, ray)
+  
+  <span class="comment">// 返回最近的交点</span>
+  <span class="keyword">return</span> closer_of(hit_left, hit_right)</code></pre>
+
+<p><strong>BVH构建（SAH启发式划分）：</strong></p>
+
+<pre><code><span class="function">function</span> build_bvh(triangles, depth):
+  <span class="comment">// 计算所有三角形的包围盒</span>
+  bbox = union_of_bboxes(triangles)
+  
+  if triangles.count &lt;= MAX_LEAF_SIZE <span class="keyword">or</span> depth &gt; MAX_DEPTH:
+    <span class="comment">// 叶子节点：直接存三角形</span>
+    <span class="keyword">return</span> <span class="keyword">new</span> BVHNode(is_leaf=<span class="number">true</span>, triangles=triangles, bbox=bbox)
+  
+  <span class="comment">// 沿着最长的坐标轴划分</span>
+  axis = longest_axis(bbox)
+  
+  <span class="comment">// 按轴排序三角形中心</span>
+  sort_triangles_by_center(triangles, axis)
+  
+  <span class="comment">// 在中间位置划分</span>
+  mid = triangles.count / <span class="number">2</span>
+  left_tris = triangles[<span class="number">0</span>:mid]
+  right_tris = triangles[mid:]
+  
+  <span class="comment">// 递归构建</span>
+  <span class="keyword">return</span> <span class="keyword">new</span> BVHNode(
+    is_leaf=<span class="number">false</span>,
+    bbox=bbox,
+    left=build_bvh(left_tris, depth+<span class="number">1</span>),
+    right=build_bvh(right_tris, depth+<span class="number">1</span>)
+  )</code></pre>
+
+<p><strong>BVH vs. 其他加速结构：</strong></p>
+
+<table>
+<tr><th>加速结构</th><th>优点</th><th>缺点</th></tr>
+<tr><td>BVH</td><td>构建简单，动态场景易更新</td><td>非均匀场景效率略低</td></tr>
+<tr><td>KD-Tree</td><td>均匀场景最优</td><td>构建复杂，内存占用大</td></tr>
+<tr><td>均匀网格</td><td>实现最简单，动态场景友好</td><td>内存占用大，"空单元格"浪费</td></tr>
+<tr><td>八叉树</td><td>自适应空间划分</td><td>实现复杂，对光线追踪不如BVH常见</td></tr>
+</table>
+
+<hr>
+
+<h2 id="4-8-完整光线追踪器实现框架">4.8 完整光线追踪器实现框架</h2>
+
+<p>把以上所有概念组装起来：</p>
+
+<pre><code><span class="function">function</span> render_scene():
+  <span class="comment">// 准备场景</span>
+  scene = load_scene(<span class="string">"scene.obj"</span>)
+  bvh = build_bvh(scene.triangles)  <span class="comment">// 构建BVH加速结构</span>
+  
+  <span class="comment">// 准备相机</span>
+  camera = Camera(eye=vec3(<span class="number">0</span>,<span class="number">0</span>,<span class="number">5</span>), gaze=vec3(<span class="number">0</span>,<span class="number">0</span>,-<span class="number">1</span>), up=vec3(<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>))
+  
+  <span class="comment">// 渲染循环</span>
+  <span class="keyword">for</span> j <span class="keyword">in</span> <span class="number">0</span>..height-<span class="number">1</span>:
+    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span>..width-<span class="number">1</span>:
+      <span class="comment">// 生成光线</span>
+      u = l + (r - l) * (i + <span class="number">0.5</span>) / width
+      v = b + (t - b) * (j + <span class="number">0.5</span>) / height
+      ray_dir = normalize(u * camera.u + v * camera.v - d * camera.w)
+      ray = Ray(camera.eye, ray_dir)
+      
+      <span class="comment">// 追踪光线（递归深度从0开始）</span>
+      color = trace(ray, scene, bvh, depth=<span class="number">0</span>)
+      
+      <span class="comment">// 设置像素颜色</span>
+      image.set_pixel(i, j, color)
+  
+  save_image(image, <span class="string">"output.png"</span>)
+
+<span class="function">function</span> trace(ray, scene, bvh, depth):
+  <span class="comment">// 最大深度限制</span>
+  if depth &gt; MAX_DEPTH:
+    <span class="keyword">return</span> Color(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)
+  
+  <span class="comment">// 使用BVH加速求交</span>
+  hit = bvh.intersect(ray, scene)
+  
+  if <span class="keyword">not</span> hit:
+    <span class="keyword">return</span> scene.background_color
+  
+  <span class="comment">// 漫反射+高光着色</span>
+  color = simple_shade(hit, scene.lights)
+  
+  <span class="comment">// 反射递归</span>
+  if hit.material.reflectivity &gt; <span class="number">0</span>:
+    refl_dir = ray.direction - <span class="number">2</span> * dot(ray.direction, hit.normal) * hit.normal
+    refl_ray = Ray(hit.point + <span class="number">1e-4</span> * hit.normal, refl_dir)
+    refl_color = trace(refl_ray, scene, bvh, depth + <span class="number">1</span>)
+    color += hit.material.reflectivity * refl_color
+  
+  <span class="comment">// 阴影</span>
+  <span class="keyword">for</span> light <span class="keyword">in</span> scene.lights:
+    shadow_dir = normalize(light.position - hit.point)
+    shadow_ray = Ray(hit.point + <span class="number">1e-4</span> * hit.normal, shadow_dir)
+    if bvh.intersect(shadow_ray, scene) <span class="keyword">is not</span> <span class="keyword">None</span>:
+      color *= <span class="number">0.3</span>  <span class="comment">// 阴影衰减</span>
+  
+  <span class="comment">// 俄罗斯轮盘赌</span>
+  if depth &gt; <span class="number">3</span>:
+    p = <span class="number">0.7</span>
+    if random() &gt; p:
+      color = Color(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)
+    <span class="keyword">else</span>:
+      color = color / p
+  
+  <span class="keyword">return</span> color</code></pre>
+
+<hr>
+
+<h2 id="全章总结">全章总结</h2>
+
+<blockquote>
+<p><strong>核心洞察</strong>：光线追踪的核心思想极其简单——对每个像素发射一条光线，找到它碰到的第一个物体。但"简单"不意味着"不强大"：</p>
+</blockquote>
+
+<table>
+<tr><th>步骤</th><th>核心操作</th><th>关键公式/算法</th></tr>
+<tr><td><strong>发射光线</strong></td><td>从摄像机穿过像素中心</td><td><code>u = l + (r-l)(i+0.5)/nx</code></td></tr>
+<tr><td><strong>球体求交</strong></td><td>求解二次方程 At²+Bt+C=0</td><td>A=d·d, B=2m·d, C=m·m-R²</td></tr>
+<tr><td><strong>三角形求交</strong></td><td>Möller-Trumbore算法</td><td>Cramer法则求解t, β, γ</td></tr>
+<tr><td><strong>反射</strong></td><td>反射方向公式</td><td>r = d - 2(d·n)n</td></tr>
+<tr><td><strong>着色</strong></td><td>计算表面颜色</td><td>（详见第5章）</td></tr>
+<tr><td><strong>加速</strong></td><td>BVH层次包围盒</td><td>俄罗斯套娃式递归排除</td></tr>
+<tr><td><strong>终止</strong></td><td>俄罗斯轮盘赌</td><td>随机终止 + 期望补偿</td></tr>
+</table>
+
+<p><strong>一句话总结</strong>：光线追踪 = 对每个像素发射光线 → 求交 → 着色 → 递归反射/折射，用BVH加速，用俄罗斯轮盘赌优雅终止。</p>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li class="active"><a href="ch04_光线追踪.html" class="active">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#4-1-基本光线追踪算法">4.1 基本光线追踪算法</a></li>
+  <li class="toc-h3"><a href="#4-1-1-核心思想">4.1.1 核心思想</a></li>
+  <li class="toc-h3"><a href="#4-1-2-为什么光线追踪这么重要">4.1.2 为什么光线追踪这么重要？</a></li>
+  <li class="toc-h2"><a href="#4-2-透视投影的几何基础">4.2 透视投影的几何基础</a></li>
+  <li class="toc-h3"><a href="#4-2-1-针孔相机模型">4.2.1 针孔相机模型</a></li>
+  <li class="toc-h3"><a href="#4-2-2-相机坐标系">4.2.2 相机坐标系</a></li>
+  <li class="toc-h3"><a href="#4-2-3-视平面参数">4.2.3 视平面参数</a></li>
+  <li class="toc-h2"><a href="#4-3-光线生成">4.3 光线生成</a></li>
+  <li class="toc-h3"><a href="#4-3-1-光线参数方程">4.3.1 光线参数方程</a></li>
+  <li class="toc-h3"><a href="#4-3-2-像素坐标到视平面的映射-核心公式">4.3.2 像素坐标到视平面的映射（核心公式）</a></li>
+  <li class="toc-h3"><a href="#4-3-3-从视平面到光线方向">4.3.3 从视平面到光线方向</a></li>
+  <li class="toc-h3"><a href="#4-3-4-特殊情况-正交投影">4.3.4 特殊情况：正交投影</a></li>
+  <li class="toc-h2"><a href="#4-4-光线与物体求交">4.4 光线与物体求交</a></li>
+  <li class="toc-h3"><a href="#4-4-1-光线与球体求交-完整推导">4.4.1 光线与球体求交（完整推导）</a></li>
+  <li class="toc-h3"><a href="#4-4-2-光线与三角形求交-möller-trumbore算法">4.4.2 光线与三角形求交（Möller-Trumbore算法）</a></li>
+  <li class="toc-h3"><a href="#4-4-3-光线与平面求交-扩展">4.4.3 光线与平面求交（扩展）</a></li>
+  <li class="toc-h2"><a href="#4-5-着色与阴影">4.5 着色与阴影</a></li>
+  <li class="toc-h3"><a href="#4-5-1-局部光照">4.5.1 局部光照</a></li>
+  <li class="toc-h3"><a href="#4-5-2-阴影测试">4.5.2 阴影测试</a></li>
+  <li class="toc-h2"><a href="#4-6-递归光线追踪">4.6 递归光线追踪</a></li>
+  <li class="toc-h3"><a href="#4-6-1-反射光线的几何推导-三段式">4.6.1 反射光线的几何推导（三段式）</a></li>
+  <li class="toc-h3"><a href="#4-6-2-折射-斯涅尔定律">4.6.2 折射（斯涅尔定律）</a></li>
+  <li class="toc-h3"><a href="#4-6-3-终止策略-俄罗斯轮盘赌-russian-roulette">4.6.3 终止策略：俄罗斯轮盘赌（Russian Roulette）</a></li>
+  <li class="toc-h2"><a href="#4-7-加速结构">4.7 加速结构</a></li>
+  <li class="toc-h3"><a href="#4-7-1-为什么要加速">4.7.1 为什么要加速？</a></li>
+  <li class="toc-h3"><a href="#4-7-2-包围盒层次结构-bvh">4.7.2 包围盒层次结构（BVH）</a></li>
+  <li class="toc-h2"><a href="#4-8-完整光线追踪器实现框架">4.8 完整光线追踪器实现框架</a></li>
+  <li class="toc-h2"><a href="#全章总结">全章总结</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

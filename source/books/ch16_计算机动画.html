@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch16: 计算机动画</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch16 计算机动画</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第16章：计算机动画（Computer Animation）— 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第16章（p.429-458）。<br>
+<strong>本章是图形学的"运动"</strong>——它告诉你：怎么让3D物体"动起来"。<br>
+学完本章，你将真正理解 Keyframe、Forward/Inverse Kinematics、Physics-Based Animation、Particle System、Boids Flocking 等核心技术。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s16-1">16.1 动画的12条原则</a></li>
+  <li><a href="#s16-2">16.2 关键帧与插值</a></li>
+  <li><a href="#s16-3">16.3 插值旋转</a></li>
+  <li><a href="#s16-4">16.4 变形技术</a></li>
+  <li><a href="#s16-5">16.5 角色动画：骨骼、FK、IK、Skinning</a></li>
+  <li><a href="#s16-6">16.6 基于物理的动画</a></li>
+  <li><a href="#s16-7">16.7 过程化技术</a></li>
+  <li><a href="#s16-8">16.8 群体动画与总结</a></li>
+</ul>
+</div>
+
+<hr>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+  <li>理解动画的12条原则（Disney）</li>
+  <li>掌握Keyframing和Catmull-Rom样条</li>
+  <li>理解3种旋转表示：Euler / Quaternion / Axis-Angle</li>
+  <li>掌握Forward Kinematics vs Inverse Kinematics</li>
+  <li>掌握Skinning（骨骼蒙皮）</li>
+  <li>掌握Physics-Based Animation（布料/流体/碰撞）</li>
+  <li>掌握Procedural Animation（粒子/L-system/Boids）</li>
+  <li>理解群体动画（Flocking）</li>
+</ol>
+
+<hr>
+
+<h2 id="16-1-动画的12条原则">16.1 动画的12条原则</h2>
+
+<h3 id="16-1-1-disney的遗产">16.1.1 Disney的遗产</h3>
+
+<p>1981年，迪士尼资深动画师 Ollie Johnston 和 Frank Thomas 出版了《The Illusion of Life》一书，总结了<strong>12条动画基本原则</strong>。这些原则来自几十年手工动画经验，至今仍是3D计算机动画的黄金准则。</p>
+
+<table>
+<tr><th>#</th><th>原则</th><th>含义</th><th>3D实现</th></tr>
+<tr><td>1</td><td><strong>Squash &amp; Stretch</strong></td><td>挤压和拉伸——物体运动时形状变化</td><td>骨骼缩放/变形器</td></tr>
+<tr><td>2</td><td><strong>Anticipation</strong></td><td>预备动作——起跳前先下蹲</td><td>关键帧中插入反向运动</td></tr>
+<tr><td>3</td><td><strong>Staging</strong></td><td>舞台化——让观众注意关键动作</td><td>相机镜头+灯光引导</td></tr>
+<tr><td>4</td><td><strong>Straight Ahead / Pose to Pose</strong></td><td>逐帧画 vs 关键帧+中间帧</td><td>关键帧动画</td></tr>
+<tr><td>5</td><td><strong>Follow Through</strong></td><td>跟随动作——头发/披风滞后</td><td>物理模拟/弹簧系统</td></tr>
+<tr><td>6</td><td><strong>Slow In / Slow Out</strong></td><td>缓入缓出——开始和结束慢，中间快</td><td>动画曲线（缓动函数）</td></tr>
+<tr><td>7</td><td><strong>Arcs</strong></td><td>弧线运动——几乎所有自然运动都是弧线</td><td>Catmull-Rom/Bézier曲线</td></tr>
+<tr><td>8</td><td><strong>Secondary Action</strong></td><td>次要动作——走路时手臂摆动+呼吸</td><td>分层动画/混合</td></tr>
+<tr><td>9</td><td><strong>Timing</strong></td><td>时机——速度决定情感和含义</td><td>关键帧间距控制速度</td></tr>
+<tr><td>10</td><td><strong>Exaggeration</strong></td><td>夸张——突出动作特点</td><td>关键帧幅度放大</td></tr>
+<tr><td>11</td><td><strong>Solid Drawing</strong></td><td>立体感——3D空间中的重量和体积</td><td>3D建模+光照</td></tr>
+<tr><td>12</td><td><strong>Appeal</strong></td><td>魅力——角色的吸引力</td><td>角色设计+动作风格</td></tr>
+</table>
+
+<div class="key-box">
+<strong>⚡ 核心洞察</strong>：这些原则中，<strong>Squash &amp; Stretch</strong>、<strong>Anticipation</strong>、<strong>Follow Through</strong> 是"让动画生动"的最关键三条。没有它们，再好的3D模型也像木偶。这也是为什么游戏动画和电影动画差距最大的地方——电影精心设计了这些细节，游戏受限于实时性。
+</div>
+
+<hr>
+
+<h2 id="16-2-关键帧与插值">16.2 关键帧与插值</h2>
+
+<div class="guizang-figure">
+<img src="images/ch16/ch16_keyframe.png" alt="关键帧插值">
+<div class="guizang-caption">图16-1：关键帧插值——时间轴上大黑点（关键帧）之间由系统自动生成中间帧</div>
+</div>
+
+<h3 id="16-2-1-关键帧思想">16.2.1 关键帧思想</h3>
+
+<div class="term-box">
+<strong>核心定义</strong>：Keyframe = "动画师指定少数关键状态，系统自动插值生成中间帧"
+</div>
+
+<p><strong>工作流程</strong>：</p>
+<ol>
+  <li>动画师在时间轴上的几个关键点设置物体的位置/旋转/缩放</li>
+  <li>系统在这些关键点之间插值，生成所有的中间帧</li>
+  <li>动画师调整插值曲线（缓入缓出）来控制速度感</li>
+</ol>
+
+<p><strong>优势</strong>：</p>
+<ul>
+  <li>不用画每一帧——效率提升数百倍</li>
+  <li>艺术家掌控关键点的节奏</li>
+  <li>修改一个关键帧不影响其他帧（局部控制）</li>
+</ul>
+
+<h3 id="16-2-2-动画曲线-animation-curves">16.2.2 动画曲线（Animation Curves）</h3>
+
+<p>关键帧之间用什么曲线插值？</p>
+
+<table>
+<tr><th>插值方式</th><th>连续度</th><th>效果</th><th>使用场景</th></tr>
+<tr><td><strong>线性插值</strong></td><td>C⁰</td><td>生硬，速度突变</td><td>机械运动</td></tr>
+<tr><td><strong>Catmull-Rom</strong></td><td>C¹</td><td>平滑，自动缓入缓出</td><td><strong>行业标准</strong></td></tr>
+<tr><td><strong>Hermite（TCB）</strong></td><td>C¹</td><td>可独立控制tension/continuity/bias</td><td>高级动画编辑</td></tr>
+<tr><td><strong>Bézier</strong></td><td>G¹</td><td>直观的切线手柄</td><td>Maya/Blender默认</td></tr>
+</table>
+
+<h3 id="16-2-3-tcb控件-kochanek-bartels">16.2.3 TCB控件（Kochanek-Bartels）</h3>
+
+<p>TCB是三个参数的缩写，它们控制曲线在每个关键点处的行为：</p>
+
+<table>
+<tr><th>参数</th><th>范围</th><th>默认值</th><th>负值效果</th><th>正值效果</th></tr>
+<tr><td><strong>Tension（紧绷度）</strong></td><td>[-1, 1]</td><td>0</td><td>曲线松弛（像橡皮筋）</td><td>曲线紧绷（接近直线）</td></tr>
+<tr><td><strong>Continuity（连续度）</strong></td><td>[-1, 1]</td><td>0</td><td>曲线"急转"（停顿感）</td><td>曲线"弹回"（回弹感）</td></tr>
+<tr><td><strong>Bias（偏向度）</strong></td><td>[-1, 1]</td><td>0</td><td>曲线偏向关键点之后</td><td>曲线偏向关键点之前</td></tr>
+</table>
+
+<div class="info-box">
+<strong>💡 游戏开发实战</strong>：Maya/Blender/Unity的动画曲线编辑器都基于TCB/Bézier控制。理解Tension/Continuity/Bias = 掌握了专业动画节奏调整的核心。
+</div>
+
+<h3 id="16-2-4-弧长参数化与速度控制">16.2.4 弧长参数化与速度控制</h3>
+
+<p><strong>问题</strong>：参数u在曲线上走"等距不是等弧长"。u从0走到0.1可能只移动了很短距离，而从0.5走到0.6移动了很长距离。所以直接用u控制速度是不对的。</p>
+
+<p><strong>解决方案</strong>：</p>
+<div class="formula">s(u) = ∫₀ᵘ ||df/du|| du</div>
+
+<p>s(u)称为<strong>弧长函数</strong>，它把参数u映射到实际走过的距离。</p>
+
+<p><strong>实际做法</strong>：</p>
+<ol>
+  <li><strong>预计算</strong>：在曲线上采样N个点，累加距离，建立u→s的查找表</li>
+  <li><strong>查表</strong>：给定目标距离s，在表中查找对应的u</li>
+  <li><strong>插值</strong>：在表项之间线性插值得到精确的u</li>
+  <li><strong>求值</strong>：用u计算f(u)</li>
+</ol>
+
+<div class="key-box">
+<strong>⚡ 核心洞察</strong>：速度控制vs参数控制 = 专业动画师和业余动画的根本区别。业余动画用等参数间隔（导致速度不均匀），专业动画用"距离-时间函数"精确控制速度曲线。
+</div>
+
+<hr>
+
+<h2 id="16-3-插值旋转">16.3 插值旋转</h2>
+
+<h3 id="16-3-1-旋转的挑战">16.3.1 旋转的挑战</h3>
+
+<p>3D旋转比3D位置复杂得多。位置是3D向量（直接线性插值即可），但旋转不是向量——它有特殊的结构。</p>
+
+<div class="guizang-figure">
+<img src="images/ch16/ch16_quaternion.png" alt="四元数vs欧拉角">
+<div class="guizang-caption">图16-2：四元数（右，4D球面上平滑旋转）vs欧拉角（左，万向锁问题）</div>
+</div>
+
+<h3 id="16-3-2-3种旋转表示对比">16.3.2 3种旋转表示对比</h3>
+
+<table>
+<tr><th>表示</th><th>自由度</th><th>优点</th><th>缺点</th></tr>
+<tr><td><strong>欧拉角（Euler）</strong></td><td>3（X,Y,Z角度）</td><td>直观、易理解</td><td><strong>万向锁</strong>（Gimbal Lock）、插值不直</td></tr>
+<tr><td><strong>轴-角（Axis-Angle）</strong></td><td>4（轴向量+角度）</td><td>直观、无万向锁</td><td>插值困难（直接线性插值会导致旋转加速）</td></tr>
+<tr><td><strong>四元数（Quaternion）</strong></td><td>4（w,x,y,z）</td><td><strong>无万向锁</strong>、插值平滑</td><td>不直观、调试困难</td></tr>
+</table>
+
+<h3 id="16-3-3-欧拉角与万向锁">16.3.3 欧拉角与万向锁</h3>
+
+<p><strong>万向锁（Gimbal Lock）</strong>：当绕一个轴旋转90°时，另外两个轴变得"等效"——失去1个自由度。</p>
+
+<p><strong>数值例子</strong>：</p>
+<pre><code>初始旋转 (0°, 0°, 0°) → 普通方向
+旋转到 (0°, 90°, 0°) → 万向锁！
+现在绕X轴和Z轴的旋转效果相同 → 你"丢了一个轴"
+
+目标旋转 (90°, 90°, 0°) → 应该朝向某个方向
+但欧拉角插值会走"弯路"：先绕Y轴90°，再绕X轴90°
+而正确的路径应该是直接旋转 → 插值错误</code></pre>
+
+<p><strong>一个具体的数学问题</strong>：旋转0°和180°的插值。</p>
+<div class="formula-small">(0°, 0°, 0°) 到 (0°, 0°, 180°)</div>
+<p>直接线性插值欧拉角：中间帧 = (0°, 0°, 90°)——这是正确的。但如果绕不同轴：</p>
+<div class="formula-small">(0°, 0°, 0°) 到 (180°, 0°, 0°)</div>
+<p>中间帧 = (90°, 0°, 0°)——也正确。但是！如果先做90°Y轴旋转再绕X轴：</p>
+<pre><code>中间状态 (90°, 90°, 0°) → 这个方向和 (90°, 0°, 90°) 是相同旋转！
+但是路径完全不同——这就是万向锁的插值错乱。</code></pre>
+
+<h3 id="16-3-4-四元数与slerp插值">16.3.4 四元数与SLERP插值</h3>
+
+<p><strong>四元数 = 4D单位球上的点</strong></p>
+<div class="formula">q = (w, x, y, z), ||q|| = 1</div>
+<p>它表示绕轴(x,y,z)旋转角度2·arccos(w)。</p>
+
+<p><strong>SLERP（球面线性插值）</strong>：</p>
+<div class="formula">Slerp(q₁, q₂, t) = sin((1-t)θ)/sinθ · q₁ + sin(tθ)/sinθ · q₂</div>
+
+<p><strong>逐符号拆解</strong>：</p>
+<ul>
+  <li><strong>q₁, q₂</strong> = 起始和结束四元数（4D单位球上的点）</li>
+  <li><strong>θ</strong> = q₁和q₂之间的夹角 = arccos(q₁·q₂)</li>
+  <li><strong>t</strong> = 插值参数（0→在q₁，1→在q₂）</li>
+  <li><strong>sin((1-t)θ)</strong> = 球面上沿大圆路径走"剩余角度"的权重</li>
+  <li><strong>sin(tθ)</strong> = 球面上沿大圆路径走"已走角度"的权重</li>
+  <li><strong>÷sinθ</strong> = 归一化因子，确保总权重和为1</li>
+</ul>
+
+<div class="trans-box">
+<strong>用中文说就是</strong>：SLERP在4D球面上画出一条大圆弧（最短路径），旋转从q₁平滑过渡到q₂。因为是在"球面"上而不是直线上插值，所以旋转速度是均匀的，不会出现欧拉角的轴错乱。
+</div>
+
+<div class="info-box">
+<strong>💡 游戏开发实战</strong>：Unity / Unreal引擎默认使用四元数存储旋转，API都提供Quaternion.Slerp()。动画师在Maya/Blender中用欧拉角编辑（直观），导出时自动转成四元数（插值时用）。
+</div>
+
+<hr>
+
+<h2 id="16-4-变形技术">16.4 变形技术</h2>
+
+<h3 id="16-4-1-全局变形">16.4.1 全局变形</h3>
+
+<table>
+<tr><th>变形类型</th><th>效果</th><th>公式</th></tr>
+<tr><td><strong>Bend（弯曲）</strong></td><td>物体沿一个轴弯曲</td><td>θ = k·x, 点绕弯曲轴旋转</td></tr>
+<tr><td><strong>Twist（扭曲）</strong></td><td>物体两端相对旋转</td><td>θ = k·y, 比例随高度变化</td></tr>
+<tr><td><strong>Taper（锥化）</strong></td><td>物体一端大一端小</td><td>s = 1 - k·y, 点按比例缩放</td></tr>
+<tr><td><strong>Squash（挤压）</strong></td><td>压扁或拉长</td><td>整体缩放（非均匀）</td></tr>
+</table>
+
+<h3 id="16-4-2-ffd-free-form-deformation">16.4.2 FFD（Free-Form Deformation）</h3>
+
+<div class="term-box">
+<strong>核心定义</strong>：FFD = "用控制网格变形物体"——把物体包在3D网格中，移动网格点→物体跟随变形
+</div>
+
+<p><strong>公式</strong>（3D三角Bézier张量积）：</p>
+<div class="formula">P(s,t,u) = Σᵢ Σⱼ Σₖ b_i(s) · b_j(t) · b_k(u) · p_{i,j,k}</div>
+
+<p><strong>工作流程</strong>：</p>
+<ol>
+  <li>建立一个3D控制网格（lattice），把要变形的物体包在里面</li>
+  <li>计算物体每个顶点在网格中的局部坐标(s,t,u)</li>
+  <li>动画师移动网格的控制点（就像操作Bézier曲线一样）</li>
+  <li>对每个顶点，用三线性Bernstein基函数计算新的位置</li>
+</ol>
+
+<div class="info-box">
+<strong>💡 应用</strong>：Maya/Blender的Lattice Modifier就是FFD——用于角色表情、肌肉鼓起、布料褶皱等精细变形。
+</div>
+
+<hr>
+
+<h2 id="16-5-角色动画-骨骼-fk-ik-skinning">16.5 角色动画：骨骼、FK、IK、Skinning</h2>
+
+<div class="guizang-figure">
+<img src="images/ch16/ch16_fkik.png" alt="骨骼层次链FK/IK">
+<div class="guizang-caption">图16-3：骨骼层次链——FK从根到末端（蓝色箭头），IK从末端到根（红色箭头），关节为黑色圆点</div>
+</div>
+
+<h3 id="16-5-1-骨骼层次-skeleton-hierarchy">16.5.1 骨骼层次（Skeleton Hierarchy）</h3>
+
+<p>角色动画的核心：用<strong>骨骼</strong>（Bones/Joints）的层次结构驱动<strong>皮肤</strong>（Mesh Vertices）的变形。</p>
+
+<pre><code><span class="comment"># 人体骨骼层次结构（简化）</span>
+Root（骨盆）
+├── Spine（脊柱）
+│   ├── Neck（脖子）
+│   │   └── Head（头）
+│   └── L_Shoulder（左肩）
+│       ├── L_Elbow（左肘）
+│       │   └── L_Hand（左手）
+└── R_Hip（右髋）
+    ├── R_Knee（右膝）
+    │   └── R_Ankle（右脚踝）
+    │       └── R_Toe（右脚尖）
+
+<span class="comment"># 每个关节存储：</span>
+<span class="comment"># - 局部变换（相对父关节的位置/旋转）</span>
+<span class="comment"># - 世界变换（通过从根到该节点连乘计算）</span></code></pre>
+
+<h3 id="16-5-2-正向运动学-forward-kinematics--fk">16.5.2 正向运动学（Forward Kinematics, FK）</h3>
+
+<div class="term-box">
+<strong>核心定义</strong>：FK = "从根出发，按关节角计算每个子关节的世界位置"
+</div>
+
+<pre><code><span class="function">def</span> forward_kinematics(joints):
+    <span class="comment"># 从根关节开始，深度优先遍历</span>
+    <span class="keyword">for</span> joint <span class="keyword">in</span> joints:
+        <span class="keyword">if</span> joint.parent <span class="keyword">is</span> <span class="keyword">None</span>:
+            joint.world_pos = joint.local_pos      <span class="comment"># 根关节</span>
+        <span class="keyword">else</span>:
+            <span class="comment"># 当前关节的世界位置 = 父关节的世界位置 + 旋转后的局部偏移</span>
+            R = joint.parent.rotation              <span class="comment"># 父关节的旋转矩阵</span>
+            joint.world_pos = joint.parent.world_pos + R * joint.local_pos
+        
+        <span class="comment"># 注意：旋转会级联传递（子关节继承父关节的旋转）</span>
+        joint.world_rotation = joint.parent.world_rotation * joint.local_rotation</code></pre>
+
+<table>
+<tr><th>特性</th><th>FK</th><th>IK</th></tr>
+<tr><td>输入</td><td>所有关节角度</td><td>目标末端位置</td></tr>
+<tr><td>输出</td><td>末端位置</td><td>所有关节角度</td></tr>
+<tr><td>控制方式</td><td>手动调每个关节</td><td>指定末端，自动算关节</td></tr>
+<tr><td>适用场景</td><td>全身动作（走路、跳舞）</td><td>脚踩地、手拿东西</td></tr>
+<tr><td>计算复杂度</td><td>O(n)，简单</td><td>O(n³)甚至更慢，需要迭代</td></tr>
+</table>
+
+<h3 id="16-5-3-逆向运动学-inverse-kinematics--ik">16.5.3 逆向运动学（Inverse Kinematics, IK）</h3>
+
+<div class="term-box">
+<strong>核心定义</strong>：IK = "指定末端位置（如脚的位置），反算每个关节的角度"
+</div>
+
+<p><strong>数学形式</strong>：</p>
+<div class="formula">p_target - p_current = J · Δα</div>
+<p>其中J是Jacobian矩阵：J_{ij} = ∂pᵢ/∂αⱼ</p>
+
+<p><strong>逐符号拆解</strong>：</p>
+<ul>
+  <li><strong>p_target</strong> = 目标末端位置（你想让手碰到的地方）</li>
+  <li><strong>p_current</strong> = 当前末端位置</li>
+  <li><strong>Δα</strong> = 关节角度的变化量（未知数，要求解的）</li>
+  <li><strong>J</strong> = Jacobian矩阵——每个元素∂pᵢ/∂αⱼ表示"第j个关节转一点，末端位置第i分量变多少"</li>
+</ul>
+
+<p><strong>CCD算法（Cyclic Coordinate Descent）——最简单的IK求解</strong>：</p>
+<pre><code><span class="function">def</span> ik_ccd(joints, target_pos, max_iterations=<span class="number">10</span>):
+    <span class="keyword">for</span> iter <span class="keyword">in</span> range(max_iterations):
+        <span class="comment"># 从末端关节开始，反向调整每个关节</span>
+        <span class="keyword">for</span> i <span class="keyword">in</span> range(len(joints)-<span class="number">1</span>, -<span class="number">1</span>, -<span class="number">1</span>):
+            joint = joints[i]
+            
+            <span class="comment"># 计算从当前关节到末端的方向</span>
+            to_end = end_effector_pos - joint.world_pos
+            <span class="comment"># 计算从当前关节到目标的方向</span>
+            to_target = target_pos - joint.world_pos
+            
+            <span class="comment"># 旋转当前关节使to_end朝向to_target</span>
+            rotation = get_rotation_between(to_end, to_target)
+            joint.rotation *= rotation
+            
+            <span class="comment"># 更新所有子关节的位置</span>
+            update_child_positions(joint)
+        
+        <span class="comment"># 检查是否达到目标</span>
+        <span class="keyword">if</span> distance(end_effector_pos, target_pos) &lt; epsilon:
+            <span class="keyword">break</span></code></pre>
+
+<div class="key-box">
+<strong>⚡ 核心洞察</strong>：FK和IK的区别 = "推"和"拉"的区别。
+<ul>
+  <li>FK是"推"——从根部推，所有关节连锁运动，末端自然跟着动</li>
+  <li>IK是"拉"——指定末端位置，系统反向计算每个关节该转多少</li>
+  <li>实际游戏中两者结合使用：身体用FK，手和脚用IK</li>
+</ul>
+</div>
+
+<h3 id="16-5-4-skinning-蒙皮">16.5.4 Skinning（蒙皮）</h3>
+
+<div class="guizang-figure">
+<img src="images/ch16/ch16_skinning.png" alt="蒙皮Skinning">
+<div class="guizang-caption">图16-4：蒙皮——骨骼（黑色线条）驱动顶点（网格）变形，关节处显示权重分布</div>
+</div>
+
+<p><strong>Rigid Skinning（刚性蒙皮）</strong>：每个顶点只受一个骨骼影响。</p>
+<div class="formula-small">v_world = R(骨骼) · v_local</div>
+<p>缺点：关节处会断裂，像"木偶"。</p>
+
+<p><strong>Smooth Skinning / LBS（线性混合蒙皮）</strong>：每个顶点受多个骨骼影响，按权重混合。</p>
+<div class="formula">v_world = Σᵢ wᵢ · R(骨骼ᵢ) · v_local</div>
+
+<p><strong>逐符号拆解</strong>：</p>
+<ul>
+  <li><strong>v_local</strong> = 顶点在绑定姿势（T-pose）中的位置</li>
+  <li><strong>R(骨骼ᵢ)</strong> = 第i个骨骼的变换矩阵（从绑定姿势到当前姿势）</li>
+  <li><strong>wᵢ</strong> = 第i个骨骼对该顶点的影响权重（∑wᵢ = 1）</li>
+  <li><strong>v_world</strong> = 顶点变形后的世界坐标</li>
+</ul>
+
+<p><strong>权重"绘画"过程</strong>：</p>
+<ol>
+  <li>模型在T-pose（双臂平伸）下建立骨骼</li>
+  <li>动画师"画权重"：用笔刷工具在顶点上画色标（红色=完全受骨骼A影响，蓝色=完全受骨骼B影响）</li>
+  <li>权重归一化：确保每个顶点的权重之和=1</li>
+  <li>测试：弯曲关节，看皮肤变形是否自然</li>
+  <li>调整：修正"塌陷"或"糖果纸"（关节扭曲）问题，通常增加中间骨骼或调整权重</li>
+</ol>
+
+<div class="info-box">
+<strong>💡 游戏引擎标准</strong>：所有现代游戏引擎都用LBS（Linear Blend Skinning）——简单、快、足够好。每个顶点最多绑4个骨骼（4 weights × 4 bytes = 16 bytes / vertex，GPU友好）。
+</div>
+
+<h3 id="16-5-5-面部动画">16.5.5 面部动画</h3>
+
+<p>3个层次的复杂性：</p>
+<table>
+<tr><th>层次</th><th>方法</th><th>例子</th></tr>
+<tr><td><strong>1. 关节变形</strong></td><td>骨骼+蒙皮</td><td>下巴开合、眉毛挑起</td></tr>
+<tr><td><strong>2. 肌肉模拟</strong></td><td>FACS（面部动作编码系统）</td><td>真实肌肉收缩模拟</td></tr>
+<tr><td><strong>3. 表情混合</strong></td><td>Blend Shapes（混合变形）</td><td>"高兴+惊讶"→"惊喜"</td></tr>
+</table>
+
+<hr>
+
+<h2 id="16-6-基于物理的动画">16.6 基于物理的动画</h2>
+
+<h3 id="16-6-1-核心思想">16.6.1 核心思想</h3>
+
+<div class="term-box">
+<strong>核心定义</strong>：物理动画 = "用微分方程描述运动，计算机求解"
+</div>
+
+<div class="formula">dx/dt = f(x, t) &emsp;（常微分方程 ODE）</div>
+<div class="formula">∂f/∂t = F(f, x, t) &emsp;（偏微分方程 PDE）</div>
+
+<table>
+<tr><th>方法</th><th>方程</th><th>应用</th></tr>
+<tr><td>质点弹簧</td><td>F = -k·x（胡克定律）</td><td>布料、头发、绳索</td></tr>
+<tr><td>刚体动力学</td><td>F = ma, τ = Iα</td><td>碰撞、堆叠、破碎</td></tr>
+<tr><td>流体模拟</td><td>Navier-Stokes</td><td>水、烟、火</td></tr>
+<tr><td>有限元</td><td>弹性力学方程</td><td>肌肉、软组织</td></tr>
+</table>
+
+<h3 id="16-6-2-布料模拟">16.6.2 布料模拟</h3>
+
+<p><strong>质点弹簧模型</strong>：布料 = 网格状的质点 + 弹簧</p>
+<ul>
+  <li><strong>结构弹簧</strong>：连接相邻顶点，抵抗拉伸（刚度k₁）</li>
+  <li><strong>剪切弹簧</strong>：连接对角线顶点，抵抗剪切变形（刚度k₂）</li>
+  <li><strong>弯曲弹簧</strong>：跳过1个顶点，抵抗弯曲（刚度k₃）</li>
+</ul>
+
+<p><strong>约束求解</strong>（每帧迭代Gauss-Seidel）：</p>
+<pre><code><span class="comment"># 每帧执行的布料求解</span>
+<span class="keyword">for</span> iter <span class="keyword">in</span> range(<span class="number">10</span>):        <span class="comment"># 迭代次数越多越准确</span>
+    <span class="keyword">for</span> each constraint:      <span class="comment"># 对每个弹簧约束</span>
+        <span class="comment"># 如果弹簧拉伸超过原长</span>
+        delta = constraint.length - constraint.rest_length
+        <span class="keyword">if</span> delta &gt; <span class="number">0</span>:
+            <span class="comment"># 把两个顶点往中间拉</span>
+            p1 += stiffness * delta * direction / <span class="number">2</span>
+            p2 -= stiffness * delta * direction / <span class="number">2</span></code></pre>
+
+<div class="info-box">
+<strong>💡 实际应用</strong>：Marvel/Disney电影中的布料（《冰雪奇缘》艾莎的裙子、蜘蛛侠的紧身衣）都用物理模拟。游戏中常用简化版：PhysX、Chaos Physics。
+</div>
+
+<h3 id="16-6-3-数值积分方法">16.6.3 数值积分方法</h3>
+
+<p>将微分方程离散化求解：</p>
+
+<table>
+<tr><th>方法</th><th>公式</th><th>稳定性</th><th>速度</th><th>适用</th></tr>
+<tr><td><strong>显式Euler</strong></td><td>f(t+Δt)=f(t)+Δt·df/dt</td><td>差（Δt需很小）</td><td>最快</td><td>简单教学</td></tr>
+<tr><td><strong>隐式Euler</strong></td><td>解方程组</td><td>好（可大步长）</td><td>慢（解方程）</td><td>布料、流体</td></tr>
+<tr><td><strong>Verlet</strong></td><td>x(t+Δt)=2x(t)-x(t-Δt)+a·Δt²</td><td>好</td><td>快</td><td>游戏粒子</td></tr>
+<tr><td><strong>RK4</strong></td><td>4阶Runge-Kutta</td><td>好</td><td>中等</td><td>精确模拟</td></tr>
+</table>
+
+<div class="key-box">
+<strong>⚡ 核心洞察</strong>：稳定性vs速度的trade-off。显式方法简单但Δt必须小（容易爆炸）。隐式方法可大步长但要解线性方程组。游戏常用<strong>半隐式/Verlet</strong>平衡两者。
+</div>
+
+<h3 id="16-6-4-流体模拟">16.6.4 流体模拟</h3>
+
+<table>
+<tr><th>方法</th><th>思想</th><th>优势</th><th>劣势</th></tr>
+<tr><td><strong>SPH（光滑粒子流体动力学）</strong></td><td>用粒子表示流体</td><td>简单、自适应</td><td>边界处理复杂</td></tr>
+<tr><td><strong>网格法（欧拉）</strong></td><td>在固定网格上求解NS方程</td><td>稳定、精确</td><td>内存大、细节少</td></tr>
+<tr><td><strong>PIC/FLIP（混合法）</strong></td><td>粒子+网格混合</td><td>兼得两者优点</td><td>实现复杂</td></tr>
+</table>
+
+<hr>
+
+<h2 id="16-7-过程化技术">16.7 过程化技术</h2>
+
+<h3 id="16-7-1-噪声动画">16.7.1 噪声动画</h3>
+
+<div class="term-box">
+<strong>核心定义</strong>：过程化 = "用数学函数生成动画，不用关键帧"
+</div>
+
+<p><strong>例子</strong>：</p>
+<ul>
+  <li><strong>漂浮</strong>：position = noise(x + v·t)——物体随时间上下浮动</li>
+  <li><strong>水面</strong>：height = noise(x, y, t)——2D噪声在时间维度演变</li>
+  <li><strong>熔岩灯</strong>：color = noise(x, y, z, t)——4D噪声的颜色变化</li>
+</ul>
+
+<div class="formula-small">f(x, t) = noise(x + v·t)</div>
+
+<p>其中v是"速度"参数，控制动画快慢。noise函数的值在[-1, 1]之间连续变化。</p>
+
+<h3 id="16-7-2-l-system-林系统">16.7.2 L-System（林系统）</h3>
+
+<div class="term-box">
+<strong>核心定义</strong>：L-System = "用文法生成结构"——用字符串重写规则生成复杂结构
+</div>
+
+<p><strong>核心要素</strong>：</p>
+<ul>
+  <li><strong>终结符（Terminals）</strong>：最终绘制指令，如F（前进）、+（左转）、-（右转）、[（入栈）、]（出栈）</li>
+  <li><strong>非终结符（Non-Terminals）</strong>：会被替换的符号，如A、B</li>
+  <li><strong>产生式（Productions）</strong>：替换规则，如A→F[+A][-A]</li>
+  <li><strong>初始公理（Axiom）</strong>：起始字符串</li>
+</ul>
+
+<p><strong>例子——生成分形树</strong>：</p>
+<pre><code>Axiom: A
+Rule:  A → F[+A][-A]F
+
+迭代0: A
+迭代1: F[+A][-A]F
+迭代2: F[+F[+A][-A]F][-F[+A][-A]F]F
+...（迭代越多树越复杂）
+
+F = 前进画线
++ = 左转30°
+- = 右转30°
+[ = 保存当前位置（分支起点）
+] = 恢复当前位置（分支结束）</code></pre>
+
+<div class="info-box">
+<strong>💡 应用</strong>：L-System被广泛用于程序化生成植物（SpeedTree）、城市天际线、血管分支、神经网络可视化等。
+</div>
+
+<h3 id="16-7-3-元胞自动机-cellular-automata">16.7.3 元胞自动机（Cellular Automata）</h3>
+
+<p><strong>Conway's Game of Life</strong>——三规则：</p>
+<ol>
+  <li>死细胞 + 3个活邻居 → 活（出生）</li>
+  <li>活细胞 + 2或3个活邻居 → 活（存活）</li>
+  <li>其他情况 → 死（孤独或拥挤）</li>
+</ol>
+
+<p><strong>应用</strong>：森林火灾模拟、雪崩模拟、城市演化、纹理生成。</p>
+
+<hr>
+
+<h2 id="16-8-群体动画">16.8 群体动画</h2>
+
+<div class="guizang-figure">
+<img src="images/ch16/ch16_boids.png" alt="Boids群体动画">
+<div class="guizang-caption">图16-5：Boids群体——三条局部规则（分离、对齐、聚合）产生复杂的全局群体行为</div>
+</div>
+
+<h3 id="16-8-1-boids-flocking">16.8.1 Boids（Flocking）</h3>
+
+<div class="term-box">
+<strong>核心定义</strong>：Boids = "鸟群行为 = 3条局部规则"
+</div>
+
+<p>Craig Reynolds在1987年提出的Boids模型是群体动画的奠基之作。每只鸟（Boid）只遵循3条简单规则：</p>
+
+<table>
+<tr><th>规则</th><th>方向</th><th>公式</th><th>类比</th></tr>
+<tr><td><strong>1. 分离（Separation）</strong></td><td>远离太近的邻居</td><td>force_sep = -∑(neighbor_i - self) / |neighbor_i - self|²</td><td>人与人之间保持"安全距离"</td></tr>
+<tr><td><strong>2. 对齐（Alignment）</strong></td><td>与邻居速度一致</td><td>force_align = (∑ neighbor_velocity_i / N) - self_velocity</td><td>跟周围人保持相同步调</td></tr>
+<tr><td><strong>3. 聚合（Cohesion）</strong></td><td>往群体的中心移动</td><td>force_coh = (∑ neighbor_pos_i / N) - self_pos</td><td>不想落单</td></tr>
+</table>
+
+<p><strong>完整Boid行为</strong> = w₁·force_sep + w₂·force_align + w₃·force_coh + 其他规则</p>
+
+<p><strong>逐符号拆解</strong>：</p>
+<ul>
+  <li><strong>neighbor_i</strong> = 视野内的第i个邻居（距离&lt;可见半径）</li>
+  <li><strong>w₁, w₂, w₃</strong> = 三条规则的权重（控制群体行为类型：w₁大→松散群体，w₂大→整齐队形，w₃大→密集聚集）</li>
+  <li><strong>自我速度更新</strong>：velocity += acceleration · dt，position += velocity · dt</li>
+</ul>
+
+<pre><code><span class="comment"># 每帧更新每只Boid</span>
+<span class="function">def</span> update_boid(boid, flock):
+    <span class="comment"># 1. 找到视野内的邻居（距离阈值）</span>
+    neighbors = [b <span class="keyword">for</span> b <span class="keyword">in</span> flock <span class="keyword">if</span> distance(b, boid) &lt; VISION_RADIUS]
+    
+    <span class="keyword">if</span> <span class="keyword">not</span> neighbors:
+        <span class="keyword">return</span>  <span class="comment"># 没有邻居，保持当前速度</span>
+    
+    <span class="comment"># 2. 计算分离力（远离太近的）</span>
+    separation = vec2(<span class="number">0</span>, <span class="number">0</span>)
+    <span class="keyword">for</span> n <span class="keyword">in</span> neighbors:
+        diff = n.pos - boid.pos
+        <span class="keyword">if</span> length(diff) &lt; SEPARATION_RADIUS:
+            separation -= normalize(diff) / length(diff)
+    
+    <span class="comment"># 3. 计算对齐力（与邻居方向一致）</span>
+    avg_velocity = average([n.vel <span class="keyword">for</span> n <span class="keyword">in</span> neighbors])
+    alignment = avg_velocity - boid.vel
+    
+    <span class="comment"># 4. 计算聚合力（往群体中心靠）</span>
+    avg_position = average([n.pos <span class="keyword">for</span> n <span class="keyword">in</span> neighbors])
+    cohesion = avg_position - boid.pos
+    
+    <span class="comment"># 5. 合并三个力（乘以权重）</span>
+    acceleration = (SEP_WEIGHT * separation +
+                    ALIGN_WEIGHT * alignment +
+                    COH_WEIGHT * cohesion)
+    
+    <span class="comment"># 6. 更新速度和位置</span>
+    boid.vel += acceleration * dt
+    <span class="comment"># 限制最大速度</span>
+    <span class="keyword">if</span> length(boid.vel) &gt; MAX_SPEED:
+        boid.vel = normalize(boid.vel) * MAX_SPEED
+    boid.pos += boid.vel * dt</code></pre>
+
+<div class="key-box">
+<strong>⚡ 核心洞察</strong>：Boids之美在于"简单局部规则→复杂全局行为"。每只鸟只关心附近的几个邻居，但整个鸟群表现出"集体智能"——像是有个中央指挥在协调一切。这是涌现（Emergence）的经典例子。
+</div>
+
+<h3 id="16-8-2-粒子系统">16.8.2 粒子系统</h3>
+
+<p><strong>粒子系统 = "大量小元素的集合"</strong></p>
+
+<table>
+<tr><th>特性</th><th>典型值</th><th>说明</th></tr>
+<tr><td>粒子数</td><td>100~100000</td><td>越多效果越丰富，性能越差</td></tr>
+<tr><td>生命周期</td><td>1~10秒</td><td>粒子从出生到死亡的时间</td></tr>
+<tr><td>发射率</td><td>10~10000/秒</td><td>每秒生成的新粒子数</td></tr>
+<tr><td>初始速度</td><td>随机方向</td><td>给粒子随机性</td></tr>
+<tr><td>受到力</td><td>重力、风力、湍流</td><td>模拟物理效果</td></tr>
+</table>
+
+<p><strong>应用</strong>：火、烟、雾、雨、雪、爆炸、魔法、星光、尘土。</p>
+
+<div class="info-box">
+<strong>💡 游戏引擎标准</strong>：每个游戏引擎都有粒子系统——Unity ParticleSystem（CPU粒子）、UE Niagara（GPU粒子）。Niagara可以在一帧中模拟数百万个粒子。
+</div>
+
+<h3 id="16-8-3-自主角色-autonomous-characters">16.8.3 自主角色（Autonomous Characters）</h3>
+
+<p>Boids的推广——每个个体有更复杂的行为：</p>
+<ul>
+  <li><strong>AI驱动</strong>：行为由有限状态机（FSM）或行为树（Behavior Tree）决定</li>
+  <li><strong>群体协调</strong>：避免重叠、保持队形、任务分配</li>
+  <li><strong>环境感知</strong>：障碍物躲避、地形适配</li>
+  <li><strong>目标导向</strong>：巡逻、追踪、攻击、逃跑</li>
+</ul>
+
+<p><strong>应用</strong>：RTS游戏中的士兵群、MMO中的NPC群体、电影中的群演。</p>
+
+<h3 id="16-8-4-术语对照表">16.8.4 术语对照表</h3>
+
+<table>
+<tr><th>英文</th><th>中文</th><th>一句话</th></tr>
+<tr><td>Keyframe</td><td>关键帧</td><td>动画师指定的关键状态</td></tr>
+<tr><td>TCB Spline</td><td>TCB样条</td><td>Tension/Continuity/Bias控制</td></tr>
+<tr><td>Catmull-Rom</td><td>Catmull-Rom样条</td><td>自动切线的插值曲线</td></tr>
+<tr><td>Euler Angle</td><td>欧拉角</td><td>绕XYZ轴旋转的角度</td></tr>
+<tr><td>Quaternion</td><td>四元数</td><td>4D单位球上的旋转变换</td></tr>
+<tr><td>SLERP</td><td>球面线性插值</td><td>四元数之间的平滑旋转</td></tr>
+<tr><td>Gimbal Lock</td><td>万向锁</td><td>一个轴旋转90°后丢轴</td></tr>
+<tr><td>Forward Kinematics</td><td>正向运动学</td><td>从根推，末端跟着动</td></tr>
+<tr><td>Inverse Kinematics</td><td>逆向运动学</td><td>指定末端，反算关节角</td></tr>
+<tr><td>Skinning / LBS</td><td>蒙皮/线性混合蒙皮</td><td>骨骼驱动顶点变形</td></tr>
+<tr><td>FFD</td><td>自由变形</td><td>控制网格变形物体</td></tr>
+<tr><td>Boids / Flocking</td><td>群体动画</td><td>3条局部规则产生群体</td></tr>
+<tr><td>L-System</td><td>林系统</td><td>文法生成植物结构</td></tr>
+<tr><td>Particle System</td><td>粒子系统</td><td>大量小元素集合</td></tr>
+</table>
+
+<h3 id="16-8-5-全章总结">16.8.5 全章总结</h3>
+
+<div class="key-box">
+<strong>讲义核心洞察</strong>：动画 = "如何让物体动起来"——
+<ul>
+  <li><strong>12条原则</strong> = Disney 80年经验的浓缩</li>
+  <li><strong>Keyframe + Catmull-Rom</strong> = 行业标准的动画制作流程</li>
+  <li><strong>四元数</strong> = 避免万向锁，SLERP保证平滑旋转</li>
+  <li><strong>FK/IK</strong> = 骨骼动画的核心（推vs拉）</li>
+  <li><strong>LBS Skinning</strong> = 所有游戏引擎的蒙皮标准</li>
+  <li><strong>物理动画</strong> = 微分方程驱动布料/流体</li>
+  <li><strong>过程化</strong> = 噪声/L-System生成复杂动画</li>
+  <li><strong>Boids</strong> = 3条简单规则→复杂群体行为</li>
+</ul>
+</div>
+
+<p><strong>关键公式速查</strong>：</p>
+<table>
+<tr><th>名称</th><th>公式</th></tr>
+<tr><td>Catmull-Rom切线</td><td>mᵢ = (f_{i+1} - f_{i-1}) / 2Δt</td></tr>
+<tr><td>TCB控件</td><td>mᵢ = ((1-t)(1-c)(1+b)/2Δt)(f_{i+1}-fᵢ) + ((1-t)(1+c)(1-b)/2Δt)(fᵢ-f_{i-1})</td></tr>
+<tr><td>SLERP</td><td>q(t) = sin((1-t)θ)/sinθ · q₁ + sin(tθ)/sinθ · q₂</td></tr>
+<tr><td>FFD</td><td>P(s,t,u) = Σᵢⱼₖ bᵢ(s) bⱼ(t) bₖ(u) p_{i,j,k}</td></tr>
+<tr><td>LBS Skinning</td><td>v = Σ wᵢ · Rᵢ · v_local</td></tr>
+<tr><td>Jacobian IK</td><td>α = α + J⁻¹(p_target - p_current)</td></tr>
+<tr><td>Boids</td><td>separation + alignment + cohesion</td></tr>
+</table>
+
+<p><strong>下一步</strong>：第17章《使用图形硬件》——学习GPU编程、Shader、DirectX/OpenGL。这是从软件到硬件的跨越。</p>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li class="active"><a href="ch16_计算机动画.html" class="active">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#16-1-动画的12条原则">16.1 动画的12条原则</a></li>
+  <li class="toc-h3"><a href="#16-1-1-disney的遗产">16.1.1 Disney的遗产</a></li>
+  <li class="toc-h2"><a href="#16-2-关键帧与插值">16.2 关键帧与插值</a></li>
+  <li class="toc-h3"><a href="#16-2-1-关键帧思想">16.2.1 关键帧思想</a></li>
+  <li class="toc-h3"><a href="#16-2-2-动画曲线-animation-curves">16.2.2 动画曲线（Animation Curves）</a></li>
+  <li class="toc-h3"><a href="#16-2-3-tcb控件-kochanek-bartels">16.2.3 TCB控件（Kochanek-Bartels）</a></li>
+  <li class="toc-h3"><a href="#16-2-4-弧长参数化与速度控制">16.2.4 弧长参数化与速度控制</a></li>
+  <li class="toc-h2"><a href="#16-3-插值旋转">16.3 插值旋转</a></li>
+  <li class="toc-h3"><a href="#16-3-1-旋转的挑战">16.3.1 旋转的挑战</a></li>
+  <li class="toc-h3"><a href="#16-3-2-3种旋转表示对比">16.3.2 3种旋转表示对比</a></li>
+  <li class="toc-h3"><a href="#16-3-3-欧拉角与万向锁">16.3.3 欧拉角与万向锁</a></li>
+  <li class="toc-h3"><a href="#16-3-4-四元数与slerp插值">16.3.4 四元数与SLERP插值</a></li>
+  <li class="toc-h2"><a href="#16-4-变形技术">16.4 变形技术</a></li>
+  <li class="toc-h3"><a href="#16-4-1-全局变形">16.4.1 全局变形</a></li>
+  <li class="toc-h3"><a href="#16-4-2-ffd-free-form-deformation">16.4.2 FFD（Free-Form Deformation）</a></li>
+  <li class="toc-h2"><a href="#16-5-角色动画-骨骼-fk-ik-skinning">16.5 角色动画：骨骼、FK、IK、Skinning</a></li>
+  <li class="toc-h3"><a href="#16-5-1-骨骼层次-skeleton-hierarchy">16.5.1 骨骼层次（Skeleton Hierarchy）</a></li>
+  <li class="toc-h3"><a href="#16-5-2-正向运动学-forward-kinematics--fk">16.5.2 正向运动学（Forward Kinematics, FK）</a></li>
+  <li class="toc-h3"><a href="#16-5-3-逆向运动学-inverse-kinematics--ik">16.5.3 逆向运动学（Inverse Kinematics, IK）</a></li>
+  <li class="toc-h3"><a href="#16-5-4-skinning-蒙皮">16.5.4 Skinning（蒙皮）</a></li>
+  <li class="toc-h3"><a href="#16-5-5-面部动画">16.5.5 面部动画</a></li>
+  <li class="toc-h2"><a href="#16-6-基于物理的动画">16.6 基于物理的动画</a></li>
+  <li class="toc-h3"><a href="#16-6-1-核心思想">16.6.1 核心思想</a></li>
+  <li class="toc-h3"><a href="#16-6-2-布料模拟">16.6.2 布料模拟</a></li>
+  <li class="toc-h3"><a href="#16-6-3-数值积分方法">16.6.3 数值积分方法</a></li>
+  <li class="toc-h3"><a href="#16-6-4-流体模拟">16.6.4 流体模拟</a></li>
+  <li class="toc-h2"><a href="#16-7-过程化技术">16.7 过程化技术</a></li>
+  <li class="toc-h3"><a href="#16-7-1-噪声动画">16.7.1 噪声动画</a></li>
+  <li class="toc-h3"><a href="#16-7-2-l-system-林系统">16.7.2 L-System（林系统）</a></li>
+  <li class="toc-h3"><a href="#16-7-3-元胞自动机-cellular-automata">16.7.3 元胞自动机（Cellular Automata）</a></li>
+  <li class="toc-h2"><a href="#16-8-群体动画">16.8 群体动画</a></li>
+  <li class="toc-h3"><a href="#16-8-1-boids-flocking">16.8.1 Boids（Flocking）</a></li>
+  <li class="toc-h3"><a href="#16-8-2-粒子系统">16.8.2 粒子系统</a></li>
+  <li class="toc-h3"><a href="#16-8-3-自主角色-autonomous-characters">16.8.3 自主角色（Autonomous Characters）</a></li>
+  <li class="toc-h3"><a href="#16-8-4-术语对照表">16.8.4 术语对照表</a></li>
+  <li class="toc-h3"><a href="#16-8-5-全章总结">16.8.5 全章总结</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch03: 光栅图像</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch03 光栅图像</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第3章：光栅图像 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第3章（p.63-78）。<br>
+本章介绍图像的底层表示——像素、RGB颜色、Alpha合成。所有显示设备（LCD、打印机、相机）都是光栅设备。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s31">3.1 光栅设备</a></li>
+  <li><a href="#s32">3.2 图像、像素与几何</a></li>
+  <li><a href="#s33">3.3 RGB颜色</a></li>
+  <li><a href="#s34">3.4 Alpha合成</a></li>
+  <li><a href="#s35">3.5 Gamma校正</a></li>
+  <li><a href="#s36">3.6 图像文件格式</a></li>
+  <li><a href="#s37">3.7 图像I/O编程要点</a></li>
+</ul>
+</div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+  <li>理解光栅显示设备的原理（LCD/CRT/打印机/相机/扫描仪）</li>
+  <li>理解像素的几何含义和屏幕坐标系统</li>
+  <li>掌握 RGB 颜色模型的基本原理和加色混合</li>
+  <li>理解 Alpha 合成（Alpha Compositing）的工作原理</li>
+  <li>掌握 Gamma 校正的基本概念</li>
+  <li>了解图像存储格式（PNG/JPEG/EXR）的选择</li>
+  <li>掌握基本的图像 I/O 和像素操作</li>
+</ol>
+
+<hr>
+
+<h2 id="3-1-光栅设备-raster-devices">3.1 光栅设备（Raster Devices）</h2>
+
+<h3 id="3-1-1-什么是光栅-先解决第一个问题">3.1.1 什么是光栅？先解决第一个问题</h3>
+
+<p><strong>它解决什么问题？</strong>计算机生成的图像最终要显示在某个物理设备上——显示器、手机屏幕、打印机。这些设备都是怎么工作的？它们有一个共同点：都是<strong>像素阵列</strong>。</p>
+
+<blockquote><strong>光栅（Raster）= 像素的矩形阵列</strong></blockquote>
+
+<p>"Pixel" 是 "Picture Element" 的缩写（图片元素）。所有现代显示设备本质上都是一个像素网格。</p>
+
+<p><strong>生活类比</strong>：想象一块巨大的乐高底板——你要用不同颜色的乐高颗粒拼出一幅画。每个乐高颗粒就是一个"像素"。乐高颗粒越多（分辨率越高），你的画就越精细。</p>
+
+<p>那么，哪些设备是"光栅设备"？</p>
+
+<div class="guizang-figure">
+<img src="images/ch03/pixel_grid.png" alt="像素网格——放大的像素阵列">
+<div class="guizang-caption">图3-1：像素网格——每个像素是图像的最小单元，三个子像素（R/G/B）组成一个彩色像素</div>
+</div>
+
+<table>
+<tr><th>设备</th><th>原理</th><th>特点</th></tr>
+<tr><td><strong>LCD显示器</strong></td><td>液晶阵列，每个像素可独立发色</td><td>最常见的输出设备</td></tr>
+<tr><td><strong>CRT显示器</strong></td><td>电子束扫描荧光涂层</td><td>早期设备，有余光效应</td></tr>
+<tr><td><strong>打印机</strong></td><td>逐行扫描沉积墨水</td><td>没有"物理像素网格"，但本质是光栅</td></tr>
+<tr><td><strong>数码相机传感器</strong></td><td>感光元件网格采集光线</td><td>光栅 <strong>输入</strong> 设备</td></tr>
+<tr><td><strong>扫描仪</strong></td><td>线性传感器扫描过页面</td><td>光栅 <strong>输入</strong> 设备</td></tr>
+</table>
+
+<div class="info-box">
+<strong>💡 关键区分</strong>：打印机虽然没有"物理像素网格"，但它通过逐行扫描在网格点上沉积墨水——本质上还是光栅格式。就像用点阵打印一张照片，虽然打印纸本身没有格子，但打印机的控制方式就是按格子来的。
+</div>
+
+<h3 id="3-1-2-显示分辨率与像素密度">3.1.2 显示分辨率与像素密度</h3>
+
+<p><strong>分辨率</strong>：水平和垂直像素数。常见分辨率：</p>
+<ul>
+  <li><strong>1920 × 1080</strong>（Full HD）= 约200万像素</li>
+  <li><strong>3840 × 2160</strong>（4K）= 约800万像素</li>
+  <li><strong>7680 × 4320</strong>（8K）= 约3300万像素</li>
+  <li>每个像素由红、绿、蓝三个子像素组成</li>
+</ul>
+
+<p><strong>像素密度（PPI，Pixels Per Inch）</strong>：每英寸有多少像素。密度越高，肉眼越看不到单个像素。</p>
+<ul>
+  <li>手机：~400-500 PPI（"视网膜屏"）</li>
+  <li>电脑显示器：~100-200 PPI</li>
+  <li>电视：~40-80 PPI（因为距离远）</li>
+</ul>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么手机屏幕的PPI比电视高那么多，但看起来不如电视清晰？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">因为观看距离不同！手机你拿在眼前20cm处看，电视你可能在3米外看。人眼的分辨率是按"视角"算的——一个距离远、PPI低的屏幕和一个距离近、PPI高的屏幕，在人眼视网膜上的成像可能完全一样精细。这就是为什么苹果说"视网膜屏"是综合考虑了PPI和典型观看距离的。</blockquote>
+</div>
+
+<h3 id="3-1-3-像素的纵横比">3.1.3 像素的纵横比</h3>
+
+<p>并非所有像素都是正方形——这是一个很多初学者忽略但重要的细节：</p>
+<ul>
+  <li><strong>VGA</strong>：640×480，正方形像素（1:1）——标准</li>
+  <li><strong>NTSC</strong>：非正方形像素（10:11）——老式电视标准</li>
+  <li><strong>现代显示器</strong>：几乎全部正方形像素（1:1）</li>
+</ul>
+
+<p><strong>为什么会有非正方形像素？</strong>老式电视的扫描线间距和行宽不同，导致像素在水平和垂直方向上物理尺寸不一样。如果显示一个正圆形，在非正方形像素的屏幕上就会显示成椭圆。现代显示器已经全部是正方形像素了，但这个历史遗留概念偶尔还会碰到。</p>
+
+<hr>
+
+<h2 id="3-2-图像-像素与几何-images--pixels--and-geometry">3.2 图像、像素与几何（Images, Pixels, and Geometry）</h2>
+
+<h3 id="3-2-1-像素坐标系统--一个让人容易混淆的地方">3.2.1 像素坐标系统——一个让人容易混淆的地方</h3>
+
+<p><strong>它解决什么问题？</strong>你要访问图像中的某个像素——比如第3行、第5列的像素。你需要一个坐标系统来定位它。</p>
+
+<p>图像在内存中是二维数组：<code>image[y][x]</code> 或 <code>image[height][width]</code></p>
+
+<p><strong>注意！屏幕坐标系和数学课上的坐标系是相反的：</strong></p>
+<pre><code>数学课：y 轴向上 ↗
+屏幕：  y 轴向下 ↘
+
+(0,0) ──── x ────→
+  │
+  y
+  │
+  ↓</code></pre>
+
+<p><strong>为什么？</strong>历史原因——CRT显示器的电子束是从左上角开始，逐行向右、再逐行向下扫描的。这个"左上角为原点，y向下"的惯例被所有现代图形系统继承下来了。</p>
+
+<h3 id="3-2-2-像素是面积还是点-一个微妙的哲学问题">3.2.2 像素是面积还是点？一个微妙的哲学问题</h3>
+
+<p>这取决于你从哪个角度看：</p>
+<ul>
+  <li><strong>采样视角</strong>：像素是"一个点的颜色样本"——就像你在一个网格上测量每个交叉点的颜色。这时像素是一个<strong>点</strong>。</li>
+  <li><strong>显示视角</strong>：像素是"一个小方块"——每个像素占据屏幕上的一个矩形区域，发出对应的颜色。这时像素是一块<strong>区域</strong>。</li>
+</ul>
+
+<p><strong>两种视角都是正确的</strong>，取决于上下文。在渲染时（采样），你把像素当点；在显示时，你把像素当方块。</p>
+
+<p><strong>整数坐标 vs 浮点坐标</strong>：</p>
+<ul>
+  <li><strong>整数坐标</strong>：像素(i, j) 表示第i列第j行的像素。简单直接，但"像素中心"在哪里？</li>
+  <li><strong>浮点坐标</strong>：像素(i, j) 的<strong>中心</strong>在 (i+0.5, j+0.5)。这个偏移很重要——我们会在第4章光线追踪中看到它的影响。</li>
+</ul>
+
+<h3 id="3-2-3-图像在内存中的存储">3.2.3 图像在内存中的存储</h3>
+
+<p>图像在内存中就是一段连续的字节序列：</p>
+
+<pre><code>R G B R G B R G B R G B ...
+| pixel 0 | pixel 1 | pixel 2 | ...</code></pre>
+
+<table>
+<tr><th>格式</th><th>每通道位数</th><th>每像素字节数</th><th>应用场景</th></tr>
+<tr><td><strong>RGB888</strong></td><td>8位</td><td>3字节</td><td>JPEG/PNG（最常见格式）</td></tr>
+<tr><td><strong>RGBA8888</strong></td><td>8位 + Alpha</td><td>4字节</td><td>PNG带透明度</td></tr>
+<tr><td><strong>Float32</strong></td><td>32位浮点</td><td>12字节</td><td>EXR（HDR——高动态范围）</td></tr>
+<tr><td><strong>Float16</strong></td><td>16位浮点</td><td>6字节</td><td>EXR（半精度HDR）</td></tr>
+</table>
+
+<p><strong>计算例子</strong>：一张 1920×1080 的 RGBA8888 图像占用多少内存？</p>
+<pre><code>1920 × 1080 × 4 字节 = 8,294,400 字节 ≈ 7.9 MB</code></pre>
+
+<hr>
+
+<h2 id="3-3-rgb颜色-rgb-color">3.3 RGB颜色（RGB Color）</h2>
+
+<h3 id="3-3-1-三基色原理">3.3.1 三基色原理</h3>
+
+<p><strong>它解决什么问题？</strong>人眼有三种视锥细胞，分别对红、绿、蓝光最敏感。所以，任何颜色都可以用三种基本色光的<strong>不同强度混合</strong>来模拟。</p>
+
+<blockquote><strong>RGB（红绿蓝）= 加色混合模型</strong></blockquote>
+
+<div class="guizang-figure">
+<img src="images/ch03/rgb_cube.png" alt="RGB彩色立方体">
+<div class="guizang-caption">图3-2：RGB彩色立方体——三个轴分别是R, G, B通道，八个角对应八种基本颜色</div>
+</div>
+
+<p>计算机显示器使用<strong>加色混合</strong>：</p>
+<ul>
+  <li>R + G + B = 白色（三色全开 = 白）</li>
+  <li>无 R/G/B = 黑色（三色全关 = 黑）</li>
+  <li>R + G = <strong>黄色</strong>，R + B = <strong>品红</strong>，G + B = <strong>青色</strong></li>
+</ul>
+
+<p><strong>生活类比——手电筒</strong>：想象你在一个黑暗的房间里，用三个手电筒分别照射红色、绿色和蓝色的光到同一面墙上：</p>
+<ul>
+  <li>只开红色手电筒 → 墙上是红光</li>
+  <li>开红色 + 绿色 → 墙上是<strong>黄色</strong>光（红+绿=黄）</li>
+  <li>三个全开 → 墙上是<strong>白色</strong>光</li>
+</ul>
+
+<p>这与绘画的<strong>减色混合</strong>（颜料混合）恰好相反：</p>
+<pre><code>加色（显示器）：黑 → 加 RGB → 白
+减色（印刷）：  白 → 减 CMY → 黑</code></pre>
+
+<h3 id="3-3-2-颜色值的表示与转换">3.3.2 颜色值的表示与转换</h3>
+
+<table>
+<tr><th>格式</th><th>范围</th><th>精度</th><th>用途</th></tr>
+<tr><td><strong>8位整数</strong></td><td>0-255</td><td>有限（256级）</td><td>常见图片格式（JPEG/PNG）</td></tr>
+<tr><td><strong>浮点数</strong></td><td>0.0-1.0</td><td>高</td><td>着色计算（渲染内部）</td></tr>
+<tr><td><strong>半精度浮点</strong></td><td>0.0-65504</td><td>中</td><td>HDR图像（EXR格式）</td></tr>
+</table>
+
+<p>关键转换——这是你每天都会用到的操作：</p>
+<div class="formula">float r = pixel_r / 255.0f</div>
+
+<pre><code>// 8位整数 → 浮点数
+float r = 128 / 255.0f = 0.502  // 约50%强度
+
+// 浮点数 → 8位整数（存文件时）
+uint8_t r_byte = (uint8_t)(clamp(r, 0.0f, 1.0f) * 255.0f)</code></pre>
+
+<div class="key-box">
+<strong>🔑 黄金法则</strong>：<strong>永远在线性空间做光照计算，最后再转sRGB输出</strong>——这是PBR（基于物理的渲染）的黄金法则。在"渲染内部"永远使用浮点0-1，只在输入/输出时做格式转换。
+</div>
+
+<hr>
+
+<h2 id="3-4-alpha合成-alpha-compositing">3.4 Alpha合成（Alpha Compositing）</h2>
+
+<h3 id="3-4-1-什么是alpha">3.4.1 什么是Alpha？</h3>
+
+<p><strong>它解决什么问题？</strong>你想在一张背景图前面叠一张有透明区域的图片（比如一个半透明的窗口、一个带虚影的角色）。Alpha 通道就是告诉计算机"这个像素有多不透明"。</p>
+
+<blockquote><strong>Alpha（α）= 不透明度</strong></blockquote>
+
+<ul>
+  <li><strong>α = 1.0</strong>：完全不透明——前景完全盖住背景</li>
+  <li><strong>α = 0.0</strong>：完全透明——背景完全可见</li>
+  <li><strong>α = 0.5</strong>：半透明——前景和背景各贡献一半</li>
+</ul>
+
+<h3 id="3-4-2-over操作--合成的基础">3.4.2 Over操作——合成的基础</h3>
+
+<div class="guizang-figure">
+<img src="images/ch03/alpha_over.png" alt="Alpha合成Over操作——前景叠背景">
+<div class="guizang-caption">图3-3：Alpha合成Over操作——前景（半透明）叠加到背景上，产生混合效果</div>
+</div>
+
+<div class="formula">out = αf × cf + (1 - αf) × cb</div>
+
+<p><strong>每个符号的含义：</strong></p>
+<ul>
+  <li><strong>cf</strong>：前景颜色（如红色半透明层）</li>
+  <li><strong>cb</strong>：背景颜色（如白色纸张）</li>
+  <li><strong>αf</strong>：前景的透明度（如0.5 = 半透明）</li>
+  <li><strong>out</strong>：最终显示的颜色</li>
+</ul>
+
+<p><strong>生活类比</strong>：在半透明红纸上放一张白纸——</p>
+<ul>
+  <li>完全不透明（α=1.0）→ 全红（纸完全被挡住）</li>
+  <li>半透明（α=0.5）→ 粉红（红+白各一半）</li>
+  <li>完全透明（α=0.0）→ 白纸（红纸完全不挡）</li>
+</ul>
+
+<p><strong>数字例子</strong>：</p>
+<pre><code>前景：红色 cf = (1.0, 0.0, 0.0)，αf = 0.5
+背景：白色 cb = (1.0, 1.0, 1.0)
+
+out.r = 0.5 × 1.0 + (1-0.5) × 1.0 = 0.5 + 0.5 = 1.0
+out.g = 0.5 × 0.0 + 0.5 × 1.0 = 0.5
+out.b = 0.5 × 0.0 + 0.5 × 1.0 = 0.5
+
+最终颜色 = (1.0, 0.5, 0.5) = 粉红色 ✓</code></pre>
+
+<h3 id="3-4-3-预乘alpha">3.4.3 预乘Alpha</h3>
+
+<p>很多渲染系统使用预乘Alpha格式——存储 (αR, αG, αB, α) 而不是 (R, G, B, α)。好处是合成公式更简单：</p>
+
+<pre><code>// 非预乘
+out.r = αf * cf.r + (1-αf) * cb.r
+
+// 预乘（cf已经乘以αf了）
+out.r = cf.r + (1-αf) * cb.r   // 少一次乘法！</code></pre>
+
+<h3 id="3-4-4-常见的合成模式">3.4.4 常见的合成模式</h3>
+
+<table>
+<tr><th>模式</th><th>公式</th><th>用途</th></tr>
+<tr><td><strong>Over</strong></td><td>αf·cf + (1-αf)·cb</td><td>前景叠背景（最常见）</td></tr>
+<tr><td><strong>Under</strong></td><td>(1-αb)·cf + αb·cb</td><td>背景叠前景</td></tr>
+<tr><td><strong>Add</strong></td><td>cf + cb</td><td>粒子、火焰（叠加发光效果）</td></tr>
+<tr><td><strong>Multiply</strong></td><td>cf × cb</td><td>暗化、遮罩</td></tr>
+<tr><td><strong>Screen</strong></td><td>1-(1-cf)×(1-cb)</td><td>发光、亮化效果</td></tr>
+</table>
+
+<h3 id="3-4-5-合成的可结合性">3.4.5 合成的可结合性</h3>
+
+<p>Alpha合成是可结合的（Associative）：</p>
+
+<div class="formula">(A over B) over C = A over (B over C)</div>
+
+<p>这意味着你可以分步合成再合并——这是<strong>分层渲染</strong>（Layer-based compositing）的理论基础。每个物体单独渲染成一层，最后在合成阶段统一组合。</p>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：如果你把三个半透明层 A, B, C 依次叠在白色背景上，但改变了合成顺序（先合A+B，结果再叠C），结果会一样吗？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">由于合成的可结合性，结果是一样的。但是注意——这只是在标准的Over操作下成立。如果你用了Add模式或其他合成模式，可结合性不一定成立。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="3-5-gamma校正">3.5 Gamma校正</h2>
+
+<h3 id="3-5-1-问题的起源--crt的物理特性">3.5.1 问题的起源——CRT的物理特性</h3>
+
+<p><strong>它解决什么问题？</strong>你给显示器输入 (0.5, 0.5, 0.5) 的中灰色，但显示器显示出来的物理亮度不是50%——只有大约22%。这是因为CRT显示器的物理特性：输出亮度 = 输入电压的γ次方，其中γ ≈ 2.2。</p>
+
+<div class="guizang-figure">
+<img src="images/ch03/gamma_curve.png" alt="Gamma校正曲线">
+<div class="guizang-caption">图3-4：Gamma校正曲线——sRGB Gamma ≈ 2.2，显示器的输出亮度与输入电压呈非线性关系</div>
+</div>
+
+<div class="formula">L_out = V_in ^ γ（其中 γ ≈ 2.2）</div>
+
+<p><strong>生活类比——给你的感觉</strong>：假设你在Photoshop里给一个图层设置50%的透明度，你期望看到的是"一半背景一半前景"的效果。但因为Gamma的存在，如果你在未做校正的显示器上看，实际效果只有22%的前景+78%的背景——看起来比你设想的要暗很多。</p>
+
+<h3 id="3-5-2-解决方案-存储gamma--encoding-gamma">3.5.2 解决方案：存储Gamma (Encoding Gamma)</h3>
+
+<p>因为显示器有 Gamma = 2.2，图像在存储时需要预先做"反Gamma"（Gamma编码），使最终的显示亮度等于原始亮度：</p>
+
+<div class="formula">存储值 = 物理亮度 ^ (1 / 2.2)</div>
+
+<p>当显示器显示时：</p>
+
+<div class="formula">实际亮度 = (存储值) ^ 2.2 = 物理亮度 ^ (1/2.2 × 2.2) = 物理亮度 ✓</div>
+
+<p><strong>逐步拆解——用一个数字例子：</strong></p>
+<pre><code>你想在屏幕上显示 50% 的物理亮度（0.5）
+→ 因为显示器有 Gamma = 2.2
+→ 如果你直接存储 0.5，显示器实际显示 0.5^2.2 ≈ 0.218（只有22%！）
+→ 所以你需要存储 0.5^(1/2.2) ≈ 0.73
+→ 显示器显示 0.73^2.2 ≈ 0.5 ✓（正好是你想要的50%）
+
+所以：文件里存的 0.73 才对应屏幕上的 50% 亮度。
+这就是为什么 sRGB 图像看起来"比线性空间更亮"——因为像素值已经被"压缩"了。</code></pre>
+
+<h3 id="3-5-3-srgb-gamma-的精确公式">3.5.3 sRGB Gamma 的精确公式</h3>
+
+<p>现代系统使用 sRGB 标准，不是简单的 2.2 幂函数——它在暗部使用线性段来避免数值问题：</p>
+
+<pre><code>// sRGB → 线性（解码：从文件到渲染）
+c_linear = c_srgb / 12.92                     if c_srgb ≤ 0.04045
+c_linear = ((c_srgb + 0.055) / 1.055)^2.4    if c_srgb > 0.04045
+
+// 线性 → sRGB（编码：从渲染到文件）
+c_srgb = c_linear * 12.92                       if c_linear ≤ 0.0031308
+c_srgb = 1.055 × c_linear^(1/2.4) - 0.055      if c_linear > 0.0031308</code></pre>
+
+<div class="info-box">
+<strong>💡 游戏开发实战</strong>：所有<strong>纹理加载时自动做 sRGB→线性</strong>转换，在 Shader 中做光照计算，最后输出时做<strong>线性→sRGB</strong>转换。大多数游戏引擎（Unity/UE）默认启用这个流程。如果你忘记做Gamma校正，你的光照计算会出问题——阴影太暗、亮部过曝、颜色偏差。
+</div>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：假如你在线性空间做光照计算，然后直接输出到显示器（不做Gamma校正），会看到什么？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">画面整体会<strong>偏暗</strong>，特别是中间调部分。因为显示器自动应用了 Gamma=2.2，把线性值又"压缩"了一次。就好像你在照片上又加了一层暗化滤镜。正确的做法是在 Shader 最后做一次 sRGB 编码。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="3-6-图像文件格式">3.6 图像文件格式</h2>
+
+<h3 id="3-6-1-常见格式对比">3.6.1 常见格式对比</h3>
+
+<table>
+<tr><th>格式</th><th>压缩</th><th>Alpha</th><th>HDR</th><th>用途</th></tr>
+<tr><td><strong>PNG</strong></td><td>无损</td><td>✓</td><td>✗</td><td>UI/图标/截图</td></tr>
+<tr><td><strong>JPEG</strong></td><td>有损</td><td>✗</td><td>✗</td><td>照片/网络</td></tr>
+<tr><td><strong>GIF</strong></td><td>LZW</td><td>✓(1bit)</td><td>✗</td><td>动画</td></tr>
+<tr><td><strong>BMP</strong></td><td>无</td><td>✓</td><td>✗</td><td>旧格式</td></tr>
+<tr><td><strong>EXR</strong></td><td>有损/无损</td><td>✓</td><td>✓</td><td>HDR/特效</td></tr>
+<tr><td><strong>TGA</strong></td><td>无/RLE</td><td>✓</td><td>✗</td><td>3D纹理</td></tr>
+</table>
+
+<p><strong>如何选择？</strong></p>
+<ul>
+  <li>需要透明背景 → PNG</li>
+  <li>照片分享 → JPEG（体积小）</li>
+  <li>HDR数据 → EXR（浮点精度）</li>
+  <li>简单动图 → GIF</li>
+</ul>
+
+<h3 id="3-6-2-jpeg压缩原理简介">3.6.2 JPEG压缩原理简介</h3>
+
+<pre><code>RGB → YCbCr     // 把颜色分解为亮度(Y)和色度(Cb, Cr)
+↓
+4:2:0 降采样    // 色度分辨率降到1/4（人眼对色度变化不敏感）
+↓
+8×8 DCT        // 频域变换——把图像块转成频率系数
+↓
+量化            // 高频系数用更粗的精度存储（丢掉人眼不敏感的细节）
+↓
+Huffman/行程编码</code></pre>
+
+<p><strong>为什么JPEG能做到10:1的压缩比而几乎看不出质量损失？</strong>因为它在第二步（色度降采样）和第四步（高频量化）中丢弃了人眼最不敏感的信息。这是"感知编码"（perceptual coding）的经典案例。</p>
+
+<hr>
+
+<h2 id="3-7-图像i-o编程要点">3.7 图像I/O编程要点</h2>
+
+<pre><code>// 读取图片到内存
+image = read("photo.png")
+width = image.width, height = image.height
+data = image.pixels    // [R,G,B,R,G,B,...] 或 [R,G,B,A,R,G,B,A,...]
+
+// 逐个像素处理
+for y in 0..height-1:
+    for x in 0..width-1:
+        r = image.get_pixel(x, y).r
+        g = image.get_pixel(x, y).g
+        b = image.get_pixel(x, y).b
+        // 处理像素...
+        image.set_pixel(x, y, Color(r', g', b'))
+
+// 写入文件
+write(image, "output.png")</code></pre>
+
+<hr>
+
+<h2 id="全章总结">全章总结</h2>
+
+<blockquote><strong>核心洞察</strong>：像素是图形学最基本的"原子"单位——掌握了光栅设备、RGB颜色模型、Alpha合成、Gamma校正和图像格式，就掌握了图像在计算机中存储和显示的完整链路。</blockquote>
+
+<table>
+<tr><th>概念</th><th>一句话</th><th>图形学应用</th></tr>
+<tr><td><strong>光栅</strong></td><td>像素阵列——所有显示/输入设备的共同基础</td><td>LCD、CRT、打印机、相机</td></tr>
+<tr><td><strong>像素坐标</strong></td><td>原点在左上角，y轴向下</td><td>所有图像/屏幕操作的基础</td></tr>
+<tr><td><strong>RGB</strong></td><td>加色混合—红+绿+蓝=白</td><td>显示器发色原理</td></tr>
+<tr><td><strong>Alpha</strong></td><td>不透明度——α=1不透明，α=0透明</td><td>图像合成、UI、特效</td></tr>
+<tr><td><strong>Over操作</strong></td><td>out = αf·cf + (1-αf)·cb</td><td>前景叠背景的核心操作</td></tr>
+<tr><td><strong>Gamma校正</strong></td><td>sRGB↔线性的双向转换</td><td>所有PBR渲染管线必须处理</td></tr>
+<tr><td><strong>图像格式</strong></td><td>PNG（无损透明）vs JPEG（有损照片）vs EXR（HDR）</td><td>根据场景选择合适的格式</td></tr>
+</table>
+
+<div class="key-box">
+<strong>🔑 记住这一句</strong>：<br>
+"渲染内部永远是线性空间（浮点0-1），输入输出时做Gamma校正——这是图形学的第一课，也是最容易被忽略的一课。"
+</div>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li class="active"><a href="ch03_光栅图像.html" class="active">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#3-1-光栅设备-raster-devices">3.1 光栅设备（Raster Devices）</a></li>
+  <li class="toc-h3"><a href="#3-1-1-什么是光栅-先解决第一个问题">3.1.1 什么是光栅？先解决第一个问题</a></li>
+  <li class="toc-h3"><a href="#3-1-2-显示分辨率与像素密度">3.1.2 显示分辨率与像素密度</a></li>
+  <li class="toc-h3"><a href="#3-1-3-像素的纵横比">3.1.3 像素的纵横比</a></li>
+  <li class="toc-h2"><a href="#3-2-图像-像素与几何-images--pixels--and-geometry">3.2 图像、像素与几何（Images, Pixels, and Geometry）</a></li>
+  <li class="toc-h3"><a href="#3-2-1-像素坐标系统--一个让人容易混淆的地方">3.2.1 像素坐标系统——一个让人容易混淆的地方</a></li>
+  <li class="toc-h3"><a href="#3-2-2-像素是面积还是点-一个微妙的哲学问题">3.2.2 像素是面积还是点？一个微妙的哲学问题</a></li>
+  <li class="toc-h3"><a href="#3-2-3-图像在内存中的存储">3.2.3 图像在内存中的存储</a></li>
+  <li class="toc-h2"><a href="#3-3-rgb颜色-rgb-color">3.3 RGB颜色（RGB Color）</a></li>
+  <li class="toc-h3"><a href="#3-3-1-三基色原理">3.3.1 三基色原理</a></li>
+  <li class="toc-h3"><a href="#3-3-2-颜色值的表示与转换">3.3.2 颜色值的表示与转换</a></li>
+  <li class="toc-h2"><a href="#3-4-alpha合成-alpha-compositing">3.4 Alpha合成（Alpha Compositing）</a></li>
+  <li class="toc-h3"><a href="#3-4-1-什么是alpha">3.4.1 什么是Alpha？</a></li>
+  <li class="toc-h3"><a href="#3-4-2-over操作--合成的基础">3.4.2 Over操作——合成的基础</a></li>
+  <li class="toc-h3"><a href="#3-4-3-预乘alpha">3.4.3 预乘Alpha</a></li>
+  <li class="toc-h3"><a href="#3-4-4-常见的合成模式">3.4.4 常见的合成模式</a></li>
+  <li class="toc-h3"><a href="#3-4-5-合成的可结合性">3.4.5 合成的可结合性</a></li>
+  <li class="toc-h2"><a href="#3-5-gamma校正">3.5 Gamma校正</a></li>
+  <li class="toc-h3"><a href="#3-5-1-问题的起源--crt的物理特性">3.5.1 问题的起源——CRT的物理特性</a></li>
+  <li class="toc-h3"><a href="#3-5-2-解决方案-存储gamma--encoding-gamma">3.5.2 解决方案：存储Gamma (Encoding Gamma)</a></li>
+  <li class="toc-h3"><a href="#3-5-3-srgb-gamma-的精确公式">3.5.3 sRGB Gamma 的精确公式</a></li>
+  <li class="toc-h2"><a href="#3-6-图像文件格式">3.6 图像文件格式</a></li>
+  <li class="toc-h3"><a href="#3-6-1-常见格式对比">3.6.1 常见格式对比</a></li>
+  <li class="toc-h3"><a href="#3-6-2-jpeg压缩原理简介">3.6.2 JPEG压缩原理简介</a></li>
+  <li class="toc-h2"><a href="#3-7-图像i-o编程要点">3.7 图像I/O编程要点</a></li>
+  <li class="toc-h2"><a href="#全章总结">全章总结</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch19: 视觉感知</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch19 视觉感知</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第19章：视觉感知 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第19章（p.525-568）。<br>
+本章是图形学的"用户"——它告诉你<strong>人类视觉如何工作</strong>，从而<strong>指导你写出"看起来对"的图形</strong>。<br>
+学完本章，你将真正理解视觉敏感度、深度感知、视觉错觉、运动感知等核心技术。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s191">19.1 视觉科学</a></li>
+  <li><a href="#s192">19.2 眼睛解剖</a></li>
+  <li><a href="#s193">19.3 视觉敏感度</a></li>
+  <li><a href="#s194">19.4 深度感知</a></li>
+  <li><a href="#s195">19.5 视觉感知特性</a></li>
+  <li><a href="#s196">19.6 视觉错觉</a></li>
+  <li><a href="#s197">19.7 视觉感知对图形学的应用</a></li>
+</ul>
+</div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+  <li>理解<strong>视觉感知</strong>的重要性——为什么图形学最终是为"人眼"服务</li>
+  <li>掌握<strong>视觉系统解剖</strong>（眼/视网膜/锥体/杆体）</li>
+  <li>理解<strong>心理物理学</strong>——Weber/Fechner/Stevens 定律</li>
+  <li>掌握<strong>视觉敏感度</strong>（CSDF、CSF）</li>
+  <li>理解<strong>深度感知</strong>（双目、运动、透视、遮挡）</li>
+  <li>理解<strong>视觉错觉</strong>（Mach带、同时对比、几何错觉）</li>
+  <li>掌握<strong>运动感知</strong>（运动视差、光流）</li>
+  <li>理解图形学中的<strong>色调恒常性</strong></li>
+</ol>
+
+<hr>
+
+<h2 id="19-1-视觉科学-vision-science">19.1 视觉科学（Vision Science）</h2>
+
+<h3 id="19-1-1-视觉为什么重要">19.1.1 视觉为什么重要</h3>
+
+<p><strong>视觉 = 人获取 80% 信息的方式</strong>——图形学的"用户"是眼睛。</p>
+
+<blockquote><p><strong>日常类比</strong>：视觉是<strong>唯一</strong>能从远处获取 3D 信息的感官（其它都需要"接触"或"听觉"）。</p></blockquote>
+
+<h3 id="19-1-2-视觉感知的目标">19.1.2 视觉感知的目标</h3>
+
+<p><strong>把人眼前 2D 像素 → 解释成 3D 世界</strong></p>
+
+<p><strong>两个挑战</strong>：</p>
+<ul>
+  <li>物理上<strong>信息丢失</strong>（光强只是波长的积分）</li>
+  <li>大脑<strong>逆向工程</strong>出"有意义的"3D 解释</li>
+</ul>
+
+<h3 id="19-1-3-视觉的工程视角">19.1.3 视觉的工程视角</h3>
+
+<table>
+<tr><th>影响</th><th>例子</th></tr>
+<tr><td><strong>质量优化</strong></td><td>高光区像素可以精度低一点（人眼对低频敏感）</td></tr>
+<tr><td><strong>降噪算法</strong></td><td>边缘要保留，平坦区可降采样</td></tr>
+<tr><td><strong>光照计算</strong></td><td>不用对所有光线严格积分——视觉是宽容的</td></tr>
+</table>
+
+<hr>
+
+<h2 id="19-2-眼睛解剖-anatomy-of-the-eye">19.2 眼睛解剖（Anatomy of the Eye）</h2>
+
+<h3 id="19-2-1-眼球结构">19.2.1 眼球结构</h3>
+
+<p><strong>关键部分</strong>：光线 → 角膜 → 瞳孔（光圈） → 晶状体（调焦）→ 视网膜（光敏细胞）</p>
+
+<div class="guizang-figure">
+<img src="images/ch19/eye_anatomy.png" alt="人眼解剖结构">
+<div class="guizang-caption">图19-1：人眼结构——光线经角膜、晶状体聚焦到视网膜，视神经将信号传至大脑</div>
+</div>
+
+<p><strong>几何参数</strong>：</p>
+<ul>
+  <li>角膜曲率 ~ 7.8mm</li>
+  <li>晶状体调焦范围：~25cm 到无限远</li>
+</ul>
+
+<h3 id="19-2-2-视网膜的感光细胞">19.2.2 视网膜的感光细胞</h3>
+
+<p><strong>3 种锥体 + 1 种杆体</strong>——细节在 Ch18 色彩学讲过。</p>
+
+<p><strong>空间分布</strong>：</p>
+<ul>
+  <li><strong>中央凹（Fovea）</strong>：锥体密度最高，视觉最敏锐</li>
+  <li><strong>周边</strong>：杆体密度高（暗视觉）</li>
+  <li><strong>盲点（Blind Spot）</strong>：视神经穿过的地方</li>
+</ul>
+
+<div class="guizang-figure">
+<img src="images/ch19/cone_rod_distribution.png" alt="锥体杆体密度分布">
+<div class="guizang-caption">图19-2：锥体与杆体密度分布——锥体（色觉）集中在中央凹，杆体（暗光）分布在周边</div>
+</div>
+
+<blockquote><p><strong>关键洞察</strong>：<strong>Fovea 只占视野 1-2°</strong>——这就是为什么眼睛要不断扫视（Saccades）。</p></blockquote>
+
+<hr>
+
+<h2 id="19-3-视觉敏感度-visual-sensitivity">19.3 视觉敏感度（Visual Sensitivity）</h2>
+
+<h3 id="19-3-1-心理物理学-psychophysics">19.3.1 心理物理学（Psychophysics）</h3>
+
+<p><strong>心理物理学 = "物理刺激 → 感知强度"的科学</strong></p>
+
+<p><strong>3 个经典定律</strong>：</p>
+
+<table>
+<tr><th>定律</th><th>公式</th><th>含义</th></tr>
+<tr><td><strong>Weber 定律（1834）</strong></td><td>ΔI / I = k₁</td><td>最小可察觉变化与刺激强度成比例</td></tr>
+<tr><td><strong>Fechner 定律（1860）</strong></td><td>S = k₂ · log(I)</td><td>感知是"对数"缩放</td></tr>
+<tr><td><strong>Stevens 定律（1961）</strong></td><td>S = k₃ · I^b</td><td>幂律关系，b 取决于感知维度</td></tr>
+</table>
+
+<blockquote><p><strong>应用</strong>：<strong>Stevens 定律</strong>是 PBR 渲染中 tone mapping 的基础——<strong>感知和亮度是幂律关系</strong>。</p></blockquote>
+
+<h3 id="19-3-2-视觉阈值-jnd">19.3.2 视觉阈值（JND）</h3>
+
+<p><strong>JND = "刚刚能感知到的差异"</strong></p>
+
+<p><strong>应用</strong>：</p>
+<ul>
+  <li>颜色量化：4 阶 grayscale 已经能用</li>
+  <li>时间量化：60 fps 看起来连续</li>
+  <li>空间量化：视网膜只有 200 万锥体</li>
+</ul>
+
+<blockquote><p><strong>核心洞察</strong>：<strong>JND = 图像压缩的理论基础</strong>——JPEG/MPEG 都在用。</p></blockquote>
+
+<h3 id="19-3-3-对比敏感度函数-csf">19.3.3 对比敏感度函数（CSF）</h3>
+
+<p><strong>CSF = "空间频率 vs 视觉敏感度"</strong></p>
+
+<div class="guizang-figure">
+<img src="images/ch19/csf_curve.png" alt="CSF对比敏感度曲线">
+<div class="guizang-caption">图19-3：CSF 对比敏感度函数——中频最敏感，高频（细节）和低频（亮度）都不敏感</div>
+</div>
+
+<div class="formula">CSF(f) = C(f) · MTF(f)</div>
+
+<p><strong>形状</strong>：钟形——<strong>中频最敏感</strong>，高频（细节）和低频（亮度）都不敏感。</p>
+
+<blockquote><p><strong>图形学应用</strong>：<strong>8x8 DCT 块</strong>、<strong>mipmap</strong>、<strong>anisotropic filter</strong> 都在用 CSF。</p></blockquote>
+
+<h3 id="19-3-4-明视觉-vs-暗视觉">19.3.4 明视觉 vs 暗视觉</h3>
+
+<table>
+<tr><th>条件</th><th>主导</th><th>峰值</th><th>颜色</th></tr>
+<tr><td><strong>Photopic（明视觉）</strong></td><td>锥体</td><td>555 nm</td><td>有色</td></tr>
+<tr><td><strong>Scotopic（暗视觉）</strong></td><td>杆体</td><td>500 nm</td><td>无色</td></tr>
+<tr><td><strong>Mesopic（中间视觉）</strong></td><td>两者</td><td>过渡</td><td>弱色</td></tr>
+</table>
+
+<p><strong>实战</strong>：夜间游戏 → 减少色彩细节（人眼看不到）。</p>
+
+<hr>
+
+<h2 id="19-4-深度感知-depth-perception">19.4 深度感知（Depth Perception）</h2>
+
+<h3 id="19-4-1-五大深度线索">19.4.1 五大深度线索</h3>
+
+<p><strong>深度感知 = 5 大线索</strong></p>
+
+<div class="guizang-figure">
+<img src="images/ch19/depth_cues.png" alt="五大深度线索">
+<div class="guizang-caption">图19-4：五大深度线索——双目汇聚、线性透视、遮挡关系、纹理梯度、运动视差</div>
+</div>
+
+<table>
+<tr><th>线索</th><th>机制</th><th>限制</th></tr>
+<tr><td><strong>调节（Accommodation）</strong></td><td>晶状体调焦</td><td>&lt; 2m</td></tr>
+<tr><td><strong>汇聚（Vergence）</strong></td><td>双眼会聚角</td><td>&lt; 数米</td></tr>
+<tr><td><strong>双眼视差（Binocular）</strong></td><td>左右眼差异</td><td>&lt; 10m</td></tr>
+<tr><td><strong>透视（Perspective）</strong></td><td>线性透视</td><td>单目</td></tr>
+<tr><td><strong>遮挡（Occlusion）</strong></td><td>前压后</td><td>顺序</td></tr>
+</table>
+
+<h3 id="19-4-2-视觉调节-accommodation">19.4.2 视觉调节（Accommodation）</h3>
+
+<p><strong>晶状体调焦 = 测 0-2m 内的距离</strong>。极近距离有效，超过 2m 模糊，年龄越大越差。</p>
+
+<h3 id="19-4-3-双眼视差-binocular-disparity">19.4.3 双眼视差（Binocular Disparity）</h3>
+
+<div class="formula">z = ipd / (2 tan(θ/2))</div>
+<div class="formula">Δz ≈ ipd / (2 tan²(θ/Δθ))</div>
+
+<p><strong>机制</strong>：远点左右眼图像几乎一样，近点差异大。<strong>应用</strong>：VR/AR、3D 电影、立体显示器。</p>
+
+<h3 id="19-4-4-透视-perspective">19.4.4 透视（Perspective）</h3>
+
+<p><strong>线性透视 = 平行线收敛于消失点</strong></p>
+<ul>
+  <li>物体<strong>大小 = 1/距离</strong>（near = 大，far = 小）</li>
+  <li><strong>地平线</strong>上方远处</li>
+  <li><strong>消失点</strong>在视觉上 "finitize" 场景</li>
+</ul>
+
+<h3 id="19-4-5-遮挡-occlusion">19.4.5 遮挡（Occlusion）</h3>
+
+<p><strong>遮挡 = "看到前面就猜到后面"</strong>。即使单眼也有效，提供<strong>绝对顺序</strong>。</p>
+
+<h3 id="19-4-6-纹理梯度-texture-gradient">19.4.6 纹理梯度（Texture Gradient）</h3>
+
+<p><strong>远方的纹理元素看起来更密、更小</strong>。三个线索：元素大小变小、间距变小、foreshortening。</p>
+
+<h3 id="19-4-7-运动视差-motion-parallax">19.4.7 运动视差（Motion Parallax）</h3>
+
+<p><strong>近处动得快，远处动得慢</strong>。单眼也有效，<strong>被 VR 大量使用</strong>。</p>
+
+<h3 id="19-4-8-光流-optic-flow">19.4.8 光流（Optic Flow）</h3>
+
+<p><strong>光流 = "视网膜上像素的速度"</strong>。用于自运动感知、撞墙时间、避障。</p>
+
+<hr>
+
+<h2 id="19-5-视觉感知特性-perception-properties">19.5 视觉感知特性（Perception Properties）</h2>
+
+<h3 id="19-5-1-亮度恒常性-lightness-constancy">19.5.1 亮度恒常性（Lightness Constancy）</h3>
+
+<p><strong>亮度恒常性 = "无论光照如何变化，看到的亮度不变"</strong>。例：阳光下和阴天的同一张白纸，都看到"白"。</p>
+
+<p><strong>应用</strong>：PBR 渲染必须算反射率，不能只看亮度；Tone mapping 保持视觉一致性。</p>
+
+<h3 id="19-5-2-颜色恒常性-color-constancy">19.5.2 颜色恒常性（Color Constancy）</h3>
+
+<p><strong>无论什么光源，看到的颜色"差不多"</strong>。机制：von Kries 适应（Ch18 讲过）。</p>
+
+<h3 id="19-5-3-大小恒常性-size-constancy">19.5.3 大小恒常性（Size Constancy）</h3>
+
+<p><strong>远近不同时，物体大小感知不变</strong>。例：手伸到眼前 vs 伸到远处 → 大小一样。</p>
+
+<h3 id="19-5-4-形状恒常性-shape-constancy">19.5.4 形状恒常性（Shape Constancy）</h3>
+
+<p><strong>倾斜观察时，形状感知不变</strong>。例：桌子的长方形形状，不管从哪个角度看都"知道"是长方形。</p>
+
+<hr>
+
+<h2 id="19-6-视觉错觉-illusions">19.6 视觉错觉（Illusions）</h2>
+
+<h3 id="19-6-1-mach-带与-hermann-网格">19.6.1 Mach 带与 Hermann 网格</h3>
+
+<div class="guizang-figure">
+<img src="images/ch19/visual_illusions.png" alt="视觉错觉">
+<div class="guizang-caption">图19-5：视觉错觉——Mach带（边缘增强）与 Hermann网格（交叉灰点），源于侧抑制机制</div>
+</div>
+
+<h3 id="19-6-2-mach-带-mach-bands">19.6.2 Mach 带（Mach Bands）</h3>
+
+<p><strong>边缘看起来比实际对比度更强</strong>。机制：视网膜神经元的<strong>侧抑制</strong>——相邻神经元相互抑制。</p>
+
+<p><strong>应用</strong>：卡通渲染（Toon Shader）<strong>故意利用</strong>这个错觉；边缘检测（Canny, Sobel）算法。</p>
+
+<h3 id="19-6-3-同时对比-simultaneous-contrast">19.6.3 同时对比（Simultaneous Contrast）</h3>
+
+<p><strong>一个颜色受周围颜色影响</strong>。例：灰色在白背景显得更暗，在黑背景显得更亮。</p>
+
+<h3 id="19-6-4-hermann-网格错觉-hermann-grid-illusion">19.6.4 Hermann 网格错觉（Hermann Grid Illusion）</h3>
+
+<p><strong>网格交叉处出现"灰点"</strong>。机制：<strong>侧抑制</strong> + 中心-周围感受野。</p>
+
+<h3 id="19-6-5-cornsweet-错觉">19.6.5 Cornsweet 错觉</h3>
+
+<p><strong>Craik-O'Brien-Cornsweet 边缘</strong>让整个区域看起来"有亮度差异"。机制：<strong>局部边缘检测</strong>——大脑用边缘推断整体。</p>
+
+<h3 id="19-6-6-形状错觉">19.6.6 形状错觉</h3>
+<ul>
+  <li><strong>Müller-Lyer 错觉</strong>：线段长度受箭头影响</li>
+  <li><strong>Ponzo 错觉</strong>：同样大小的线段在透视中"远处看起来大"</li>
+  <li><strong>水平-垂直错觉</strong>：垂直线看起来比水平线长</li>
+</ul>
+
+<hr>
+
+<h2 id="19-7-视觉感知对图形学的应用">19.7 视觉感知对图形学的应用</h2>
+
+<h3 id="19-7-1-图像压缩">19.7.1 图像压缩</h3>
+
+<p><strong>利用人眼"看不见" = 节省空间</strong></p>
+
+<table>
+<tr><th>通道</th><th>量化精度</th><th>原因</th></tr>
+<tr><td>Y（亮度）</td><td>最细</td><td>眼睛对亮度敏感</td></tr>
+<tr><td>Cb/Cr（色度）</td><td>粗</td><td>眼睛对色度不敏感</td></tr>
+</table>
+
+<p><strong>JPEG 8x8 DCT</strong>：高频系数大幅量化（眼睛对高频不敏感），低频系数保留。</p>
+
+<h3 id="19-7-2-抗锯齿-anti-aliasing">19.7.2 抗锯齿（Anti-Aliasing）</h3>
+
+<p><strong>像素是采样——必须满足 Nyquist-Shannon 采样定理</strong>。亚像素采样：每个像素采 4/16 个子样本，用 JND 阈值决定"哪些亚样本是需要的"。</p>
+
+<h3 id="19-7-3-运动渲染">19.7.3 运动渲染</h3>
+<ul>
+  <li>60 fps：1/60 s ≈ 17ms 每帧</li>
+  <li>30 fps：1/30 s ≈ 33ms 每帧</li>
+  <li>低于 15 fps → 人眼"觉察到卡顿"</li>
+</ul>
+
+<h3 id="19-7-4-立体-stereo-3d">19.7.4 立体（Stereo 3D）</h3>
+
+<table>
+<tr><th>技术</th><th>原理</th><th>质量</th></tr>
+<tr><td><strong>Anaglyph</strong></td><td>红/青滤色</td><td>最便宜，劣质</td></tr>
+<tr><td><strong>Polarized</strong></td><td>偏光眼镜</td><td>电影院，主流</td></tr>
+<tr><td><strong>Active Shutter</strong></td><td>电子快门</td><td>高质量，贵</td></tr>
+</table>
+
+<h3 id="19-7-5-调色-color-grading">19.7.5 调色（Color Grading）</h3>
+
+<p><strong>PBR 渲染后的"最后一道工序"</strong>。关键工具：Tone curve、Color balance、Saturation、Curves。</p>
+
+<h3 id="19-7-6-游戏-ux-视觉设计">19.7.6 游戏 UX 视觉设计</h3>
+
+<p><strong>"看得清楚"比"真实"更重要</strong></p>
+
+<ul>
+  <li><strong>亮黄/亮红</strong>：警告、危险</li>
+  <li><strong>亮绿</strong>：安全、正常</li>
+  <li><strong>暗蓝/暗紫</strong>：神秘、史诗</li>
+  <li>文本对比度 ≥ 4.5:1（WCAG AA）</li>
+  <li>UI 元素 ≥ 3:1</li>
+</ul>
+
+<hr>
+
+<h2 id="全章总结">全章总结</h2>
+
+<blockquote>
+<p><strong>讲义核心洞察</strong>：图形学的"用户"是人眼——理解视觉 = 理解人眼的局限和优势——</p>
+<ul>
+  <li><strong>3 种锥体 + 杆体</strong> = 颜色和暗视觉</li>
+  <li><strong>CSF</strong> = 空间频率敏感度（mipmap 基础）</li>
+  <li><strong>Weber/Fechner/Stevens</strong> = 心理物理学</li>
+  <li><strong>5 大深度线索</strong> = 透视/遮挡/汇聚/视差/运动</li>
+  <li><strong>视觉恒常性</strong> = 渲染要保持稳定</li>
+  <li><strong>视觉错觉</strong> = 卡通渲染"作弊"</li>
+  <li><strong>运动视差 + 光流</strong> = VR 必备</li>
+</ul>
+</blockquote>
+
+<p><strong>关键公式速查</strong>：</p>
+
+<div class="formula">Weber: ΔI/I = k₁</div>
+<div class="formula">Fechner: S = k₂ · log(I)</div>
+<div class="formula">Stevens: S = k₃ · I^b</div>
+<div class="formula">CSF: CSF(f) = C(f) · MTF(f)</div>
+<div class="formula">汇聚: z = ipd / (2 tan(θ/2))</div>
+<div class="formula">透视: size_image = size_world / z</div>
+
+<p><strong>下一步</strong>：第 20 章《色调再现》——理解 HDR、LDR、ACES、tone mapping 等"调色"技术。</p>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li class="active"><a href="ch19_视觉感知.html" class="active">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#19-1-视觉科学-vision-science">19.1 视觉科学（Vision Science）</a></li>
+  <li class="toc-h3"><a href="#19-1-1-视觉为什么重要">19.1.1 视觉为什么重要</a></li>
+  <li class="toc-h3"><a href="#19-1-2-视觉感知的目标">19.1.2 视觉感知的目标</a></li>
+  <li class="toc-h3"><a href="#19-1-3-视觉的工程视角">19.1.3 视觉的工程视角</a></li>
+  <li class="toc-h2"><a href="#19-2-眼睛解剖-anatomy-of-the-eye">19.2 眼睛解剖（Anatomy of the Eye）</a></li>
+  <li class="toc-h3"><a href="#19-2-1-眼球结构">19.2.1 眼球结构</a></li>
+  <li class="toc-h3"><a href="#19-2-2-视网膜的感光细胞">19.2.2 视网膜的感光细胞</a></li>
+  <li class="toc-h2"><a href="#19-3-视觉敏感度-visual-sensitivity">19.3 视觉敏感度（Visual Sensitivity）</a></li>
+  <li class="toc-h3"><a href="#19-3-1-心理物理学-psychophysics">19.3.1 心理物理学（Psychophysics）</a></li>
+  <li class="toc-h3"><a href="#19-3-2-视觉阈值-jnd">19.3.2 视觉阈值（JND）</a></li>
+  <li class="toc-h3"><a href="#19-3-3-对比敏感度函数-csf">19.3.3 对比敏感度函数（CSF）</a></li>
+  <li class="toc-h3"><a href="#19-3-4-明视觉-vs-暗视觉">19.3.4 明视觉 vs 暗视觉</a></li>
+  <li class="toc-h2"><a href="#19-4-深度感知-depth-perception">19.4 深度感知（Depth Perception）</a></li>
+  <li class="toc-h3"><a href="#19-4-1-五大深度线索">19.4.1 五大深度线索</a></li>
+  <li class="toc-h3"><a href="#19-4-2-视觉调节-accommodation">19.4.2 视觉调节（Accommodation）</a></li>
+  <li class="toc-h3"><a href="#19-4-3-双眼视差-binocular-disparity">19.4.3 双眼视差（Binocular Disparity）</a></li>
+  <li class="toc-h3"><a href="#19-4-4-透视-perspective">19.4.4 透视（Perspective）</a></li>
+  <li class="toc-h3"><a href="#19-4-5-遮挡-occlusion">19.4.5 遮挡（Occlusion）</a></li>
+  <li class="toc-h3"><a href="#19-4-6-纹理梯度-texture-gradient">19.4.6 纹理梯度（Texture Gradient）</a></li>
+  <li class="toc-h3"><a href="#19-4-7-运动视差-motion-parallax">19.4.7 运动视差（Motion Parallax）</a></li>
+  <li class="toc-h3"><a href="#19-4-8-光流-optic-flow">19.4.8 光流（Optic Flow）</a></li>
+  <li class="toc-h2"><a href="#19-5-视觉感知特性-perception-properties">19.5 视觉感知特性（Perception Properties）</a></li>
+  <li class="toc-h3"><a href="#19-5-1-亮度恒常性-lightness-constancy">19.5.1 亮度恒常性（Lightness Constancy）</a></li>
+  <li class="toc-h3"><a href="#19-5-2-颜色恒常性-color-constancy">19.5.2 颜色恒常性（Color Constancy）</a></li>
+  <li class="toc-h3"><a href="#19-5-3-大小恒常性-size-constancy">19.5.3 大小恒常性（Size Constancy）</a></li>
+  <li class="toc-h3"><a href="#19-5-4-形状恒常性-shape-constancy">19.5.4 形状恒常性（Shape Constancy）</a></li>
+  <li class="toc-h2"><a href="#19-6-视觉错觉-illusions">19.6 视觉错觉（Illusions）</a></li>
+  <li class="toc-h3"><a href="#19-6-1-mach-带与-hermann-网格">19.6.1 Mach 带与 Hermann 网格</a></li>
+  <li class="toc-h3"><a href="#19-6-2-mach-带-mach-bands">19.6.2 Mach 带（Mach Bands）</a></li>
+  <li class="toc-h3"><a href="#19-6-3-同时对比-simultaneous-contrast">19.6.3 同时对比（Simultaneous Contrast）</a></li>
+  <li class="toc-h3"><a href="#19-6-4-hermann-网格错觉-hermann-grid-illusion">19.6.4 Hermann 网格错觉（Hermann Grid Illusion）</a></li>
+  <li class="toc-h3"><a href="#19-6-5-cornsweet-错觉">19.6.5 Cornsweet 错觉</a></li>
+  <li class="toc-h3"><a href="#19-6-6-形状错觉">19.6.6 形状错觉</a></li>
+  <li class="toc-h2"><a href="#19-7-视觉感知对图形学的应用">19.7 视觉感知对图形学的应用</a></li>
+  <li class="toc-h3"><a href="#19-7-1-图像压缩">19.7.1 图像压缩</a></li>
+  <li class="toc-h3"><a href="#19-7-2-抗锯齿-anti-aliasing">19.7.2 抗锯齿（Anti-Aliasing）</a></li>
+  <li class="toc-h3"><a href="#19-7-3-运动渲染">19.7.3 运动渲染</a></li>
+  <li class="toc-h3"><a href="#19-7-4-立体-stereo-3d">19.7.4 立体（Stereo 3D）</a></li>
+  <li class="toc-h3"><a href="#19-7-5-调色-color-grading">19.7.5 调色（Color Grading）</a></li>
+  <li class="toc-h3"><a href="#19-7-6-游戏-ux-视觉设计">19.7.6 游戏 UX 视觉设计</a></li>
+  <li class="toc-h2"><a href="#全章总结">全章总结</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

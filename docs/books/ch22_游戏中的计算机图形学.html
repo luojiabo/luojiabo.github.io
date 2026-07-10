@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch22: 游戏中的计算机图形学</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch22 游戏中的计算机图形学</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第22章：游戏中的计算机图形学 — 零基础极详细讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第22章（p.623-644），由10年经验游戏引擎/渲染工程师执笔。<br>
+<strong>本章是"游戏图形学"——所有前21章的集大成者</strong>。这一章不谈新算法，而是把之前所有内容（光栅化、纹理、光照、动画、加速结构）放到 <strong>"30帧/秒、100W三角形"</strong> 的真实约束下重新审视。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s220">学习目标</a></li>
+  <li><a href="#s221">22.1 游戏平台</a></li>
+  <li><a href="#s222">22.2 有限资源</a></li>
+  <li><a href="#s223">22.3 优化技术</a></li>
+  <li><a href="#s224">22.4 游戏类型</a></li>
+  <li><a href="#s225">22.5 游戏生产流程</a></li>
+  <li><a href="#s226">22.6 场景管理</a></li>
+  <li><a href="#s227">22.7 碰撞检测</a></li>
+  <li><a href="#s228">22.8 粒子系统与渲染循环</a></li>
+  <li><a href="#s229">22.9 调试与性能分析</a></li>
+  <li><a href="#s22sum">全章总结</a></li>
+</ul>
+</div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+  <li>理解游戏平台的硬件差异与选型策略</li>
+  <li>掌握有限资源下的预算分配思维（CPU/GPU/Memory/团队时间）</li>
+  <li>理解优化技术矩阵：Culling、LOD、Batching、Prepass</li>
+  <li>掌握场景管理的数据结构（BVH/Octree/BSP/ECS）</li>
+  <li>理解碰撞检测的Broad/Narrow两阶段架构</li>
+  <li>掌握游戏渲染循环的完整生命周期</li>
+  <li>理解游戏类型对图形技术选型的根本影响</li>
+  <li>掌握美术资产生产管线（高模→低模→法线→纹理→Shader→动画）</li>
+</ol>
+
+<hr>
+
+<!-- ==================== 22.1 ==================== -->
+<h2 id="22-1-游戏平台-platforms">22.1 游戏平台（Platforms）</h2>
+
+<h3 id="22-1-1-为什么需要关注-平台">22.1.1 为什么需要关注"平台"？</h3>
+
+<p><strong>核心矛盾</strong>：游戏不像离线渲染电影——它必须在某个<strong>具体硬件</strong>上以<strong>确定的帧率</strong>运行。离线渲染可以花10小时渲染一帧，游戏每帧必须<strong>小于33ms</strong>（30fps）甚至<strong>小于16ms</strong>（60fps）。</p>
+
+<div class="analogy">
+<strong>💡 生活类比：搬家</strong>
+<p>离线渲染就像"请搬家公司搬一整个房子"——你可以花一整天精雕细琢每件家具怎么摆。游戏渲染就像"在高速公路上边开车边组装宜家家具"——你必须在车子开到下一个出口之前把椅子组装好，否则就"撞车"（掉帧）。</p>
+</div>
+
+<h3 id="22-1-2-五大平台的差异">22.1.2 五大平台的差异</h3>
+
+<table>
+<tr><th>平台</th><th>硬件</th><th>OS</th><th>API</th><th>特点</th><th>对渲染的影响</th></tr>
+<tr><td><strong>PC</strong></td><td>任意（千差万别）</td><td>Windows/Linux/Mac</td><td>DirectX/Vulkan/OpenGL</td><td>配置差异巨大，必须可配置</td><td>需要动态分辨率、多档画质设置</td></tr>
+<tr><td><strong>主机</strong>（PS5/Xbox）</td><td>固定（完全确定）</td><td>定制OS</td><td>厂商SDK</td><td>硬件确定，可极致优化</td><td>可以写死参数，利用硬件特性</td></tr>
+<tr><td><strong>手机</strong></td><td>弱（散热差）</td><td>iOS/Android</td><td>Metal/Vulkan/OpenGL</td><td>续航敏感，发热严重</td><td>必须降分辨率、减少pass</td></tr>
+<tr><td><strong>Web</strong></td><td>任意（浏览器内）</td><td>浏览器沙箱</td><td>WebGL/WebGPU</td><td>沙箱限制多，性能受限</td><td>Draw Call上限低</td></tr>
+<tr><td><strong>VR/AR</strong></td><td>头显（双目）</td><td>定制</td><td>OpenXR</td><td>90/120fps强制要求</td><td>渲染分辨率要乘2（双眼）</td></tr>
+</table>
+
+<div class="choice-table">
+<strong>🔧 技术选型：选A不选B的理由</strong>
+<table>
+<tr><th>场景</th><th>推荐选</th><th>不推荐选</th><th>理由</th></tr>
+<tr><td>移动端游戏</td><td>Unity + Vulkan</td><td>Unreal + D3D12</td><td>Unity移动生态成熟，Unreal移动端功耗大</td></tr>
+<tr><td>主机AAA</td><td>Unreal Engine</td><td>自研引擎</td><td>UE5已针对PS5/Xbox优化，自研成本高</td></tr>
+<tr><td>Web小游戏</td><td>WebGL + Three.js</td><td>原生Vulkan</td><td>浏览器不支持原生Vulkan，WebGL是唯一选择</td></tr>
+</table>
+</div>
+
+<div class="key-box">
+<strong>🔥 重要洞察</strong>：平台选择是游戏开发的"第一性原理"——它决定了你的三角形预算、纹理大小、shader复杂度。一个PS5游戏和一个手机游戏的渲染管线是完全不同的。
+</div>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么主机（Console）的游戏画面通常比同配置PC好？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">因为主机硬件完全确定！开发者可以针对固定硬件做极致优化——比如PS5的定制SSD可以实现近乎即时的场景加载，这是PC无法比拟的。同样，因为没有"兼容千万种显卡"的负担，驱动程序的开销也小得多。</blockquote>
+</div>
+
+<hr>
+
+<!-- ==================== 22.2 ==================== -->
+<h2 id="22-2-有限资源-limited-resources">22.2 有限资源（Limited Resources）</h2>
+
+<h3 id="22-2-1-核心矛盾-硬件永远不够用">22.2.1 核心矛盾：硬件永远不够用</h3>
+
+<p>游戏开发中需要管理 <strong>5 类有限资源</strong>，缺一不可：</p>
+
+<div class="analogy">
+<strong>💡 生活类比：家庭预算</strong>
+<p>想象你每个月有10000元收入（=一帧的33ms），需要分配在房租（GPU渲染）、食物（CPU渲染）、交通（物理模拟）、娱乐（动画）、储蓄（音频/网络）上。如果房租占太多，其他方面就得省。游戏引擎的"帧预算"完全一样——每个子系统只能分到固定的毫秒数。</p>
+</div>
+
+<table>
+<tr><th>资源</th><th>衡量</th><th>紧张程度</th><th>应对策略</th></tr>
+<tr><td><strong>CPU时间</strong></td><td>ms/帧</td><td>⭐⭐⭐⭐</td><td>预算分配、Job System、多线程</td></tr>
+<tr><td><strong>GPU时间</strong></td><td>ms/帧</td><td>⭐⭐⭐⭐⭐</td><td>LOD、剔除、Shader优化</td></tr>
+<tr><td><strong>内存</strong></td><td>MB/GB</td><td>⭐⭐⭐</td><td>流式加载、引用计数、压缩</td></tr>
+<tr><td><strong>带宽</strong></td><td>GB/s</td><td>⭐⭐⭐</td><td>数据压缩、合并Draw Call</td></tr>
+<tr><td><strong>开发时间</strong></td><td>人月</td><td>⭐⭐⭐⭐⭐</td><td>工具链、复用、Asset Store</td></tr>
+</table>
+
+<h3 id="22-2-2-帧率预算-frame-budget">22.2.2 帧率预算（Frame Budget）</h3>
+
+<div class="guizang-figure">
+<img src="images/ch22/ch22_frame_budget.png" alt="帧预算分配饼图">
+<div class="guizang-caption">图22-1：30fps下33ms的帧预算分配——GPU渲染是最大头</div>
+</div>
+
+<p>30fps = 33.3ms/帧 = 一帧的"时间钱包"。每一项任务都在"抢钱"：</p>
+
+<table>
+<tr><th>任务</th><th>预算（30fps）</th><th>预算（60fps）</th><th>占比</th><th>优化方向</th></tr>
+<tr><td>输入处理</td><td>0.5ms</td><td>0.25ms</td><td>1.5%</td><td>合并事件、批量处理</td></tr>
+<tr><td>游戏逻辑</td><td>5ms</td><td>2.5ms</td><td>15%</td><td>Job System、ECS</td></tr>
+<tr><td>物理模拟</td><td>3ms</td><td>1.5ms</td><td>9%</td><td>LOD物理、简化碰撞体</td></tr>
+<tr><td>动画更新</td><td>2ms</td><td>1ms</td><td>6%</td><td>LOD动画、GPU蒙皮</td></tr>
+<tr><td><strong>CPU渲染</strong></td><td><strong>8ms</strong></td><td><strong>4ms</strong></td><td><strong>24%</strong></td><td>剔除、批处理、Job System</td></tr>
+<tr><td><strong>GPU渲染</strong></td><td><strong>13ms</strong></td><td><strong>6.5ms</strong></td><td><strong>39%</strong></td><td>LOD、Shader优化、分辨率</td></tr>
+<tr><td>音频</td><td>1ms</td><td>0.5ms</td><td>3%</td><td>音频压缩、流式</td></tr>
+<tr><td>网络</td><td>0.5ms</td><td>0.25ms</td><td>1.5%</td><td>异步、预测</td></tr>
+</table>
+
+<div class="key-box">
+<strong>🔥 重要洞察</strong>：GPU渲染占了39%（13ms）！如果你在优化其他部分（比如音频省了0.3ms），但GPU还是13ms，帧率不会有任何变化。你必须找到<strong>当前最慢的环节</strong>（瓶颈）来优化。
+</div>
+
+<h3 id="22-2-3-异构资源-heterogeneous-resources">22.2.3 异构资源（Heterogeneous Resources）</h3>
+
+<p>GPU不是单一资源——它是多个并行单元的总和：</p>
+
+<table>
+<tr><th>资源类型</th><th>任务</th><th>数量级</th><th>例子</th></tr>
+<tr><td><strong>CPU核心</strong></td><td>通用计算</td><td>4-16核</td><td>游戏逻辑、AI</td></tr>
+<tr><td><strong>Vertex Shader</strong></td><td>顶点变换</td><td>数千单元</td><td>蒙皮、顶点动画</td></tr>
+<tr><td><strong>Pixel Shader</strong></td><td>像素计算</td><td>数千单元</td><td>光照、纹理采样</td></tr>
+<tr><td><strong>纹理单元</strong></td><td>采样纹理</td><td>数十-百</td><td>TexRead、过滤</td></tr>
+<tr><td><strong>ROP</strong></td><td>写帧缓冲</td><td>数十</td><td>深度测试、混合</td></tr>
+</table>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么"减少材质复杂度"有时完全不影响帧率？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">因为瓶颈可能在Vertex Shader而不是Pixel Shader！如果场景的瓶颈是"三角形太多"，你改材质（只影响Pixel Shader）完全没用。你要么减少三角形，要么优化Vertex Shader。这就是"一次只能优化一个瓶颈"原则——你必须先找到瓶颈在哪儿。</blockquote>
+</div>
+
+<hr>
+
+<!-- ==================== 22.3 ==================== -->
+<h2 id="22-3-优化技术-optimization-techniques">22.3 优化技术（Optimization Techniques）</h2>
+
+<h3 id="22-3-1-核心理念--最便宜的渲染---不渲染">22.3.1 核心理念："最便宜的渲染 = 不渲染"</h3>
+
+<div class="analogy">
+<strong>💡 生活类比：商场推广</strong>
+<p>你在一家大商场做推广活动。与其给每一个路人发传单（=渲染所有物体），不如：只给走进商场的人发（=视锥剔除）、不给背对你的人发（=背面剔除）、不给已经在其他柜台排队的人发（=遮挡剔除）。</p>
+</div>
+
+<table>
+<tr><th>技术</th><th>原理</th><th>节省量</th><th>实现难度</th><th>必备程度</th></tr>
+<tr><td><strong>视锥剔除</strong></td><td>摄像机视野外的不画</td><td>50-90%三角形</td><td>低</td><td>⭐⭐⭐⭐⭐ 必备</td></tr>
+<tr><td><strong>遮挡剔除</strong></td><td>被挡住的不画</td><td>50-95%像素</td><td>中</td><td>⭐⭐⭐⭐ 必备</td></tr>
+<tr><td><strong>背面剔除</strong></td><td>看不到的背面不画</td><td>30-50%三角形</td><td>无（硬件自带）</td><td>⭐⭐⭐⭐⭐ 自动</td></tr>
+<tr><td><strong>LOD</strong></td><td>远距离用粗模</td><td>50-90%三角形</td><td>中</td><td>⭐⭐⭐⭐ 必备</td></tr>
+<tr><td><strong>小对象剔除</strong></td><td>像素&lt;1的不画</td><td>0-5%</td><td>低</td><td>⭐⭐ 锦上添花</td></tr>
+</table>
+
+<h3 id="22-3-2-视锥剔除-frustum-culling">22.3.2 视锥剔除（Frustum Culling）</h3>
+
+<div class="guizang-figure">
+<img src="images/ch22/ch22_frustum_culling.png" alt="视锥体剔除示意图">
+<div class="guizang-caption">图22-2：视锥剔除——只绘制摄像机视锥体内的物体</div>
+</div>
+
+<p><strong>为什么需要视锥剔除？</strong>想象一个开放世界游戏，场景中有10万个物体。如果不做剔除，每帧都要遍历全部10万个物体，仅遍历开销就超过10ms。但实际只有几百个物体在视野内——剩下99.5%的工作都是浪费。</p>
+
+<pre><code><span class="comment">// 基本的视锥剔除——6个平面测试</span>
+<span class="function">function</span> IsInFrustum(BoundingBox bbox, Frustum frustum):
+  <span class="comment">// 对6个平面依次测试</span>
+  <span class="comment">// 左、右、上、下、近、远，共6个裁剪平面</span>
+  <span class="keyword">for</span> Plane p <span class="keyword">in</span> frustum.planes:
+    <span class="comment">// 如果包围盒完全在平面外侧 → 不可见</span>
+    if bbox.IsOutside(p):
+      <span class="keyword">return</span> <span class="number">false</span>
+  <span class="keyword">return</span> <span class="number">true</span></code></pre>
+
+<p><strong>为什么是6个平面？</strong>视锥体像一个平截头的金字塔——它有4个侧面（左/右/上/下）加上近裁剪面和远裁剪面。物体必须同时位于这6个平面内侧才可见。</p>
+
+<div class="choice-table">
+<strong>🔧 技术选型：视锥剔除加速结构</strong>
+<table>
+<tr><th>结构</th><th>查询复杂度</th><th>适合场景</th></tr>
+<tr><td><strong>无结构（暴力）</strong></td><td>O(n) — n=10万时不可接受</td><td>小场景</td></tr>
+<tr><td><strong>BVH</strong></td><td>O(log n)</td><td>静态+动态混合</td></tr>
+<tr><td><strong>四叉树/八叉树</strong></td><td>O(log n)</td><td>户外大场景</td></tr>
+<tr><td><strong>均匀网格</strong></td><td>O(1)~O(n)</td><td>粒子系统</td></tr>
+</table>
+</div>
+
+<h3 id="22-3-3-lod-level-of-detail">22.3.3 LOD（Level of Detail）</h3>
+
+<div class="guizang-figure">
+<img src="images/ch22/ch22_lod_selection.png" alt="LOD细节级别选择">
+<div class="guizang-caption">图22-3：LOD选择——距离越远，细节越少</div>
+</div>
+
+<p><strong>为什么需要LOD？</strong>一个角色模型有10万个三角形。当它在100米外时，在屏幕上只占50个像素。用10万三角形渲染50个像素的空间是巨大的浪费——每个像素平均处理2000个三角形。</p>
+
+<table>
+<tr><th>距离</th><th>LOD级别</th><th>三角形数</th><th>视觉差异</th><th>节省</th></tr>
+<tr><td>&lt;10m</td><td>LOD 0</td><td>10,000</td><td>完整细节</td><td>0%</td></tr>
+<tr><td>10-50m</td><td>LOD 1</td><td>5,000</td><td>几乎看不出</td><td>50%</td></tr>
+<tr><td>50-200m</td><td>LOD 2</td><td>1,000</td><td>轻微差异</td><td>90%</td></tr>
+<tr><td>200-1000m</td><td>LOD 3</td><td>200</td><td>大致轮廓</td><td>98%</td></tr>
+<tr><td>&gt;1km</td><td>LOD 4</td><td>0</td><td>完全看不见</td><td>100%</td></tr>
+</table>
+
+<pre><code><span class="comment">// LOD选择——基于距离的简化版</span>
+<span class="function">function</span> SelectLOD(Object obj, Camera cam):
+  dist = distance(cam.position, obj.position)
+  <span class="keyword">if</span> dist &lt; <span class="number">10</span>:   <span class="keyword">return</span> <span class="number">0</span>   <span class="comment">// 最近距离→最高细节</span>
+  <span class="keyword">if</span> dist &lt; <span class="number">50</span>:  <span class="keyword">return</span> <span class="number">1</span>
+  <span class="keyword">if</span> dist &lt; <span class="number">200</span>: <span class="keyword">return</span> <span class="number">2</span>
+  <span class="keyword">if</span> dist &lt; <span class="number">1000</span>:<span class="keyword">return</span> <span class="number">3</span>
+  <span class="keyword">return</span> <span class="number">-1</span>       <span class="comment">// 太远→不画</span></code></pre>
+
+<div class="key-box">
+<strong>🔥 重要洞察</strong>：LOD不只是"远的用粗模"那么简单。HLOD（Hierarchical LOD）把远处一群物体合并成一个简化模型——这极大减少了Draw Call。一个10000棵树的森林，用HLOD可以合并成几十个"树丛"模型，Draw Call从10000降到50。
+</div>
+
+<h3 id="22-3-4-遮挡剔除-occlusion-culling">22.3.4 遮挡剔除（Occlusion Culling）</h3>
+
+<table>
+<tr><th>方法</th><th>原理</th><th>适合</th><th>优点</th><th>缺点</th></tr>
+<tr><td><strong>PVS</strong></td><td>预计算"每个格子能看到什么"</td><td>室内（Doom/Quake）</td><td>运行时零开销</td><td>只适合静态场景</td></tr>
+<tr><td><strong>BSP</strong></td><td>预计算前后关系树</td><td>静态室内</td><td>确定性</td><td>构建复杂</td></tr>
+<tr><td><strong>Hardware Occlusion Query</strong></td><td>GPU实时查询"这个物体被挡了多少"</td><td>户外</td><td>准确</td><td>有延迟（一帧延迟）</td></tr>
+<tr><td><strong>HiZ</strong></td><td>用上一帧深度做粗粒度遮挡测试</td><td>现代GPU通用</td><td>低开销</td><td>帧间依赖</td></tr>
+</table>
+
+<h3 id="22-3-5-depth-prepass-深度预渲染">22.3.5 Depth Prepass（深度预渲染）</h3>
+
+<p><strong>为什么需要Depth Prepass？</strong>GPU的Early-Z只在你没有修改深度时生效。如果你的shader写了深度（比如用clip/discard），Early-Z就失效了。Depth Prepass先画一遍纯深度（不画颜色），让所有物体的深度都写入Z-buffer，第二遍画颜色时就可以用Early-Z拒绝被遮挡的像素。</p>
+
+<pre><code><span class="comment">// Depth Prepass 标准实现</span>
+
+<span class="comment">// 第一遍：只写深度，不写颜色</span>
+<span class="keyword">for</span> obj <span class="keyword">in</span> opaque_objects:
+  draw(obj, depth_only=<span class="number">true</span>, color_mask=<span class="number">false</span>)
+
+<span class="comment">// 排序：不透明物体从前到后</span>
+sort(opaque_objects, front_to_back)
+
+<span class="comment">// 第二遍：画颜色，Early-Z会拒绝被遮挡的像素</span>
+<span class="keyword">for</span> obj <span class="keyword">in</span> opaque_objects:
+  draw(obj, color=<span class="number">true</span>)</code></pre>
+
+<div class="key-box">
+<strong>🔥 重要洞察</strong>：Depth Prepass的代价是所有不透明物体画两遍！但收益是Fragment Shader节省30-70%。因为现代游戏的大部分GPU时间花在Fragment Shader上，这个交换通常是值得的。
+</div>
+
+<h3 id="22-3-6-draw-call优化">22.3.6 Draw Call优化</h3>
+
+<p><strong>为什么Draw Call是"天敌"？</strong>每次Draw Call，CPU需要准备顶点数据、设置渲染状态、提交命令——这些操作有0.1-1ms的固定开销。如果一帧有10000个Draw Call，仅开销就超过10ms。</p>
+
+<table>
+<tr><th>技术</th><th>原理</th><th>效果</th></tr>
+<tr><td><strong>Static Batching</strong></td><td>把多个静态网格合并成一个</td><td>1000个物体 → 1个Draw Call</td></tr>
+<tr><td><strong>GPU Instancing</strong></td><td>同mesh不同变换，一次提交</td><td>1000棵树 → 1个Draw Call</td></tr>
+<tr><td><strong>Dynamic Batching</strong></td><td>运行时合并材质相同的物体</td><td>节省30-50% Draw Call</td></tr>
+</table>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：10000个Draw Call和1000个Draw Call，对帧率的影响有多大？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">10000个Draw Call的CPU开销大约是10ms（假设每个1μs），加上GPU提交延迟，很容易超过16ms的60fps预算。而1000个只有1ms——这就是为什么优化目标通常是"每帧&lt;3000 Draw Call"。在移动设备上，这个目标要更严格，通常希望 &lt; 500。</blockquote>
+</div>
+
+<hr>
+
+<!-- ==================== 22.4 ==================== -->
+<h2 id="22-4-游戏类型-game-types">22.4 游戏类型（Game Types）</h2>
+
+<h3 id="22-4-1-为什么游戏类型决定技术选型">22.4.1 为什么游戏类型决定技术选型？</h3>
+
+<p><strong>核心原因</strong>：不同类型的游戏对渲染的约束完全不同。一个格斗游戏只有两个角色在屏幕上，可以给每个角色3万个三角形。一个RTS游戏有上千个单位，每个单位只能分到200个三角形。</p>
+
+<div class="guizang-figure">
+<img src="images/ch22/ch22_engine_architecture.png" alt="游戏引擎架构层次">
+<div class="guizang-caption">图22-4：游戏引擎架构层次——平台→渲染→玩法→资源→工具</div>
+</div>
+
+<h3 id="22-4-2-按场景规模分类">22.4.2 按场景规模分类</h3>
+
+<table>
+<tr><th>类型</th><th>例子</th><th>场景规模</th><th>图形策略</th><th>核心挑战</th></tr>
+<tr><td><strong>室内封闭</strong></td><td>Devil May Cry, God of War</td><td>1-2个房间</td><td>高细节、烘焙光照</td><td>有限空间内的极致画质</td></tr>
+<tr><td><strong>线性关卡</strong></td><td>Uncharted, Tomb Raider</td><td>几十个关卡</td><td>中细节、混合光照</td><td>引导注意力</td></tr>
+<tr><td><strong>沙盒开放</strong></td><td>GTA, Skyrim</td><td>几km²</td><td>远粗近细、流式加载</td><td>大世界的性能一致性</td></tr>
+<tr><td><strong>MMO大世界</strong></td><td>WoW, FF14</td><td>几十km²</td><td>严格LOD、极致流式</td><td>多人同屏的性能保障</td></tr>
+</table>
+
+<h3 id="22-4-3-按美术风格分类">22.4.3 按美术风格分类</h3>
+
+<table>
+<tr><th>风格</th><th>例子</th><th>技术特点</th><th>图形投入</th></tr>
+<tr><td><strong>写实</strong></td><td>Crysis, COD</td><td>PBR、HDR、CSM、SSR</td><td>极高</td></tr>
+<tr><td><strong>风格化写实</strong></td><td>战神、神秘海域</td><td>风格化材质、强光影对比</td><td>高</td></tr>
+<tr><td><strong>卡通</strong></td><td>喷射战士、原神</td><td>描边、平面色、Cel-shading</td><td>中</td></tr>
+<tr><td><strong>NPR</strong></td><td>Okami, 茶杯头</td><td>水彩/油画滤镜、手绘风格</td><td>特殊</td></tr>
+</table>
+
+<div class="key-box">
+<strong>🔥 重要洞察</strong>：渲染目标决定一切！《大神》（Okami）不用PBR，但每个像素都是艺术品。你的游戏不需要"最好的渲染技术"，需要的是"最适合游戏风格的渲染技术"。
+</div>
+
+<hr>
+
+<!-- ==================== 22.5 ==================== -->
+<h2 id="22-5-游戏生产流程-the-game-production-process">22.5 游戏生产流程（The Game Production Process）</h2>
+
+<h3 id="22-5-1-标准开发流程">22.5.1 标准开发流程</h3>
+
+<pre><code>概念设计 (Concept Art)
+   ↓
+立项 (Greenlight) — 给发行商看Demo
+   ↓
+Pre-production (引擎选型、工具链搭建、技术验证)
+   ↓
+Full Production (主要内容制作——耗时最长)
+   ↓
+Alpha (内部测试、功能冻结)
+   ↓
+Beta (外部测试、修Bug)
+   ↓
+Gold / Release (送审、发布)
+   ↓
+补丁 / DLC (持续运营1-5年)</code></pre>
+
+<h3 id="22-5-2-资产创建流程">22.5.2 资产创建流程</h3>
+
+<div class="analogy">
+<strong>💡 生活类比：做雕塑</strong>
+<p>想象一个雕塑家的工作流程：先用粗泥塑一个大概的形状（=高模），然后用工具刻出细节（=ZBrush雕刻），最后翻模做出一个轻便的塑料复制品（=低模+法线贴图）。游戏资产创建完全一样——先做高模（细节丰富但太"重"），然后"烤"出法线贴图用在低模上。</p>
+</div>
+
+<pre><code>高模 (Hi-poly, ZBrush, 数百万面)
+  ↓ 烘焙 (Bake Normal Map)
+法线贴图 (Normal Map, 编码细节到颜色)
+  ↓
+低模 (Low-poly, Maya/Blender, 几千面)
+  ↓
+UV展开 (UV Mapping, 连续无撕裂)
+  ↓
+纹理贴图 (Diffuse, Normal, Specular, Roughness, AO)
+  ↓
+Shader配置 (PBR参数调试)
+  ↓
+骨骼绑定 (Rigging) + 蒙皮 (Skinning)
+  ↓
+动画 (Animation)
+  ↓
+入库 (Import to Engine)</code></pre>
+
+<h3 id="22-5-3-法线贴图深度解析">22.5.3 法线贴图深度解析</h3>
+
+<p><strong>为什么需要法线贴图？</strong>一个角色的皮肤上有毛孔、皱纹、伤疤——这些细节如果用三角形建模，需要几百万个三角形。法线贴图用一张图片"假装"有这些细节，让光照计算认为表面是凹凸不平的，但实际几何是平滑的。</p>
+
+<pre><code><span class="comment">// Shader中解码法线贴图</span>
+vec3 normal = texture(normalMap, uv).rgb * <span class="number">2.0</span> - <span class="number">1.0</span>;
+<span class="comment">// 法线贴图的RGB编码了切线空间中的法线方向</span>
+<span class="comment">// *2-1 把[0,1]映射回[-1,1]</span>
+normal = normalize(TBN * normal);
+<span class="comment">// 从切线空间变换到世界空间</span></code></pre>
+
+<div class="key-box">
+<strong>🔥 重要洞察</strong>：法线贴图为什么是紫色的？因为B通道（蓝色）= Z分量，通常朝外（接近1）；R和G通道接近0.5（中灰）。中灰+蓝色=紫色。看到紫色法线贴图时，你就知道"这是正确的"。
+</div>
+
+<hr>
+
+<!-- ==================== 22.6 ==================== -->
+<h2 id="22-6-场景管理-scene-management">22.6 场景管理（Scene Management）</h2>
+
+<h3 id="22-6-1-为什么需要场景管理">22.6.1 为什么需要场景管理？</h3>
+
+<p><strong>核心问题</strong>：没有场景管理 = O(n)检查所有物体。10万个物体时，每帧要遍历10万次——仅这个操作就超过10ms。</p>
+
+<pre><code>无场景管理: <span class="keyword">for</span> each obj <span class="keyword">in</span> <span class="number">100000</span>: test(obj)   → 100000次测试
+有Octree:   <span class="keyword">for</span> each leaf <span class="keyword">in</span> visible_set: test(obj) → 8-64次测试
+加速比: 1000倍以上！</code></pre>
+
+<h3 id="22-6-2-空间数据结构对比">22.6.2 空间数据结构对比</h3>
+
+<table>
+<tr><th>数据结构</th><th>原理</th><th>查询</th><th>构建</th><th>动态更新</th><th>适合场景</th></tr>
+<tr><td><strong>BVH</strong></td><td>二叉树，任意轴划分</td><td>O(log n)</td><td>O(n log n)</td><td>中</td><td>光线追踪、静态几何</td></tr>
+<tr><td><strong>Octree</strong></td><td>8等分立方体</td><td>O(log n)</td><td>O(n log n)</td><td>中</td><td>户外、Voxel</td></tr>
+<tr><td><strong>K-d Tree</strong></td><td>二叉树，坐标轴交替</td><td>O(log n)</td><td>O(n log n)</td><td>差</td><td>光线追踪（最佳）</td></tr>
+<tr><td><strong>BSP</strong></td><td>二叉平面分割</td><td>O(log n)</td><td>O(n²)</td><td>不可变</td><td>静态室内（Quake）</td></tr>
+<tr><td><strong>Uniform Grid</strong></td><td>规则网格</td><td>O(1)~O(n)</td><td>O(n)</td><td>好</td><td>粒子、规则场景</td></tr>
+</table>
+
+<div class="choice-table">
+<strong>🔧 技术选型：选A不选B的理由</strong>
+<table>
+<tr><th>场景</th><th>推荐</th><th>不推荐</th><th>理由</th></tr>
+<tr><td>光线追踪加速</td><td>BVH + SAH</td><td>均匀网格</td><td>BVH自适应空间分布，比网格更紧凑</td></tr>
+<tr><td>室内静态场景</td><td>BSP</td><td>Octree</td><td>BSP的PVS预计算对室内最有效</td></tr>
+<tr><td>动态大世界</td><td>Octree/Dynamic BVH</td><td>K-d Tree</td><td>K-d Tree重构代价太高</td></tr>
+</table>
+</div>
+
+<hr>
+
+<!-- ==================== 22.7 ==================== -->
+<h2 id="22-7-碰撞检测-collision-detection">22.7 碰撞检测（Collision Detection）</h2>
+
+<h3 id="22-7-1-包围体-bounding-volumes">22.7.1 包围体（Bounding Volumes）</h3>
+
+<table>
+<tr><th>类型</th><th>表示</th><th>紧密性</th><th>测试速度</th><th>适合</th></tr>
+<tr><td><strong>AABB</strong></td><td>6个轴对齐面</td><td>差</td><td>最快</td><td>静态物体粗筛</td></tr>
+<tr><td><strong>OBB</strong></td><td>任意方向盒</td><td>中</td><td>中</td><td>旋转物体</td></tr>
+<tr><td><strong>Sphere</strong></td><td>球体</td><td>差</td><td>快</td><td>球类、快速测试</td></tr>
+<tr><td><strong>Capsule</strong></td><td>圆柱+半球</td><td>中</td><td>快</td><td>角色碰撞（腿+身）</td></tr>
+<tr><td><strong>Convex Hull</strong></td><td>凸包</td><td>好</td><td>中</td><td>任意凸形</td></tr>
+<tr><td><strong>Mesh</strong></td><td>三角形精确</td><td>完美</td><td>慢</td><td>精确需求</td></tr>
+</table>
+
+<div class="key-box">
+<strong>🔥 重要洞察</strong>：永远不要用Mesh做碰撞！一个角色的碰撞应该用Capsule（胶囊体），而不是角色的精细三角网格。精细碰撞的角色就像用放大镜检查每个螺丝——99%的情况根本不需要。
+</div>
+
+<hr>
+
+<!-- ==================== 22.8 ==================== -->
+<h2 id="22-8-渲染循环-render-loop">22.8 渲染循环（Render Loop）</h2>
+
+<div class="guizang-figure">
+<img src="images/ch22/ch22_render_loop.png" alt="渲染循环流程图">
+<div class="guizang-caption">图22-5：游戏渲染循环——每帧的完整生命周期</div>
+</div>
+
+<h3 id="22-8-1-标准游戏循环">22.8.1 标准游戏循环</h3>
+
+<pre><code>While (game is running):
+  ProcessInput()     <span class="comment">// 处理键盘、鼠标、手柄输入</span>
+  Update()           <span class="comment">// 游戏逻辑 + 物理 + 动画 + AI</span>
+  Render()           <span class="comment">// 裁剪→排序→渲染→后处理</span>
+  WaitForFrameEnd()  <span class="comment">// 限流到30/60fps</span></code></pre>
+
+<h3 id="22-8-2-一帧的完整渲染管线">22.8.2 一帧的完整渲染管线</h3>
+
+<pre><code>Frame N
+├─ CPU阶段
+│   ├─ 输入处理: 读取鼠标/键盘/手柄
+│   ├─ 游戏逻辑: 玩家状态、AI决策、事件处理
+│   ├─ 物理模拟: 碰撞检测、刚体/软体
+│   ├─ 动画更新: 骨骼动画、变形目标、IK
+│   └─ 相机更新: 设置视锥体参数
+│
+├─ 场景更新 (CPU)
+│   ├─ 视锥剔除 → 生成可见列表
+│   ├─ 遮挡剔除 → 精炼可见列表
+│   ├─ 排序: 不透明前到后、半透明后到前
+│   └─ 构建Command Buffer
+│
+├─ GPU渲染
+│   ├─ Shadow Pass: 所有阴影投射体
+│   ├─ Depth Prepass: 深度预渲染(可选)
+│   ├─ Opaque Pass: 不透明物体(Early-Z)
+│   ├─ Sky: 天空盒/天空球
+│   ├─ Transparent Pass: 半透明(无Early-Z)
+│   ├─ Post-Process: Bloom、Tonemap、AA
+│   └─ UI: 界面层
+│
+└─ Present: 交换前后缓冲</code></pre>
+
+<div class="key-box">
+<strong>🔥 重要洞察</strong>：现代引擎中CPU和GPU是<strong>完全并行</strong>的。CPU在处理第N帧的输入和逻辑时，GPU正在渲染第N-1帧。流水线深度通常为2-3帧。这就是为什么游戏延迟通常有2-3帧——不是"慢"，是"并行化的代价"。
+</div>
+
+<hr>
+
+<!-- ==================== 22.9 ==================== -->
+<h2 id="22-9-调试与性能分析-debug---profiling">22.9 调试与性能分析（Debug & Profiling）</h2>
+
+<h3 id="22-9-1-常见瓶颈速查">22.9.1 常见瓶颈速查</h3>
+
+<table>
+<tr><th>症状</th><th>原因</th><th>排查工具</th><th>解决方案</th></tr>
+<tr><td>GPU利用率100%</td><td>GPU满载</td><td>RenderDoc, PIX</td><td>降低分辨率、简化Shader</td></tr>
+<tr><td>CPU利用率100%</td><td>渲染线程忙</td><td>Unreal Insights</td><td>Job System、减少Draw Call</td></tr>
+<tr><td>Draw Call太高</td><td>物体太碎</td><td>stat unit (UE)</td><td>合批、Instancing</td></tr>
+<tr><td>SetPass太多</td><td>材质切换频繁</td><td>stat shader</td><td>材质合并、排序</td></tr>
+<tr><td>三角形太多</td><td>几何没LOD</td><td>stat rhi</td><td>加LOD、HLOD</td></tr>
+</table>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么"我觉得这里慢"几乎总是错的？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">因为人的直觉对于"多线程并行环境下的瓶颈定位"完全不可靠。可能你觉得"场景物体太多"所以去优化剔除，但实际瓶颈是"阴影贴图分辨率太高"。必须用Profiler（如RenderDoc、Unreal Insights）先测量，再优化。这就是游戏引擎的黄金法则：<strong>Measure first, optimize second</strong>。</blockquote>
+</div>
+
+<hr>
+
+<!-- ==================== Summary ==================== -->
+<h2 id="全章总结">全章总结</h2>
+
+<div class="key-box">
+<strong>🔥 核心洞察</strong>：本章不是讲"一个具体算法"，而是讲<strong>"如何在有限资源下做出产品"</strong>。游戏图形学的本质不是"做出最美画面"，而是"在16ms内做出最好的画面"。
+</div>
+
+<table>
+<tr><th>主题</th><th>一句话</th></tr>
+<tr><td><strong>平台</strong></td><td>没有"通用游戏"——选型看平台，平台决定约束</td></tr>
+<tr><td><strong>资源</strong></td><td>CPU/GPU/Memory/团队时间，全是瓶颈，一个都不能忽视</td></tr>
+<tr><td><strong>预算</strong></td><td>30fps=33ms，每毫秒都要精打细算</td></tr>
+<tr><td><strong>优化</strong></td><td>不画 &gt; 画简单 &gt; 画复杂，从易到难</td></tr>
+<tr><td><strong>场景管理</strong></td><td>没有空间分割 = O(n) = 卡死</td></tr>
+<tr><td><strong>碰撞</strong></td><td>包围体粗筛（Broad Phase）+ 精确细检（Narrow Phase）</td></tr>
+<tr><td><strong>LOD</strong></td><td>远粗近细，HLOD是大世界终极武器</td></tr>
+<tr><td><strong>生产流程</strong></td><td>美术是团队的70%，程序员为美术服务</td></tr>
+<tr><td><strong>渲染循环</strong></td><td>CPU/GPU完全并行，流水线深度2-3</td></tr>
+<tr><td><strong>Profile</strong></td><td>Measure first, optimize second</td></tr>
+</table>
+
+<div class="analogy">
+<strong>💡 最终类比：厨师做菜</strong>
+<p>游戏图形学就像米其林大厨做菜——不是"能做出什么"的问题，而是"在30分钟内给100人做出可口的菜"。你需要知道每种食材的准备时间（=渲染开销），合理安排工序（=管线），在时间压力下做出最好的味道（=画面）。真正的厨师（=游戏工程师）不是只懂做菜（=图形学理论），更要懂厨房管理（=资源预算、团队协作）。</p>
+</div>
+
+<p><strong>给读者的最后一句</strong>：</p>
+<blockquote>
+<p><strong>"游戏图形学不是科学，是工程。"</strong><br>
+你不需要发明新算法——你需要<strong>把已知算法用对地方</strong>。99%的性能问题都来自"<strong>在错的地方用了对的算法</strong>"。<br>
+<strong>Measure. Profile. Optimize. Repeat.</strong></p>
+</blockquote>
+
+<hr>
+<p><strong>讲义完成。第22章覆盖了从平台到优化的全部"工程"视角——这是你从"学生"到"工程师"的分水岭。</strong></p>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li class="active"><a href="ch22_游戏中的计算机图形学.html" class="active">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#22-1-游戏平台-platforms">22.1 游戏平台（Platforms）</a></li>
+  <li class="toc-h3"><a href="#22-1-1-为什么需要关注-平台">22.1.1 为什么需要关注"平台"？</a></li>
+  <li class="toc-h3"><a href="#22-1-2-五大平台的差异">22.1.2 五大平台的差异</a></li>
+  <li class="toc-h2"><a href="#22-2-有限资源-limited-resources">22.2 有限资源（Limited Resources）</a></li>
+  <li class="toc-h3"><a href="#22-2-1-核心矛盾-硬件永远不够用">22.2.1 核心矛盾：硬件永远不够用</a></li>
+  <li class="toc-h3"><a href="#22-2-2-帧率预算-frame-budget">22.2.2 帧率预算（Frame Budget）</a></li>
+  <li class="toc-h3"><a href="#22-2-3-异构资源-heterogeneous-resources">22.2.3 异构资源（Heterogeneous Resources）</a></li>
+  <li class="toc-h2"><a href="#22-3-优化技术-optimization-techniques">22.3 优化技术（Optimization Techniques）</a></li>
+  <li class="toc-h3"><a href="#22-3-1-核心理念--最便宜的渲染---不渲染">22.3.1 核心理念："最便宜的渲染 = 不渲染"</a></li>
+  <li class="toc-h3"><a href="#22-3-2-视锥剔除-frustum-culling">22.3.2 视锥剔除（Frustum Culling）</a></li>
+  <li class="toc-h3"><a href="#22-3-3-lod-level-of-detail">22.3.3 LOD（Level of Detail）</a></li>
+  <li class="toc-h3"><a href="#22-3-4-遮挡剔除-occlusion-culling">22.3.4 遮挡剔除（Occlusion Culling）</a></li>
+  <li class="toc-h3"><a href="#22-3-5-depth-prepass-深度预渲染">22.3.5 Depth Prepass（深度预渲染）</a></li>
+  <li class="toc-h3"><a href="#22-3-6-draw-call优化">22.3.6 Draw Call优化</a></li>
+  <li class="toc-h2"><a href="#22-4-游戏类型-game-types">22.4 游戏类型（Game Types）</a></li>
+  <li class="toc-h3"><a href="#22-4-1-为什么游戏类型决定技术选型">22.4.1 为什么游戏类型决定技术选型？</a></li>
+  <li class="toc-h3"><a href="#22-4-2-按场景规模分类">22.4.2 按场景规模分类</a></li>
+  <li class="toc-h3"><a href="#22-4-3-按美术风格分类">22.4.3 按美术风格分类</a></li>
+  <li class="toc-h2"><a href="#22-5-游戏生产流程-the-game-production-process">22.5 游戏生产流程（The Game Production Process）</a></li>
+  <li class="toc-h3"><a href="#22-5-1-标准开发流程">22.5.1 标准开发流程</a></li>
+  <li class="toc-h3"><a href="#22-5-2-资产创建流程">22.5.2 资产创建流程</a></li>
+  <li class="toc-h3"><a href="#22-5-3-法线贴图深度解析">22.5.3 法线贴图深度解析</a></li>
+  <li class="toc-h2"><a href="#22-6-场景管理-scene-management">22.6 场景管理（Scene Management）</a></li>
+  <li class="toc-h3"><a href="#22-6-1-为什么需要场景管理">22.6.1 为什么需要场景管理？</a></li>
+  <li class="toc-h3"><a href="#22-6-2-空间数据结构对比">22.6.2 空间数据结构对比</a></li>
+  <li class="toc-h2"><a href="#22-7-碰撞检测-collision-detection">22.7 碰撞检测（Collision Detection）</a></li>
+  <li class="toc-h3"><a href="#22-7-1-包围体-bounding-volumes">22.7.1 包围体（Bounding Volumes）</a></li>
+  <li class="toc-h2"><a href="#22-8-渲染循环-render-loop">22.8 渲染循环（Render Loop）</a></li>
+  <li class="toc-h3"><a href="#22-8-1-标准游戏循环">22.8.1 标准游戏循环</a></li>
+  <li class="toc-h3"><a href="#22-8-2-一帧的完整渲染管线">22.8.2 一帧的完整渲染管线</a></li>
+  <li class="toc-h2"><a href="#22-9-调试与性能分析-debug---profiling">22.9 调试与性能分析（Debug & Profiling）</a></li>
+  <li class="toc-h3"><a href="#22-9-1-常见瓶颈速查">22.9.1 常见瓶颈速查</a></li>
+  <li class="toc-h2"><a href="#全章总结">全章总结</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

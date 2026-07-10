@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch05: 表面着色</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch05 表面着色</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第5章：表面着色 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第5章（p.97-122）。<br>
+表面着色（Surface Shading）是计算机图形学中"画颜色"的核心——它回答了一个看似简单的问题：<strong>给定一个表面点，它应该是什么颜色？</strong><br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#pre">前置知识：向量运算必读</a></li>
+  <li><a href="#s51">5.1 什么是着色</a></li>
+  <li><a href="#s52">5.2 Lambert漫反射模型</a></li>
+  <li><a href="#s53">5.3 Blin-Phong高光模型</a></li>
+  <li><a href="#s54">5.4 着色频率：逐顶点 vs 逐像素</a></li>
+  <li><a href="#s55">5.5 环境光</a></li>
+  <li><a href="#s56">5.6 阴影实现</a></li>
+  <li><a href="#s57">5.7 各向异性着色</a></li>
+  <li><a href="#s58">5.8 从Blinn-Phong到PBR</a></li>
+  <li><a href="#s59">5.9 完整着色器代码</a></li>
+  <li><a href="#summary">全章总结</a></li>
+</ul>
+</div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+  <li>理解"着色"的本质——从几何到颜色的映射</li>
+  <li>掌握Lambert漫反射模型的数学直觉和代码实现</li>
+  <li>掌握Blinn-Phong高光模型——半程向量的巧妙设计</li>
+  <li>理解逐顶点 vs 逐像素着色的工程权衡</li>
+  <li>了解环境光和阴影的简单实现</li>
+  <li>建立从经验模型（Blinn-Phong）到物理模型（PBR）的过渡认知</li>
+</ol>
+
+<hr>
+
+<h2 id="前置知识-向量运算必读">前置知识：向量运算必读</h2>
+
+<p>在正式进入着色之前，我们必须先掌握几个基本数学工具。如果你已经有基础，可以直接跳过；如果你是零基础，请仔细阅读这一节。</p>
+
+<h3 id="1--法线-normal">1. 法线（Normal）</h3>
+
+<p><strong>法线是垂直于表面的单位向量。</strong>它是着色中最基础的概念——所有的光照计算都依赖于法线。</p>
+
+<div class="formula">n = (p - c) / ||p - c||（球体表面法线）</div>
+
+<table>
+<tr><th>类型</th><th>法线方向</th><th>举例</th></tr>
+<tr><td>平面法线</td><td>垂直于平面</td><td>水平地面法线 = (0, 1, 0)</td></tr>
+<tr><td>球面法线</td><td>从球心指向表面</td><td>点p处的法线 = normalize(p - 球心)</td></tr>
+<tr><td>曲面法线</td><td>垂直于切平面</td><td>在光滑曲面上每个点的法线都不同</td></tr>
+</table>
+
+<h3 id="2--点积-dot-product">2. 点积（Dot Product）</h3>
+
+<p>两个向量的点积返回一个标量（单个数值）。这是着色中<strong>最重要的运算</strong>——没有之一。</p>
+
+<div class="formula">a·b = ||a|| · ||b|| · cosθ</div>
+
+<div class="guizang-figure">
+<img src="images/ch05/ndotl_geometry.png" alt="n·l的几何意义 — 法线与光线方向的夹角余弦">
+<div class="guizang-caption">图5-1：n·l的几何意义——法线n与光线方向l的夹角余弦，决定着色的核心计算</div>
+</div>
+
+<table>
+<tr><th>用法</th><th>公式</th><th>几何意义</th></tr>
+<tr><td>求夹角</td><td>cosθ = (a·b)/(||a||·||b||)</td><td>两个方向之间夹角的余弦值</td></tr>
+<tr><td>投影长度</td><td>a在b上的投影 = a·(b/||b||)</td><td>一个向量在另一个方向上的"分量"</td></tr>
+<tr><td>判断朝向</td><td>a·b > 0</td><td>两向量夹角 < 90°（朝向同一侧）</td></tr>
+<tr><td>判断背向</td><td>a·b < 0</td><td>两向量夹角 > 90°（朝向反侧）</td></tr>
+</table>
+
+<blockquote>
+<strong>关键直觉</strong>：当两个向量都是单位长度时，a·b 就是 cosθ。这个值在θ=0°时为1（完全对齐），θ=90°时为0（垂直），θ=180°时为-1（完全相反）。
+</blockquote>
+
+<h3 id="3--方向关系--着色中的-四大方向">3. 方向关系——着色中的"四大方向"</h3>
+
+<p>着色涉及四个关键方向向量，理解它们的关系是理解本章全部内容的前提：</p>
+
+<table>
+<tr><th>符号</th><th>名称</th><th>含义</th></tr>
+<tr><td><strong>n</strong></td><td>法线</td><td>垂直于表面的单位向量，指向表面外侧</td></tr>
+<tr><td><strong>l</strong></td><td>光线方向</td><td>从表面点指向光源的单位向量</td></tr>
+<tr><td><strong>v</strong></td><td>视线方向</td><td>从表面点指向相机/眼睛的单位向量</td></tr>
+<tr><td><strong>h</strong></td><td>半程向量</td><td>h = (l + v) / ||l + v||，光源和视线之间的"中间方向"</td></tr>
+</table>
+
+<pre><code>        光源              相机
+          ↑ l              ↑ v
+           \              /
+            \            /
+             \          /
+              \   h    /
+               \  ↑   /
+                \ |  /
+                 \| /
+    ────────────●──────→ 表面
+                  |
+                  | n（法线）
+                  ↓</code></pre>
+
+<hr>
+
+<h2 id="5-1-什么是着色-shading">5.1 什么是着色（Shading）？</h2>
+
+<h3 id="5-1-1-着色的核心问题">5.1.1 着色的核心问题</h3>
+
+<p><strong>着色 = 决定一个表面点应该呈现什么颜色</strong></p>
+
+<blockquote>
+<p><strong>为什么着色是一个独立的问题？</strong><br>
+光线追踪回答了"光线碰到哪里了"（几何问题），但同一点因材质不同可以呈现完全不同的颜色。着色回答的是"碰到的点看起来是什么样"（光学问题）。</p>
+</blockquote>
+
+<p><strong>一个生活类比：</strong>想象你用手电筒照一个白色墙壁、一面镜子和一块红砖。三个表面在同一个位置，但呈现完全不同的颜色和质感。这是因为每个表面的"材质"对光的反应不同——这就是着色要计算的。</p>
+
+<table>
+<tr><th>材质</th><th>视觉特征</th><th>物理机制</th></tr>
+<tr><td>木质/石膏</td><td>漫反射（各个方向亮度相同）</td><td>光线被吸收后从微观凹凸中均匀散射</td></tr>
+<tr><td>金属</td><td>强反射，颜色为反射色</td><td>自由电子立即反射光线，仅有高光</td></tr>
+<tr><td>塑料</td><td>漫反射底色 + 白色高光</td><td>底层漫反射 + 表层光滑反射</td></tr>
+</table>
+
+<h3 id="5-1-2-局部着色-vs-全局光照">5.1.2 局部着色 vs 全局光照</h3>
+
+<p>渲染中的"着色"包含两个层次：</p>
+
+<ol>
+  <li><strong>局部着色（Local Shading）</strong>：只考虑表面点、光源和相机的直接关系。本章全部内容。</li>
+  <li><strong>全局光照（Global Illumination）</strong>：考虑光线在场景中的多次弹射和间接照明。第4章的光线追踪和第23章的路径追踪处理此问题。</li>
+</ol>
+
+<blockquote>
+<strong>重要区分</strong>：局部着色计算的是"点本身看起来是什么颜色"，而全局光照计算的是"点接收到的总光量"。两者结合才是最终的渲染颜色。
+</blockquote>
+
+<hr>
+
+<h2 id="5-2-lambert漫反射模型">5.2 Lambert漫反射模型</h2>
+
+<h3 id="5-2-1-什么是漫反射">5.2.1 什么是漫反射？</h3>
+
+<p><strong>漫反射</strong>（Diffuse Reflection）是光线照射到粗糙表面后，向所有方向均匀反射的现象。这是我们在日常生活中看到的大多数物体（墙壁、衣服、纸张、石头）呈现颜色的方式。</p>
+
+<div class="key-box">
+<strong>核心概念</strong>：漫反射的颜色不随观察角度变化——无论你从哪个方向看，同一表面的亮度相同。
+</div>
+
+<div class="guizang-figure">
+<img src="images/ch05/lambert_diffuse.png" alt="Lambert漫反射—光线均匀散射">
+<div class="guizang-caption">图5-2：Lambert漫反射——光线照射到粗糙表面后向所有方向均匀散射</div>
+</div>
+
+<h3 id="5-2-2-兰伯特余弦定律-lambert-s-cosine-law">5.2.2 兰伯特余弦定律（Lambert's Cosine Law）</h3>
+
+<p>漫反射的亮度由<strong>兰伯特余弦定律</strong>描述：</p>
+
+<div class="formula">L_diffuse = k_d · I_light · max(0, n·l)</div>
+
+<p><strong>这个公式到底在说什么？我们逐项拆解：</strong></p>
+
+<table>
+<tr><th>符号</th><th>名称</th><th>具体含义</th><th>单位/范围</th></tr>
+<tr><td>L_diffuse</td><td>漫反射亮度</td><td>最终呈现的漫反射颜色，RGB三通道值</td><td>[0, 1]³</td></tr>
+<tr><td>k_d</td><td>漫反射系数</td><td>表面自身的颜色/反射率（又称albedo、漫反射反照率）</td><td>[0, 1]³（RGB）</td></tr>
+<tr><td>I_light</td><td>入射光强度</td><td>光源在表面处的辐射强度</td><td>[0, ∞)（RGB）</td></tr>
+<tr><td>n</td><td>表面法线</td><td>垂直于表面的单位向量，指向外侧</td><td>单位向量</td></tr>
+<tr><td>l</td><td>光源方向</td><td>从表面指向光源的单位向量</td><td>单位向量</td></tr>
+<tr><td>n·l</td><td>点积</td><td>法线与光线方向夹角的余弦值 = cosθ</td><td>[-1, 1]</td></tr>
+<tr><td>max(0, ...)</td><td>裁剪负值</td><td>只考虑来自表面"正面"的光，背面光源不计</td><td>[0, 1]</td></tr>
+</table>
+
+<h3 id="5-2-3-直观理解-为什么n-l决定了亮度">5.2.3 直观理解：为什么n·l决定了亮度？</h3>
+
+<p>想象一束平行光照射一个单位面积的正方形：</p>
+
+<pre><code>阳光直射（θ=0°）:          阳光斜射（θ=60°）:
+      |                          /
+      |                         /  光线束
+      |                        /
+    ●───── 表面              ●───── 表面
+    cos0° = 1                 cos60° = 0.5
+    全部能量集中在1单位面积   相同能量分散到2单位面积
+    → 表面亮                   → 表面暗</code></pre>
+
+<p><strong>核心直觉</strong>：相同的光通量，照射的面积越大，单位面积接收到的光越少。而n·l正好等于cosθ，衡量了"光线在法线方向的有效能量"。这解释了为什么中午的太阳比傍晚的更亮——因为太阳直射（θ小）时，每平方米地面接收的能量更多。</p>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么Lambert模型中没有视角方向v？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">
+因为漫反射的光线均匀地向所有方向散射——无论你从哪个角度看，亮度完全一样。这就是"漫"的含义——"散漫"地、均匀地向四面八方反射。所以Lambert模型不需要视角方向v，这是它与高光模型的根本区别。
+</blockquote>
+</div>
+
+<h3 id="5-2-4-完整的lambert着色函数-逐行中文注释">5.2.4 完整的Lambert着色函数（逐行中文注释）</h3>
+
+<pre><code><span class="function">function</span> lambert_shade(surface_point, normal, light_pos, light_color, kd):
+    <span class="comment">// === 第1步：计算指向光源的单位方向 ===</span>
+    <span class="comment">// light_pos - surface_point 是从表面指向光源的向量</span>
+    <span class="comment">// 必须归一化，这样点积的结果才等于cosθ</span>
+    l = normalize(light_pos - surface_point)
+    
+    <span class="comment">// === 第2步：计算漫反射因子 ===</span>
+    <span class="comment">// n·l = cosθ，衡量光线垂直入射的程度</span>
+    <span class="comment">// max(0, ...) 剔除了从背面照来的光</span>
+    n_dot_l = dot(normal, l)
+    diffuse_factor = max(<span class="number">0.0</span>, n_dot_l)
+    
+    <span class="comment">// === 第3步：计算最终漫反射颜色 ===</span>
+    <span class="comment">// kd × light_color = 在光源颜色下看到的基础色</span>
+    <span class="comment">// × diffuse_factor = 根据入射角度衰减</span>
+    diffuse_color = kd * light_color * diffuse_factor
+    
+    <span class="keyword">return</span> diffuse_color</code></pre>
+
+<h3 id="5-2-5-数值例子">5.2.5 数值例子</h3>
+
+<p>假设红色球体（k_d = (1, 0, 0)），白色光源（I_light = (1, 1, 1)）：</p>
+
+<table>
+<tr><th>角度θ</th><th>n·l = cosθ</th><th>diffuse_factor</th><th>最终颜色</th><th>物理含义</th></tr>
+<tr><td>0°（直射）</td><td>1.0</td><td>1.0</td><td>(1, 0, 0)</td><td>最亮，100%能量</td></tr>
+<tr><td>30°</td><td>0.866</td><td>0.866</td><td>(0.866, 0, 0)</td><td>略暗</td></tr>
+<tr><td>60°</td><td>0.5</td><td>0.5</td><td>(0.5, 0, 0)</td><td>一半亮度</td></tr>
+<tr><td>90°（平行）</td><td>0.0</td><td>0.0</td><td>(0, 0, 0)</td><td>全黑，光线完全平行于表面</td></tr>
+<tr><td>120°（背面）</td><td>-0.5</td><td>0.0</td><td>(0, 0, 0)</td><td>max(0,...)裁剪为0，无光照</td></tr>
+</table>
+
+<h3 id="5-2-6-多点光源的漫反射">5.2.6 多点光源的漫反射</h3>
+
+<p>实际场景中通常有多个光源，每个光源独立计算漫反射后累加：</p>
+
+<pre><code><span class="function">function</span> lambert_multi_light(surface_point, normal, lights, kd):
+    <span class="comment">// 初始化为黑色（无光照）</span>
+    final_color = Color(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)
+    
+    <span class="comment">// 遍历每个光源，累加它们的贡献</span>
+    <span class="keyword">for</span> light <span class="keyword">in</span> lights:
+        <span class="comment">// 每个光源独立计算Lambert着色</span>
+        l = normalize(light.position - surface_point)
+        n_dot_l = max(<span class="number">0.0</span>, dot(normal, l))
+        
+        <span class="comment">// 累加当前光源的漫反射贡献</span>
+        final_color += kd * light.color * n_dot_l
+    
+    <span class="comment">// 注意：累积可能超过1.0，需要clamp</span>
+    <span class="keyword">return</span> clamp(final_color, <span class="number">0.0</span>, <span class="number">1.0</span>)</code></pre>
+
+<blockquote>
+<strong>物理直觉</strong>：多个光源叠加时，颜色是相加的。一个红色球体被一个白光和一个蓝光照亮时，同时收到(1,0,0)和(0,0,1)的贡献，所以接受光照的一半呈紫色混合。
+</blockquote>
+
+<hr>
+
+<h2 id="5-3-blinn-phong高光模型">5.3 Blinn-Phong高光模型</h2>
+
+<h3 id="5-3-1-从漫反射到高光--为什么需要它">5.3.1 从漫反射到高光——为什么需要它？</h3>
+
+<p>Lambert模型能很好地表现粗糙材质，但你肯定见过光滑表面的<strong>高光点</strong>（Specular Highlight）——比如塑料球上的那个亮白点、金属表面的明亮反光。这些高光不能用漫反射解释，因为它们：</p>
+
+<ul>
+  <li><strong>依赖于观察角度</strong>——高光会随你的移动而变化</li>
+  <li><strong>通常呈白色</strong>（对绝缘体而言）——高光是光源的颜色，不是材质的颜色</li>
+  <li><strong>范围集中</strong>——只在特定角度附近出现，不像漫反射那样均匀</li>
+</ul>
+
+<div class="guizang-figure">
+<img src="images/ch05/half_vector.png" alt="Blinn-Phong半程向量h=(l+v)/2">
+<div class="guizang-caption">图5-3：Blinn-Phong半程向量——h = (l+v)/2，当h与n对齐时产生最强高光</div>
+</div>
+
+<h3 id="5-3-2-从phong到blinn-phong--一段历史">5.3.2 从Phong到Blinn-Phong——一段历史</h3>
+
+<p><strong>Phong模型（1975年）</strong>：最早的高光模型之一。</p>
+
+<div class="formula">L_specular_Phong = k_s · I_light · max(0, v·r)^p</div>
+
+<p>其中 r 是反射方向：r = 2(n·l)n - l（光线被表面反射后的方向）。</p>
+
+<p><strong>问题是</strong>：计算反射方向 r 需要两次点积和一次向量加减，在1970年代的计算机上开销不小。</p>
+
+<p><strong>Blinn-Phong模型（1977年，改进版）</strong>：<br>
+Jim Blinn（没错，就是那个电影《星际迷航2：可汗之怒》的视觉特效总监）提出了一个巧妙的改进——用<strong>半程向量 h</strong> 代替反射方向 r：</p>
+
+<div class="formula">L_specular = k_s · I_light · max(0, n·h)^p</div>
+
+<h3 id="5-3-3-半程向量h的几何直觉">5.3.3 半程向量h的几何直觉</h3>
+
+<p>半程向量定义为：</p>
+
+<div class="formula">h = (l + v) / ||l + v||</div>
+
+<p>h 是光线方向 l 和视线方向 v 的"中间方向"——如果法线 n 恰好与 h 对齐，那么根据反射定律，视线方向 v 恰好能看到光源的反射像。</p>
+
+<pre><code>         h = normalize(l + v)
+                  ↑
+                 /
+                /
+    l ←───────●──────→ v
+    光源方向   |     观察方向
+              n（法线）</code></pre>
+
+<table>
+<tr><th>比较项</th><th>原始Phong（r = 反射方向）</th><th>Blinn-Phong（h = 半程向量）</th></tr>
+<tr><td>计算方式</td><td>需要计算反射方向r</td><td>只需要l+v然后归一化</td></tr>
+<tr><td>点积运算</td><td>v·r</td><td>n·h</td></tr>
+<tr><td>高光对齐条件</td><td>v与r对齐（即v正好看到反射）</td><td>n与h对齐（即法线在l和v中间）</td></tr>
+<tr><td>物理真实度</td><td>高光偏硬</td><td>更柔和，更接近真实</td></tr>
+<tr><td>性能</td><td>略慢（需额外计算r）</td><td>略快</td></tr>
+</table>
+
+<h3 id="5-3-4-光泽指数p对高光的影响">5.3.4 光泽指数p对高光的影响</h3>
+
+<p>指数 p（shininess exponent，也称光泽指数）控制高光的聚散程度：</p>
+
+<div class="formula">specular_factor = max(0, n·h)^p</div>
+
+<p><strong>p的作用就是"放大" n·h 的差异：</strong></p>
+
+<ul>
+  <li>当 n·h = 1 时（法线与半程向量完全对齐），1^p = 1 — 此时无论p多大，高光都是最亮的</li>
+  <li>当 n·h = 0.9 时（稍微偏离），0.9^10 = 0.349（只剩35%），0.9^100 = 0.000027（几乎没了！）</li>
+</ul>
+
+<pre><code>p = 1          p = 10         p = 100        p = 1000
+  ╱‾‾‾╲        ╱╲              │               │
+  │    │        │  │            │               │
+  │    │        │  │            │               │
+  └────┘        └──┘           └┘              └┘
+  漫散射         粗糙塑料       光滑塑料         镜面金属</code></pre>
+
+<table>
+<tr><th>p值</th><th>材质例子</th><th>视觉效果</th><th>n·h=0.9时的值</th></tr>
+<tr><td>1</td><td>粗糙石膏</td><td>大面积柔和反光</td><td>0.9</td></tr>
+<tr><td>10</td><td>粗糙塑料/磨砂表面</td><td>中小面积高光</td><td>0.349</td></tr>
+<tr><td>100</td><td>一般塑料/油漆</td><td>小而亮的高光</td><td>0.000027</td></tr>
+<tr><td>500</td><td>光泽塑料</td><td>极小的亮斑</td><td>≈ 2.6×10^(-23)</td></tr>
+<tr><td>1000+</td><td>金属/镜面</td><td>几乎就是镜面反射</td><td>≈ 0</td></tr>
+</table>
+
+<h3 id="5-3-5-完整的blinn-phong高光函数">5.3.5 完整的Blinn-Phong高光函数</h3>
+
+<pre><code><span class="function">function</span> blinn_phong_specular(
+    normal,         <span class="comment">// 表面法线（单位向量）</span>
+    light_dir,      <span class="comment">// 指向光源的方向（已归一化）</span>
+    view_dir,       <span class="comment">// 指向相机的方向（已归一化）</span>
+    ks,             <span class="comment">// 高光反射系数（彩色的如金属金，白色的如塑料）</span>
+    p               <span class="comment">// 光泽指数（越大高光越集中）</span>
+):
+    <span class="comment">// === 第1步：计算半程向量 h ===</span>
+    <span class="comment">// h是l和v的"中间方向"，当法线与h对齐时产生最强高光</span>
+    half_vec = normalize(light_dir + view_dir)
+    
+    <span class="comment">// === 第2步：计算法线与半程向量的点积 ===</span>
+    <span class="comment">// 衡量当前观察方向与完美反射方向的接近程度</span>
+    n_dot_h = dot(normal, half_vec)
+    
+    <span class="comment">// === 第3步：裁剪负值 ===</span>
+    <span class="comment">// 负值意味着高光在表面背面，不可见</span>
+    n_dot_h_clamped = max(<span class="number">0.0</span>, n_dot_h)
+    
+    <span class="comment">// === 第4步：施加光泽指数 p ===</span>
+    <span class="comment">// p越大 → 角度容忍度越小 → 高光越集中</span>
+    specular_factor = pow(n_dot_h_clamped, p)
+    
+    <span class="comment">// === 第5步：乘以高光系数和光源颜色 ===</span>
+    <span class="comment">// 金属ks是彩色的（如金的ks是黄色），电介质（塑料等）是白色</span>
+    specular_color = ks * light_color * specular_factor
+    
+    <span class="keyword">return</span> specular_color</code></pre>
+
+<h3 id="5-3-6-lambert---blinn-phong---完整局部着色">5.3.6 Lambert + Blinn-Phong = 完整局部着色</h3>
+
+<p>将环境光（背景光）、漫反射、高光三者叠加，就是完整的Blinn-Phong着色模型：</p>
+
+<div class="formula">L = k_a · I_ambient + Σ_i[ k_d · I_i · max(0, n·l_i) + k_s · I_i · max(0, n·h_i)^p ]</div>
+
+<pre><code><span class="function">function</span> blinn_phong_shade(
+    point, normal,        <span class="comment">// 表面点的位置和法线</span>
+    view_dir,             <span class="comment">// 指向相机的方向</span>
+    lights,               <span class="comment">// 场景中的光源列表</span>
+    kd, ks, p,            <span class="comment">// 材质参数：漫反射系数、高光系数、光泽指数</span>
+    ambient_color         <span class="comment">// 环境光颜色（防止全黑）</span>
+):
+    <span class="comment">// === 第1步：环境光（间接光照的"底光"） ===</span>
+    <span class="comment">// 没有直接光照时，表面不会全黑</span>
+    final_color = kd * ambient_color
+    
+    <span class="comment">// === 第2步：遍历每个光源 ===</span>
+    <span class="keyword">for</span> light <span class="keyword">in</span> lights:
+        <span class="comment">// 指向光源的方向</span>
+        l = normalize(light.position - point)
+        
+        <span class="comment">// === 漫反射部分 ===</span>
+        <span class="comment">// 只有n·l > 0（表面正面朝向光源）时才计算</span>
+        n_dot_l = max(<span class="number">0.0</span>, dot(normal, l))
+        diffuse = kd * light.color * n_dot_l
+        
+        <span class="comment">// === 高光部分 ===</span>
+        <span class="comment">// 计算半程向量，法线与h越接近高光越强</span>
+        h = normalize(l + view_dir)
+        n_dot_h = max(<span class="number">0.0</span>, dot(normal, h))
+        specular = ks * light.color * pow(n_dot_h, p)
+        
+        <span class="comment">// 累加当前光源的贡献</span>
+        final_color += diffuse + specular
+    
+    <span class="comment">// === 第3步：颜色裁减防止溢出 ===</span>
+    <span class="comment">// 多个光源叠加可能超过1.0，必须限制在合法范围</span>
+    final_color = clamp(final_color, <span class="number">0.0</span>, <span class="number">1.0</span>)
+    
+    <span class="keyword">return</span> final_color</code></pre>
+
+<h3 id="5-3-7-完整公式的符号速查">5.3.7 完整公式的符号速查</h3>
+
+<table>
+<tr><th>符号</th><th>含义</th><th>影响</th></tr>
+<tr><td>L</td><td>最终着色颜色（RGB）</td><td>输出的像素值</td></tr>
+<tr><td>k_a</td><td>环境光反射系数</td><td>控制表面的最低亮度</td></tr>
+<tr><td>I_ambient</td><td>环境光强度</td><td>场景整体亮度</td></tr>
+<tr><td>Σ</td><td>对所有光源求和</td><td>多光源叠加</td></tr>
+<tr><td>k_d</td><td>漫反射系数（albedo）</td><td>表面固有颜色</td></tr>
+<tr><td>I_light</td><td>光源强度</td><td>各光源的颜色和亮度</td></tr>
+<tr><td>n·l</td><td>光线入射角余弦</td><td>决定漫反射的明暗变化</td></tr>
+<tr><td>k_s</td><td>高光反射系数</td><td>高光的颜色和强度</td></tr>
+<tr><td>n·h</td><td>半程向量对齐度</td><td>决定高光的位置</td></tr>
+<tr><td>p</td><td>光泽指数（shininess）</td><td>高光的集中程度</td></tr>
+</table>
+
+<hr>
+
+<h2 id="5-4-着色频率-逐顶点-vs-逐像素">5.4 着色频率：逐顶点 vs 逐像素</h2>
+
+<h3 id="5-4-1-问题的起源">5.4.1 问题的起源</h3>
+
+<p>在GPU出现之前，工程师必须仔细权衡质量与性能。着色的"位置选择"是第一个也是最重要的工程决策。</p>
+
+<div class="guizang-figure">
+<img src="images/ch05/pixel_shading.png" alt="逐顶点着色 vs 逐像素着色对比">
+<div class="guizang-caption">图5-4：逐顶点着色（Gouraud）vs 逐像素着色（Phong）——左侧丢失高光细节，右侧完全保留</div>
+</div>
+
+<p><strong>核心问题</strong>：着色计算应该在哪个阶段执行？</p>
+<ul>
+  <li>在<strong>顶点</strong>处算（每个三角形算3次），然后在三角形内部<strong>插值</strong>颜色</li>
+  <li>在每个<strong>像素</strong>处算（每个覆盖像素算1次），但需要<strong>插值法线</strong></li>
+</ul>
+
+<h3 id="5-4-2-逐顶点着色-gouraud-shading">5.4.2 逐顶点着色（Gouraud Shading）</h3>
+
+<p>Gouraud着色由Henri Gouraud在1971年提出。基本思想：在顶点处计算颜色，然后通过重心坐标插值到三角形内部像素。</p>
+
+<pre><code><span class="comment">// GPU顶点着色器：在顶点处计算着色</span>
+<span class="function">function</span> vertex_shader(vertex, model_matrix, view_dir, lights, kd, ks, p):
+    <span class="comment">// 变换到世界坐标系</span>
+    world_pos = model_matrix * vertex.position
+    
+    <span class="comment">// 法线变换（需要逆转置矩阵，详见第7章）</span>
+    world_normal = normalize(transpose(inverse(model_matrix)) * vertex.normal)
+    
+    <span class="comment">// 在顶点处计算完整着色</span>
+    color = blinn_phong_shade(world_pos, world_normal, view_dir, lights, kd, ks, p)
+    
+    <span class="keyword">return</span> color  <span class="comment">// 输出到光栅化器进行插值</span></code></pre>
+
+<pre><code>        三角形顶点
+           ● (颜色=红)
+          / \
+         /   \
+        /     \     三角形内部像素的颜色 = 
+       /       \    α·颜色0 + β·颜色1 + γ·颜色2
+      /         \   （α, β, γ是重心坐标）
+     ●───────────●
+  (颜色=绿)     (颜色=蓝)</code></pre>
+
+<table>
+<tr><th>优点</th><th>缺点</th></tr>
+<tr><td>速度快——每个三角形算3次着色</td><td>高光可能完全丢失（高光发生在三角形内部时）</td></tr>
+<tr><td>GPU硬件实现简单</td><td>需要大量三角形细分才能捕捉细节</td></tr>
+<tr><td>所需带宽小</td><td>插值颜色可能导致马赫带效应（视觉条纹）</td></tr>
+</table>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：一个很大的三角形，中心有高光但三个顶点都没有。逐顶点着色会是什么结果？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">
+高光完全丢失！因为三个顶点的颜色都是"没有高光"，插值后内部像素自然也没有高光。这就是为什么早期3D游戏中的物体往往看起来"塑料感"强——它们的模型被分割得不够细，高光细节都丢失了。
+</blockquote>
+</div>
+
+<h3 id="5-4-3-逐像素着色-phong-shading">5.4.3 逐像素着色（Phong Shading）</h3>
+
+<p>注意：这里的"Phong"是指Bui Tuong Phong（Phong光照模型的提出者），他名字的第二次出现。逐像素着色在1975年由Phong提出。</p>
+
+<p>基本思想：不在顶点处计算颜色，而是将<strong>法线</strong>从顶点插值到每个像素，然后在每个像素处独立计算着色。</p>
+
+<pre><code><span class="comment">// 顶点着色器——只计算需要插值的数据</span>
+<span class="function">function</span> vertex_shader(vertex, model_matrix):
+    world_pos = model_matrix * vertex.position
+    world_normal = normalize(transpose(inverse(model_matrix)) * vertex.normal)
+    <span class="keyword">return</span> (world_pos, world_normal)  <span class="comment">// 这些数据将由GPU插值后传给片元</span>
+
+<span class="comment">// 片元着色器（GPU fragment shader）——在每个像素上独立计算</span>
+<span class="function">function</span> fragment_shader(
+    world_pos,          <span class="comment">// 插值后的世界坐标</span>
+    world_normal,       <span class="comment">// 插值后的法线</span>
+    view_dir,           <span class="comment">// 指向相机的方向</span>
+    lights,             <span class="comment">// 场景光源</span>
+    kd, ks, p           <span class="comment">// 材质参数</span>
+):
+    <span class="comment">// 插值后法线长度可能不是1，必须重新归一化</span>
+    normal = normalize(world_normal)
+    
+    <span class="comment">// 在像素处完整计算Blinn-Phong</span>
+    color = blinn_phong_shade(world_pos, normal, view_dir, lights, kd, ks, p)
+    
+    <span class="keyword">return</span> color</code></pre>
+
+<h3 id="5-4-4-插值过程详解">5.4.4 插值过程详解</h3>
+
+<pre><code><span class="comment">// 三个顶点的插值数据</span>
+v0 = (pos0, normal0)
+v1 = (pos1, normal1)
+v2 = (pos2, normal2)
+
+<span class="comment">// 对每个像素(x, y)计算重心坐标</span>
+<span class="comment">// 重心坐标是三角形内的点相对于三个顶点的权重</span>
+(α, β, γ) = barycentric_coords(x, y, v0, v1, v2)
+<span class="comment">// 其中 α + β + γ = 1，且都非负</span>
+
+<span class="comment">// 插值位置（用于后续计算光线方向）</span>
+interp_pos = α·pos0 + β·pos1 + γ·pos2
+
+<span class="comment">// 插值法线（需要在每个像素重新归一化！）</span>
+interp_normal = α·normal0 + β·normal1 + γ·normal2
+interp_normal = normalize(interp_normal)  <span class="comment">// 关键步骤！</span></code></pre>
+
+<table>
+<tr><th>优点</th><th>缺点</th></tr>
+<tr><td>每个像素独立计算，高光细节完整</td><td>慢——每个像素都要执行完整的着色计算</td></tr>
+<tr><td>低多边形模型也能表现得细腻</td><td>GPU带宽要求高——需要传递法线等插值数据</td></tr>
+<tr><td>没有马赫带效应</td><td>（现代GPU通过SIMD并行已基本解决性能问题）</td></tr>
+</table>
+
+<h3 id="5-4-5-对比总结">5.4.5 对比总结</h3>
+
+<table>
+<tr><th>对比项</th><th>逐顶点（Gouraud）</th><th>逐像素（Phong）</th></tr>
+<tr><td>计算位置</td><td>顶点处</td><td>每个像素（片元）处</td></tr>
+<tr><td>插值内容</td><td>颜色</td><td>法线、位置</td></tr>
+<tr><td>计算次数</td><td>每个三角形3次</td><td>每个覆盖像素1次</td></tr>
+<tr><td>高光质量</td><td>差（可能完全丢失）</td><td>好（每个像素独立）</td></tr>
+<tr><td>锯齿现象</td><td>严重</td><td>轻微</td></tr>
+<tr><td>带宽需求</td><td>低（只需传颜色）</td><td>高（需传法线和位置）</td></tr>
+<tr><td>适用场景</td><td>性能关键、材质简单</td><td>高质量渲染</td></tr>
+<tr><td>图形API时代</td><td>固定管线（OpenGL 1.x）</td><td>可编程管线（GLSL/HLSL）</td></tr>
+</table>
+
+<hr>
+
+<h2 id="5-5-环境光-ambient-term">5.5 环境光（Ambient Term）</h2>
+
+<h3 id="5-5-1-为什么需要环境光">5.5.1 为什么需要环境光？</h3>
+
+<p>想象一个房间里的球体，只有一扇窗户透入阳光。球体面向窗户的一面被照亮，但背向的一面呢？在真实世界中，它会被墙壁反射的间接光照亮——不会全黑。</p>
+
+<p>但在局部着色模型中，我们<strong>没有计算间接光照</strong>。所以没有直接光照的表面就是全黑的——这在视觉上不自然。</p>
+
+<pre><code>只靠直接光：                    加上环境光：
+   ●             ●
+   │   (黑)      │ (暗，但不是全黑)
+   │             │
+   └──光源       └──光源
+   背面 = 黑色    背面 = 环境色</code></pre>
+
+<h3 id="5-5-2-环境光的数学">5.5.2 环境光的数学</h3>
+
+<p>环境光是最简单的近似——给所有表面加一个均匀的"底光"：</p>
+
+<div class="formula">L_ambient = k_a · I_ambient</div>
+
+<table>
+<tr><th>符号</th><th>含义</th><th>典型值</th></tr>
+<tr><td>k_a</td><td>环境光反射系数</td><td>通常设为k_d（漫反射系数）</td></tr>
+<tr><td>I_ambient</td><td>环境光强度（RGB）</td><td>(0.1, 0.1, 0.1) 暗灰或 (0.05, 0.05, 0.1) 暗蓝</td></tr>
+</table>
+
+<blockquote>
+<strong>重要说明</strong>：环境光是一个"作弊"。它不依赖于法线方向、不依赖于光照方向、不依赖于观察方向——就是给所有表面加上一个固定颜色。虽然物理上不精确，但它简单有效地防止了"死黑"区域。
+</blockquote>
+
+<h3 id="5-5-3-环境光的局限">5.5.3 环境光的局限</h3>
+
+<p>真正的间接光照远比简单环境光复杂：</p>
+<ul>
+  <li>墙是红色的 → 它反射的光也是偏红的 → 附近的白色物体会染上粉色</li>
+  <li>天花板的光不会被地面"吸入" → 面朝上的表面应该接收更多间接光</li>
+</ul>
+
+<p>更精确的间接光照需要<strong>环境光遮蔽（Ambient Occlusion）</strong>、<strong>球谐函数（Spherical Harmonics）</strong>或<strong>路径追踪</strong>。但这些都超出了第5章的范围。</p>
+
+<hr>
+
+<h2 id="5-6-阴影实现">5.6 阴影实现</h2>
+
+<h3 id="5-6-1-阴影测试的原理">5.6.1 阴影测试的原理</h3>
+
+<p>有了着色公式后，我们要问：如果光源到表面点的路径上有其他物体挡住呢？——那就产生<strong>阴影</strong>。</p>
+
+<p>阴影测试极其简单：<strong>从表面点向光源发射一条"阴影光线"</strong>，如果中途碰到物体，说明该点在阴影中。</p>
+
+<pre><code><span class="function">function</span> shade_with_shadow(point, normal, view_dir, lights, kd, ks, p, ambient, scene):
+    <span class="comment">// 基础环境光</span>
+    final_color = kd * ambient
+    
+    <span class="keyword">for</span> light <span class="keyword">in</span> lights:
+        <span class="comment">// === 阴影测试 ===</span>
+        <span class="comment">// 从表面点向光源发射一条探测光线</span>
+        l = normalize(light.position - point)
+        
+        <span class="comment">// 关键：加一个小偏移ε防止"自相交"</span>
+        <span class="comment">// 由于浮点精度，光线可能与自己刚离开的表面相交</span>
+        shadow_ray = Ray(point + <span class="number">1e-4</span> * normal, l)
+        shadow_hit = scene.intersect(shadow_ray)
+        
+        <span class="comment">// 计算光源距离，判断阻挡物是否在光源之前</span>
+        light_dist = distance(point, light.position)
+        <span class="keyword">if</span> shadow_hit <span class="keyword">and</span> shadow_hit.t &lt; light_dist:
+            <span class="keyword">continue</span>  <span class="comment">// 在阴影中！跳过光照贡献</span>
+        
+        <span class="comment">// === 漫反射 ===</span>
+        n_dot_l = max(<span class="number">0.0</span>, dot(normal, l))
+        final_color += kd * light.color * n_dot_l
+        
+        <span class="comment">// === 高光 ===</span>
+        h = normalize(l + view_dir)
+        n_dot_h = max(<span class="number">0.0</span>, dot(normal, h))
+        final_color += ks * light.color * pow(n_dot_h, p)
+    
+    <span class="keyword">return</span> clamp(final_color, <span class="number">0.0</span>, <span class="number">1.0</span>)</code></pre>
+
+<h3 id="5-6-2-关于ε偏移的深入解释">5.6.2 关于ε偏移的深入解释</h3>
+
+<blockquote>
+<p><strong>什么是"自相交"？</strong><br>
+在计算机中，浮点数不是精确的。当你计算光线与表面的交点时，得到的是一个"近似"位置。这个位置可能在表面的"内部"一点点。当你从该点发射阴影光线时，它可能一出发就"碰到"了自己所在的表面——产生错误的阴影条纹。</p>
+
+<p><strong>解决方法</strong>：沿法线方向加一个极小偏移（通常 ε = 1e-4 到 1e-6），让阴影光线的起点稍微离开表面。</p>
+</blockquote>
+
+<hr>
+
+<h2 id="5-7-各向异性着色-扩展">5.7 各向异性着色（扩展）</h2>
+
+<h3 id="5-7-1-各向同性-vs-各向异性">5.7.1 各向同性 vs 各向异性</h3>
+
+<p>Blinn-Phong模型假设表面在所有方向上的反射特性相同——这称为<strong>各向同性（Isotropic）</strong>。但有些材质不是这样：</p>
+
+<table>
+<tr><th>材质</th><th>类型</th><th>视觉效果</th><th>原因</th></tr>
+<tr><td>拉丝金属</td><td>各向异性</td><td>高光沿拉丝方向拉长</td><td>表面有微观的沟槽方向</td></tr>
+<tr><td>CD/DVD碟面</td><td>各向异性</td><td>彩虹色条纹</td><td>螺旋数据轨道</td></tr>
+<tr><td>丝绸布料</td><td>各向异性</td><td>顺滑光泽随角度变化</td><td>纤维的定向排列</td></tr>
+<tr><td>毛发/头发</td><td>各向异性</td><td>沿发丝方向的高光</td><td>圆柱形纤维</td></tr>
+</table>
+
+<p>各向异性着色需要引入<strong>切线方向</strong>（tangent）参与计算，但本章不深入展开。</p>
+
+<hr>
+
+<h2 id="5-8-从blinn-phong到pbr的过渡">5.8 从Blinn-Phong到PBR的过渡</h2>
+
+<h3 id="5-8-1-blinn-phong的局限性">5.8.1 Blinn-Phong的局限性</h3>
+
+<p>Blinn-Phong是"经验模型"——它的公式看起来不错，但不严格遵循物理：</p>
+
+<ul>
+  <li><strong>不保证能量守恒</strong>：漫反射+高光的量可能超过入射光</li>
+  <li><strong>参数无物理意义</strong>：kd、ks、p是"调出来的"，不是从真实材质测量得到的</li>
+  <li><strong>没有Fresnel效应</strong>：掠射角时反射应该增强（见Fresnel效应图）</li>
+</ul>
+
+<div class="guizang-figure">
+<img src="images/ch05/fresnel_effect.png" alt="Fresnel效应—掠射角反射增强">
+<div class="guizang-caption">图5-5：Fresnel效应——视线接近掠射角时，反射显著增强</div>
+</div>
+
+<h3 id="5-8-2-pbr-基于物理的渲染-简介">5.8.2 PBR（基于物理的渲染）简介</h3>
+
+<p>现代渲染（20世纪10年代后）使用<strong>基于物理的着色模型（PBR）</strong>：</p>
+
+<table>
+<tr><th>对比项</th><th>Blinn-Phong</th><th>PBR (Cook-Torrance)</th></tr>
+<tr><td>理论基础</td><td>经验公式（好看就行）</td><td>微表面理论（物理正确）</td></tr>
+<tr><td>能量守恒</td><td>不保证</td><td>严格保证</td></tr>
+<tr><td>参数</td><td>kd, ks, p（无量纲）</td><td>roughness, metallic, albedo（有物理单位）</td></tr>
+<tr><td>反射类型</td><td>漫反射 + 经验高光</td><td>漫反射 + 微表面BRDF</td></tr>
+<tr><td>Fresnel效应</td><td>无</td><td>Schlick近似（第五个公式）</td></tr>
+<tr><td>效果稳定性</td><td>随视角可能"过曝"</td><td>物理正确，任何角度都自然</td></tr>
+<tr><td>使用难度</td><td>容易（三个参数调色即可）</td><td>稍难（需理解微表面理论）</td></tr>
+</table>
+
+<p>PBR的复杂性超出本章范围，感兴趣可阅读第20章（光与材质）。</p>
+
+<hr>
+
+<h2 id="5-9-完整着色器代码示例">5.9 完整着色器代码示例</h2>
+
+<p>下面是一个完整的GPU着色器伪代码，整合了本章学到的所有知识：</p>
+
+<pre><code><span class="comment">// ============================</span>
+<span class="comment">// 顶点着色器（Vertex Shader）</span>
+<span class="comment">// ============================</span>
+<span class="comment">// 负责将顶点数据变换到世界坐标系并传递到片元阶段</span>
+
+<span class="keyword">void</span> vertex_main(InputVertex v):
+    <span class="comment">// 模型矩阵变换：从局部坐标系 → 世界坐标系</span>
+    world_pos = model_matrix * v.position
+    
+    <span class="comment">// 法线变换：使用法线矩阵（模型矩阵的逆转置的3×3部分）</span>
+    <span class="comment">// 注意：不能用model_matrix直接变换法线！</span>
+    world_normal = normalize(normal_matrix * v.normal)
+    
+    <span class="comment">// 输出到光栅化器进行插值</span>
+    output.world_pos = world_pos
+    output.world_normal = world_normal
+    output.texcoord = v.texcoord
+
+<span class="comment">// ============================</span>
+<span class="comment">// 片元着色器（Fragment Shader）</span>
+<span class="comment">// ============================</span>
+<span class="comment">// 在每个像素上执行完整的Blinn-Phong着色</span>
+
+<span class="comment">// uniform变量：由CPU传入的全局常量</span>
+uniform vec3 camera_pos;       <span class="comment">// 相机在世界空间的位置</span>
+uniform vec3 light_pos;        <span class="comment">// 光源位置</span>
+uniform vec3 light_color;      <span class="comment">// 光源颜色和强度</span>
+uniform vec3 ambient;          <span class="comment">// 环境光颜色</span>
+uniform vec3 kd;               <span class="comment">// 漫反射颜色（RGB albedo）</span>
+uniform vec3 ks;               <span class="comment">">// 高光颜色（RGB）</span>
+uniform <span class="keyword">float</span> p;               <span class="comment">// 光泽指数（shininess）</span>
+
+<span class="keyword">void</span> fragment_main(FragmentInput f):
+    <span class="comment">// === 第1步：归一化插值后的法线 ===</span>
+    <span class="comment">// 插值会改变向量长度，必须重新归一化</span>
+    vec3 n = normalize(f.world_normal)
+    
+    <span class="comment">// === 第2步：计算视角方向 ===</span>
+    <span class="comment">// 从表面点指向相机</span>
+    vec3 v = normalize(camera_pos - f.world_pos)
+    
+    <span class="comment">// === 第3步：计算指向光源的方向 ===</span>
+    <span class="comment">// 从表面点指向光源</span>
+    vec3 l = normalize(light_pos - f.world_pos)
+    
+    <span class="comment">// === 第4步：环境光 ===</span>
+    <span class="comment">// 给所有表面加点"底光"，防止背面全黑</span>
+    vec3 color = kd * ambient
+    
+    <span class="comment">// === 第5步：漫反射（Lambert） ===</span>
+    <span class="comment">// n·l = cosθ，控制入射光的有效能量</span>
+    <span class="keyword">float</span> n_dot_l = max(<span class="number">0.0</span>, dot(n, l))
+    color += kd * light_color * n_dot_l
+    
+    <span class="comment">// === 第6步：高光（Blinn-Phong） ===</span>
+    <span class="comment">// h = normalize(l + v) 半程向量</span>
+    <span class="comment">// n·h ≈ 1 时高光最强</span>
+    vec3 h = normalize(l + v)
+    <span class="keyword">float</span> n_dot_h = max(<span class="number">0.0</span>, dot(n, h))
+    color += ks * light_color * pow(n_dot_h, p)
+    
+    <span class="comment">// === 第7步：输出最终颜色 ===</span>
+    <span class="comment">// clamp确保颜色值不超过[0,1]范围</span>
+    gl_FragColor = vec4(clamp(color, <span class="number">0.0</span>, <span class="number">1.0</span>), <span class="number">1.0</span>)</code></pre>
+
+<hr>
+
+<h2 id="全章总结">全章总结</h2>
+
+<blockquote>
+<p><strong>核心洞察</strong>：表面着色的本质是"用数学公式模拟光与材质的交互"。通过三个简单成分的组合——环境光、漫反射、高光——就能表达从粗糙石膏到光滑金属的广泛材质范围。</p>
+</blockquote>
+
+<table>
+<tr><th>概念</th><th>核心公式</th><th>关键参数</th><th>依赖关系</th></tr>
+<tr><td><strong>环境光</strong></td><td>L = k_a·I_a</td><td>k_a</td><td>方向无关（物理不精确但实用）</td></tr>
+<tr><td><strong>漫反射</strong></td><td>L = k_d·I·max(0, n·l)</td><td>k_d</td><td>依赖法线和光源方向</td></tr>
+<tr><td><strong>高光</strong></td><td>L = k_s·I·max(0, n·h)^p</td><td>k_s, p</td><td>依赖法线、光源和视角方向</td></tr>
+<tr><td><strong>逐顶点</strong></td><td>顶点 → 插值颜色</td><td>N_tri × 3次</td><td>速度快但丢失高光细节</td></tr>
+<tr><td><strong>逐像素</strong></td><td>插值法线 → 每像素计算</td><td>N_tri × N_pixels</td><td>质量高但计算量大</td></tr>
+<tr><td><strong>阴影</strong></td><td>阴影光线检测遮挡</td><td>每次着色多一次求交</td><td>产生硬阴影的简单方法</td></tr>
+</table>
+
+<p><strong>一句话总结</strong>：着色 = 环境光（防止死黑）+ 漫反射（粗糙材质感）+ 高光（光泽感），逐像素着色用更多计算换取更好的视觉效果；从Blinn-Phong到PBR是图形学从"看起来对"到"物理上对"的进化。</p>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li class="active"><a href="ch05_表面着色.html" class="active">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#前置知识-向量运算必读">前置知识：向量运算必读</a></li>
+  <li class="toc-h3"><a href="#1--法线-normal">1. 法线（Normal）</a></li>
+  <li class="toc-h3"><a href="#2--点积-dot-product">2. 点积（Dot Product）</a></li>
+  <li class="toc-h3"><a href="#3--方向关系--着色中的-四大方向">3. 方向关系——着色中的"四大方向"</a></li>
+  <li class="toc-h2"><a href="#5-1-什么是着色-shading">5.1 什么是着色（Shading）？</a></li>
+  <li class="toc-h3"><a href="#5-1-1-着色的核心问题">5.1.1 着色的核心问题</a></li>
+  <li class="toc-h3"><a href="#5-1-2-局部着色-vs-全局光照">5.1.2 局部着色 vs 全局光照</a></li>
+  <li class="toc-h2"><a href="#5-2-lambert漫反射模型">5.2 Lambert漫反射模型</a></li>
+  <li class="toc-h3"><a href="#5-2-1-什么是漫反射">5.2.1 什么是漫反射？</a></li>
+  <li class="toc-h3"><a href="#5-2-2-兰伯特余弦定律-lambert-s-cosine-law">5.2.2 兰伯特余弦定律（Lambert's Cosine Law）</a></li>
+  <li class="toc-h3"><a href="#5-2-3-直观理解-为什么n-l决定了亮度">5.2.3 直观理解：为什么n·l决定了亮度？</a></li>
+  <li class="toc-h3"><a href="#5-2-4-完整的lambert着色函数-逐行中文注释">5.2.4 完整的Lambert着色函数（逐行中文注释）</a></li>
+  <li class="toc-h3"><a href="#5-2-5-数值例子">5.2.5 数值例子</a></li>
+  <li class="toc-h3"><a href="#5-2-6-多点光源的漫反射">5.2.6 多点光源的漫反射</a></li>
+  <li class="toc-h2"><a href="#5-3-blinn-phong高光模型">5.3 Blinn-Phong高光模型</a></li>
+  <li class="toc-h3"><a href="#5-3-1-从漫反射到高光--为什么需要它">5.3.1 从漫反射到高光——为什么需要它？</a></li>
+  <li class="toc-h3"><a href="#5-3-2-从phong到blinn-phong--一段历史">5.3.2 从Phong到Blinn-Phong——一段历史</a></li>
+  <li class="toc-h3"><a href="#5-3-3-半程向量h的几何直觉">5.3.3 半程向量h的几何直觉</a></li>
+  <li class="toc-h3"><a href="#5-3-4-光泽指数p对高光的影响">5.3.4 光泽指数p对高光的影响</a></li>
+  <li class="toc-h3"><a href="#5-3-5-完整的blinn-phong高光函数">5.3.5 完整的Blinn-Phong高光函数</a></li>
+  <li class="toc-h3"><a href="#5-3-6-lambert---blinn-phong---完整局部着色">5.3.6 Lambert + Blinn-Phong = 完整局部着色</a></li>
+  <li class="toc-h3"><a href="#5-3-7-完整公式的符号速查">5.3.7 完整公式的符号速查</a></li>
+  <li class="toc-h2"><a href="#5-4-着色频率-逐顶点-vs-逐像素">5.4 着色频率：逐顶点 vs 逐像素</a></li>
+  <li class="toc-h3"><a href="#5-4-1-问题的起源">5.4.1 问题的起源</a></li>
+  <li class="toc-h3"><a href="#5-4-2-逐顶点着色-gouraud-shading">5.4.2 逐顶点着色（Gouraud Shading）</a></li>
+  <li class="toc-h3"><a href="#5-4-3-逐像素着色-phong-shading">5.4.3 逐像素着色（Phong Shading）</a></li>
+  <li class="toc-h3"><a href="#5-4-4-插值过程详解">5.4.4 插值过程详解</a></li>
+  <li class="toc-h3"><a href="#5-4-5-对比总结">5.4.5 对比总结</a></li>
+  <li class="toc-h2"><a href="#5-5-环境光-ambient-term">5.5 环境光（Ambient Term）</a></li>
+  <li class="toc-h3"><a href="#5-5-1-为什么需要环境光">5.5.1 为什么需要环境光？</a></li>
+  <li class="toc-h3"><a href="#5-5-2-环境光的数学">5.5.2 环境光的数学</a></li>
+  <li class="toc-h3"><a href="#5-5-3-环境光的局限">5.5.3 环境光的局限</a></li>
+  <li class="toc-h2"><a href="#5-6-阴影实现">5.6 阴影实现</a></li>
+  <li class="toc-h3"><a href="#5-6-1-阴影测试的原理">5.6.1 阴影测试的原理</a></li>
+  <li class="toc-h3"><a href="#5-6-2-关于ε偏移的深入解释">5.6.2 关于ε偏移的深入解释</a></li>
+  <li class="toc-h2"><a href="#5-7-各向异性着色-扩展">5.7 各向异性着色（扩展）</a></li>
+  <li class="toc-h3"><a href="#5-7-1-各向同性-vs-各向异性">5.7.1 各向同性 vs 各向异性</a></li>
+  <li class="toc-h2"><a href="#5-8-从blinn-phong到pbr的过渡">5.8 从Blinn-Phong到PBR的过渡</a></li>
+  <li class="toc-h3"><a href="#5-8-1-blinn-phong的局限性">5.8.1 Blinn-Phong的局限性</a></li>
+  <li class="toc-h3"><a href="#5-8-2-pbr-基于物理的渲染-简介">5.8.2 PBR（基于物理的渲染）简介</a></li>
+  <li class="toc-h2"><a href="#5-9-完整着色器代码示例">5.9 完整着色器代码示例</a></li>
+  <li class="toc-h2"><a href="#全章总结">全章总结</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

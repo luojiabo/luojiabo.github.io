@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch21: 隐式建模</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch21 隐式建模</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第21章：隐式建模 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第21章（p.595-622）。<br>
+<strong>核心问题</strong>：不用"顶点列表"定义形状，而是用"数学公式"定义——<code>f(x,y,z) = 0</code> = 表面。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s2100">21.0 前置数学：偏导和梯度，从零讲起</a></li>
+  <li><a href="#s211">21.1 什么是隐式建模？</a></li>
+  <li><a href="#s212">21.2 隐式方程的核心思想</a></li>
+  <li><a href="#s213">21.3 骨骼原语与求和混合（Blob）</a></li>
+  <li><a href="#s214">21.4 Blob 求和手算例子</a></li>
+  <li><a href="#s215">21.5 构造实体几何（CSG）</a></li>
+  <li><a href="#s216">21.6 Marching Cubes：把场变成网格</a></li>
+  <li><a href="#s217">21.7 更多混合方式（Ricci Blend）</a></li>
+  <li><a href="#s218">21.8 形变（Warp）</a></li>
+  <li><a href="#s219">21.9 精确接触建模（PCM）</a></li>
+  <li><a href="#s2110">21.10 BlobTree</a></li>
+  <li><a href="#s2111">21.11 隐式 vs 显式对比</a></li>
+  <li><a href="#s2112">21.12 总结</a></li>
+</ul>
+</div>
+
+<hr>
+
+<h2 id="21-0-前置数学-偏导和梯度-从零讲起">21.0 前置数学：偏导和梯度，从零讲起</h2>
+
+<p><strong>这是"前置数学扫盲"章节</strong>——如果你对偏导和梯度只有一个模糊的印象，这里帮你彻底理清。这两个概念是理解隐式建模的数学基础。</p>
+
+<h3 id="21-0-1-偏导数-只看-x-方向的变化">21.0.1 偏导数：只看 x 方向的变化</h3>
+
+<p><strong>这是在解决什么问题</strong>：一个函数 f(x,y) 有多个变量。你没法"同时对 x 和 y 求导"，所以先固定 y 只看 x 的变化——这就是偏导。</p>
+
+<div class="info-box">
+<strong>用中文说就是</strong>：偏导数 = "固定其他变量，只看其中一个变量变化时 f 的变化率"。
+</div>
+
+<pre><code>函数：f(x, y) = x² + y²
+
+偏导 ∂f/∂x（读作"偏 f 偏 x"）：
+  用中文说就是：把 y 当作常数，只看 x 的变化。
+  把 y 固定，f 对 x 求导 → ∂f/∂x = 2x
+  含义：在点 (x, y) 处，沿 x 方向走一小步，f 会变多少
+
+偏导 ∂f/∂y：
+  用中文说就是：把 x 当作常数，只看 y 的变化。
+  把 x 固定，f 对 y 求导 → ∂f/∂y = 2y
+  含义：在点 (x, y) 处，沿 y 方向走一小步，f 会变多少
+
+生活类比：
+  你站在一个山坡上，地面高度 = f(x,y)
+  ∂f/∂x = "向东走一步，高度变化多少"
+  ∂f/∂y = "向北走一步，高度变化多少"
+  两个偏导各自告诉你"一个方向"的变化率
+</code></pre>
+
+<h3 id="21-0-2-梯度-上坡最快的方向">21.0.2 梯度：上坡最快的方向</h3>
+
+<p><strong>这是在解决什么问题</strong>：偏导数给了你"一个方向"的变化率，但你想知道"哪个方向变化最快"——梯度就是所有偏导拼成的向量，指向最陡的上坡方向。</p>
+
+<div class="formula">∇f = (∂f/∂x, ∂f/∂y, ∂f/∂z)</div>
+
+<div class="info-box">
+<strong>用中文说就是</strong>：梯度 = 把所有偏导拼成一个向量。它指向"函数值增加最快的方向"——也就是<strong>最陡的上坡方向</strong>。
+</div>
+
+<pre><code>例子：f(x,y) = x² + y²
+  ∇f = (2x, 2y)
+  在点 (1, 0) 处，∇f = (2, 0)
+  用中文说就是：在 (1,0) 这个点，沿 x 正方向走 f 增加最快（上坡），
+  沿 y 方向 f 不变（水平）。
+
+梯度的三个核心用途：
+  ① 表面法线：∇f / |∇f| = 表面的法线方向
+  ② 最大值方向：梯度指向 f 最大的方向
+  ③ 最小值方向：-∇f 指向 f 最小的方向（下坡方向）
+</code></pre>
+
+<h3 id="21-0-3-梯度---表面法线">21.0.3 梯度 = 表面法线</h3>
+
+<p><strong>这是在解决什么问题</strong>：在隐式曲面 f(x,y,z)=0 上，我们需要知道"表面朝向"。不用存顶点法线——梯度免费给你法线！</p>
+
+<div class="formula">n = ∇f / |∇f|</div>
+
+<div class="key-box">
+<strong>关键洞察</strong>：隐式建模中，梯度 ∇f 就是表面法线的方向。你不需要存任何法线数据——算一下梯度就行。<br>
+这一点是隐式建模的"免费午餐"——显式建模需要存大量的顶点法线数据（48字节/顶点），隐式建模的法线是公式自带的。
+</div>
+
+<div class="guizang-figure">
+<img src="images/ch21/ch21_gradient_normal.png" alt="等值面与梯度方向">
+<div class="guizang-caption">图21-1：等值面与梯度——梯度指向最陡上坡方向，归一化后就是表面法线</div>
+</div>
+
+<hr>
+
+<h2 id="21-1-什么是隐式建模">21.1 什么是隐式建模？</h2>
+
+<h3 id="21-1-1-显式-vs-隐式--根本区别">21.1.1 显式 vs 隐式——根本区别</h3>
+
+<p><strong>这是在解决什么问题</strong>：传统的"显式"建模用三角形顶点定义形状，处理"点是否在物体内部"非常麻烦。隐式建模用数学公式定义形状——代入一个点立刻知道内外。</p>
+
+<pre><code>显式建模（多边形）：
+  "这个球由 1000 个三角形的顶点列表定义。"
+  你有一个点 → 问"这个点在球表面吗？" → 要跟所有三角形判断 → 麻烦。
+
+隐式建模：
+  "这个球由公式 x² + y² + z² - 1 = 0 定义。"
+  你有一个点 → 代入公式 → 正数（在外面）/ 零（在表面）/ 负数（在里面）
+  → 简单！
+</code></pre>
+
+<h3 id="21-1-2-核心对比表">21.1.2 核心对比表</h3>
+
+<table>
+<tr><th>维度</th><th>显式（多边形）</th><th>隐式（场）</th></tr>
+<tr><td>定义方式</td><td>顶点 + 三角形</td><td>标量函数 f(p) = iso<a href="#fn-iso" class="fn" title="iso = isosurface（等值面），即函数值等于某个常数的所有点构成的曲面。">&#8224;</a></td></tr>
+<tr><td>找表面点</td><td>遍历三角形</td><td>二分法求 f(p)=0</td></tr>
+<tr><td>判断内外</td><td>BVH<a href="#fn-bvh" class="fn" title="BVH = Bounding Volume Hierarchy（包围盒层次结构），用树形包围盒加速光线与三角形求交。">&#8224;</a> + 法线测试（复杂）</td><td>sign(f(p)) 一个字</td></tr>
+<tr><td>拓扑变化</td><td>重建网格（昂贵）</td><td>改公式即可（便宜）</td></tr>
+<tr><td>法线计算</td><td>存顶点法线或叉乘</td><td>∇f / |∇f| 免费</td></tr>
+<tr><td>光线求交</td><td>三角形求交（快）</td><td>ray marching（慢）</td></tr>
+</table>
+
+<hr>
+
+<h2 id="21-2-隐式方程的核心思想">21.2 隐式方程的核心思想</h2>
+
+<h3 id="21-2-1-最简单的隐式曲面-球">21.2.1 最简单的隐式曲面：球</h3>
+
+<p><strong>这是在解决什么问题</strong>：用公式定义球体。代入任意一个点 (x,y,z) 就能知道它在球内、球外还是球表面。</p>
+
+<div class="formula">f(x,y,z) = x² + y² + z² - r² = 0</div>
+
+<pre><code>用中文说就是：
+  对于任意点 (x,y,z)：
+    如果 f &lt; 0（x²+y²+z² - r² &lt; 0）→ 点在球内部
+    如果 f = 0（x²+y²+z² - r² = 0）→ 点在球表面上
+    如果 f &gt; 0（x²+y²+z² - r² &gt; 0）→ 点在球外部
+
+例子（手算）：
+  球半径 r = 2
+  点 A(0, 0, 0):
+    f = 0² + 0² + 0² - 2² = -4 &lt; 0 → 球内部 ✓
+  点 B(0, 0, 2):
+    f = 0² + 0² + 2² - 2² = 0 → 球表面 ✓
+  点 C(3, 0, 0):
+    f = 3² + 0² + 0² - 2² = 9 - 4 = 5 &gt; 0 → 球外部 ✓
+</code></pre>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：如果是椭圆体（椭球）呢？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">公式变成 f = x²/a² + y²/b² + z²/c² - 1 = 0，其中 a、b、c 分别是三个轴方向的半径。还是同样的判断逻辑——代入点的坐标看 f 的正负。</blockquote>
+</div>
+
+<h3 id="21-2-2-隐式的核心优势-任意拓扑">21.2.2 隐式的核心优势：任意拓扑</h3>
+
+<p><strong>这是在解决什么问题</strong>：显式模型如果两个球要融合成一个"花生"形状，你得重建所有的三角形——非常麻烦。隐式模型只需要把两个球的公式加起来——自动融合！</p>
+
+<pre><code>两个球融合 → 隐式表达式：
+
+  球 1: f₁(x,y,z) = x² + y² + z² - 1²
+  球 2: f₂(x,y,z) = (x-1.5)² + y² + z² - 1²
+
+  融合后的场：
+    f(x,y,z) = f₁ + f₂
+
+  取 f = 某个等值面（比如 f = 0.5）→ 两个球"融化在一起"
+
+用中文说就是：把两个球各自的"场值"相加 →
+  两个球连接处场值变高 → 自然融合！
+</code></pre>
+
+<div class="key-box">
+<strong>核心洞察</strong>：隐式建模的"求和混合"是显式建模做不到的——显式网格需要手工搭建或布尔运算，而隐式建模只需要加法。这就是为什么软体物理、流体模拟、3D 建模中的"融合"都用隐式。
+</div>
+
+<hr>
+
+<h2 id="21-3-骨骼原语与求和混合-blob">21.3 骨骼原语与求和混合（Blob）</h2>
+
+<h3 id="21-3-1-骨骼原语-skeletal-primitive">21.3.1 骨骼原语（Skeletal Primitive）</h3>
+
+<p><strong>这是在解决什么问题</strong>：每个基本形状（球、线、环）是一个"骨骼"<span class="fn" title="骨骼（Skeletal）：这里不是动物骨骼，而是指形状的"骨架"——定义距离场的基本几何体。每个骨骼在空间中产生一个衰减的场。">&#8224;</span>，它定义了一个"距离函数"——空间任意一点到它的距离。</p>
+
+<div class="formula">f<sub>i</sub>(p) = g<sub>i</sub>( d<sub>i</sub>(p) )</div>
+
+<table>
+<tr><th>符号</th><th>含义</th><th>用中文说就是</th></tr>
+<tr><td>d<sub>i</sub>(p)</td><td>点 p 到骨骼 i 的最短距离</td><td>"到骨骼有多远"</td></tr>
+<tr><td>g<sub>i</sub>(r)</td><td>衰减函数</td><td>"距离→影响力的换算公式"</td></tr>
+<tr><td>f<sub>i</sub>(p)</td><td>骨骼 i 在点 p 的场值</td><td>"这个点感受到的影响力"</td></tr>
+</table>
+
+<h3 id="21-3-2-四种衰减函数">21.3.2 四种衰减函数</h3>
+
+<table>
+<tr><th>名称</th><th>公式</th><th>用中文说就是</th><th>特点</th></tr>
+<tr><td><strong>Blinn (Gaussian)</strong></td><td>g(d) = e^(-r·d²)</td><td>"高斯钟形曲线——越远越弱"</td><td>光滑、无限范围、计算贵</td></tr>
+<tr><td><strong>Metaball</strong></td><td>分段多项式</td><td>"三段拼接——近处是、中间过渡、远处没有"</td><td>有限范围、C¹ 光滑</td></tr>
+<tr><td><strong>Soft Objects (Wyvill 3次)</strong></td><td>(1-d²/r²)³</td><td>"三次衰减——从近到远平滑变0"</td><td>有限范围、C² 光滑</td></tr>
+<tr><td><strong>Wyvill（简单版）</strong></td><td>(1-d²/r²)³</td><td>"最简版本——平方再立方"</td><td>最快计算</td></tr>
+</table>
+
+<h3 id="21-3-3-求和混合-summation-blending">21.3.3 求和混合（Summation Blending）</h3>
+
+<p><strong>这是在解决什么问题</strong>：一个骨骼只定义了一个形状。求和混合把所有骨骼的场值加起来，得到一个"总场"。物体的表面就在"总场 = 某个值"的等值面上。</p>
+
+<div class="formula">f(p) = Σ<sub>i</sub> f<sub>i</sub>(p) = Σ<sub>i</sub> g<sub>i</sub>( d<sub>i</sub>(p) )</div>
+
+<div class="info-box">
+<strong>用中文说就是</strong>：每个骨骼在点 p 贡献一个"影响力"（场值），把所有影响力加起来 → 得到 p 点的总影响力。所有 影响力 = 某个值的点 → 构成物体的表面。
+</div>
+
+<hr>
+
+<h2 id="21-4-blob-求和手算例子">21.4 Blob 求和手算例子</h2>
+
+<p><strong>这是在解决什么问题</strong>：通过手算几个点的场值，直观理解"两个球融合"的数值过程。光看公式可能抽象，算一遍就懂了。</p>
+
+<div class="guizang-figure">
+<img src="images/ch21/ch21_blob_fusion.png" alt="Blob融合过程">
+<div class="guizang-caption">图21-2：Blob 融合过程——两个球体的场值叠加，中间形成鼓包，等值面"融化"成一体</div>
+</div>
+
+<h3 id="设定">设定</h3>
+
+<pre><code>骨骼 1：球心在 (0, 0, 0)，半径 r₁ = 1，衰减系数 c₁ = 1
+骨骼 2：球心在 (2, 0, 0)，半径 r₂ = 1，衰减系数 c₂ = 1
+衰减函数：g(d) = e^(-c·d²)
+总场：f(p) = g₁(d₁) + g₂(d₂) = e^(-d₁²) + e^(-d₂²)
+等值面：f(p) = 0.5（取等值线 iso = 0.5）
+</code></pre>
+
+<h3 id="计算点-a-0--0--0-----第一个球的球心">计算点 A(0, 0, 0) —— 第一个球的球心</h3>
+
+<pre><code>d₁ = |A - 球心₁| = |(0,0,0) - (0,0,0)| = 0
+d₂ = |A - 球心₂| = |(0,0,0) - (2,0,0)| = 2
+
+g₁ = e^(-0²) = e⁰ = 1.000
+g₂ = e^(-2²) = e⁻⁴ = 0.018
+
+f(A) = 1.000 + 0.018 = 1.018
+
+f(A) &gt; 0.5 → 点 A 在表面内部 ✓
+用中文说就是：球心处场值最大，肯定在物体里。
+</code></pre>
+
+<h3 id="计算点-b-1--0--0-----两个球的中点">计算点 B(1, 0, 0) —— 两个球的中点</h3>
+
+<pre><code>d₁ = |B - (0,0,0)| = 1
+d₂ = |B - (2,0,0)| = 1
+
+g₁ = e^(-1²) = e⁻¹ = 0.368
+g₂ = e^(-1²) = e⁻¹ = 0.368
+
+f(B) = 0.368 + 0.368 = 0.736
+
+f(B) &gt; 0.5 → 中点也在物体内部 ✓
+用中文说就是：两个球中间场值叠加，形成一个"鼓包"——融合了。
+</code></pre>
+
+<h3 id="计算点-c-1-5--0-8--0-----边界外一点">计算点 C(1.5, 0.8, 0) —— 边界外一点</h3>
+
+<pre><code>d₁ = √(1.5² + 0.8²) = √(2.25+0.64) = √2.89 = 1.70
+d₂ = √((1.5-2)² + 0.8²) = √(0.25+0.64) = √0.89 = 0.94
+
+g₁ = e^(-1.70²) = e⁻²·⁸⁹ = 0.056
+g₂ = e^(-0.94²) = e⁻⁰·⁸⁸⁴ = 0.413
+
+f(C) = 0.056 + 0.413 = 0.469
+
+f(C) ≈ 0.47 &lt; 0.5 → 点 C 在表面外部 ✓
+用中文说就是：离两个球都远了，场值衰减到临界值以下。
+</code></pre>
+
+<h3 id="手算总结">手算总结</h3>
+
+<table>
+<tr><th>点</th><th>位置</th><th>f 值</th><th>在表面内？</th><th>含义</th></tr>
+<tr><td>A</td><td>(0, 0, 0)</td><td>1.018</td><td>是</td><td>球心处场值最高</td></tr>
+<tr><td>B</td><td>(1, 0, 0)</td><td>0.736</td><td>是</td><td>两球中间叠加，融合</td></tr>
+<tr><td>C</td><td>(1.5, 0.8, 0)</td><td>0.469</td><td>否</td><td>边界外</td></tr>
+</table>
+
+<div class="key-box">
+<strong>这个手算告诉我们什么？</strong><br>
+从 A→B→C，场值从 1.018 降到 0.469。等值面 f=0.5 就在 B 和 C 之间穿过 → 这就是物体的表面！<br>
+两个本来分离的球，因为中间的场值叠加 &gt; 0.5 → "融合"成一体。
+</div>
+
+<hr>
+
+<h2 id="21-5-构造实体几何-csg">21.5 构造实体几何（CSG）</h2>
+
+<h3 id="21-5-1-csg---组合形状">21.5.1 CSG = 组合形状</h3>
+
+<p><strong>这是在解决什么问题</strong>：求和混合是隐式建模的"软融合"方式。但有时候你想要"硬切割"——比如在球上打个方洞。CSG（Constructive Solid Geometry）<span class="fn" title="CSG = Constructive Solid Geometry（构造实体几何），用布尔运算（并/交/差）组合基本几何体。">&#8224;</span>就是做这个的。</p>
+
+<div class="info-box">
+<strong>用中文说就是</strong>：CSG 就像用乐高积木搭东西——用基本的形状（球、立方体、圆柱）通过"并、交、差"操作组合成复杂形状。
+</div>
+
+<div class="guizang-figure">
+<img src="images/ch21/ch21_csg_boolean.png" alt="CSG布尔运算">
+<div class="guizang-caption">图21-3：CSG 布尔运算——球与立方体的并集（Union）、交集（Intersection）、差集（Difference）</div>
+</div>
+
+<table>
+<tr><th>操作</th><th>数学公式</th><th>用中文说就是</th></tr>
+<tr><td><strong>并集</strong>（Union）A ∪ B</td><td>f = max(f<sub>A</sub>, f<sub>B</sub>)</td><td>"属于 A 或者 B" ≈ 选最靠近表面的</td></tr>
+<tr><td><strong>交集</strong>（Intersection）A ∩ B</td><td>f = min(f<sub>A</sub>, f<sub>B</sub>)</td><td>"同时属于 A 和 B" ≈ 选到最近表面的距离</td></tr>
+<tr><td><strong>差集</strong>（Difference）A - B</td><td>f = min(f<sub>A</sub>, 2·iso - f<sub>B</sub>)</td><td>"属于 A 但不属于 B"</td></tr>
+</table>
+
+<h3 id="21-5-2-csg-的直观例子">21.5.2 CSG 的直观例子</h3>
+
+<pre><code>例 1：球 ∩ 立方体 = 球被立方体裁剪
+
+  球：f₁ = x² + y² + z² - 1²
+  立方体：f₂ = max(|x|, |y|, |z|) - 0.75
+
+  交集：f = min(f₁, f₂)
+  结果 = 球被切掉四个角，变成一个八分之一球体形状。
+
+例 2：球 - 圆柱 = 球被圆柱打洞
+
+  球：f₁ = x² + y² + z² - 1²
+  圆柱（沿 y 轴）：f₂ = max(√(x²+z²) - 0.3, |y| - 1.5)
+
+  差集：f = min(f₁, -f₂)
+  结果：属于球、但不属于圆柱 → 球被圆柱挖掉一块。
+</code></pre>
+
+<h3 id="21-5-3-min-max-的问题--折痕-crease">21.5.3 min/max 的问题——折痕（Crease）</h3>
+
+<p><strong>这是在解决什么问题</strong>：min 和 max 在两个表面交汇处会产生"折痕"（数学上叫 C⁰ 不连续<a href="#fn-c0" class="fn" title="C⁰ 连续：函数值连续但一阶导数不连续，视觉上表现为"折痕"或"尖锐边"。C¹ 连续：一阶导数也连续，表面光滑。">&#8224;</a>）——视觉上看起来像尖锐的边。</p>
+
+<table>
+<tr><th>解决方案</th><th>公式</th><th>效果</th></tr>
+<tr><td>① 简单粗糙</td><td>接受折痕</td><td>机械零件风格</td></tr>
+<tr><td>② R-function</td><td>R_min(f₁,f₂) = f₁+f₂ - √(f₁²+f₂²)</td><td>C¹ 连续布尔运算</td></tr>
+<tr><td>③ softmin</td><td>softmin(a,b,k)</td><td>k 控制光滑半径</td></tr>
+</table>
+
+<hr>
+
+<h2 id="21-6-marching-cubes-把场变成网格">21.6 Marching Cubes：把场变成网格</h2>
+
+<p><strong>这是在解决什么问题</strong>：隐式模型没有顶点，你没法直接用 GPU 画。Marching Cubes 把隐式场 f(p)=iso 的等值面变成三角形网格，这样就能用传统管线渲染了。</p>
+
+<div class="guizang-figure">
+<img src="images/ch21/ch21_marching_cubes.png" alt="Marching Cubes算法图解">
+<div class="guizang-caption">图21-4：Marching Cubes 算法——8个顶点的内外状态组成256种编码，通过对称性简化为15种拓扑结构</div>
+</div>
+
+<h3 id="21-6-1-核心思路">21.6.1 核心思路</h3>
+
+<pre><code>① 划分空间：把场景切成很多小立方体（体素/voxel<a href="#fn-voxel" class="fn" title="体素（Voxel）= Volume Pixel，3D空间中的最小立方体单元，类似2D图像中的像素。">&#8224;</a>）
+② 对每个立方体：检查它的 8 个顶点在等值面的"哪一侧"
+③ 每个顶点 = 0（内侧）或 1（外侧）→ 8 个顶点 = 一个 8 位二进制数（0~255）
+④ 查表：每种 8 位组合对应一种三角形排列方式
+⑤ 插值：在立方体边上精确找到等值面的位置
+
+用中文说就是：
+  把空间切成无数个小块，
+  对每个小块检查"哪些角在物体里面、哪些在外面"，
+  根据角的内外分布——决定这个小块里放几个三角形。
+</code></pre>
+
+<h3 id="21-6-2-从-256-到-15--降低-94">21.6.2 从 256 到 15——降低 94%</h3>
+
+<p><strong>这是在解决什么问题</strong>：8 个顶点，每个 2 种状态（内/外），总共 2⁸ = 256 种情况。但很多只是旋转/镜像了一下，本质一样。按对称性归类后只剩 15 种。</p>
+
+<pre><code>为什么从 256 降到 15？
+
+核心观察：很多"情况"本质上是相同的，只是旋转/镜像了一下。
+
+例子：
+  情况 1：只有顶点 0 在内部 → 切出一个三角形
+  情况 256 = 只有顶点 7 在内部 → 位置不同，但结构一样
+    （旋转一下就是情况 1）
+
+所以——
+  256 种具体排列 → 按旋转/镜像归类 → 15 种拓扑结构
+
+用中文说大白话：
+  "256 种情况里面，很多只是转了个方向、翻了个面，
+   抽掉这些重复的，真正不一样的三角形排列方式只有 15 种。"
+</code></pre>
+
+<h3 id="21-6-3-算法步骤">21.6.3 算法步骤</h3>
+
+<pre><code>Step 1：把空间划分为规则的体素网格（如 64x64x64 个立方体）
+Step 2：对每个立方体：
+  a. 计算 8 个顶点的场值 f(p)
+  b. 每个顶点判断在 iso 内（f &lt; iso）还是外（f &gt; iso）
+  c. 8 个判断结果组成一个 8-bit 索引（0~255）
+  d. 用索引查表 → 得到三角形列表
+  e. 用线性插值在边上找到准确的 f = iso 位置
+Step 3：输出所有三角形 → 三角网格！
+
+用中文说就是：
+  64×64×64 = 262,144 个立方体，每个切出 0~5 个三角形
+  总三角形数 ≈ 几十万到几百万
+  这就是隐式模型"多边形化"的标准方法。
+</code></pre>
+
+<h3 id="21-6-4-常见问题">21.6.4 常见问题</h3>
+
+<table>
+<tr><th>问题</th><th>现象</th><th>原因</th><th>解决方案</th></tr>
+<tr><td><strong>歧义（Ambiguity）</strong></td><td>相邻立方体三角形不匹配</td><td>一个面的 4 个顶点出现"两两对角"模式</td><td>在面中心加采样点 / 拆四面体</td></tr>
+<tr><td><strong>网格精度不够</strong></td><td>曲面看起来"块状"</td><td>体素太大</td><td>加密网格 / 用自适应网格</td></tr>
+<tr><td><strong>内存爆炸</strong></td><td>256³ 网格 → 几千万个立方体</td><td>均匀网格太粗暴</td><td>用 Octree / OpenVDB</td></tr>
+<tr><td><strong>帧间抖动</strong></td><td>动画时三角形跳变</td><td>线性插值在动态场中不稳定</td><td>用更稳定的求根法 / 时间连贯性缓存</td></tr>
+</table>
+
+<hr>
+
+<h2 id="21-7-更多混合方式-ricci-blend">21.7 更多混合方式（Ricci Blend）</h2>
+
+<h3 id="21-7-1-为什么求和不够">21.7.1 为什么求和不够？</h3>
+
+<p><strong>这是在解决什么问题</strong>：求和 f = f₁ + f₂ 只是简单相加——两个球中间会凸起。如果你想要控制凸起的形状（平一点、尖一点、还是变成布尔运算）怎么办？</p>
+
+<div class="formula">f<sub>blend</sub> = (f₁ⁿ + f₂ⁿ)^(1/n)</div>
+
+<table>
+<tr><th>n 值</th><th>效果</th><th>用中文说就是</th></tr>
+<tr><td>n = 1</td><td>f = f₁ + f₂ 求和混合</td><td>标准"鼓包"融合</td></tr>
+<tr><td>n → +∞</td><td>f → max(f₁, f₂) 并集</td><td>不鼓包，硬边</td></tr>
+<tr><td>n → -∞</td><td>f → min(f₁, f₂) 交集</td><td>布尔运算</td></tr>
+<tr><td>n 在中间</td><td>从融合到布尔平滑过渡</td><td>可以逐帧动画</td></tr>
+</table>
+
+<div class="info-box">
+<strong>生活类比</strong>：n 是一个"调节旋钮"——旋到 1 是两个水泡融合，旋到很大是两个气球挤在一起但不融合。动画师可以一帧一帧地旋转这个纽，做出"流体慢慢凝固"的效果。
+</div>
+
+<hr>
+
+<h2 id="21-8-形变-warp">21.8 形变（Warp）</h2>
+
+<h3 id="21-8-1-warp-的核心思想">21.8.1 Warp 的核心思想</h3>
+
+<p><strong>这是在解决什么问题</strong>：不改变物体本身，而是"扭曲它周围的空间"——先扭曲空间坐标，再用原来的公式判断。这是隐式建模独有的能力：你扭曲了空间，物体就跟着变形。</p>
+
+<div class="formula">f<sub>warped</sub>(p) = f<sub>original</sub>( w(p) )</div>
+
+<pre><code>用中文说就是：
+  ① 给定一个点 p
+  ② 你先问 "这个点被扭曲后到了哪里？" → w(p)
+  ③ 再用原始场的公式算 w(p) 的场值
+  ④ 这个值就是扭曲后物体在 p 点的场值
+
+重要的直觉：你不是在变形物体，你是在变形空间！
+</code></pre>
+
+<h3 id="21-8-2-三种基本-warp">21.8.2 三种基本 Warp</h3>
+
+<table>
+<tr><th>类型</th><th>公式</th><th>生活类比</th></tr>
+<tr><td><strong>Twist（扭转）</strong></td><td>z 轴越高，xy 旋转越大</td><td>像拧毛巾</td></tr>
+<tr><td><strong>Taper（锥化）</strong></td><td>y 越高，xy 方向越收窄</td><td>像削铅笔</td></tr>
+<tr><td><strong>Bend（弯曲）</strong></td><td>绕某个轴弯曲坐标</td><td>像掰弯一根铁丝</td></tr>
+</table>
+
+<hr>
+
+<h2 id="21-9-精确接触建模-pcm">21.9 精确接触建模（PCM）</h2>
+
+<h3 id="21-9-1-问题描述">21.9.1 问题描述</h3>
+
+<p><strong>这是在解决什么问题</strong>：两个隐式物体靠近时，如果不做特殊处理，它们会"互相穿透"。PCM（Precise Contact Modeling）让它们"刚好贴在一起"——就像两个水泡触碰但不融合。</p>
+
+<pre><code>标准求和混合：两个球靠近 → 自动融合（像水泡合并）
+
+PCM：两个球靠近 → 接触但不融合（像两个气球挤在一起）
+  用中文说就是：在接触面上，A 的场值被 B"推开"，
+  B 的场值被 A"推开"。
+
+实现方式：
+  在 A 上加一个形变函数 s_A(p)，让 A 在接触区域"收缩"
+  在 B 上加一个形变函数 s_B(p)，让 B 在接触区域"收缩"
+  确保 s_A(p) 和 s_B(p) 恰好抵消对方的渗透
+</code></pre>
+
+<hr>
+
+<h2 id="21-10-blobtree">21.10 BlobTree</h2>
+
+<p><strong>这是在解决什么问题</strong>：BlobTree 是把所有隐式操作组织成一棵树——就像场景图（Scene Graph<span class="fn" title="场景图（Scene Graph）：3D场景中物体的层级组织方式，父节点变换影响子节点。BlobTree是把同样的概念用在隐式建模中。">&#8224;</span>）但专门给隐式建模用。</p>
+
+<div class="guizang-figure">
+<img src="images/ch21/ch21_blobtree.png" alt="BlobTree场景图结构">
+<div class="guizang-caption">图21-5：BlobTree 场景图——树形结构组合隐式曲面，叶节点是基本形状，内部节点是操作</div>
+</div>
+
+<h3 id="21-10-1-节点类型">21.10.1 节点类型</h3>
+
+<table>
+<tr><th>节点类型</th><th>子节点数</th><th>说明</th></tr>
+<tr><td>[Primitive]</td><td>0（叶节点）</td><td>骨骼原语（球、圆柱、环等）</td></tr>
+<tr><td>[Warp]</td><td>1（单目）</td><td>空间扭曲（twist/taper/bend）</td></tr>
+<tr><td>[Blend (+)]</td><td>2（二叉）</td><td>求和混合</td></tr>
+<tr><td>[Union (∪)]</td><td>2（二叉）</td><td>max 并集</td></tr>
+<tr><td>[Intersection (∩)]</td><td>2（二叉）</td><td>min 交集</td></tr>
+<tr><td>[Difference (-)]</td><td>2（二叉）</td><td>差集</td></tr>
+<tr><td>[Affine]</td><td>1（单目）</td><td>平移/旋转/缩放</td></tr>
+</table>
+
+<h3 id="21-10-2-遍历算法">21.10.2 遍历算法</h3>
+
+<pre><code>要计算 BlobTree 在点 p 处的场值：
+
+函数 f(节点 N, 点 p):
+  如果 N 是基本形状 → 直接算 f(p)
+  如果 N 是 Warp     → 先扭曲 p → f(N的子节点, w(p))
+  如果 N 是 Blend    → f(左子, p) + f(右子, p)
+  如果 N 是 Union    → max(f(左子, p), f(右子, p))
+  如果 N 是 Intersection → min(f(左子, p), f(右子, p))
+  如果 N 是 Difference → min(f(左子, p), -f(右子, p))
+</code></pre>
+
+<hr>
+
+<h2 id="21-11-隐式-vs-显式对比">21.11 隐式 vs 显式对比</h2>
+
+<table>
+<tr><th>维度</th><th>显式（多边形网格）</th><th>隐式（场）</th></tr>
+<tr><td><strong>存储</strong></td><td>顶点数 × 48B（顶点+法线+UV...）</td><td>函数参数（几个数）或体素 N³×4B</td></tr>
+<tr><td><strong>判断内外</strong></td><td>BVH + 法线测试</td><td>sign(f(p)) O(1)</td></tr>
+<tr><td><strong>拓扑变化</strong></td><td>重建网格非常麻烦</td><td>改参数或加公式即可</td></tr>
+<tr><td><strong>法线</strong></td><td>存或叉乘算</td><td>∇f/|∇f| 免费</td></tr>
+<tr><td><strong>渲染</strong></td><td>GPU 原生、极快</td><td>要 Marching Cubes 或 raymarching</td></tr>
+<tr><td><strong>布尔运算</strong></td><td>慢、易出错</td><td>min/max → 快、精确</td></tr>
+<tr><td><strong>融合</strong></td><td>不可能自动融合</td><td>求和混合 → 自动融合</td></tr>
+<tr><td><strong>内存</strong></td><td>随细节线性增长</td><td>体素随细节立方增长（OpenVDB 可优化）</td></tr>
+</table>
+
+<h3 id="工程选型建议">工程选型建议</h3>
+
+<table>
+<tr><th>场景</th><th>用哪个？</th><th>原因</th></tr>
+<tr><td>大世界建筑/地形</td><td>显式</td><td>GPU 渲染快、内存可控</td></tr>
+<tr><td>软体物理、流体</td><td>隐式</td><td>拓扑自动变化、融合自然</td></tr>
+<tr><td>UI 字体/描边</td><td>隐式（SDF）</td><td>无限缩放不失真</td></tr>
+<tr><td>机械 CAD</td><td>混合（B-rep + CSG）</td><td>布尔精确 + 渲染快</td></tr>
+<tr><td>角色皮肤变形</td><td>显式蒙皮</td><td>GPU 原生、性能好</td></tr>
+<tr><td>科学可视化</td><td>隐式 + Marching Cubes</td><td>等值面是自然的可视化方式</td></tr>
+</table>
+
+<hr>
+
+<h2 id="21-12-总结">21.12 总结</h2>
+
+<h3 id="核心要点">核心要点</h3>
+
+<table>
+<tr><th>编号</th><th>要点</th><th>通俗理解</th></tr>
+<tr><td>①</td><td>隐式建模 = 用公式 f(p)=iso 定义形状</td><td>不用顶点列表，用数学公式</td></tr>
+<tr><td>②</td><td>偏导 = 只看一个方向的变化</td><td>"向东走一步的变化率"</td></tr>
+<tr><td>③</td><td>梯度 = 最陡上坡方向 = 表面法线免费拿</td><td>不用存法线，算梯度就行</td></tr>
+<tr><td>④</td><td>Blob 融合 = 所有骨骼场值求和</td><td>"影响力叠加"自动融合</td></tr>
+<tr><td>⑤</td><td>CSG 操作 = min/max 布尔运算</td><td>并=max，交=min，差=min(f<sub>A</sub>,-f<sub>B</sub>)</td></tr>
+<tr><td>⑥</td><td>Marching Cubes: 256→15 种三角形配置</td><td>对称性归类，查表即可</td></tr>
+<tr><td>⑦</td><td>Warp = 扭曲空间，不是扭曲物体</td><td>先变形坐标，再算场值</td></tr>
+<tr><td>⑧</td><td>BlobTree = 隐式建模的场景图</td><td>树形组织所有操作</td></tr>
+</table>
+
+<hr>
+
+<div class="key-box">
+<strong>一句话记住第21章</strong><br>
+隐式建模 = 用 f(x,y,z)=0 定义万物。同一个场函数 → 判断内外（O(1)）→ 求法线（梯度免费）→ 求和融合（自动拓扑）→ Marching Cubes 变网格（统一输出）。这一套工具链是 SDF、体积云、软体物理、NeRF 等技术的基础。
+</div>
+
+<hr>
+
+<div class="fn-def"><strong>脚注</strong></div>
+<div class="fn-def">&#8224; <strong>iso（等值面）</strong>：Isosurface，函数值等于某个常数的所有点构成的曲面。隐式建模中常用的等值是 f(p)=0。</div>
+<div class="fn-def">&#8224; <strong>BVH（包围盒层次结构）</strong>：Bounding Volume Hierarchy，用树形包围盒加速光线与网格的求交操作。树的每个节点是一个包围盒，子节点包含更小的包围盒或三角形。</div>
+<div class="fn-def">&#8224; <strong>C⁰ 连续</strong>：函数值连续但一阶导数不连续，视觉上表现为"折痕"。C¹ 连续：一阶导数也连续，表面光滑无折痕。</div>
+<div class="fn-def">&#8224; <strong>体素（Voxel）</strong>：Volume Pixel，3D空间中的最小立方体单元，类似2D图像中的像素。体素网格是 Marching Cubes 的运行基础。</div>
+<div class="fn-def">&#8224; <strong>场景图（Scene Graph）</strong>：3D场景中物体的层级组织方式，父节点变换影响子节点。BlobTree 把同样的概念用在隐式建模中。</div>
+<div class="fn-def">&#8224; <strong>骨骼（Skeletal）</strong>：不是动物骨骼，而是指形状的"骨架"——定义距离场的基本几何体。每个骨骼在空间中产生一个衰减的场。</div>
+<div class="fn-def">&#8224; <strong>CSG（构造实体几何）</strong>：Constructive Solid Geometry，用布尔运算（并/交/差）组合基本几何体来创建复杂形状。</div>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li><a href="ch06_线性代数.html">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li class="active"><a href="ch21_隐式建模.html" class="active">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#21-0-前置数学-偏导和梯度-从零讲起">21.0 前置数学：偏导和梯度，从零讲起</a></li>
+  <li class="toc-h3"><a href="#21-0-1-偏导数-只看-x-方向的变化">21.0.1 偏导数：只看 x 方向的变化</a></li>
+  <li class="toc-h3"><a href="#21-0-2-梯度-上坡最快的方向">21.0.2 梯度：上坡最快的方向</a></li>
+  <li class="toc-h3"><a href="#21-0-3-梯度---表面法线">21.0.3 梯度 = 表面法线</a></li>
+  <li class="toc-h2"><a href="#21-1-什么是隐式建模">21.1 什么是隐式建模？</a></li>
+  <li class="toc-h3"><a href="#21-1-1-显式-vs-隐式--根本区别">21.1.1 显式 vs 隐式——根本区别</a></li>
+  <li class="toc-h3"><a href="#21-1-2-核心对比表">21.1.2 核心对比表</a></li>
+  <li class="toc-h2"><a href="#21-2-隐式方程的核心思想">21.2 隐式方程的核心思想</a></li>
+  <li class="toc-h3"><a href="#21-2-1-最简单的隐式曲面-球">21.2.1 最简单的隐式曲面：球</a></li>
+  <li class="toc-h3"><a href="#21-2-2-隐式的核心优势-任意拓扑">21.2.2 隐式的核心优势：任意拓扑</a></li>
+  <li class="toc-h2"><a href="#21-3-骨骼原语与求和混合-blob">21.3 骨骼原语与求和混合（Blob）</a></li>
+  <li class="toc-h3"><a href="#21-3-1-骨骼原语-skeletal-primitive">21.3.1 骨骼原语（Skeletal Primitive）</a></li>
+  <li class="toc-h3"><a href="#21-3-2-四种衰减函数">21.3.2 四种衰减函数</a></li>
+  <li class="toc-h3"><a href="#21-3-3-求和混合-summation-blending">21.3.3 求和混合（Summation Blending）</a></li>
+  <li class="toc-h2"><a href="#21-4-blob-求和手算例子">21.4 Blob 求和手算例子</a></li>
+  <li class="toc-h3"><a href="#设定">设定</a></li>
+  <li class="toc-h3"><a href="#计算点-a-0--0--0-----第一个球的球心">计算点 A(0, 0, 0) —— 第一个球的球心</a></li>
+  <li class="toc-h3"><a href="#计算点-b-1--0--0-----两个球的中点">计算点 B(1, 0, 0) —— 两个球的中点</a></li>
+  <li class="toc-h3"><a href="#计算点-c-1-5--0-8--0-----边界外一点">计算点 C(1.5, 0.8, 0) —— 边界外一点</a></li>
+  <li class="toc-h3"><a href="#手算总结">手算总结</a></li>
+  <li class="toc-h2"><a href="#21-5-构造实体几何-csg">21.5 构造实体几何（CSG）</a></li>
+  <li class="toc-h3"><a href="#21-5-1-csg---组合形状">21.5.1 CSG = 组合形状</a></li>
+  <li class="toc-h3"><a href="#21-5-2-csg-的直观例子">21.5.2 CSG 的直观例子</a></li>
+  <li class="toc-h3"><a href="#21-5-3-min-max-的问题--折痕-crease">21.5.3 min/max 的问题——折痕（Crease）</a></li>
+  <li class="toc-h2"><a href="#21-6-marching-cubes-把场变成网格">21.6 Marching Cubes：把场变成网格</a></li>
+  <li class="toc-h3"><a href="#21-6-1-核心思路">21.6.1 核心思路</a></li>
+  <li class="toc-h3"><a href="#21-6-2-从-256-到-15--降低-94">21.6.2 从 256 到 15——降低 94%</a></li>
+  <li class="toc-h3"><a href="#21-6-3-算法步骤">21.6.3 算法步骤</a></li>
+  <li class="toc-h3"><a href="#21-6-4-常见问题">21.6.4 常见问题</a></li>
+  <li class="toc-h2"><a href="#21-7-更多混合方式-ricci-blend">21.7 更多混合方式（Ricci Blend）</a></li>
+  <li class="toc-h3"><a href="#21-7-1-为什么求和不够">21.7.1 为什么求和不够？</a></li>
+  <li class="toc-h2"><a href="#21-8-形变-warp">21.8 形变（Warp）</a></li>
+  <li class="toc-h3"><a href="#21-8-1-warp-的核心思想">21.8.1 Warp 的核心思想</a></li>
+  <li class="toc-h3"><a href="#21-8-2-三种基本-warp">21.8.2 三种基本 Warp</a></li>
+  <li class="toc-h2"><a href="#21-9-精确接触建模-pcm">21.9 精确接触建模（PCM）</a></li>
+  <li class="toc-h3"><a href="#21-9-1-问题描述">21.9.1 问题描述</a></li>
+  <li class="toc-h2"><a href="#21-10-blobtree">21.10 BlobTree</a></li>
+  <li class="toc-h3"><a href="#21-10-1-节点类型">21.10.1 节点类型</a></li>
+  <li class="toc-h3"><a href="#21-10-2-遍历算法">21.10.2 遍历算法</a></li>
+  <li class="toc-h2"><a href="#21-11-隐式-vs-显式对比">21.11 隐式 vs 显式对比</a></li>
+  <li class="toc-h3"><a href="#工程选型建议">工程选型建议</a></li>
+  <li class="toc-h2"><a href="#21-12-总结">21.12 总结</a></li>
+  <li class="toc-h3"><a href="#核心要点">核心要点</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>

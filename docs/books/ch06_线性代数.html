@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>虎书5 Ch06: 线性代数</title>
+<style>/* 虎书5 Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+/* topbar */
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+/* main */
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+/* overlay */
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+/* panels */
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">虎书5</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch06 线性代数</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<h1>第6章：线性代数 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书5》第5版第6章（p.109-126）。<br>
+<strong>本章是计算机图形学的"数学骨架"</strong>——它告诉你为什么"变换一个物体"可以写成"乘一个矩阵"，为什么"体积缩放"等于"行列式"，为什么"特征向量"是"变换中方向不变的向量"。<br>
+<em>本版插画采用 Guizang 材质插画风格重新绘制。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s61">6.1 行列式</a></li>
+  <li><a href="#s62">6.2 矩阵</a></li>
+  <li><a href="#s63">6.3 用矩阵计算</a></li>
+  <li><a href="#s64">6.4 特征值与特征向量</a></li>
+  <li><a href="#s65">6.5 奇异值分解（SVD）</a></li>
+  <li><a href="#s66">6.6 Cramer法则</a></li>
+  <li><a href="#s67">6.7 矩阵与图形变换</a></li>
+  <li><a href="#s68">6.8 数值稳定性</a></li>
+  <li><a href="#summary">全章总结</a></li>
+</ul>
+</div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+  <li>理解行列式的<strong>几何含义</strong>——不是计算，是"面积/体积缩放倍数"</li>
+  <li>掌握矩阵运算的核心规则：乘法、转置、逆矩阵</li>
+  <li>理解正交矩阵在图形学中的特殊地位</li>
+  <li>理解特征值/特征向量的"不变方向"含义</li>
+  <li>掌握SVD——任意矩阵的"瑞士军刀"</li>
+  <li>学会用矩阵方法求解线性方程组</li>
+</ol>
+
+<hr>
+
+<h2 id="6-1-行列式-determinants">6.1 行列式（Determinants）</h2>
+
+<h3 id="6-1-1-从面积到行列式--核心直觉">6.1.1 从面积到行列式——核心直觉</h3>
+
+<blockquote>
+<strong>核心洞察</strong>：2×2矩阵的行列式绝对值 = 该矩阵把"单位面积的方形"变成"多大面积的平行四边形"。
+</blockquote>
+
+<p>让我们从视觉上理解这个最重要的概念：</p>
+
+<div class="guizang-figure">
+<img src="images/ch06/dot_cross_product.png" alt="点积和叉积的几何意义">
+<div class="guizang-caption">图6-1：点积衡量投影长度，叉积衡量平行四边形面积——二者是线性代数的几何基石</div>
+</div>
+
+<p>对于一个2×2矩阵：</p>
+
+<div class="formula">det([a b; c d]) = ad - bc</div>
+
+<table>
+<tr><th>det值</th><th>几何意义</th><th>举例</th></tr>
+<tr><td>det = 5</td><td>矩阵把单位面积"放大"了5倍</td><td>缩放矩阵 diag(5,1) → det=5</td></tr>
+<tr><td>det = 1</td><td>面积不变</td><td>旋转矩阵 → det = 1</td></tr>
+<tr><td>det = 0</td><td>把面积"压成0"——矩阵<strong>奇异</strong>（不可逆）</td><td>投影矩阵 → det = 0</td></tr>
+<tr><td>det = -3</td><td>翻面 + 放大3倍（负号=镜像翻转）</td><td>反射矩阵 → det = -1</td></tr>
+</table>
+
+<h3 id="6-1-2-3d行列式-体积缩放">6.1.2 3D行列式：体积缩放</h3>
+
+<p>3×3矩阵的行列式 = <strong>平行六面体的有向体积</strong>，即三个列向量张成的三维形状的体积：</p>
+
+<div class="formula">det([a1 a2 a3; b1 b2 b3; c1 c2 c3]) = a1·(b2·c3 - b3·c2) - a2·(b1·c3 - b3·c1) + a3·(b1·c2 - b2·c1)</div>
+
+<p>这个三阶行列式的展开式可以记忆为：a×第一行去掉a列后的2×2子行列式，符号交替。</p>
+
+<blockquote>
+<strong>图形学应用</strong>：det=0 → 矩阵不可逆 → 物体被压扁到平面 → 叫<strong>退化</strong>（degenerate）。在物理仿真中，det&lt;0表示"翻转"（法线方向反了），通常是错误的。
+</blockquote>
+
+<pre><code><span class="comment">// 图形学中常见的退化判断</span>
+<span class="keyword">bool</span> is_degenerate = (fabs(matrix.determinant()) &lt; <span class="number">1e-6</span>);</code></pre>
+
+<h3 id="6-1-3-行列式的三条核心性质">6.1.3 行列式的三条核心性质</h3>
+
+<p>每条性质都有清晰的几何意义：</p>
+
+<table>
+<tr><th>性质</th><th>公式</th><th>几何解释</th></tr>
+<tr><td>1. 缩放</td><td>|k·a · b| = k·|a · b|</td><td>某边放大k倍 → 面积也放大k倍</td></tr>
+<tr><td>2. 剪切不变面积</td><td>|a+k·b · b| = |a · b|</td><td>剪切变换不改变面积（只是歪了）</td></tr>
+<tr><td>3. 加法（分割）</td><td>|a · (b+c)| = |a·b| + |a·c|</td><td>平行四边形可分割成两个面积之和</td></tr>
+</table>
+
+<div class="guizang-figure">
+<img src="images/ch06/determinant_area.png" alt="行列式的几何意义——平行四边形面积">
+<div class="guizang-caption">图6-2：行列式的几何意义——两个向量张成的平行四边形面积</div>
+</div>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么剪切变换不改变面积？这对纹理映射有什么影响？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">
+剪切只是"倾斜"了图形，但底和高的长度都没变——所以面积不变。在纹理映射中，这意味着我们可以对纹理做剪切变换而不改变纹理的"总可见量"，只改变形状。
+</blockquote>
+</div>
+
+<hr>
+
+<h2 id="6-2-矩阵-matrices">6.2 矩阵（Matrices）</h2>
+
+<h3 id="6-2-1-矩阵是什么">6.2.1 矩阵是什么？</h3>
+
+<blockquote>
+<strong>矩阵 = 数字的二维数组 + 特定的算术规则</strong>
+</blockquote>
+
+<p>在图形学中，矩阵几乎都是<strong>实数方阵</strong>（行数=列数）：</p>
+
+<table>
+<tr><th>矩阵大小</th><th>用途</th><th>例子</th></tr>
+<tr><td>2×2</td><td>2D线性变换</td><td>旋转 cosθ, -sinθ; sinθ, cosθ</td></tr>
+<tr><td>3×3</td><td>3D线性变换（不含平移）</td><td>3D旋转矩阵</td></tr>
+<tr><td>4×4</td><td>3D仿射变换（含平移）</td><td>模型-视图-投影矩阵</td></tr>
+</table>
+
+<h3 id="6-2-2-矩阵运算">6.2.2 矩阵运算</h3>
+
+<p><strong>矩阵乘法——图形学中最重要的运算：</strong></p>
+
+<div class="guizang-figure">
+<img src="images/ch06/matrix_multiplication.png" alt="矩阵乘法的行乘列示意">
+<div class="guizang-caption">图6-3：矩阵乘法——A的行与B的列对应元素相乘后累加</div>
+</div>
+
+<div class="formula">C[i][j] = Σ(k) A[i][k] × B[k][j]</div>
+
+<blockquote>
+<strong>关键约束</strong>：A的列数必须等于B的行数。即 (m×p)×(p×n) = (m×n)。中间的p必须相等。
+</blockquote>
+
+<pre><code><span class="comment">// 2×2矩阵乘法例子</span>
+A = [1 2]    B = [5 6]    C = A × B = [1×5+2×7   1×6+2×8] = [19 22]
+    [3 4]        [7 8]                [3×5+4×7   3×6+4×8]   [43 50]
+
+<span class="comment">// 验证右上角元素 C[0][1]：</span>
+<span class="comment">// A的第0行 [1, 2] × B的第1列 [6, 8]^T = 1×6 + 2×8 = 22 ✓</span></code></pre>
+
+<table>
+<tr><th>运算</th><th>公式</th><th>图形学含义</th></tr>
+<tr><td>矩阵乘法</td><td>C = A × B</td><td>AB = "先做A变换，再做B变换"</td></tr>
+<tr><td>矩阵加法</td><td>[A] + [B] = [对应元素相加]</td><td>不常用在变换中</td></tr>
+<tr><td>标量乘法</td><td>k·A = [每个元素×k]</td><td>对变换整体缩放</td></tr>
+</table>
+
+<h3 id="6-2-3-转置-transpose">6.2.3 转置（Transpose）</h3>
+
+<blockquote>
+<strong>转置 = 把矩阵的行变成列</strong>
+</blockquote>
+
+<div class="formula">Aᵀ[i][j] = A[j][i]</div>
+
+<pre><code>A = [1 2 3]    Aᵀ = [1 4]
+    [4 5 6]         [2 5]
+                    [3 6]</code></pre>
+
+<p><strong>最重要的转置性质：</strong></p>
+
+<div class="formula">(AB)ᵀ = Bᵀ × Aᵀ   ← 顺序翻转！</div>
+
+<blockquote>
+<p><strong>直观理解</strong>：因为"先做A再做B"，转置后变成"先做Bᵀ再做Aᵀ"——操作顺序正好反过来。这个性质在图形学中频繁使用。</p>
+</blockquote>
+
+<h3 id="6-2-4-逆矩阵-inverse">6.2.4 逆矩阵（Inverse）</h3>
+
+<blockquote>
+<strong>逆矩阵 = 矩阵的"倒数"</strong>
+</blockquote>
+
+<p>A的逆矩阵A⁻¹满足：</p>
+
+<div class="formula">A × A⁻¹ = A⁻¹ × A = I（单位矩阵）</div>
+
+<p>单位矩阵I：对角线为1，其余为0：</p>
+
+<div class="formula">I = [1 0 0; 0 1 0; 0 0 1]</div>
+
+<table>
+<tr><th>性质</th><th>公式</th><th>解释</th></tr>
+<tr><td>可逆条件</td><td>det(A) ≠ 0</td><td>行列式为0时不可逆（退化）</td></tr>
+<tr><td>逆的逆</td><td>(A⁻¹)⁻¹ = A</td><td>两次求逆回到原位</td></tr>
+<tr><td>乘积的逆</td><td>(AB)⁻¹ = B⁻¹ × A⁻¹</td><td>顺序翻转！与转置相同</td></tr>
+</table>
+
+<h3 id="6-2-5-正交矩阵--图形学最重要的特殊矩阵">6.2.5 正交矩阵——图形学最重要的特殊矩阵</h3>
+
+<blockquote>
+<strong>正交矩阵</strong>：满足 R × Rᵀ = I 的矩阵。
+</blockquote>
+
+<p>对于正交矩阵，有一个极其诱人的性质：</p>
+
+<div class="formula">R⁻¹ = Rᵀ  （逆 = 转置）</div>
+
+<p>这意味着旋转矩阵的"撤销"超级快——不需要解方程组，直接取转置即可。</p>
+
+<pre><code><span class="comment">// 验证正交矩阵</span>
+<span class="comment">// 求逆 = 求转置，这是旋转矩阵的"特权"</span>
+<span class="comment">// 因为旋转是正交变换，不改变向量长度和夹角</span>
+
+R = [cosθ  -sinθ]
+    [sinθ   cosθ]
+
+Rᵀ × R = [cosθ  sinθ] [cosθ  -sinθ] = [1  0] = I  ✓
+          [-sinθ cosθ] [sinθ   cosθ]   [0  1]</code></pre>
+
+<p><strong>判断正交矩阵的三个条件：</strong></p>
+<ol>
+  <li>所有列都是<strong>单位长度</strong>（每列向量长度为1）</li>
+  <li>所有列之间<strong>互相正交</strong>（任意两列点积为0）</li>
+  <li>行列式为 <strong>+1 或 -1</strong>（+1=纯旋转，-1=含反射）</li>
+</ol>
+
+<hr>
+
+<h2 id="6-3-用矩阵计算">6.3 用矩阵计算</h2>
+
+<h3 id="6-3-1-向量操作-行向量-vs-列向量">6.3.1 向量操作：行向量 vs 列向量</h3>
+
+<p>在图形学中，向量通常是<strong>列向量</strong>。矩阵乘以列向量得到新列向量：</p>
+
+<div class="formula">[3×3] × [3×1] = [3×1]</div>
+
+<p>这叫<strong>后乘</strong>（post-multiplication）——矩阵在左，向量在右。</p>
+
+<pre><code><span class="comment">// 列向量后乘（现代OpenGL/Vulkan标准）</span>
+v' = M × v
+
+<span class="comment">// 行向量前乘（早期DirectX/旧API）</span>
+v' = v × M
+
+<span class="comment">// 两种方式数学上等价，但代码完全不同！</span>
+<span class="comment">// 现在的标准是列向量+后乘</span></code></pre>
+
+<h3 id="6-3-2-点积和叉积的矩阵形式">6.3.2 点积和叉积的矩阵形式</h3>
+
+<p><strong>点积的矩阵形式：</strong></p>
+
+<div class="formula">a · b = aᵀ · b = Σ a_i · b_i</div>
+
+<p>将a转置为行向量，乘以b（列向量），结果就是标量。</p>
+
+<p><strong>叉积的矩阵形式（反对称矩阵）：</strong></p>
+
+<div class="formula">a × b = [a]× · b</div>
+
+<p>其中 [a]× 是<strong>反对称矩阵</strong>：</p>
+
+<pre><code>[a]× = [  0  -az   ay]
+       [  az   0  -ax]
+       [ -ay  ax   0 ]</code></pre>
+
+<p>这个形式在后面第7章的Rodrigues旋转公式中非常有用。</p>
+
+<hr>
+
+<h2 id="6-4-特征值与特征向量">6.4 特征值与特征向量</h2>
+
+<h3 id="6-4-1-直观理解--不变的方向">6.4.1 直观理解——不变的方向</h3>
+
+<blockquote>
+<strong>特征向量</strong>：被矩阵变换后<strong>方向不变</strong>的非零向量。<br>
+<strong>特征值</strong>：变换后被<strong>缩放的比例</strong>。
+</blockquote>
+
+<div class="formula">A × v = λ × v</div>
+
+<p>这个公式的意思是：矩阵A作用在特征向量v上，结果就是v本身乘以λ——方向不变，只改变长度。</p>
+
+<div class="guizang-figure">
+<img src="images/ch06/eigenvector.png" alt="特征向量——变换中方向不变的向量">
+<div class="guizang-caption">图6-4：特征向量——在变换中保持方向不变的向量，只被缩放λ倍</div>
+</div>
+
+<p><strong>生活类比</strong>：想象你拿着一张地图（2D平面），用放大镜（矩阵）去照它。在大多数方向上的线会改变方向——但总有一些特殊方向上的线只是变长了或变短了，方向不变。这些特殊方向就是<strong>特征向量</strong>方向，变长/变短的倍数就是<strong>特征值</strong>。</p>
+
+<h3 id="6-4-2-如何求特征值">6.4.2 如何求特征值</h3>
+
+<p>求特征值就是解下面这个方程：</p>
+
+<div class="formula">|A - λI| = 0</div>
+
+<p>展开后是一个关于λ的多项式方程：</p>
+
+<pre><code>对2×2矩阵：
+|a₁₁-λ  a₁₂  |  = (a₁₁-λ)(a₂₂-λ) - a₁₂a₂₁ = 0
+|a₂₁    a₂₂-λ|
+
+展开：λ² - (a₁₁ + a₂₂)λ + (a₁₁a₂₂ - a₁₂a₂₁) = 0
+      ← λ² 项       ← 一次项                ← 常数项 = det(A)</code></pre>
+
+<table>
+<tr><th>矩阵大小</th><th>特征值方程次数</th><th>求解方法</th></tr>
+<tr><td>2×2</td><td>二次方程</td><td>求根公式（解析解）</td></tr>
+<tr><td>3×3</td><td>三次方程</td><td>可能解析解，但复杂</td></tr>
+<tr><td>4×4+</td><td>高次方程</td><td>必须用数值方法（QR分解、Power Iteration）</td></tr>
+</table>
+
+<blockquote>
+<strong>图形学警示</strong>：解析求特征值只对2×2和3×3实用。更大的矩阵请用迭代数值方法。
+</blockquote>
+
+<h3 id="6-4-3-对称矩阵的特殊性质">6.4.3 对称矩阵的特殊性质</h3>
+
+<p><strong>对称矩阵</strong>：A = Aᵀ。在图形学中非常多见（例如物理仿真中的刚度矩阵、惯性张量）。</p>
+
+<p><strong>关键定理</strong>：实对称矩阵的特征值<strong>一定为实数</strong>，且对应的特征向量<strong>互相正交</strong>。</p>
+
+<p>这个性质使得对称矩阵可以对角化：</p>
+
+<div class="formula">A = Q × D × Qᵀ</div>
+
+<p>其中 Q 是正交矩阵（列向量是A的特征向量），D是对角矩阵（对角元素是A的特征值）。</p>
+
+<blockquote>
+<strong>几何意义</strong>：对称矩阵的变换 = "旋转到特征向量方向 → 按特征值缩放 → 反向旋转回去"。这是理解SVD的铺垫。
+</blockquote>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：旋转矩阵的特征向量是什么？缩放矩阵呢？剪切矩阵呢？
+<blockquote style="background: transparent; border: none; padding: 0; margin: 4px 0 0;">
+旋转矩阵（非对称）在2D中没有实数特征向量（因为所有向量都在旋转，方向都变了）——特征值为复数。缩放矩阵的特征向量就是坐标轴方向，特征值就是各轴的缩放倍数。剪切矩阵有一个特征向量（剪切方向），对应特征值为1。
+</blockquote>
+</div>
+
+<hr>
+
+<h2 id="6-5-奇异值分解-svd">6.5 奇异值分解（SVD）</h2>
+
+<h3 id="6-5-1-为什么需要svd">6.5.1 为什么需要SVD</h3>
+
+<p><strong>问题</strong>：不是所有矩阵都能对角化！非对称矩阵的特征值可能是复数（比如旋转矩阵）。当特征值是复数时，它失去了"缩放倍数"的直观几何意义。</p>
+
+<p><strong>解决方案</strong>：<strong>SVD（奇异值分解）</strong>——对<strong>任何</strong>矩阵都有效，且奇异值一定是实数。</p>
+
+<h3 id="6-5-2-svd的数学定义">6.5.2 SVD的数学定义</h3>
+
+<p>任意 m×n 矩阵 A 都可以分解为：</p>
+
+<div class="formula">A = U × Σ × Vᵀ</div>
+
+<table>
+<tr><th>符号</th><th>大小</th><th>含义</th></tr>
+<tr><td>U</td><td>m×m</td><td>左奇异向量组成的正交矩阵</td></tr>
+<tr><td>Σ</td><td>m×n</td><td>对角矩阵，对角元素为奇异值（非负实数，降序排列）</td></tr>
+<tr><td>V</td><td>n×n</td><td>右奇异向量组成的正交矩阵</td></tr>
+</table>
+
+<h3 id="6-5-3-svd的几何含义">6.5.3 SVD的几何含义</h3>
+
+<blockquote>
+<strong>SVD告诉你</strong>：任何线性变换 = "旋转 → 按奇异值缩放 → 旋转回去"。
+</blockquote>
+
+<pre><code>输入向量 v        U×Vᵀ        缩放           A = U×Σ×Vᵀ
+    v    ────→  Vᵀv   ────→  ΣVᵀv   ────→   U×Σ×Vᵀ×v
+               旋转        按σ缩放        旋转</code></pre>
+
+<p><strong>三个动作的物理意义：</strong></p>
+<ul>
+  <li><strong>Vᵀ</strong>：把v旋转到"主轴"坐标系</li>
+  <li><strong>Σ</strong>：按奇异值σ₁, σ₂, ..., σᵣ分别缩放（σ₁是主要缩放）</li>
+  <li><strong>U</strong>：从"主轴"坐标系转回原始坐标系</li>
+</ul>
+
+<h3 id="6-5-4-svd在图形学中的应用">6.5.4 SVD在图形学中的应用</h3>
+
+<table>
+<tr><th>应用</th><th>原理</th><th>效果</th></tr>
+<tr><td><strong>数据降维（PCA）</strong></td><td>保留最大的k个奇异值，丢弃小值</td><td>用1%的数据保留95%的信息</td></tr>
+<tr><td><strong>图像压缩</strong></td><td>对图像块做SVD，只保留前几个奇异值</td><td>极低存储下的近似重建</td></tr>
+<tr><td><strong>最小二乘求解</strong></td><td>x = V × Σ⁻¹ × Uᵀ × b</td><td>数值稳定的伪逆求解</td></tr>
+<tr><td><strong>条件数判断</strong></td><td>条件数 = σ_max / σ_min</td><td>数值稳定性衡量</td></tr>
+</table>
+
+<blockquote>
+<strong>SVD是图形学工具箱中的"瑞士军刀"</strong>——遇到任何"分解矩阵"的问题，先想SVD。
+</blockquote>
+
+<hr>
+
+<h2 id="6-6-cramer法则">6.6 Cramer法则</h2>
+
+<h3 id="6-6-1-用行列式解方程组">6.6.1 用行列式解方程组</h3>
+
+<p>Cramer法则 = 用行列式解线性方程组。对于2个方程2个未知数：</p>
+
+<div class="formula">x = |A_x| / |A|, y = |A_y| / |A|</div>
+
+<pre><code>对于方程组：
+a₁x + b₁y = c₁
+a₂x + b₂y = c₂
+
+       |c₁  b₁|           |a₁  c₁|
+x =  ─────────      y = ─────────
+       |a₁  b₁|           |a₁  b₁|
+       |a₂  b₂|           |a₂  b₂|</code></pre>
+
+<p><strong>几何解释</strong>：|A|是三个列向量张成的n维体积。|A_x|是把x系数列替换为b后的"新体积"。x = 新体积/原体积。</p>
+
+<h3 id="6-6-2-3d例子">6.6.2 3D例子</h3>
+
+<pre><code>3个平面（3个三元一次方程）求交点：
+
+3x + 7y + 2z = 4
+2x - 4y - 3z = -1
+5x + 2y +  z = 1
+
+       |4  7  2|           |3  4  2|           |3  7  4|
+x =  ─────────      y = ─────────      z = ─────────
+       |3  7  2|           |3  7  2|           |3  7  2|
+       |2 -4 -3|           |2 -4 -3|           |2 -4 -3|
+       |5  2  1|           |5  2  1|           |5  2  1|</code></pre>
+
+<p>图形学中Cramer法则在光线-三角形求交（Möller-Trumbore算法）中有直接应用——用Cramer法则求解3个未知数t, β, γ。</p>
+
+<hr>
+
+<h2 id="6-7-矩阵与图形变换">6.7 矩阵与图形变换</h2>
+
+<h3 id="6-7-1-用矩阵表示变换">6.7.1 用矩阵表示变换</h3>
+
+<div class="guizang-figure">
+<img src="images/ch06/basis_change.png" alt="基变换——同一个向量在不同坐标系中的表示">
+<div class="guizang-caption">图6-5：基变换——同一个向量在不同坐标系下有不同的坐标表示</div>
+</div>
+
+<p>每一种"线性变换"都对应一个矩阵：</p>
+
+<table>
+<tr><th>变换</th><th>2D矩阵</th><th>3D矩阵（线性部分）</th></tr>
+<tr><td>缩放</td><td>[sx 0; 0 sy]</td><td>diag(sx, sy, sz)</td></tr>
+<tr><td>旋转</td><td>[cosθ -sinθ; sinθ cosθ]</td><td>绕x/y/z轴的3个旋转矩阵</td></tr>
+<tr><td>剪切</td><td>[1 k; 0 1]</td><td>多种（xy, xz, yz平面）</td></tr>
+<tr><td>反射</td><td>[-1 0; 0 1]</td><td>对特定平面的反射</td></tr>
+</table>
+
+<h3 id="6-7-2-矩阵乘法的-魔法">6.7.2 矩阵乘法的"魔法"</h3>
+
+<p>矩阵乘法对应变换的<strong>复合</strong>：</p>
+
+<div class="formula">T_total = T₃ × T₂ × T₁</div>
+
+<blockquote>
+意思是："先做T₁，再做T₂，再做T₃"（从右到左读）。
+</blockquote>
+
+<p><strong>图形学应用</strong>：场景中一个物体的最终位置 = 模型矩阵 × 视图矩阵 × 投影矩阵。</p>
+
+<h3 id="6-7-3-旋转矩阵的特殊性">6.7.3 旋转矩阵的特殊性</h3>
+
+<p>任何3D旋转矩阵R都满足：</p>
+<ol>
+  <li>R是正交矩阵（R⁻¹ = Rᵀ）</li>
+  <li>det(R) = +1（不包含反射——区别于反射矩阵的det=-1）</li>
+  <li>9个参数中只有3个独立（绕x, y, z的旋转角）</li>
+</ol>
+
+<blockquote>
+<strong>反直觉事实</strong>：3D旋转只有3个自由度，但旋转矩阵有9个数字！这就是为什么四元数（只有4个数字+1个约束=3个自由度）能成为更紧凑的旋转表示。
+</blockquote>
+
+<hr>
+
+<h2 id="6-8-数值稳定性">6.8 数值稳定性</h2>
+
+<h3 id="6-8-1-为什么图形学很关心数值问题">6.8.1 为什么图形学很关心数值问题</h3>
+
+<ul>
+  <li><strong>大量浮点运算</strong>：累积误差会消耗精度</li>
+  <li><strong>病态矩阵</strong>：接近奇异的矩阵让结果爆炸</li>
+  <li><strong>实时要求</strong>：不能等"无限精度"计算</li>
+</ul>
+
+<h3 id="6-8-2-实用建议">6.8.2 实用建议</h3>
+
+<p><strong>1. 避免直接求逆：</strong></p>
+
+<pre><code><span class="comment">// ❌ 不推荐：多次求逆</span>
+M_combined = M_a.inverse() * M_b.inverse();
+
+<span class="comment">// ✅ 推荐：先合成再求逆</span>
+M_combined = M_b * M_a;
+M_combined_inverse = (M_b * M_a).inverse();</code></pre>
+
+<p><strong>2. 优先使用正交矩阵的性质：</strong></p>
+
+<pre><code><span class="comment">// ❌ 慢：解线性方程组求逆再乘</span>
+result = M_inverse * v;
+
+<span class="comment">// ✅ 快：因为M是正交矩阵，M⁻¹ = Mᵀ</span>
+result = M.transpose() * v;</code></pre>
+
+<p><strong>3. 用SVD处理病态问题：</strong></p>
+
+<pre><code><span class="comment">// 对接近奇异的矩阵，SVD给出"最稳定"的解</span>
+U, Σ, Vt = svd(A);
+<span class="comment">// 伪逆 = V × Σ⁺ × Uᵀ，其中Σ⁺的小奇异值置0</span>
+A_pseudoinverse = V * diag_pinv(Σ) * U.transpose();</code></pre>
+
+<hr>
+
+<h2 id="全章总结">全章总结</h2>
+
+<blockquote>
+<p><strong>核心洞察</strong>：线性代数是计算机图形学的"母语"——</p>
+<ul>
+  <li><strong>行列式</strong> 告诉你变换的缩放比例（和奇异性）</li>
+  <li><strong>矩阵乘法</strong> 让你可以"叠加"多个变换</li>
+  <li><strong>正交矩阵</strong> 让"撤销变换"变得极快（逆=转置）</li>
+  <li><strong>特征向量</strong> 告诉你变换的"不变方向"</li>
+  <li><strong>SVD</strong> 告诉你"任何变换=旋转×缩放×旋转"</li>
+</ul>
+<p><strong>最重要的不是公式，而是几何直觉</strong>——每个矩阵运算背后都有一个空间形状的变换。掌握了几何，你就"看穿"了公式。</p>
+</blockquote>
+
+<table>
+<tr><th>概念</th><th>核心公式</th><th>图形学意义</th></tr>
+<tr><td>逆矩阵</td><td>A × A⁻¹ = I</td><td>撤销变换</td></tr>
+<tr><td>转置</td><td>(AB)ᵀ = Bᵀ × Aᵀ</td><td>变换顺序翻转</td></tr>
+<tr><td>乘积的逆</td><td>(AB)⁻¹ = B⁻¹ × A⁻¹</td><td>复合变换的逆</td></tr>
+<tr><td>正交矩阵</td><td>R × Rᵀ = I → R⁻¹ = Rᵀ</td><td>旋转矩阵极速求逆</td></tr>
+<tr><td>特征值</td><td>A × v = λ × v</td><td>不变方向与缩放</td></tr>
+<tr><td>对角化</td><td>A = Q × D × Qᵀ</td><td>对称矩阵分解（对称矩阵专属）</td></tr>
+<tr><td>SVD</td><td>A = U × Σ × Vᵀ</td><td>任何矩阵的通用分解</td></tr>
+<tr><td>Cramer法则</td><td>x = |A_x| / |A|</td><td>行列式法求线性方程组</td></tr>
+</table>
+
+<p><strong>一句话总结</strong>：行列式=面积/体积缩放倍数，矩阵乘法=变换复合，正交矩阵=逆=转置的超方便性质，特征向量=变换中不改变方向的向量，SVD=任意矩阵都能分解为旋转×缩放×旋转。</p>
+
+</div>
+</div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li><a href="ch01_引言.html">01 引言<span class="en">Introduction</span></a></li>
+  <li><a href="ch02_杂项数学.html">02 杂项数学<span class="en">Misc Math</span></a></li>
+  <li><a href="ch03_光栅图像.html">03 光栅图像<span class="en">Raster Images</span></a></li>
+  <li><a href="ch04_光线追踪.html">04 光线追踪<span class="en">Ray Tracing</span></a></li>
+  <li><a href="ch05_表面着色.html">05 表面着色<span class="en">Surface Shading</span></a></li>
+  <li class="active"><a href="ch06_线性代数.html" class="active">06 线性代数<span class="en">Linear Algebra</span></a></li>
+  <li><a href="ch07_变换矩阵.html">07 变换矩阵<span class="en">Transforms</span></a></li>
+  <li><a href="ch08_视图与投影变换.html">08 视图与投影变换<span class="en">Viewing</span></a></li>
+  <li><a href="ch09_图形管线.html">09 图形管线<span class="en">Pipeline</span></a></li>
+  <li><a href="ch10_信号处理.html">10 信号处理<span class="en">Signals</span></a></li>
+  <li><a href="ch11_纹理映射.html">11 纹理映射<span class="en">Texture</span></a></li>
+  <li><a href="ch12_图形学数据结构.html">12 图形学数据结构<span class="en">Data Structures</span></a></li>
+  <li><a href="ch13_采样.html">13 采样<span class="en">Sampling</span></a></li>
+  <li><a href="ch14_物理渲染.html">14 物理渲染<span class="en">PBR</span></a></li>
+  <li><a href="ch15_曲线.html">15 曲线<span class="en">Curves</span></a></li>
+  <li><a href="ch16_计算机动画.html">16 计算机动画<span class="en">Animation</span></a></li>
+  <li><a href="ch17_使用图形硬件.html">17 使用图形硬件<span class="en">GPU Hardware</span></a></li>
+  <li><a href="ch18_颜色.html">18 颜色<span class="en">Color</span></a></li>
+  <li><a href="ch19_视觉感知.html">19 视觉感知<span class="en">Perception</span></a></li>
+  <li><a href="ch20_色调再现.html">20 色调再现<span class="en">Tone</span></a></li>
+  <li><a href="ch21_隐式建模.html">21 隐式建模<span class="en">Implicit</span></a></li>
+  <li><a href="ch22_游戏中的计算机图形学.html">22 游戏中的计算机图形学<span class="en">Games</span></a></li>
+  <li><a href="ch23_可视化.html">23 可视化<span class="en">Visualization</span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div><div class="toc-title"></div>
+<ul class="toc-list">
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#6-1-行列式-determinants">6.1 行列式（Determinants）</a></li>
+  <li class="toc-h3"><a href="#6-1-1-从面积到行列式--核心直觉">6.1.1 从面积到行列式——核心直觉</a></li>
+  <li class="toc-h3"><a href="#6-1-2-3d行列式-体积缩放">6.1.2 3D行列式：体积缩放</a></li>
+  <li class="toc-h3"><a href="#6-1-3-行列式的三条核心性质">6.1.3 行列式的三条核心性质</a></li>
+  <li class="toc-h2"><a href="#6-2-矩阵-matrices">6.2 矩阵（Matrices）</a></li>
+  <li class="toc-h3"><a href="#6-2-1-矩阵是什么">6.2.1 矩阵是什么？</a></li>
+  <li class="toc-h3"><a href="#6-2-2-矩阵运算">6.2.2 矩阵运算</a></li>
+  <li class="toc-h3"><a href="#6-2-3-转置-transpose">6.2.3 转置（Transpose）</a></li>
+  <li class="toc-h3"><a href="#6-2-4-逆矩阵-inverse">6.2.4 逆矩阵（Inverse）</a></li>
+  <li class="toc-h3"><a href="#6-2-5-正交矩阵--图形学最重要的特殊矩阵">6.2.5 正交矩阵——图形学最重要的特殊矩阵</a></li>
+  <li class="toc-h2"><a href="#6-3-用矩阵计算">6.3 用矩阵计算</a></li>
+  <li class="toc-h3"><a href="#6-3-1-向量操作-行向量-vs-列向量">6.3.1 向量操作：行向量 vs 列向量</a></li>
+  <li class="toc-h3"><a href="#6-3-2-点积和叉积的矩阵形式">6.3.2 点积和叉积的矩阵形式</a></li>
+  <li class="toc-h2"><a href="#6-4-特征值与特征向量">6.4 特征值与特征向量</a></li>
+  <li class="toc-h3"><a href="#6-4-1-直观理解--不变的方向">6.4.1 直观理解——不变的方向</a></li>
+  <li class="toc-h3"><a href="#6-4-2-如何求特征值">6.4.2 如何求特征值</a></li>
+  <li class="toc-h3"><a href="#6-4-3-对称矩阵的特殊性质">6.4.3 对称矩阵的特殊性质</a></li>
+  <li class="toc-h2"><a href="#6-5-奇异值分解-svd">6.5 奇异值分解（SVD）</a></li>
+  <li class="toc-h3"><a href="#6-5-1-为什么需要svd">6.5.1 为什么需要SVD</a></li>
+  <li class="toc-h3"><a href="#6-5-2-svd的数学定义">6.5.2 SVD的数学定义</a></li>
+  <li class="toc-h3"><a href="#6-5-3-svd的几何含义">6.5.3 SVD的几何含义</a></li>
+  <li class="toc-h3"><a href="#6-5-4-svd在图形学中的应用">6.5.4 SVD在图形学中的应用</a></li>
+  <li class="toc-h2"><a href="#6-6-cramer法则">6.6 Cramer法则</a></li>
+  <li class="toc-h3"><a href="#6-6-1-用行列式解方程组">6.6.1 用行列式解方程组</a></li>
+  <li class="toc-h3"><a href="#6-6-2-3d例子">6.6.2 3D例子</a></li>
+  <li class="toc-h2"><a href="#6-7-矩阵与图形变换">6.7 矩阵与图形变换</a></li>
+  <li class="toc-h3"><a href="#6-7-1-用矩阵表示变换">6.7.1 用矩阵表示变换</a></li>
+  <li class="toc-h3"><a href="#6-7-2-矩阵乘法的-魔法">6.7.2 矩阵乘法的"魔法"</a></li>
+  <li class="toc-h3"><a href="#6-7-3-旋转矩阵的特殊性">6.7.3 旋转矩阵的特殊性</a></li>
+  <li class="toc-h2"><a href="#6-8-数值稳定性">6.8 数值稳定性</a></li>
+  <li class="toc-h3"><a href="#6-8-1-为什么图形学很关心数值问题">6.8.1 为什么图形学很关心数值问题</a></li>
+  <li class="toc-h3"><a href="#6-8-2-实用建议">6.8.2 实用建议</a></li>
+  <li class="toc-h2"><a href="#全章总结">全章总结</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+</script>
+</body></html>
