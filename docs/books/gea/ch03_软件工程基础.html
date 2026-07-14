@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>GEA Vol.1 Ch03: 软件工程基础 — 零基础讲义 (Guizang版)</title>
+<style>/* GEA Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+svg{max-width:100%;height:auto}
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content h4{font-size:14px;font-weight:600;margin:14px 0 6px;color:#444;padding-left:14px;border-left:2px solid #b2b2ff}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img,#content figure svg{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+.info-box{background:#eef0ff;border-left:4px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.thought-box{background:#fff8e1;border-left:4px solid #ffc107;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.key-box{background:#e8f8f5;border-left:4px solid #00b894;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.guizang-figure{text-align:center;margin:16px 0}
+.guizang-figure svg{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.guizang-caption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+.lesson-box{background:#faf8ff;border:1px dashed #b2b2ff;padding:12px 16px;margin:16px 0;border-radius:6px}
+.lesson-tag{display:inline-block;background:#5b5bff;color:#fff;font-size:11px;padding:2px 8px;border-radius:3px;margin-right:8px}
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list li.toc-h4{padding-left:48px;color:#888;font-size:11px;font-style:italic}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+.qa-section{margin:20px 0}
+.qa-item{border:1px solid #e8e8e3;border-radius:8px;margin:8px 0;overflow:hidden}
+.qa-q{background:#fafaf8;padding:10px 14px;cursor:pointer;font-weight:600;font-size:14px;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.qa-q:hover{background:#f0f0ec}
+.qa-q .arrow{color:#999;font-size:12px;transition:transform .2s}
+.qa-item.open .qa-q .arrow{transform:rotate(90deg)}
+.qa-a{display:none;padding:12px 14px;background:#fff;font-size:14px;line-height:1.8;border-top:1px solid #eee}
+.qa-item.open .qa-a{display:block}
+.qa-a code{background:#f0f0eb;padding:1px 4px;border-radius:3px;font-size:.9em;color:#d6336c}
+.qa-tag{display:inline-block;background:#eef0ff;color:#5b5bff;font-size:10px;padding:1px 6px;border-radius:3px;margin-right:6px}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">GEA V1</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch03 软件工程基础</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<!-- CH03 DETAILED WITH x.x.x SUBSECTIONS -->
+<h1>第3章：软件工程基础 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Jason Gregory 所著《Game Engine Architecture Volume I》第4版第3章（Fundamentals of Software Engineering for Games, p.93-185），由10年经验游戏引擎工程师执笔，逐节专业翻译、逐步展开推导。<br>
+<strong>细到 x.x.x 三级章节，零基础读者不必看原书也能完全理解。</strong><br>
+<em>本版插画由 ImageGen + Guizang 材质插画标准流程生成。</em></p>
+</blockquote>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#学习目标">学习目标</a></li>
+  <li><a href="#s31">3.1 C++ 与面向对象</a></li>
+  <li><a href="#s32">3.2 错误处理与断言</a></li>
+  <li><a href="#s33">3.3 数据、代码与内存布局</a></li>
+  <li><a href="#s34">3.4 计算机硬件基础</a></li>
+  <li><a href="#s35">3.5 内存架构</a></li>
+  <li><a href="#insight">本章核心洞察</a></li>
+  <li><a href="#exercises">课后练习题</a></li>
+  <li><a href="#qaagent">qAagent 零基础问答区</a></li>
+</ul>
+</div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+  <li>理解 C++ 封装、继承、多态三大特性在游戏引擎中的具体应用</li>
+  <li>掌握断言、异常、返回值三种错误处理方式的取舍</li>
+  <li>能画出程序在内存中的四段结构图</li>
+  <li>理解内存层次结构如何影响游戏性能</li>
+  <li>明白栈分配比堆分配快 100-1000 倍的根本原因</li>
+  <li>了解虚函数表、虚拟内存、内存对齐等底层概念</li>
+  <li>掌握面向数据设计（DOD）的核心思想</li>
+</ol>
+
+<hr>
+
+<h2 id="s31">3.1 C++ 与面向对象</h2>
+
+<p>游戏引擎是大型 C++ 软件系统。Unreal Engine 5 有数千万行 C++ 代码。这一节我们从面向对象三大特性讲起，逐步深入到指针/引用、虚函数表等关键概念。</p>
+
+<h3 id="3-1-1">3.1.1 面向对象三大特性</h3>
+
+<p><strong>一句话总览</strong>：封装 = 隐藏细节，继承 = 复用代码，多态 = 统一接口不同行为。</p>
+
+<h4 id="3-1-1-1">3.1.1.1 封装</h4>
+
+<p><strong>生活类比</strong>：你按遥控器上的音量键。你不知道遥控器内部是红外线发射还是蓝牙信号——你也不在乎。你只关心"声音变大了"。这就是封装：把内部实现隐藏起来，对外只暴露有限的、稳定的接口。</p>
+
+<p>在游戏引擎中：</p>
+
+<pre><code>class Player {
+public:
+    // ---- 公开接口：其他人只能通过这些函数操作 Player ----
+    void TakeDamage(float amount);   // 受伤
+    void Heal(float amount);         // 治疗
+    float GetHealth() const;         // 查询血量
+    bool IsAlive() const;            // 是否存活
+
+private:
+    // ---- 私有实现细节：外部代码不能直接访问 ----
+    float m_health;                  // 当前血量
+    float m_maxHealth;               // 最大血量
+    bool m_isInvincible;             // 是否无敌（可能被道具激活）
+
+    // 内部辅助函数，外部不需要知道它的存在
+    void ClampHealth() {
+        if (m_health < 0.0f) m_health = 0.0f;
+        if (m_health > m_maxHealth) m_health = m_maxHealth;
+    }
+};</code></pre>
+
+<p>外部代码只能通过 <code>TakeDamage()</code>、<code>GetHealth()</code> 等函数与 Player 交互。它们不能直接写 <code>player.m_health = 999999</code>——因为 <code>m_health</code> 是 private 的。</p>
+
+<p>这有什么好处？如果在某个版本中你要把血量计算公式从"减去伤害值"改为"减去伤害值 x 护甲穿透系数"，你只需要修改 <code>TakeDamage()</code> 内部。所有调用者不需要改任何代码——这就是封装的威力：<strong>修改内部实现不影响外部调用者</strong>。</p>
+
+<h4 id="3-1-1-2">3.1.1.2 继承</h4>
+
+<p><strong>生活类比</strong>：你想做一个"带灯的办公椅"。你有普通椅子的设计图（基类）——它有四条腿、一个坐垫、一个靠背。你现在要做的是在它上面加两个零件：灯和电源线。你不用从零画椅子的四条腿——你继承普通椅子，然后添加灯的部件。</p>
+
+<p>游戏引擎的典型继承链：</p>
+
+<pre><code>// 基类：所有"能放在游戏世界里的东西"的共性
+class Actor {
+public:
+    Vector3 m_position;              // 世界坐标
+    Vector3 m_rotation;              // 旋转
+    Vector3 m_scale;                 // 缩放
+
+    virtual void Tick(float deltaTime) {
+        // 每帧被调用一次。基类什么都不做
+    }
+};
+
+// 派生类：角色（有血量的 Actor）
+class Character : public Actor {
+public:
+    float m_health;
+    float m_maxHealth;
+
+    virtual void TakeDamage(float amount) {
+        m_health -= amount;
+        if (m_health <= 0.0f) Die();
+    }
+
+    virtual void Die() {
+        // 播放死亡动画、掉落道具等
+    }
+};
+
+// 进一步派生：玩家角色（有输入控制的 Character）
+class PlayerCharacter : public Character {
+public:
+    void HandleInput(InputInfo input) {
+        // 处理键盘/手柄输入
+    }
+
+    void Tick(float deltaTime) override {
+        // 重写 Tick，每帧检查输入
+        HandleInput(GetInput());
+        Character::Tick(deltaTime);   // 调用父类的 Tick
+    }
+};</code></pre>
+
+<p>这个继承链一共三层：Actor → Character → PlayerCharacter。每一层都在上一层的基础上增加新的能力。</p>
+
+<p>如果引擎里要加一个"敌人角色"，你可以继承 Character：</p>
+
+<pre><code>class EnemyCharacter : public Character {
+public:
+    AIComponent m_ai;                // AI 组件
+    void Tick(float deltaTime) override {
+        m_ai.Update(deltaTime);      // 更新 AI 逻辑
+        Character::Tick(deltaTime);
+    }
+};</code></pre>
+
+<p>不需要重写血量、受伤、死亡这些逻辑。它们已经写在 Character 里了，EnemyCharacter 直接继承过来就能用。这就是继承的价值：<strong>复用代码，避免重复造轮子</strong>。</p>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么不直接把所有代码写在 Actor 一个类里？<br>
+<blockquote style="background:transparent;border:none;padding:0;margin:4px 0 0">那 Actor 类会膨胀到几万行，包含血量、输入处理、AI、物理……所有东西。几乎不可能维护。继承让我们把代码按"概念层次"组织：Actor 层只关心位置，Character 层关心血量，Player 层关心输入。每层聚焦于自己的职责。</blockquote>
+</div>
+
+<h4 id="3-1-1-3">3.1.1.3 多态</h4>
+
+<p><strong>生活类比</strong>：都叫"播放"——播放 MP3 是音乐响起，播放 DVD 是电影开始，播放黑胶唱片是唱针落下。调用者不需要知道具体是哪种设备——只管说"播放"，设备自己知道怎么做。</p>
+
+<p>游戏引擎中最经典的例子——武器系统：</p>
+
+<pre><code>class Weapon {
+public:
+    // 纯虚函数 = 所有武器必须实现 Fire()
+    virtual void Fire() = 0;
+};
+
+class Gun : public Weapon {
+public:
+    void Fire() override {
+        SpawnBullet(m_muzzlePosition, m_barrelDirection);
+        PlaySound("gun_shot.wav");
+        m_ammo--;
+    }
+};
+
+class Bow : public Weapon {
+public:
+    void Fire() override {
+        SpawnArrow(m_owner.GetAimDirection());
+        PlaySound("bow_release.wav");
+        m_energy -= 10.0f;
+    }
+};
+
+class MagicStaff : public Weapon {
+public:
+    void Fire() override {
+        CastSpell("fireball", m_target);
+        PlaySound("magic_fire.wav");
+        m_mana -= 30.0f;
+    }
+};</code></pre>
+
+<p>现在，玩家切换武器时，游戏逻辑只需要这样写：</p>
+
+<pre><code>void PlayerCharacter::FireWeapon() {
+    // currentWeapon 可以是 Gun / Bow / MagicStaff 中的任意一种
+    // 但这里只需要调用 Fire()——多态机制自动决定调用哪个版本的 Fire
+    currentWeapon->Fire();
+}</code></pre>
+
+<p><code>currentWeapon</code> 是一个 <code>Weapon*</code> 类型的指针。它指向 Gun 时调用 Gun::Fire()，指向 Bow 时调用 Bow::Fire()。调用者（<code>FireWeapon()</code>）<strong>完全不知道也不关心</strong>玩家当前拿的是什么武器。这就是多态的魅力。</p>
+
+<div class="info-box">
+<strong>💡 这叫"开闭原则"</strong><br>
+对扩展开放（可以加新武器），对修改关闭（不需要改已有代码）。这是面向对象设计的核心目标之一。
+</div>
+
+<h3 id="3-1-2">3.1.2 指针 vs 引用</h3>
+
+<p>一张表讲清楚：</p>
+
+<table>
+<tr><th>特性</th><th>指针 <code>int* p</code></th><th>引用 <code>int&amp; r</code></th></tr>
+<tr><td>能否重新指向</td><td>可以 <code>p = &amp;y;</code></td><td>不行——初始化后永远绑定</td></tr>
+<tr><td>能否为 null</td><td>可以（危险！使用时必须检查）</td><td>不能——必须绑定有效对象</td></tr>
+<tr><td>占用内存</td><td>8 字节（64位），单独存储地址</td><td>不占——它是原始变量的别名</td></tr>
+<tr><td>怎么访问值</td><td><code>*p</code> 或 <code>p->member</code></td><td>直接 <code>r</code>（语法糖）</td></tr>
+</table>
+
+<p><strong>游戏引擎惯例</strong>：Unreal Engine 用 <code>UObject*</code> 指针管理所有对象——因为对象可以被销毁、移动、重新创建。引用通常用于函数参数（传递大对象时避免拷贝）。</p>
+
+<h3 id="3-1-3">3.1.3 虚函数与虚函数表（vtable）</h3>
+
+<p>多态在底层是怎么实现的？答案是<strong>虚函数表（vtable）</strong>。</p>
+
+<p>每个有虚函数的类，编译器会为它生成一个隐藏的<strong>函数指针数组</strong>——这个数组就叫虚函数表（vtable）。</p>
+
+<p>每个对象有一个隐藏的成员变量——<code>vptr</code>（指向自己类的 vtable 的指针）。</p>
+
+<pre><code>// 概念伪代码
+Weapon::vtable = {
+    &Weapon::Fire   // 纯虚函数 = 0
+};
+
+Gun::vtable = {
+    &Gun::Fire
+};
+
+Bow::vtable = {
+    &Bow::Fire
+};</code></pre>
+
+<p>当调用 <code>weapon->Fire()</code> 时，底层执行的是：</p>
+
+<pre><code>// 概念伪代码——实际由编译器生成
+void CallVirtualFire(Weapon* w) {
+    // 第一步：从对象读取 vptr（间接访问 #1）
+    VTable* vt = w->vptr;
+    // 第二步：从 vtable 中读取 Fire 函数地址（间接访问 #2）
+    FunctionPtr func = vt[0];
+    // 第三步：跳转到该地址执行
+    func(w);
+}</code></pre>
+
+<p>三步操作，两次间接内存访问（读 vptr、读 vtable）。而普通函数调用只需要"直接跳转到编译期确定的地址"——一步到位。这就是虚函数比普通函数调用<strong>稍微</strong>慢一点的原因（大约多 2-10 个 CPU 周期）。</p>
+
+<p>在性能关键的代码中（比如每帧执行几百万次的渲染循环），游戏引擎有时会避免使用虚函数，改用<strong>编译期多态</strong>（如模板/CRTP 模式）。但对于大多数日常代码，虚函数的性能开销可以忽略不计。</p>
+
+<hr>
+
+<h2 id="s32">3.2 错误处理与断言</h2>
+
+<p>游戏中的错误处理与普通应用软件不同——你可能没有"返回错误页"的选项。本节讲三种错误处理方式及其在游戏引擎中的取舍。</p>
+
+<h3 id="3-2-1">3.2.1 三种错误处理方式</h3>
+
+<h4 id="3-2-1-1">3.2.1.1 返回值检查</h4>
+
+<pre><code>File file;
+if (!file.Open("config.ini")) {
+    // 打开失败——处理错误
+    LogError("无法打开配置文件 config.ini");
+    return;
+}
+// 继续执行……</code></pre>
+
+<p><strong>优点</strong>：简单、直接、无隐藏开销。<br>
+<strong>缺点</strong>：调用者<strong>可能忘记检查返回值</strong>。多层调用链中错误被掩盖，定位困难。</p>
+
+<h4 id="3-2-1-2">3.2.1.2 C++ 异常</h4>
+
+<pre><code>try {
+    int* hugeArray = new int[1000000000000];
+    ProcessArray(hugeArray);
+} catch (std::bad_alloc& e) {
+    LogError("内存不足：" + string(e.what()));
+    GracefulShutdown();
+}</code></pre>
+
+<p><strong>优点</strong>：异常自动沿调用栈向上传播，不需要每层都检查返回值。<br>
+<strong>缺点（致命）</strong>：游戏引擎<strong>几乎全部禁用 C++ 异常</strong>。原因：</p>
+<ol>
+  <li><strong>性能开销</strong>：编译器需要生成额外的栈展开代码（unwind tables），增加二进制文件大小。即使在没抛出异常的正常路径中，也有少量性能损失。</li>
+  <li><strong>不可预测性</strong>：异常抛出时的栈展开耗时不确定——可能微秒级，也可能毫秒级。在游戏引擎的 16.7ms 帧预算中，这种不确定性是不可接受的。</li>
+  <li><strong>最佳实践</strong>：Unreal Engine、Unity 等主流引擎都使用编译选项 <code>-fno-exceptions</code> 或 <code>/EHsc-</code> 禁用 C++ 异常。</li>
+</ol>
+
+<h4 id="3-2-1-3">3.2.1.3 断言（assertion）</h4>
+
+<pre><code>void SetPlayerName(const char* name) {
+    // 断言：name 不能是空指针
+    // 如果 name 是 nullptr，程序立即停止
+    assert(name != nullptr && "Player name cannot be null!");
+
+    // 断言通过后才执行实际逻辑
+    m_name = name;
+}</code></pre>
+
+<p><strong>断言</strong>的含义是："这里不应该发生这种情况。如果发生了，说明程序有 bug——停下来让我修。"</p>
+
+<p>断言在 <strong>Debug 版本</strong>中生效。在 <strong>Release 版本</strong>中，<code>assert()</code> 被完全编译掉——不产生任何代码。所以断言不影响玩家电脑的运行性能。</p>
+
+<div class="info-box">
+<strong>💡 游戏引擎的断言哲学</strong><br>
+大部分游戏引擎（Unreal、Unity）明确禁用 C++ 异常，但大量使用断言。原因：<br>
+• 引擎出错时通常"恢复不可能"——贴图加载失败怎么办？用默认贴图，然后断言之。<br>
+• 断言比"默默返回错误"好得多——它立刻把问题暴露在开发者面前。<br>
+• 断言只在 Debug 版本启用——不影响发布版本的性能。
+</div>
+
+<h3 id="3-2-2">3.2.2 断言哲学</h3>
+
+<p><strong>生活类比</strong>：飞机安检。身份不对立刻拦下，比让问题混进去好得多。</p>
+
+<p>一个完整的断言系统通常包括：</p>
+
+<ul>
+  <li><code>assert(condition)</code>：基础断言</li>
+  <li><code>verify(condition)</code>：无论 Debug 还是 Release 都生效的断言</li>
+  <li><code>check(condition)</code>：Unreal 自定义的类似 verify 的宏</li>
+  <li><code>ensure(condition)</code>：Unreal 的"软断言"——只记录一次不崩溃</li>
+</ul>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：为什么断言比"if 检查 + return"更适合游戏引擎？<br>
+<blockquote style="background:transparent;border:none;padding:0;margin:4px 0 0">假设有一个函数 calculateDamage() 内部发生了空指针访问。你用 if 检查 + return 的话，程序会继续运行——在错误状态下运行。之后渲染模块读取了错误的数据，在完全不相关的代码中崩溃。排查者看到的是"渲染崩溃"，但根因是"calculateDamage 里的空指针"。这种"错误传播"导致定位时间从 5 分钟变成 5 小时。断言直接把罪魁祸首按在案发现场。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="s33">3.3 数据、代码与内存布局</h2>
+
+<p>你的程序在内存中长什么样？这是编译器决定的事情，但理解它对写出高性能代码至关重要。</p>
+
+<div class="guizang-figure">
+  <img src="images/ch03/01_memory_layout.png" alt="程序内存四段布局">
+  <div class="guizang-caption">图3-1：程序在内存中的四段结构</div>
+</div>
+
+<h3 id="3-3-1">3.3.1 四段结构详解</h3>
+
+<p>用一个具体例子来理解四段：</p>
+
+<pre><code>// 数据段：程序启动时分配，结束时释放
+int g_globalCounter = 0;           // 全局变量 → 数据段(.data)
+static float s_pi = 3.14159f;      // 静态变量 → 数据段(.data)
+
+void SomeFunction() {
+    // 栈：函数调用时分配，函数返回时释放
+    int localVar = 42;              // 局部变量 → 栈
+    float array[100];               // 局部数组 → 栈
+
+    // 堆：手动分配，手动释放
+    int* heapVar = new int(100);    // new → 堆
+    delete heapVar;                 // delete → 从堆释放
+
+    // 代码段：编译时就确定的机器指令
+    // SomeFunction 的指令就在代码段中
+}</code></pre>
+
+<h4 id="3-3-1-1">3.3.1.1 代码段（.text）</h4>
+
+<p>存储 CPU 要执行的机器指令。只读，编译期固定。<strong>生活类比</strong>：法律条文——每个人都必须遵守，不能随意修改。</p>
+
+<h4 id="3-3-1-2">3.3.1.2 数据段（.data / .bss）</h4>
+
+<p>存储全局变量和静态变量。程序启动时分配，结束时销毁。<strong>生活类比</strong>：市政府档案——从城市建立到消亡一直存在。</p>
+
+<table>
+<tr><th>子段</th><th>存储内容</th></tr>
+<tr><td><code>.data</code></td><td>有初始值的全局/静态变量（如 <code>int g = 42;</code>）</td></tr>
+<tr><td><code>.bss</code></td><td>零初始化的全局/静态变量（如 <code>int g;</code>，磁盘上不占空间）</td></tr>
+</table>
+
+<h4 id="3-3-1-3">3.3.1.3 堆（Heap）</h4>
+
+<p>存储 <code>new</code>/<code>malloc</code> 动态分配的对象。运行时动态变化，手动管理。<strong>生活类比</strong>：自由市场——随时可以租摊位（分配），随时可以退租（释放）。</p>
+
+<h4 id="3-3-1-4">3.3.1.4 栈（Stack）</h4>
+
+<p>存储局部变量、函数参数、返回地址。每帧动态变化，自动管理（进入函数压栈、退出函数出栈）。<strong>生活类比</strong>：临时停车场——后进先出，自动管理。</p>
+
+<h3 id="3-3-2">3.3.2 栈 vs 堆：性能差异</h3>
+
+<h4 id="3-3-2-1">3.3.2.1 栈分配原理</h4>
+
+<pre><code>void StackExample() {
+    // 栈分配：编译器生成一条指令 "sub rsp, 4"
+    // 把栈顶指针（RSP 寄存器）向下移动 4 字节 = 分配完成
+    int x = 42;
+
+    // 释放：编译器生成 "add rsp, 4"
+    // 栈顶指针移回来 = 释放完成
+}</code></pre>
+
+<p>栈分配只需要 1 条指令，约 <strong>0.5 纳秒</strong>。</p>
+
+<h4 id="3-3-2-2">3.3.2.2 堆分配原理</h4>
+
+<pre><code>void HeapExample() {
+    // 堆分配：调用 malloc() → 内部做以下工作
+    // ① 在空闲链表中查找大小合适的块
+    // ② 如果找到的块比需要的更大，分割成两块
+    // ③ 更新空闲链表
+    // ④ 返回分配的内存地址
+    // ⑤ （可能还需要加锁，防止多线程冲突）
+    int* p = new int(42);
+
+    // 堆释放：调用 free() → 内部做以下工作
+    // ① 根据指针找到对应的内存块
+    // ② 检查块的前后是否有相邻空闲块——合并
+    // ③ 更新空闲链表
+    delete p;
+}</code></pre>
+
+<p>堆分配约 <strong>50-200 纳秒</strong>，比栈慢 <strong>100-400 倍</strong>。</p>
+
+<div class="key-box">
+<strong>🔑 游戏引擎铁律</strong>：在游戏循环（每帧执行的代码）中<strong>绝对不要</strong>做堆分配。所有内存应该在加载关卡时预先申请好，运行时"零分配"（zero allocation）。
+</div>
+
+<h3 id="3-3-3">3.3.3 实战对比</h3>
+
+<div class="thought-box">
+<strong>🤔 想一想</strong>：在游戏循环中 new 一个 int 看似就几微秒，为什么引擎团队如此忌讳？<br>
+<blockquote style="background:transparent;border:none;padding:0;margin:4px 0 0">单个 new 不可怕。可怕的是：① 在每帧执行 10000 次的循环中 new，一次 1μs → 10ms，占帧预算 60%。② new 可能触发页面错误（page fault），导致瞬间卡顿几百微秒。③ new/delete 频繁进行会产生内存碎片，几小时后游戏因"找不到足够大的连续内存块"而崩溃。</blockquote>
+</div>
+
+<hr>
+
+<h2 id="s34">3.4 计算机硬件基础</h2>
+
+<div class="guizang-figure">
+  <img src="images/ch03/02_memory_hierarchy.png" alt="内存层次结构金字塔">
+  <div class="guizang-caption">图3-2：内存层次结构——越大越慢、越小越快</div>
+</div>
+
+<h3 id="3-4-1">3.4.1 内存层次结构</h3>
+
+<p>这张图是全书最重要的概念之一。不理解它，你写出来的代码可能无形中"很慢"却不知道为什么。</p>
+
+<table>
+<tr><th>层级</th><th>典型大小</th><th>访问延迟</th><th>约等于 CPU 周期</th></tr>
+<tr><td><strong>寄存器（Register）</strong></td><td>~100 字节</td><td>~0.3 纳秒</td><td>~1 周期</td></tr>
+<tr><td><strong>L1 缓存</strong></td><td>~32 KB</td><td>~1 纳秒</td><td>~4 周期</td></tr>
+<tr><td><strong>L2 缓存</strong></td><td>~256 KB</td><td>~3 纳秒</td><td>~12 周期</td></tr>
+<tr><td><strong>L3 缓存</strong></td><td>~8-16 MB</td><td>~12 纳秒</td><td>~48 周期</td></tr>
+<tr><td><strong>内存（RAM）</strong></td><td>16-64 GB</td><td>~100 纳秒</td><td>~400 周期</td></tr>
+<tr><td><strong>SSD 磁盘</strong></td><td>512 GB-2 TB</td><td>~100,000 纳秒</td><td>~400,000 周期</td></tr>
+</table>
+
+<p><strong>关键数字</strong>：</p>
+<ul>
+  <li>CPU 主频约 4GHz → 1 个周期 = 0.25 纳秒</li>
+  <li>内存延迟约 100 纳秒 → <strong>CPU 要等 400 个周期</strong>才能从内存读到一个数据</li>
+  <li>400 个周期中，CPU 理论上可以执行 400 条指令——但它卡在等待数据上</li>
+</ul>
+
+<h3 id="3-4-2">3.4.2 缓存行（Cache Line）</h3>
+
+<p>CPU 从内存读取数据时，不是一次只读一个字节，而是读<strong>一整条缓存行</strong>——通常是 64 字节。</p>
+
+<p>这意味着：你访问 <code>array[0]</code>（4 字节）时，<code>array[1]</code> 到 <code>array[15]</code>（一共 16 个 int 共 64 字节）也被自动加载到了缓存中。下次访问它们时——免费，从缓存秒取。</p>
+
+<h3 id="3-4-3">3.4.3 性能影响：糟糕设计 vs DOD 设计</h3>
+
+<pre><code>// 糟糕的设计：4 个数组，数据分散
+struct Position { float x, y, z; };
+struct Velocity { float vx, vy, vz; };
+struct Health { float hp; };
+struct Name { char str[32]; };
+
+Position pos[1000];
+Velocity vel[1000];
+Health hp[1000];
+Name name[1000];
+
+// 更新位置：每读一个 pos 就从内存取——大量 cache miss！
+for (int i = 0; i < 1000; i++) {
+    pos[i].x += vel[i].vx * dt;
+}</code></pre>
+
+<pre><code>// 优秀的设计：DOD（面向数据设计）
+struct Entity {
+    float x, y, z;      // 位置
+    float vx, vy, vz;    // 速度
+    float hp;
+    char name[32];
+};
+Entity entities[1000];
+
+// 更新位置：读 entities[0] 时，整个结构体加载到缓存
+// 读 entities[1] 时，它已经在缓存里——几乎全部 cache hit！
+for (int i = 0; i < 1000; i++) {
+    entities[i].x += entities[i].vx * dt;
+}</code></pre>
+
+<p>第一个版本：每次迭代 ~100ns，1000 次 = 100μs。<br>
+第二个版本：每次迭代 ~1ns，1000 次 = 1μs。<br>
+差距 <strong>100 倍</strong>。</p>
+
+<p>这就是著名的"面向数据设计"（Data-Oriented Design, DOD）的核心思想：<strong>根据数据的访问模式来组织数据在内存中的布局</strong>。</p>
+
+<hr>
+
+<h2 id="s35">3.5 内存架构</h2>
+
+<h3 id="3-5-1">3.5.1 虚拟内存</h3>
+
+<p>操作系统给每个程序一个"假象"——每个程序都以为自己占用了整个内存空间（32 位 = 4GB，64 位更大）。实际上，物理内存被多个程序共享。</p>
+
+<p>操作系统通过<strong>页表（Page Table）</strong>把程序使用的"虚拟地址"翻译成真正的"物理地址"：</p>
+
+<pre><code>// 程序看到的地址（虚拟地址）：0x00400000
+// 经过页表翻译后的真正位置（物理地址）：0x7F3B_4000
+// 两个地址完全不同！程序不知道也不关心真实位置</code></pre>
+
+<p><strong>虚拟内存的好处</strong>：</p>
+<ol>
+  <li><strong>隔离性</strong>：程序 A 不能访问程序 B 的内存</li>
+  <li><strong>简化编程</strong>：每个程序有"连续"的地址空间</li>
+  <li><strong>交换（Swapping）</strong>：不常用的内存页可被换到磁盘上</li>
+</ol>
+
+<h3 id="3-5-2">3.5.2 内存对齐</h3>
+
+<p>CPU 在读取内存时，对地址有<strong>对齐要求</strong>：</p>
+<ul>
+  <li>int（4 字节）应该从 4 的倍数地址开始</li>
+  <li>short（2 字节）应该从 2 的倍数地址开始</li>
+  <li>double（8 字节）应该从 8 的倍数地址开始</li>
+</ul>
+
+<p><strong>如果不对齐会怎样？</strong></p>
+
+<pre><code>struct BadLayout {
+    char a;         // 1 字节（假设在偏移 0）
+    int b;          // 4 字节（被填充推到偏移 4）
+    short c;        // 2 字节（偏移 8）
+};
+// sizeof(BadLayout) = 12 字节（不是 1+4+2=7！多了 3 字节 padding）</code></pre>
+
+<p>优化版本：</p>
+
+<pre><code>struct GoodLayout {
+    int b;          // 4 字节（偏移 0）
+    short c;        // 2 字节（偏移 4）
+    char a;         // 1 字节（偏移 6）
+};
+// sizeof(GoodLayout) = 8 字节 ✓</code></pre>
+
+<h3 id="3-5-3">3.5.3 内存优化策略</h3>
+
+<p>游戏引擎中的内存优化常用手段：</p>
+<ul>
+  <li><strong>对象池</strong>：预分配固定大小对象数组，用完放回池中复用</li>
+  <li><strong>内存映射文件</strong>：把磁盘文件直接映射到内存，避免 read/write 调用</li>
+  <li><strong>预分配</strong>：加载关卡时一次性分配好所有需要的内存</li>
+  <li><strong>NUMA-aware 分配</strong>：在多核 CPU 中，优先从本地内存节点分配</li>
+</ul>
+
+<div class="info-box">
+<strong>💡 为什么对齐很重要？</strong><br>
+不对齐的 int 需要 CPU 读两次内存——慢 2-3 倍。而且这在 SIMD 指令中尤其严重——Intel 的 SSE/AVX 指令要求 128 位/256 位数据必须对齐，不对齐直接崩溃。
+</div>
+
+<hr>
+
+<h2 id="insight">本章核心洞察</h2>
+
+<div class="key-box">
+<strong>🔑 游戏引擎性能优化的本质</strong><br>
+所有优化最终都可以归结为一件事：<strong>减少 CPU 等待内存的时间</strong>。<br>
+• 避免堆分配（慢 100-1000 倍）<br>
+• 提高缓存命中率（把相关数据放一起）<br>
+• 注意内存对齐（减少 padding，保证 SIMD 安全）<br>
+• 理解虚拟内存（避免不必要的页面错误）<br>
+这一切的目标是让 CPU 尽可能在纳秒级的缓存中工作，而不是在百纳秒级的内存中等待。
+</div>
+
+<hr>
+
+<h2 id="exercises">📝 课后练习题（含答案）</h2>
+
+<p>点击每题展开答案——先自己思考再看解答：</p>
+
+<div class="qa-section">
+
+<div class="qa-item">
+<div class="qa-q" onclick="toggleQA(this)">
+<span><span class="qa-tag">题1</span>C++ 概念：用自己的话解释封装、继承、多态。各举一个游戏中实际的例子。</span>
+<span class="arrow">▶</span>
+</div>
+<div class="qa-a">
+<p><strong>封装</strong>：隐藏内部实现细节，对外只暴露有限接口。</p>
+<ul><li>例子：Player 类公开 TakeDamage()/GetHealth()，隐藏 m_health 私有变量。外部代码不能直接修改血量。</li></ul>
+<p><strong>继承</strong>：一个类从另一个类获得已有的属性和方法。</p>
+<ul><li>例子：Actor → Character → PlayerCharacter。Actor 有位置，Character 有血量，PlayerCharacter 有输入处理。每层继承上层的能力并添加新功能。</li></ul>
+<p><strong>多态</strong>：同一个接口，不同的实现方式。</p>
+<ul><li>例子：Weapon::Fire()——Gun 发射子弹，Bow 射箭，MagicStaff 释放法术。调用者只需调用 Fire()，具体行为由实际类型决定。</li></ul>
+</div>
+</div>
+
+<div class="qa-item">
+<div class="qa-q" onclick="toggleQA(this)">
+<span><span class="qa-tag">题2</span>什么是 vtable？为什么虚函数调用比普通函数调用慢？何时用模板替代虚函数？</span>
+<span class="arrow">▶</span>
+</div>
+<div class="qa-a">
+<p><strong>vtable（虚函数表）</strong>：编译器为每个有虚函数的类生成的函数指针数组。每个对象有一个 vptr 指向自己类的 vtable。</p>
+<p><strong>为什么慢</strong>：普通函数调用 = 直接跳转到编译期确定的地址。虚函数调用 = ① 读 vptr ② 从 vtable 读函数地址 ③ 跳转。两次间接内存访问多耗约 2-10 个 CPU 周期。</p>
+<p><strong>何时用模板</strong>：在极致性能的热路径中（如每帧执行百万次的渲染循环），用 CRTP 模板实现编译期多态，完全消除虚函数开销。</p>
+</div>
+</div>
+
+<div class="qa-item">
+<div class="qa-q" onclick="toggleQA(this)">
+<span><span class="qa-tag">题3</span>为什么游戏引擎禁用 C++ 异常？断言和 if + return 比有什么本质区别？</span>
+<span class="arrow">▶</span>
+</div>
+<div class="qa-a">
+<p><strong>禁用异常的原因</strong>：① 编译器和运行时生成额外展开代码，增加二进制大小和轻微性能损失。② 异常抛出时栈展开耗时不可预测，与实时 16.7ms 帧预算冲突。③ Unreal/Unity 都用编译选项禁用。</p>
+<p><strong>断言 vs if + return</strong>：if + return 会继续在错误状态下运行——错误传播到其他模块，在完全不相关的地方崩溃，定位时间从 5 分钟变 5 小时。断言直接停在犯罪现场，告诉开发者哪一行出了问题。而且断言在 Release 版本中完全编译掉，不影响玩家。</p>
+</div>
+</div>
+
+<div class="qa-item">
+<div class="qa-q" onclick="toggleQA(this)">
+<span><span class="qa-tag">题4</span>画出程序在内存中的四段结构图。</span>
+<span class="arrow">▶</span>
+</div>
+<div class="qa-a">
+<p>四段从高地址到低地址（以 32 位为例）：</p>
+<pre><code>高地址
++------------------+  ← 栈顶（向下增长）
+|      栈（Stack）        |  局部变量、函数参数、返回地址
+|        ↓                |  自动管理，LIFO
+|                          |
+|        ↑                |
+|      堆（Heap）         |  new/malloc 动态分配，手动管理
++------------------------+
+|    数据段（.data）       |  有初始值的全局/静态变量
+|    数据段（.bss）        |  零初始化的全局/静态变量
++------------------------+
+|    代码段（.text）       |  机器指令，只读，编译期固定
+低地址 +------------------+</code></pre>
+<p>生活类比：代码段=法律条文，数据段=市政府档案，堆=自由市场，栈=临时停车场。</p>
+</div>
+</div>
+
+<div class="qa-item">
+<div class="qa-q" onclick="toggleQA(this)">
+<span><span class="qa-tag">题5</span>为什么栈分配比堆分配快 100-400 倍？为什么游戏引擎禁止在循环中堆分配？</span>
+<span class="arrow">▶</span>
+</div>
+<div class="qa-a">
+<p><strong>栈分配</strong>：1 条 CPU 指令 sub rsp, N（移动栈顶指针）。<strong>~0.5 纳秒</strong>。</p>
+<p><strong>堆分配</strong>：① 查找空闲链表 ② 可能分割块 ③ 更新空闲链表 ④ 返回地址。可能加锁。释放时还要合并。<strong>~50-200 纳秒</strong>。</p>
+<p><strong>为什么禁止</strong>：① 累积效应——循环 10000 次就占 60% 帧预算。② new 可能触发页面错误(page fault)导致微秒级卡顿。③ 频繁 new/delete 产生内存碎片，几小时后因找不到连续大块而崩溃。</p>
+</div>
+</div>
+
+<div class="qa-item">
+<div class="qa-q" onclick="toggleQA(this)">
+<span><span class="qa-tag">题6</span>L1 缓存 1ns，RAM 100ns，CPU 4GHz，一次 RAM 读取浪费多少 CPU 周期？</span>
+<span class="arrow">▶</span>
+</div>
+<div class="qa-a">
+<p>4GHz = 每秒 4×10⁹ 周期。1 周期 = 0.25 纳秒。</p>
+<p>RAM 读取 100ns ÷ 0.25ns/周期 = <strong>400 周期</strong>。</p>
+<p>L1 缓存读取 1ns ÷ 0.25ns/周期 = 4 周期。</p>
+<p>差距 100 倍。CPU 在这些周期里理论上可以执行 400 条指令——但它卡在等待数据上。</p>
+</div>
+</div>
+
+<div class="qa-item">
+<div class="qa-q" onclick="toggleQA(this)">
+<span><span class="qa-tag">题7</span>什么是缓存行？大小多少？如何影响数据设计？</span>
+<span class="arrow">▶</span>
+</div>
+<div class="qa-a">
+<p><strong>缓存行</strong>：CPU 与内存之间的最小传输单位，通常 <strong>64 字节</strong>。</p>
+<p>访问 array[0]（4 字节）时，array[1]~array[15]（共 64 字节）一并被加载到缓存。</p>
+<p><strong>对设计的影响</strong>：</p>
+<ul>
+  <li>结构体数组（AoS）：Entity entities[1000]，每个 Entity 包含位置+速度+血量。遍历时位置和速度在同一个缓存行里——✅ 好</li>
+  <li>数组结构体（SoA）：float x[1000], float y[1000], float z[1000]。更新位置时只加载 x/y/z 数组，不加载无用的血量数据——✅ 对某些访问模式更好</li>
+</ul>
+<p>DOD（面向数据设计）的核心就是根据数据访问模式选择 AoS 或 SoA。</p>
+</div>
+</div>
+
+<div class="qa-item">
+<div class="qa-q" onclick="toggleQA(this)">
+<span><span class="qa-tag">题8</span>struct Example 在 32 位平台上的 sizeof 是多少？如何优化？</span>
+<span class="arrow">▶</span>
+</div>
+<div class="qa-a">
+<pre><code>struct Example {    // 原始布局
+    bool flag;      // 偏移 0，1 字节
+                    // [padding 7 字节，因为 double 需要 8 字节对齐]
+    double value;   // 偏移 8，8 字节
+    int count;      // 偏移 16，4 字节
+    short id;       // 偏移 20，2 字节
+                    // [padding 2 字节，让 sizeof 是 8 的倍数]
+};                  // sizeof = 24</code></pre>
+<p><strong>优化版</strong>（按大小降序排列）：</p>
+<pre><code>struct ExampleOpt {
+    double value;   // 8 字节，偏移 0
+    int count;      // 4 字节，偏移 8
+    short id;       // 2 字节，偏移 12
+    bool flag;      // 1 字节，偏移 14
+                    // [padding 1 字节]
+};                  // sizeof = 16 ✓（节省 8 字节）</code></pre>
+</div>
+</div>
+
+</div>
+
+<hr>
+
+<h2 id="qaagent">🤖 qAagent 零基础问答区</h2>
+
+<div class="qa-section">
+
+<div class="qa-item">
+<div class="qa-q" onclick="toggleQA(this)">
+<span><span class="qa-tag">C++基础</span>面向对象三大特性我学了好几遍都记不住，能用一个故事串起来吗？</span>
+<span class="arrow">▶</span>
+</div>
+<div class="qa-a">
+<p>用一个餐厅的故事一次性讲清楚：</p>
+<ul>
+  <li><strong>封装</strong>：你是顾客。你只需要跟服务员说"点菜"。你不需要知道厨房里怎么炒菜、洗碗、备料。服务员（公开接口）帮你屏蔽了厨房的复杂。</li>
+  <li><strong>继承</strong>：中餐厅和西餐厅都继承自"餐厅"这个基类——都有厨房、菜单、餐桌、收银台。但中餐厅在基类基础上加了"茶"和"蒸笼"，西餐厅加了"酒"和"烤箱"。</li>
+  <li><strong>多态</strong>：你喊一声"买单！"。中餐厅给你端来一杯茶（中式服务），西餐厅给你递上账单（西式服务）。同一个"买单"指令，不同餐厅执行不同的行为。</li>
+</ul>
+</div>
+</div>
+
+<div class="qa-item">
+<div class="qa-q" onclick="toggleQA(this)">
+<span><span class="qa-tag">C++基础</span>指针和引用到底有什么区别？什么时候用哪个？</span>
+<span class="arrow">▶</span>
+</div>
+<div class="qa-a">
+<p>一张表讲清楚：</p>
+<table>
+<tr><th></th><th>指针 <code>int* p</code></th><th>引用 <code>int&amp; r</code></th></tr>
+<tr><td>能重新绑定吗？</td><td>可以</td><td>不行</td></tr>
+<tr><td>能为 null 吗？</td><td>可以（危险！）</td><td>不能</td></tr>
+<tr><td>占用内存？</td><td>8 字节（64位）</td><td>不占</td></tr>
+<tr><td>访问方式？</td><td><code>*p</code> / <code>p-&gt;member</code></td><td>直接 <code>r</code></td></tr>
+</table>
+<p><strong>游戏引擎惯例</strong>：用指针管理对象（因为对象可能被销毁/重新创建），引用用于函数参数（避免拷贝、表达"必须有效"）。</p>
+</div>
+</div>
+
+<div class="qa-item">
+<div class="qa-q" onclick="toggleQA(this)">
+<span><span class="qa-tag">性能</span>我写了 10 年代码从没注意过缓存命中率，为什么游戏开发这么在乎？</span>
+<span class="arrow">▶</span>
+</div>
+<div class="qa-a">
+<p>因为你在写普通应用软件——用户感觉不到 1ms 的差距。但在游戏引擎中，1ms 就是 6% 的帧预算（60fps = 16.7ms/帧）。</p>
+<p><strong>数值对比</strong>：遍历 100 万元素<strong>链表</strong>（散乱内存，大量 cache miss）：每次 ~100ns，总时间 ~100ms = ❌ 卡死。遍历 100 万元素<strong>数组</strong>（连续内存，基本无 cache miss）：每次 ~1ns，总时间 ~1ms = ✅ 完美。差距 <strong>100 倍</strong>。</p>
+</div>
+</div>
+
+<div class="qa-item">
+<div class="qa-q" onclick="toggleQA(this)">
+<span><span class="qa-tag">实践</span>我在游戏循环中用 new 分配一块小内存，就一次，问题大吗？</span>
+<span class="arrow">▶</span>
+</div>
+<div class="qa-a">
+<p>一次 new 不致命。但有两个问题：① <strong>累积</strong>——"就一次"写进去，下个需求来了又"就一次"，三个月后变成 50 次。代码审查时没人能看出来。最好从一开始就禁止。② <strong>内存碎片</strong>——即使你现在只 new 一次，程序跑了 2 个小时后堆上各种大小分配释放产生了碎片。突然某个时刻需要一个稍大的连续内存块——找不到了——游戏崩溃。碎片是渐进式杀手。</p>
+<p>正确做法：在加载关卡时把所有需要的内存预先分配好（创建一个池或线性分配器），运行时零分配。Unreal、Unity 的官方编码规范都明确写明了这条规则。</p>
+</div>
+</div>
+
+<div class="qa-item">
+<div class="qa-q" onclick="toggleQA(this)">
+<span><span class="qa-tag">调试</span>断言崩溃了怎么找到问题？</span>
+<span class="arrow">▶</span>
+</div>
+<div class="qa-a">
+<p>断言崩溃时会显示三部分信息：① <strong>断言表达式</strong>（什么条件失败）② <strong>文件位置</strong>（哪个文件第几行）③ <strong>错误消息</strong>。在 VS 中按"重试"按钮，调试器会<strong>自动停在断言失败的那一行代码上</strong>，可以立刻查看所有变量的值。Unreal Engine 中打开 Output Log 搜索 <code>Assertion failed</code> 就能找到完整的调用堆栈。</p>
+</div>
+</div>
+
+<div class="qa-item">
+<div class="qa-q" onclick="toggleQA(this)">
+<span><span class="qa-tag">计算机体系</span>为什么 32 位程序最大只能用 4GB 内存？</span>
+<span class="arrow">▶</span>
+</div>
+<div class="qa-a">
+<p>32 位 CPU 的地址总线是 32 根线——每根线可以表示 0 或 1。所以能访问的地址数量 = 2 的 32 次方 = 4,294,967,296 ≈ 43 亿个地址。每个地址对应 1 字节，所以最大 4GB。64 位 CPU 能访问 2 的 64 次方 ≈ 18EB（百亿亿字节）——但实际只实现 48 位地址空间（256TB），因为目前不需要更大。游戏引擎从 32 位迁移到 64 位的主要动力：现代 3A 游戏贴图精度极高，一张 4K 贴图可能占 500MB，一个关卡 50 张就是 25GB，4GB 完全不够用。代价：指针从 4 字节变为 8 字节，几千万个指针的引擎多占 200MB+。</p>
+</div>
+</div>
+
+<div class="qa-item">
+<div class="qa-q" onclick="toggleQA(this)">
+<span><span class="qa-tag">概念</span>"面向数据设计"（DOD）到底是什么意思？</span>
+<span class="arrow">▶</span>
+</div>
+<div class="qa-a">
+<p>传统 OOD：思考"有什么对象？每个对象有什么属性和行为？" → 把相关属性和行为封装在类里。DOD：思考"数据怎么被访问的？访问模式是什么？" → 按访问模式组织数据在内存中的布局。</p>
+<p><strong>具体例子</strong>：OOD 方式一个 Character 类包含位置/速度/血量/名字/AI 状态……遍历 10000 个角色更新位置时，跳过一大堆无用的数据（名字/AI 状态）浪费了缓存空间。DOD 方式把所有角色的位置放在一个连续数组中、速度在另一个连续数组中……更新位置时 CPU 只读取"需要的"数据（位置+速度），缓存利用效率极高。</p>
+<p>简单说：<strong>OOD 是从人类思维组织代码；DOD 是从硬件思维优化性能</strong>。现代游戏引擎的核心系统大量使用 DOD 设计思路。</p>
+</div>
+</div>
+
+<div class="qa-item">
+<div class="qa-q" onclick="toggleQA(this)">
+<span><span class="qa-tag">引擎设计</span>Unreal Engine 用什么方式管理内存？</span>
+<span class="arrow">▶</span>
+</div>
+<div class="qa-a">
+<p>Unreal Engine 使用自己的一套内存管理系统（FMemory / FMalloc 体系）：</p>
+<ul>
+  <li><strong>分配器选择</strong>：Debug 模式用 MallocDebug（保护字节检测越界）；Release 模式按平台选最高效分配器</li>
+  <li><strong>MallocProfiler</strong>：统计每种分配的大小、数量、调用栈</li>
+  <li><strong>UObject 系统</strong>：通过垃圾回收（标记-清扫）自动管理游戏对象</li>
+  <li><strong>TArray / TMap</strong>：Unreal 自有容器类，替代 std::vector / std::map</li>
+</ul>
+<p>Unity 类似：使用 C# 的垃圾回收，但引入了 Incremental GC（增量式）来避免瞬卡。Unity 也提供了 <code>UnsafeUtility</code> 和本地分配器给高性能需求。</p>
+</div>
+</div>
+
+</div>
+</div></div></div><div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li class=""><a href="ch01_引言.html">01 引言<span class="en"></span></a></li>
+  <li class=""><a href="ch02_工具的技艺.html">02 工具的技艺<span class="en"></span></a></li>
+  <li class=" active"><a href="ch03_软件工程基础.html">03 软件工程基础<span class="en"></span></a></li>
+  <li class=""><a href="ch04_并行与并发.html">04 并行与并发<span class="en"></span></a></li>
+  <li class=""><a href="ch05_3D数学基础.html">05 3D数学基础<span class="en"></span></a></li>
+  <li class=""><a href="ch06_引擎支持系统.html">06 引擎支持系统<span class="en"></span></a></li>
+  <li class=""><a href="ch07_资源与文件系统.html">07 资源与文件系统<span class="en"></span></a></li>
+  <li class=""><a href="ch08_游戏循环与实时模拟.html">08 游戏循环与实时模拟<span class="en"></span></a></li>
+  <li class=""><a href="ch09_人机交互设备.html">09 人机交互设备<span class="en"></span></a></li>
+  <li class=""><a href="ch10_调试与开发工具.html">10 调试与开发工具<span class="en"></span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div>
+<ul class="toc-list">
+<li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#s31">3.1 C++ 与面向对象</a></li>
+  <li class="toc-h3"><a href="#3-1-1">3.1.1 面向对象三大特性</a></li>
+  <li class="toc-h4"><a href="#3-1-1-1">3.1.1.1 封装</a></li>
+  <li class="toc-h4"><a href="#3-1-1-2">3.1.1.2 继承</a></li>
+  <li class="toc-h4"><a href="#3-1-1-3">3.1.1.3 多态</a></li>
+  <li class="toc-h3"><a href="#3-1-2">3.1.2 指针 vs 引用</a></li>
+  <li class="toc-h3"><a href="#3-1-3">3.1.3 虚函数与虚函数表（vtable）</a></li>
+  <li class="toc-h2"><a href="#s32">3.2 错误处理与断言</a></li>
+  <li class="toc-h3"><a href="#3-2-1">3.2.1 三种错误处理方式</a></li>
+  <li class="toc-h4"><a href="#3-2-1-1">3.2.1.1 返回值检查</a></li>
+  <li class="toc-h4"><a href="#3-2-1-2">3.2.1.2 C++ 异常</a></li>
+  <li class="toc-h4"><a href="#3-2-1-3">3.2.1.3 断言（assertion）</a></li>
+  <li class="toc-h3"><a href="#3-2-2">3.2.2 断言哲学</a></li>
+  <li class="toc-h2"><a href="#s33">3.3 数据、代码与内存布局</a></li>
+  <li class="toc-h3"><a href="#3-3-1">3.3.1 四段结构详解</a></li>
+  <li class="toc-h4"><a href="#3-3-1-1">3.3.1.1 代码段（.text）</a></li>
+  <li class="toc-h4"><a href="#3-3-1-2">3.3.1.2 数据段（.data / .bss）</a></li>
+  <li class="toc-h4"><a href="#3-3-1-3">3.3.1.3 堆（Heap）</a></li>
+  <li class="toc-h4"><a href="#3-3-1-4">3.3.1.4 栈（Stack）</a></li>
+  <li class="toc-h3"><a href="#3-3-2">3.3.2 栈 vs 堆：性能差异</a></li>
+  <li class="toc-h4"><a href="#3-3-2-1">3.3.2.1 栈分配原理</a></li>
+  <li class="toc-h4"><a href="#3-3-2-2">3.3.2.2 堆分配原理</a></li>
+  <li class="toc-h3"><a href="#3-3-3">3.3.3 实战对比</a></li>
+  <li class="toc-h2"><a href="#s34">3.4 计算机硬件基础</a></li>
+  <li class="toc-h3"><a href="#3-4-1">3.4.1 内存层次结构</a></li>
+  <li class="toc-h3"><a href="#3-4-2">3.4.2 缓存行（Cache Line）</a></li>
+  <li class="toc-h3"><a href="#3-4-3">3.4.3 性能影响：糟糕设计 vs DOD 设计</a></li>
+  <li class="toc-h2"><a href="#s35">3.5 内存架构</a></li>
+  <li class="toc-h3"><a href="#3-5-1">3.5.1 虚拟内存</a></li>
+  <li class="toc-h3"><a href="#3-5-2">3.5.2 内存对齐</a></li>
+  <li class="toc-h3"><a href="#3-5-3">3.5.3 内存优化策略</a></li>
+  <li class="toc-h2"><a href="#insight">本章核心洞察</a></li>
+  <li class="toc-h2"><a href="#exercises">📝 课后练习题（含答案）</a></li>
+  <li class="toc-h2"><a href="#qaagent">🤖 qAagent 零基础问答区</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+function toggleQA(el){
+  var item=el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+</body></html>

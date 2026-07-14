@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>GEA Vol.1 Ch07: 资源与文件系统 — 零基础讲义 (Guizang版)</title>
+<style>/* GEA Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+svg{max-width:100%;height:auto}
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content h4{font-size:14px;font-weight:600;margin:14px 0 6px;color:#444;padding-left:14px;border-left:2px solid #b2b2ff}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img,#content figure svg{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+.info-box{background:#eef0ff;border-left:4px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.thought-box{background:#fff8e1;border-left:4px solid #ffc107;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.key-box{background:#e8f8f5;border-left:4px solid #00b894;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.guizang-figure{text-align:center;margin:16px 0}
+.guizang-figure svg{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.guizang-caption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+.lesson-box{background:#faf8ff;border:1px dashed #b2b2ff;padding:12px 16px;margin:16px 0;border-radius:6px}
+.lesson-tag{display:inline-block;background:#5b5bff;color:#fff;font-size:11px;padding:2px 8px;border-radius:3px;margin-right:8px}
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list li.toc-h4{padding-left:48px;color:#888;font-size:11px;font-style:italic}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+.qa-section{margin:20px 0}
+.qa-item{border:1px solid #e8e8e3;border-radius:8px;margin:8px 0;overflow:hidden}
+.qa-q{background:#fafaf8;padding:10px 14px;cursor:pointer;font-weight:600;font-size:14px;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.qa-q:hover{background:#f0f0ec}
+.qa-q .arrow{color:#999;font-size:12px;transition:transform .2s}
+.qa-item.open .qa-q .arrow{transform:rotate(90deg)}
+.qa-a{display:none;padding:12px 14px;background:#fff;font-size:14px;line-height:1.8;border-top:1px solid #eee}
+.qa-item.open .qa-a{display:block}
+.qa-a code{background:#f0f0eb;padding:1px 4px;border-radius:3px;font-size:.9em;color:#d6336c}
+.qa-tag{display:inline-block;background:#eef0ff;color:#5b5bff;font-size:10px;padding:1px 6px;border-radius:3px;margin-right:6px}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">GEA V1</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch07 资源与文件系统</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<!-- CH03 DETAILED WITH x.x.x SUBSECTIONS -->
+<h1>第7章：资源与文件系统 — 零基础讲义</h1>
+
+<blockquote><p><strong>讲义说明</strong><br>本讲义基于 Jason Gregory 所著《Game Engine Architecture Volume I》第4版第7章（Resources and the File System, p.439-482），逐节翻译推导。<br><em>本版插画由 ImageGen + Guizang 材质插画标准流程生成。</em></p></blockquote>
+
+<div class="toc"><strong>目录</strong><ul>
+<li><a href="#学习目标">学习目标</a></li>
+<li><a href="#7-1">7.1 文件系统</a></li>
+<li><a href="#7-2">7.2 资源管理器</a></li>
+<li><a href="#7-3">7.3 流式加载</a></li>
+<li><a href="#7-4">7.4 资源生命周期</a></li>
+<li><a href="#insight">本章核心洞察</a></li>
+<li><a href="#exercises">课后练习题</a></li>
+<li><a href="#qaagent">qAagent 零基础问答区</a></li>
+</ul></div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol><li>理解包文件（Pak/Package）的设计目的和结构</li><li>掌握异步 I/O 的基本原理</li><li>理解资源管理器的核心职责（加载、卸载、引用计数、依赖管理）</li><li>掌握流式加载在开放世界游戏中的实现策略</li><li>理解资源生命周期管理的设计权衡</li></ol>
+<hr>
+
+<h2 id="7-1">7.1 文件系统</h2>
+
+<div class="guizang-figure"><img src="images/ch07/01_resource_manager.png" alt="资源管理器"><div class="guizang-caption">图7-1：资源管理器工作流程（Guizang流程生成）</div></div>
+
+<h3 id="7-1-1">7.1.1 为什么不能用操作系统的文件系统？</h3>
+<h4 id="7-1-1-1">7.1.1.1 OS 文件系统的三大局限</h4>
+<table><tr><th>问题</th><th>影响</th></tr>
+<tr><td>文件数量爆炸</td><td>游戏可能有数十万个独立文件——OS 打开/遍历目录极慢</td></tr>
+<tr><td>磁盘寻道</td><td>每打开一个新文件 = 磁头移动到另一个位置（HDD 上 8-15ms！）</td></tr>
+<tr><td>跨平台差异</td><td>Windows 反斜杠、Linux 正斜杠、PS5 完全不同</td></tr>
+</table>
+
+<h3 id="7-1-2">7.1.2 包文件（Package File）</h3>
+<h4 id="7-1-2-1">7.1.2.1 核心思想：把一万个小文件打包成一个大文件</h4>
+<p><strong>生活类比：</strong> 搬家时把零碎物品装进纸箱——搬运一个纸箱比搬运 100 个小物件高效得多。同样的，读取一个连续的 2GB 文件比读取 10000 个 200KB 的文件快数十倍。</p>
+<h4 id="7-1-2-2">7.1.2.2 包文件的结构</h4>
+<pre><code>// 包文件（.pak）的内部结构
+[文件头: "PAK1" 魔术数 + 版本号]
+[文件内容: 连续存储的压缩/不压缩数据块]
+[目录表: 文件名→偏移量+大小的哈希表——位于文件末尾，便于快速更新]
+
+// 加载流程
+1. 打开 .pak 文件
+2. 读文件尾的目录表到内存
+3. 需要 "textures/hero.png": 查哈希表 → 得到偏移量 → seek + 读取 → 返回</code></pre>
+
+<h3 id="7-1-3">7.1.3 异步 I/O</h3>
+<h4 id="7-1-3-1">7.1.3.1 三个核心操作</h4>
+<pre><code>// 异步 I/O 的三步模式
+// ① 发起请求（立即返回）
+IORequest req = FileSystem::ReadAsync("textures/hero.png", callback);
+
+// ② 游戏继续运行，不被阻塞
+GameLoop::Update(dt);  // IO 在后台处理中...
+
+// ③ 检查是否完成
+if (req.IsReady()) {
+    Texture* tex = LoadFromMemory(req.GetData());
+}</code></pre>
+<h4 id="7-1-3-2">7.1.3.2 为什么必须异步？</h4>
+<p>同步读取一个 32MB 的纹理 = 游戏画面冻结 50-100ms——完全不可接受。异步 I/O 在 IO 线程（或 OS 内核）中处理磁盘操作，主线程继续运行——玩家看到的加载动画是实时渲染的。</p>
+
+<hr>
+
+<h2 id="7-2">7.2 资源管理器</h2>
+
+<h3 id="7-2-1">7.2.1 资源管理器的核心职责</h3>
+<h4 id="7-2-1-1">7.2.1.1 四大核心功能</h4>
+<ol><li><strong>加载：</strong> 从包文件读取原始数据→解析→转换为 GPU/CPU 可用的格式</li>
+<li><strong>卸载：</strong> 释放不再需要的资源占用的内存（对内存紧缺的游戏机至关重要）</li>
+<li><strong>去重：</strong> 两个角色用了同一张纹理——只加载一次，返回同一个指针</li>
+<li><strong>依赖追踪：</strong> 材质依赖纹理和着色器——卸载材质时自动检查依赖</li></ol>
+
+<h3 id="7-2-2">7.2.2 引用计数</h3>
+<h4 id="7-2-2-1">7.2.2.1 AddRef / Release 模式</h4>
+<pre><code>class Resource {
+    std::atomic&lt;int&gt; refCount = 0;
+
+    void AddRef() { refCount++; }
+
+    void Release() {
+        if (--refCount == 0) {
+            Unload();      // 没人引用了——真正卸载
+        }
+    }
+};
+
+// 使用示例
+Texture* tex = ResourceManager::Load("hero.png");  // refCount = 1
+Material* mat = CreateMaterial(tex);                // refCount = 2 (材质也引用)
+tex-&gt;Release();                                     // refCount = 1
+mat-&gt;Release();                                     // refCount = 0 → 卸载</code></pre>
+
+<h3 id="7-2-3">7.2.3 依赖管理</h3>
+<h4 id="7-2-3-1">7.2.3.1 依赖图</h4>
+<p>一个角色模型（FBX）可能依赖：骨骼动画数据、多张纹理（漫反射/法线/金属度/粗糙度）、材质、着色器、碰撞数据、物理材质。资源管理器需要知道这支"依赖树"。当卸载角色时，所有只被这个角色引用的子资源也一起卸载。</p>
+<pre><code>// knight.fbx 的依赖树
+knight.fbx
+  ├── skeleton.bone_data
+  ├── knight_diffuse.png        ← 只有 knight 在用
+  ├── knight_normal.png         ← 只有 knight 在用
+  ├── steel_material.mtl
+  │   └── steel_shader.glsl     ← 多个角色共用——不能卸载！
+  ├── knight_physics.col
+  ├── walk.anim
+  ├── attack.anim
+  └── hit_reaction.anim
+
+// 卸载 knight 时：
+// ✅ 卸载 knight_diffuse.png (refCount=0)
+// ❌ 不卸载 steel_shader.glsl (refCount=5，其他角色还在用)</code></pre>
+
+<hr>
+
+<h2 id="7-3">7.3 流式加载</h2>
+
+<h3 id="7-3-1">7.3.1 开放世界的挑战</h3>
+<h4 id="7-3-1-1">7.3.1.1 内存永远不够</h4>
+<pre><code>// 开放世界资源规模估算
+世界大小: 64 平方千米
+每平方米纹理数据: ~2MB（压缩后）
+总纹理需求: 128TB ← 不可能全加载到内存！
+GPU 显存: 8-12GB（PS5/高端PC）
+
+结论: 只能加载玩家周围的资源（~1-2km半径），远处的不加载或低精度</code></pre>
+
+<h3 id="7-3-2">7.3.2 区块策略（Chunking）</h3>
+<h4 id="7-3-2-1">7.3.2.1 世界切分与九格加载</h4>
+<p>把世界切成等大的区块（如 256m×256m 一个 chunk）。始终加载玩家所在区块及相邻8个区块（3×3）。当玩家移动到新区块时，异步加载新出现的3个区块，卸载离开的3个旧区块。</p>
+<pre><code>// 区块加载伪代码
+void UpdateStreaming(Vector3 playerPos) {
+    int3 currentChunk = WorldToChunk(playerPos);
+
+    for (int dx=-1; dx<=1; dx++)
+    for (int dy=-1; dy<=1; dy++) {
+        int3 chunk = currentChunk + int3(dx,0,dy);
+        if (!IsLoaded(chunk))
+            RequestLoadAsync(chunk);   // 异步加载
+    }
+
+    // 卸载距离 > 2 的区块
+    for (auto& loaded : loadedChunks) {
+        if (Distance(loaded.center, playerPos) > 2 * chunkSize)
+            UnloadChunk(loaded);
+    }
+}</code></pre>
+
+<h3 id="7-3-3">7.3.3 流式加载的四大挑战</h3>
+<h4 id="7-3-3-1">7.3.3.1 需要精妙处理的四种情况</h4>
+<ol><li><strong>预测：</strong> 玩家开车速度 100km/h = 每秒跨越 0.8 个区块——需要提前加载前方区块</li>
+<li><strong>瞬间传送：</strong> 玩家用传送门跳了 10km——画面可能冻结几秒（加载目的地的大量资源）</li>
+<li><strong>POP-IN：</strong> 资源在玩家眼前"弹出来"——用淡入、低精度先替代、延迟显示等技巧缓解</li>
+<li><strong>平滑过渡：</strong> 从"低精度 LOD"无缝切换到"高精度完整模型"——不能让玩家看到切换过程</li></ol>
+
+<hr>
+
+<h2 id="7-4">7.4 资源生命周期</h2>
+
+<h3 id="7-4-1">7.4.1 资源状态机</h3>
+<h4 id="7-4-1-1">7.4.1.1 五种状态</h4>
+<ol><li><strong>未加载：</strong> 根本不在内存中</li>
+<li><strong>加载中：</strong> 异步加载正在进行（IO线程在读文件，主线程等结果）</li>
+<li><strong>已加载未使用：</strong> 在内存中但没有对象引用它——等待回收</li>
+<li><strong>已加载使用中：</strong> 至少一个游戏对象引用了它</li>
+<li><strong>已卸载：</strong> 从内存中移除——释放给其他资源</li></ol>
+
+<h3 id="7-4-2">7.4.2 卸载策略</h3>
+<h4 id="7-4-2-1">7.4.2.1 激进 vs 保守</h4>
+<p><strong>激进卸载：</strong> refCount 降到 0 立即卸载——内存使用最小但可能"卸早了"（玩家过几秒又需要——重新加载有延迟）。<br><strong>保守卸载：</strong> refCount=0 后保留在内存中直到内存压力——给了一个"宽限期"，避免反复加载卸载同一资源（"抖动"）。<br>实际中采用混合策略：小的资源激进卸载（省内存），大的资源保守卸载（避免重新加载的延迟）。</p>
+
+<hr>
+
+<h2 id="insight">本章核心洞察</h2>
+<div class="key-box"><strong>🔑 资源管理 = 游戏世界的"内存管家"</strong><br>
+从操作系统的角度看，游戏是一个"不断大量吃内存又大量释放"的极端程序。资源管理器在"永远不够的内存"和"无限大的游戏世界"之间走钢丝。包文件聚合小文件、引用计数管理生命周期、流式加载按需读取——这三者构成了现代游戏资源基础设施的骨架。<br><br>
+<strong>三条资源准则：</strong><br>
+1. <strong>包文件不是"可选"——是"必须"：</strong> 一万个独立文件在主机上的加载时间是灾难性的<br>
+2. <strong>异步 I/O 是默认，不是优化：</strong> 任何会阻塞主线程超过 1ms 的 I/O 操作都必须异步<br>
+3. <strong>引用计数不是银弹：</strong> 循环引用需要手动打破（A引用B，B引用A——两者永远不会降到0），需要 weak pointer</div>
+
+<hr>
+
+<h2 id="exercises">📝 课后练习题（含答案）</h2>
+<div class="qa-section">
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题1</span>为什么游戏引擎需要包文件？至少列举三个原因。</span><span class="arrow">▶</span></div><div class="qa-a"><p>① 减少磁盘寻道（一个大文件 vs 一万个小文件）② 便于分发和更新（一个文件vs散落的上万文件）③ 跨平台抽象（Windows/PS5/Xbox 统一接口）④ 可选压缩和加密。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题2</span>引用计数的基本思想是什么？引用计数的最大陷阱是什么？</span><span class="arrow">▶</span></div><div class="qa-a"><p>思想：每个对象记录"有多少地方在使用它"。AddRef时+1，Release时-1，降到0时卸载。最大陷阱：<strong>循环引用</strong>——A引用B、B引用A，两个对象互相持有引用，refCount永远不会到0 → 内存泄漏。解决方案：weak_ptr（不增加引用计数）。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题3</span>异步I/O的三个步骤是什么？为什么不能在加载纹理时直接用同步fread？</span><span class="arrow">▶</span></div><div class="qa-a"><p>① 发起请求（立即返回）② 游戏继续运行（不被阻塞）③ 检查是否完成。同步 fread 会阻塞主线程——32MB纹理的同步读取可能让游戏冻结 50-100ms。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题4</span>什么是POP-IN？有哪些缓解技巧？</span><span class="arrow">▶</span></div><div class="qa-a"><p>POP-IN = 资源在玩家眼前突然出现。缓解：① 淡入（1-2帧的不透明度过渡）② LOD切换时做几何变形（Dithering/像素溶解）③ 先显示低精度再异步替换高精度④ 增加预加载距离。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题5</span>一个角色模型（FBX）加载时，大概会触发多少依赖资源的加载？</span><span class="arrow">▶</span></div><div class="qa-a"><p>一个典型的 AAA 角色可能触发加载：骨骼数据(1)、纹理贴图(4-6张: 漫反射/法线/金属/粗糙度/AO/自发光)、材质文件(1)、着色器(1-2)、碰撞数据(1)、动画文件(10-50)。总计 ~20-60 个依赖资源。这全部由资源管理器的依赖图自动串联加载。</p></div></div>
+
+</div>
+
+<hr>
+
+<h2 id="qaagent">🤖 qAagent 零基础问答区</h2>
+<div class="qa-section">
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">概念</span>PS5 的 SSD 和普通硬盘在游戏加载上有本质区别吗？</span><span class="arrow">▶</span></div><div class="qa-a"><p>有，而且是<strong>量级差异</strong>。HDD: 100-150MB/s 顺序读、8-15ms 寻道延迟。PS5 SSD: 5500MB/s 顺序读、<0.1ms 延迟。这意味着 PS5 的开发者可以做传统 HDD 上不可能的设计——比如实时从 SSD 流式加载纹理（不需要预加载到内存），因为读取速度已经接近内存带宽。这就是为什么 PS5 独占游戏有所谓的"无加载界面"——SSD 快到让加载和游戏无缝融合。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">概念</span>Weak Pointer（弱指针）和智能指针有什么区别？什么场景下用它？</span><span class="arrow">▶</span></div><div class="qa-a"><p>weak_ptr<strong>不增加引用计数</strong>——它只是一个"软引用"。使用时需要 lock() 得到一个 shared_ptr（如果对象已被释放则返回空）。<strong>场景：</strong>打破循环引用——A持有B的shared_ptr，B持有A的weak_ptr。A释放后，B的weak_ptr自动失效。在资源管理中：资源管理器持有资源的shared_ptr，游戏对象持有weak_ptr——游戏对象不阻止资源被卸载。</p></div></div>
+
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li class=""><a href="ch01_引言.html">01 引言<span class="en"></span></a></li>
+  <li class=""><a href="ch02_工具的技艺.html">02 工具的技艺<span class="en"></span></a></li>
+  <li class=""><a href="ch03_软件工程基础.html">03 软件工程基础<span class="en"></span></a></li>
+  <li class=""><a href="ch04_并行与并发.html">04 并行与并发<span class="en"></span></a></li>
+  <li class=""><a href="ch05_3D数学基础.html">05 3D数学基础<span class="en"></span></a></li>
+  <li class=""><a href="ch06_引擎支持系统.html">06 引擎支持系统<span class="en"></span></a></li>
+  <li class=" active"><a href="ch07_资源与文件系统.html">07 资源与文件系统<span class="en"></span></a></li>
+  <li class=""><a href="ch08_游戏循环与实时模拟.html">08 游戏循环与实时模拟<span class="en"></span></a></li>
+  <li class=""><a href="ch09_人机交互设备.html">09 人机交互设备<span class="en"></span></a></li>
+  <li class=""><a href="ch10_调试与开发工具.html">10 调试与开发工具<span class="en"></span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div>
+<ul class="toc-list">
+<li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#7-1">7.1 文件系统</a></li>
+  <li class="toc-h3"><a href="#7-1-1">7.1.1 为什么不能用操作系统的文件系统？</a></li>
+  <li class="toc-h4"><a href="#7-1-1-1">7.1.1.1 OS 文件系统的三大局限</a></li>
+  <li class="toc-h3"><a href="#7-1-2">7.1.2 包文件（Package File）</a></li>
+  <li class="toc-h4"><a href="#7-1-2-1">7.1.2.1 核心思想：把一万个小文件打包成一个大文件</a></li>
+  <li class="toc-h4"><a href="#7-1-2-2">7.1.2.2 包文件的结构</a></li>
+  <li class="toc-h3"><a href="#7-1-3">7.1.3 异步 I/O</a></li>
+  <li class="toc-h4"><a href="#7-1-3-1">7.1.3.1 三个核心操作</a></li>
+  <li class="toc-h4"><a href="#7-1-3-2">7.1.3.2 为什么必须异步？</a></li>
+  <li class="toc-h2"><a href="#7-2">7.2 资源管理器</a></li>
+  <li class="toc-h3"><a href="#7-2-1">7.2.1 资源管理器的核心职责</a></li>
+  <li class="toc-h4"><a href="#7-2-1-1">7.2.1.1 四大核心功能</a></li>
+  <li class="toc-h3"><a href="#7-2-2">7.2.2 引用计数</a></li>
+  <li class="toc-h4"><a href="#7-2-2-1">7.2.2.1 AddRef / Release 模式</a></li>
+  <li class="toc-h3"><a href="#7-2-3">7.2.3 依赖管理</a></li>
+  <li class="toc-h4"><a href="#7-2-3-1">7.2.3.1 依赖图</a></li>
+  <li class="toc-h2"><a href="#7-3">7.3 流式加载</a></li>
+  <li class="toc-h3"><a href="#7-3-1">7.3.1 开放世界的挑战</a></li>
+  <li class="toc-h4"><a href="#7-3-1-1">7.3.1.1 内存永远不够</a></li>
+  <li class="toc-h3"><a href="#7-3-2">7.3.2 区块策略（Chunking）</a></li>
+  <li class="toc-h4"><a href="#7-3-2-1">7.3.2.1 世界切分与九格加载</a></li>
+  <li class="toc-h3"><a href="#7-3-3">7.3.3 流式加载的四大挑战</a></li>
+  <li class="toc-h4"><a href="#7-3-3-1">7.3.3.1 需要精妙处理的四种情况</a></li>
+  <li class="toc-h2"><a href="#7-4">7.4 资源生命周期</a></li>
+  <li class="toc-h3"><a href="#7-4-1">7.4.1 资源状态机</a></li>
+  <li class="toc-h4"><a href="#7-4-1-1">7.4.1.1 五种状态</a></li>
+  <li class="toc-h3"><a href="#7-4-2">7.4.2 卸载策略</a></li>
+  <li class="toc-h4"><a href="#7-4-2-1">7.4.2.1 激进 vs 保守</a></li>
+  <li class="toc-h2"><a href="#insight">本章核心洞察</a></li>
+  <li class="toc-h2"><a href="#exercises">📝 课后练习题（含答案）</a></li>
+  <li class="toc-h2"><a href="#qaagent">🤖 qAagent 零基础问答区</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+function toggleQA(el){
+  var item=el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+</body></html>

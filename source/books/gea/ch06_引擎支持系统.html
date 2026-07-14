@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>GEA Vol.1 Ch06: 引擎支持系统 — 零基础讲义 (Guizang版)</title>
+<style>/* GEA Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+svg{max-width:100%;height:auto}
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content h4{font-size:14px;font-weight:600;margin:14px 0 6px;color:#444;padding-left:14px;border-left:2px solid #b2b2ff}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img,#content figure svg{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+.info-box{background:#eef0ff;border-left:4px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.thought-box{background:#fff8e1;border-left:4px solid #ffc107;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.key-box{background:#e8f8f5;border-left:4px solid #00b894;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.guizang-figure{text-align:center;margin:16px 0}
+.guizang-figure svg{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.guizang-caption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+.lesson-box{background:#faf8ff;border:1px dashed #b2b2ff;padding:12px 16px;margin:16px 0;border-radius:6px}
+.lesson-tag{display:inline-block;background:#5b5bff;color:#fff;font-size:11px;padding:2px 8px;border-radius:3px;margin-right:8px}
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list li.toc-h4{padding-left:48px;color:#888;font-size:11px;font-style:italic}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+.qa-section{margin:20px 0}
+.qa-item{border:1px solid #e8e8e3;border-radius:8px;margin:8px 0;overflow:hidden}
+.qa-q{background:#fafaf8;padding:10px 14px;cursor:pointer;font-weight:600;font-size:14px;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.qa-q:hover{background:#f0f0ec}
+.qa-q .arrow{color:#999;font-size:12px;transition:transform .2s}
+.qa-item.open .qa-q .arrow{transform:rotate(90deg)}
+.qa-a{display:none;padding:12px 14px;background:#fff;font-size:14px;line-height:1.8;border-top:1px solid #eee}
+.qa-item.open .qa-a{display:block}
+.qa-a code{background:#f0f0eb;padding:1px 4px;border-radius:3px;font-size:.9em;color:#d6336c}
+.qa-tag{display:inline-block;background:#eef0ff;color:#5b5bff;font-size:10px;padding:1px 6px;border-radius:3px;margin-right:6px}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">GEA V1</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch06 引擎支持系统</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<!-- CH03 DETAILED WITH x.x.x SUBSECTIONS -->
+<h1>第6章：引擎支持系统 — 零基础讲义</h1>
+
+<blockquote><p><strong>讲义说明</strong><br>本讲义基于 Jason Gregory 所著《Game Engine Architecture Volume I》第4版第6章（Engine Support Systems, p.387-438），逐节翻译推导。本章涵盖引擎的"下水道系统"——内存管理、容器、字符串等基础设施。<br><em>本版插画由 ImageGen + Guizang 材质插画标准流程生成。</em></p></blockquote>
+
+<div class="toc"><strong>目录</strong><ul>
+<li><a href="#学习目标">学习目标</a></li>
+<li><a href="#6-1">6.1 子系统启动与终止</a></li>
+<li><a href="#6-2">6.2 内存管理</a></li>
+<li><a href="#6-3">6.3 容器</a></li>
+<li><a href="#6-4">6.4 字符串与哈希ID</a></li>
+<li><a href="#6-5">6.5 引擎配置</a></li>
+<li><a href="#insight">本章核心洞察</a></li>
+<li><a href="#exercises">课后练习题</a></li>
+<li><a href="#qaagent">qAagent 零基础问答区</a></li>
+</ul></div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol><li>理解引擎子系统的启动顺序及其依赖关系</li><li>掌握各种自定义分配器的使用场景（线性/池/栈/双缓冲）</li><li>理解为什么游戏引擎需要自定义容器（而非直接用 STL）</li><li>掌握字符串哈希ID（StringId）的用途</li><li>了解引擎配置系统（CVar）的设计</li></ol>
+<hr>
+
+<h2 id="6-1">6.1 子系统启动与终止</h2>
+
+<h3 id="6-1-1">6.1.1 启动顺序</h3>
+<h4 id="6-1-1-1">6.1.1.1 为什么顺序很重要？</h4>
+<p>引擎启动像<strong>搭积木</strong>——必须先放最底层，再逐层往上。内存管理器必须在所有系统之前初始化（因为所有系统都要分配内存）。渲染器必须在游戏逻辑之前初始化（因为游戏逻辑可能加载需要渲染的资源）。</p>
+<h4 id="6-1-1-2">6.1.1.2 典型启动序列</h4>
+<pre><code>// 引擎子系统启动顺序（拓扑排序）
+1. 内存管理器 ← 一切的基础
+2. 数学库
+3. 文件系统
+4. 日志系统
+5. 资源管理器
+6. 渲染器
+7. 物理引擎
+8. 音频引擎
+9. 动画系统
+10. AI 系统
+11. 游戏逻辑 → 启动完成！
+
+// 关闭顺序相反：11,10,9,8,...,1</code></pre>
+
+<h3 id="6-1-2">6.1.2 子系统依赖管理</h3>
+<h4 id="6-1-2-1">6.1.2.1 依赖声明</h4>
+<p>每个子系统声明"我需要哪些系统在我之前启动"——系统管理器根据依赖图自动计算正确的启动和关闭顺序。这就是"拓扑排序"——你不需要手动编排顺序，只需要声明依赖。</p>
+<pre><code>// 依赖声明伪代码
+REGISTER_SYSTEM(Renderer)
+    .DependsOn(ResourceManager)
+    .DependsOn(FileSystem)
+    .DependsOn(MemoryManager);
+// 系统管理器自动算出：Memory→File→Resource→Renderer</code></pre>
+
+<hr>
+
+<h2 id="6-2">6.2 内存管理</h2>
+
+<div class="guizang-figure"><img src="images/ch06/01_allocators.png" alt="四种分配器"><div class="guizang-caption">图6-1：四种自定义内存分配器（Guizang流程生成）</div></div>
+
+<h3 id="6-2-1">6.2.1 为什么不能用 malloc/free？</h3>
+<h4 id="6-2-1-1">6.2.1.1 通用分配器的五大问题</h4>
+<table><tr><th>问题</th><th>影响</th></tr>
+<tr><td>速度不确定</td><td>malloc 可能触发系统调用，耗时从 50ns 到 1ms 不等——帧率抖动</td></tr>
+<tr><td>内存碎片</td><td>长时间运行后，空闲内存被切碎，大块分配失败</td></tr>
+<tr><td>无调试信息</td><td>不知道这次分配来自哪个系统、哪个文件</td></tr>
+<tr><td>无内存统计</td><td>不知道"渲染器用了多少内存 vs AI 系统用了多少"</td></tr>
+<tr><td>不可定制</td><td>不能针对特定使用模式优化</td></tr>
+</table>
+
+<h3 id="6-2-2">6.2.2 四种自定义分配器</h3>
+<h4 id="6-2-2-1">6.2.2.1 线性分配器（Stack/Linear Allocator）</h4>
+<p><strong>模型：</strong> 像一个卷纸——一直往前用，用完一卷换新一卷。分配超快（只移动一个指针），但<strong>无法单独释放</strong>中间的对象——只能整卷重置。<strong>适合：</strong>一帧的临时数据（函数调用中的临时缓冲、渲染命令缓冲）。</p>
+<pre><code>class LinearAllocator {
+    char* buffer;
+    size_t capacity;
+    size_t offset = 0;
+
+    void* Allocate(size_t size) {
+        assert(offset + size <= capacity);
+        void* ptr = buffer + offset;
+        offset += size;
+        return ptr;
+    }
+
+    void Reset() { offset = 0; }  // 整卷重置，极快
+};</code></pre>
+
+<h4 id="6-2-2-2">6.2.2.2 池分配器（Pool Allocator）</h4>
+<p><strong>模型：</strong> 预分配一大块内存，切成等大小的小块。分配=从空闲链表摘一个，释放=挂回空闲链表——O(1) 且无碎片。<strong>适合：</strong>大量同类型的小对象（子弹、粒子、UI元素）。</p>
+<pre><code>template&lt;typename T&gt;
+class PoolAllocator {
+    struct Slot { union { T data; Slot* next; }; };  // 空闲时用作链表节点
+    Slot* freeList;  // 空闲链表
+
+    T* Allocate() {
+        Slot* s = freeList;
+        freeList = s->next;
+        return &s->data;
+    }
+    void Free(T* obj) {
+        Slot* s = reinterpret_cast&lt;Slot*&gt;(obj);
+        s->next = freeList;
+        freeList = s;
+    }
+};</code></pre>
+
+<h4 id="6-2-2-3">6.2.2.3 栈分配器（LIFO Allocator）</h4>
+<p>类似线性但支持"释放最后分配的"。<strong>适合：</strong>递归算法中的临时树节点。</p>
+
+<h4 id="6-2-2-4">6.2.2.4 双缓冲分配器（Double-Buffered Allocator）</h4>
+<p>两个缓冲区：当前帧用 A，下一帧开始前切换到 B（同时清空 A 给下下帧用）。<strong>适合：</strong>多线程中一帧的临时数据——渲染线程读 BufferB，逻辑线程写 BufferA，帧末尾交换——无需锁。</p>
+
+<div class="thought-box"><strong>想一想</strong>：池分配器和通用 malloc 的区别是什么？为什么游戏引擎大量使用池分配器？<br>
+<blockquote style="background:transparent;border:none;padding:0;margin:4px 0 0">核心区别：<strong>池分配器零碎片、恒定时间、缓存友好</strong>。所有槽位大小相同且连续排列，CPU 缓存可以预取。malloc 需要维护复杂的空闲链表，操作时间不确定。游戏引擎中 "大量同类型对象"（子弹/粒子/敌人）是常态——池分配器是标配。</blockquote></div>
+
+<hr>
+
+<h2 id="6-3">6.3 容器</h2>
+
+<h3 id="6-3-1">6.3.1 游戏引擎的自定义容器</h3>
+<h4 id="6-3-1-1">6.3.1.1 为什么不用 STL？</h4>
+<table><tr><th>问题</th><th>STL</th><th>自定义容器</th></tr>
+<tr><td>分配器</td><td>std::allocator（全局 malloc）</td><td>引擎自定义分配器（池/线性/带跟踪）</td></tr>
+<tr><td>内存开销</td><td>某些实现有额外开销</td><td>精确控制内存布局</td></tr>
+<tr><td>调试</td><td>调试复杂（模板展开后难读）</td><td>可附加调试信息（分配来源）</td></tr>
+<tr><td>性能</td><td>一般（通用实现）</td><td>针对游戏使用模式优化</td></tr>
+<tr><td>跨平台一致性</td><td>各平台实现不同</td><td>行为完全一致</td></tr>
+</table>
+
+<h3 id="6-3-2">6.3.2 缓存友好的容器设计</h3>
+<h4 id="6-3-2-1">6.3.2.1 数组优于链表</h4>
+<pre><code>// ❌ 链表：每次迭代都可能 cache miss（每个节点内存不连续）
+std::list&lt;Enemy&gt; enemies;
+for (auto& e : enemies) { e.Update(); }
+
+// ✅ 数组：内存连续，CPU 预取有效——cache miss 率极低
+std::vector&lt;Enemy&gt; enemies;
+for (auto& e : enemies) { e.Update();  // 快 10-100 倍！}
+
+// 为什么差这么多？
+// L1 cache 延迟 1ns，RAM 延迟 100ns
+// 数组：第一次访问将连续内存块加载到 cache，后续访问命中 cache（1ns）
+// 链表：每个节点跳转到随机位置 → 几乎每次访问都 cache miss（100ns）</code></pre>
+
+<h3 id="6-3-3">6.3.3 C++17 标准容器</h3>
+<h4 id="6-3-3-1">6.3.3.1 实际上越来越多的引擎使用 STL</h4>
+<p>随着 C++17/20 标准容器的改进（支持自定义分配器、small_vector/static_vector 提案），越来越多引擎（包括部分 Unreal 模块）开始使用标准容器+自定义分配器，而不是从头写一套。</p>
+
+<hr>
+
+<h2 id="6-4">6.4 字符串与哈希ID</h2>
+
+<h3 id="6-4-1">6.4.1 为什么字符串在游戏引擎中是"昂贵"的？</h3>
+<h4 id="6-4-1-1">6.4.1.1 三个问题</h4>
+<p>① 动态分配（std::string 每次赋值可能分配新内存）② 比较慢（strcmp 是 O(n)）③ 占用内存大（每个 string 都有独立缓冲区）。在游戏引擎中，字符串几乎只用于<strong>调试输出和资源路径</strong>——内部标识用更高效的方式。</p>
+
+<h3 id="6-4-2">6.4.2 StringId / FName 系统</h3>
+<h4 id="6-4-2-1">6.4.2.1 核心思想：运行时用整数代替字符串</h4>
+<p>资源路径、配置名等在编译或首次加载时计算哈希，运行时只传递 32/64 位整数。字符串比较变成了整数比较（O(1) vs O(n)）。Unreal Engine 的 <strong>FName</strong> 就是这套系统的经典实现。</p>
+
+<pre><code>// StringId 的简单实现
+class StringId {
+    static std::unordered_map&lt;uint32_t, std::string&gt; table;
+public:
+    static uint32_t Intern(const char* str) {
+        uint32_t hash = Hash(str);  // FNV-1a 或 CRC32
+        table[hash] = str;          // 保存原始字符串（调试用）
+        return hash;
+    }
+
+    static const char* Lookup(uint32_t id) {
+        return table[id].c_str();   // 调试时查看原始字符串
+    }
+};
+
+// 使用时：字符串只出现一次（Intern时），之后全是整数比较
+StringId heroPath = StringId::Intern("meshes/hero/hero_mesh.fbx");
+// ... 以后所有比较操作都是整数比整数，比字符串比较快10-100倍</code></pre>
+
+<h4 id="6-4-2-2">6.4.2.2 FNV-1a 哈希</h4>
+<p>FNV-1a 是游戏引擎中最常用的哈希算法——简单（每字节一个 XOR + 乘法）、快速、碰撞率低。Gregory 在书中特别推荐。</p>
+
+<hr>
+
+<h2 id="6-5">6.5 引擎配置</h2>
+
+<h3 id="6-5-1">6.5.1 配置系统的需求</h3>
+<h4 id="6-5-1-1">6.5.1.1 五个关键需求</h4>
+<ol><li><strong>层次化覆盖：</strong> 默认值 → 用户配置 → 命令行参数。命令行参数的优先级最高</li>
+<li><strong>热重载：</strong> 修改配置不需要重启游戏</li>
+<li><strong>类型安全：</strong> 不能把字符串赋给整数配置</li>
+<li><strong>序列化：</strong> 能保存和加载到 JSON/INI</li>
+<li><strong>控制台可访问：</strong> 在游戏内的控制台修改</li></ol>
+
+<h3 id="6-5-2">6.5.2 Unreal 的 CVar 系统</h3>
+<h4 id="6-5-2-1">6.5.2.1 三位一体</h4>
+<pre><code>// Unreal 风格 CVar 的声明+注册+使用
+// 声明（通常在 .cpp 文件顶部）
+static TAutoConsoleVariable&lt;float&gt; CVarPlayerSpeed(
+    TEXT("game.player.speed"),   // 控制台名称
+    5.0f,                         // 默认值
+    TEXT("Player movement speed in meters per second"),
+    ECVF_Default                  // 标志位
+);
+
+// 游戏逻辑中使用
+float speed = CVarPlayerSpeed.GetValueOnGameThread();
+
+// 控制台中修改（运行时）
+// > game.player.speed 10.0
+// → "game.player.speed = 10.0"</code></pre>
+
+<hr>
+
+<h2 id="insight">本章核心洞察</h2>
+<div class="key-box"><strong>🔑 基础设施决定上层建筑</strong><br>
+本章讲的是"下水道"——内存管理、容器、字符串——看似枯燥，但<strong>这些是决定一个引擎能跑多快、能撑多久的基础</strong>。一个用池分配器管理粒子的引擎 vs 一个每帧 malloc 几千次的引擎——帧率稳定性的差距可达数倍。同样的，用数组代替链表的简单决定，可能带来 10 倍的 cache 命中率提升。<br><br>
+<strong>三条基础准则：</strong><br>
+1. <strong>自定义分配器不是可选：</strong> 线性分配器用于每帧临时的滚动数据，池分配器用于大量同类对象<br>
+2. <strong>能用数组就不要用链表：</strong> CPU 的 cache 友好度是游戏引擎的第一性能原则<br>
+3. <strong>StringId > std::string：</strong> 内部标识用整数的哈希，字符串只用于人机交互</div>
+
+<hr>
+
+<h2 id="exercises">📝 课后练习题（含答案）</h2>
+<div class="qa-section">
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题1</span>为什么游戏引擎需要自定义内存分配器而不用系统malloc？至少列三点。</span><span class="arrow">▶</span></div><div class="qa-a"><p>① 速度不确定（malloc可能触发系统调用，慢）② 碎片化（长时间运行后空闲内存被切碎）③ 无调试信息（不知道谁分配了多少）。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题2</span>线性分配器和池分配器各适合什么场景？为什么？</span><span class="arrow">▶</span></div><div class="qa-a"><p>线性适合每帧临时数据（渲染命令缓冲、函数内临时buffers）——因为分配极快（移动指针）、帧末整卷重置。池适合大量同类对象（子弹、粒子）——O(1)分配释放、零碎片、缓存友好。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题3</span>为什么游戏引擎经常用数组而不是链表来存储对象？</span><span class="arrow">▶</span></div><div class="qa-a"><p>数组内存连续 → CPU 预取有效 → cache 命中率高。链表每个节点散落在内存各处 → 几乎每次迭代都 cache miss。差距可达10-100倍。在实时性能至关重要的游戏引擎中，这是决定性因素。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题4</span>什么是 StringId？为什么游戏引擎使用它而不是std::string？</span><span class="arrow">▶</span></div><div class="qa-a"><p>将字符串哈希为32/64位整数。运行时只传递和比较整数。优势：O(1)比较（vs O(n)的strcmp）、无动态分配、内存占用极小。Unreal的FName就是这个系统。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题5</span>双缓冲分配器如何实现"无锁"的多线程数据共享？</span><span class="arrow">▶</span></div><div class="qa-a"><p>两个缓冲区A和B。逻辑线程写A，渲染线程读B。帧末只交换指针（原子操作，<1ns）。不需要互斥锁因为两个线程永远不碰同一块缓冲区。这是"数据隔离替代数据同步"的经典设计。</p></div></div>
+
+</div>
+
+<hr>
+
+<h2 id="qaagent">🤖 qAagent 零基础问答区</h2>
+<div class="qa-section">
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">概念</span>内存碎片到底是什么？为什么这么可怕？</span><span class="arrow">▶</span></div><div class="qa-a"><p>想象一个停车场：有100个空位但分散在各处——你想停一辆需要连续5个空位的货车，虽然总空闲50个但找不到连续5个。这就是碎片。游戏中表现：总空闲2GB但无法分配一个连续的128MB缓冲——崩溃。池分配器通过固定大小消除碎片。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">实践</span>我现在就要写一个粒子系统——具体怎么用池分配器？</span><span class="arrow">▶</span></div><div class="qa-a"><p>预分配你预期的最大粒子数（比如10000个）的PoolAllocator&lt;Particle&gt;。每帧创建粒子=从池中分配（O(1)），销毁粒子=归还到池（O(1)）。池满了就不创建新粒子（或淘汰最老的）。这比每帧 new Particle/delete Particle 快数十倍且零碎片。</p></div></div>
+
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li class=""><a href="ch01_引言.html">01 引言<span class="en"></span></a></li>
+  <li class=""><a href="ch02_工具的技艺.html">02 工具的技艺<span class="en"></span></a></li>
+  <li class=""><a href="ch03_软件工程基础.html">03 软件工程基础<span class="en"></span></a></li>
+  <li class=""><a href="ch04_并行与并发.html">04 并行与并发<span class="en"></span></a></li>
+  <li class=""><a href="ch05_3D数学基础.html">05 3D数学基础<span class="en"></span></a></li>
+  <li class=" active"><a href="ch06_引擎支持系统.html">06 引擎支持系统<span class="en"></span></a></li>
+  <li class=""><a href="ch07_资源与文件系统.html">07 资源与文件系统<span class="en"></span></a></li>
+  <li class=""><a href="ch08_游戏循环与实时模拟.html">08 游戏循环与实时模拟<span class="en"></span></a></li>
+  <li class=""><a href="ch09_人机交互设备.html">09 人机交互设备<span class="en"></span></a></li>
+  <li class=""><a href="ch10_调试与开发工具.html">10 调试与开发工具<span class="en"></span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div>
+<ul class="toc-list">
+<li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#6-1">6.1 子系统启动与终止</a></li>
+  <li class="toc-h3"><a href="#6-1-1">6.1.1 启动顺序</a></li>
+  <li class="toc-h4"><a href="#6-1-1-1">6.1.1.1 为什么顺序很重要？</a></li>
+  <li class="toc-h4"><a href="#6-1-1-2">6.1.1.2 典型启动序列</a></li>
+  <li class="toc-h3"><a href="#6-1-2">6.1.2 子系统依赖管理</a></li>
+  <li class="toc-h4"><a href="#6-1-2-1">6.1.2.1 依赖声明</a></li>
+  <li class="toc-h2"><a href="#6-2">6.2 内存管理</a></li>
+  <li class="toc-h3"><a href="#6-2-1">6.2.1 为什么不能用 malloc/free？</a></li>
+  <li class="toc-h4"><a href="#6-2-1-1">6.2.1.1 通用分配器的五大问题</a></li>
+  <li class="toc-h3"><a href="#6-2-2">6.2.2 四种自定义分配器</a></li>
+  <li class="toc-h4"><a href="#6-2-2-1">6.2.2.1 线性分配器（Stack/Linear Allocator）</a></li>
+  <li class="toc-h4"><a href="#6-2-2-2">6.2.2.2 池分配器（Pool Allocator）</a></li>
+  <li class="toc-h4"><a href="#6-2-2-3">6.2.2.3 栈分配器（LIFO Allocator）</a></li>
+  <li class="toc-h4"><a href="#6-2-2-4">6.2.2.4 双缓冲分配器（Double-Buffered Allocator）</a></li>
+  <li class="toc-h2"><a href="#6-3">6.3 容器</a></li>
+  <li class="toc-h3"><a href="#6-3-1">6.3.1 游戏引擎的自定义容器</a></li>
+  <li class="toc-h4"><a href="#6-3-1-1">6.3.1.1 为什么不用 STL？</a></li>
+  <li class="toc-h3"><a href="#6-3-2">6.3.2 缓存友好的容器设计</a></li>
+  <li class="toc-h4"><a href="#6-3-2-1">6.3.2.1 数组优于链表</a></li>
+  <li class="toc-h3"><a href="#6-3-3">6.3.3 C++17 标准容器</a></li>
+  <li class="toc-h4"><a href="#6-3-3-1">6.3.3.1 实际上越来越多的引擎使用 STL</a></li>
+  <li class="toc-h2"><a href="#6-4">6.4 字符串与哈希ID</a></li>
+  <li class="toc-h3"><a href="#6-4-1">6.4.1 为什么字符串在游戏引擎中是"昂贵"的？</a></li>
+  <li class="toc-h4"><a href="#6-4-1-1">6.4.1.1 三个问题</a></li>
+  <li class="toc-h3"><a href="#6-4-2">6.4.2 StringId / FName 系统</a></li>
+  <li class="toc-h4"><a href="#6-4-2-1">6.4.2.1 核心思想：运行时用整数代替字符串</a></li>
+  <li class="toc-h4"><a href="#6-4-2-2">6.4.2.2 FNV-1a 哈希</a></li>
+  <li class="toc-h2"><a href="#6-5">6.5 引擎配置</a></li>
+  <li class="toc-h3"><a href="#6-5-1">6.5.1 配置系统的需求</a></li>
+  <li class="toc-h4"><a href="#6-5-1-1">6.5.1.1 五个关键需求</a></li>
+  <li class="toc-h3"><a href="#6-5-2">6.5.2 Unreal 的 CVar 系统</a></li>
+  <li class="toc-h4"><a href="#6-5-2-1">6.5.2.1 三位一体</a></li>
+  <li class="toc-h2"><a href="#insight">本章核心洞察</a></li>
+  <li class="toc-h2"><a href="#exercises">📝 课后练习题（含答案）</a></li>
+  <li class="toc-h2"><a href="#qaagent">🤖 qAagent 零基础问答区</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+function toggleQA(el){
+  var item=el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+</body></html>

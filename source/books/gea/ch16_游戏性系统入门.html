@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>GEA Vol.2 Ch16: 游戏性系统入门 — 零基础讲义 (Guizang版)</title>
+<style>/* GEA Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+svg{max-width:100%;height:auto}
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content h4{font-size:14px;font-weight:600;margin:14px 0 6px;color:#444;padding-left:14px;border-left:2px solid #b2b2ff}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img,#content figure svg{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+.info-box{background:#eef0ff;border-left:4px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.thought-box{background:#fff8e1;border-left:4px solid #ffc107;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.key-box{background:#e8f8f5;border-left:4px solid #00b894;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.guizang-figure{text-align:center;margin:16px 0}
+.guizang-figure svg{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.guizang-caption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+.lesson-box{background:#faf8ff;border:1px dashed #b2b2ff;padding:12px 16px;margin:16px 0;border-radius:6px}
+.lesson-tag{display:inline-block;background:#5b5bff;color:#fff;font-size:11px;padding:2px 8px;border-radius:3px;margin-right:8px}
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list li.toc-h4{padding-left:48px;color:#888;font-size:11px;font-style:italic}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+.qa-section{margin:20px 0}
+.qa-item{border:1px solid #e8e8e3;border-radius:8px;margin:8px 0;overflow:hidden}
+.qa-q{background:#fafaf8;padding:10px 14px;cursor:pointer;font-weight:600;font-size:14px;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.qa-q:hover{background:#f0f0ec}
+.qa-q .arrow{color:#999;font-size:12px;transition:transform .2s}
+.qa-item.open .qa-q .arrow{transform:rotate(90deg)}
+.qa-a{display:none;padding:12px 14px;background:#fff;font-size:14px;line-height:1.8;border-top:1px solid #eee}
+.qa-item.open .qa-a{display:block}
+.qa-a code{background:#f0f0eb;padding:1px 4px;border-radius:3px;font-size:.9em;color:#d6336c}
+.qa-tag{display:inline-block;background:#eef0ff;color:#5b5bff;font-size:10px;padding:1px 6px;border-radius:3px;margin-right:6px}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">GEA V1</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch16 游戏性系统入门</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<!-- CH03 DETAILED WITH x.x.x SUBSECTIONS -->
+<h1>第16章：游戏性系统入门 — 零基础讲义</h1>
+
+<blockquote><p><strong>讲义说明</strong>本讲义基于 Game Engine Architecture Vol.II 第16章（Introduction to Gameplay Systems, p.522-541）。<br><em>本版插画由 ImageGen + Guizang 材质插画标准流程生成。</em></p></blockquote>
+
+<div class="toc"><strong>目录</strong><ul>
+<li><a href="#学习目标">学习目标</a></li><li><a href="#16-1">16.1 游戏世界的解剖</a></li><li><a href="#16-2">16.2 游戏对象模型</a></li><li><a href="#16-3">16.3 事件与消息</a></li><li><a href="#insight">本章核心洞察</a></li><li><a href="#exercises">课后练习题</a></li><li><a href="#qaagent">qAagent问答区</a></li>
+</ul></div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol><li>理解游戏世界的组成元素分类</li><li>掌握组件式游戏对象模型的设计哲学</li><li>理解事件驱动架构在游戏中的应用</li></ol>
+<hr>
+
+<h2 id="16-1">16.1 游戏世界的解剖</h2>
+<h3 id="16-1-1">16.1.1 世界元素分类</h3>
+<h4 id="16-1-1-1">16.1.1.1 四大类型</h4>
+<table><tr><th>类型</th><th>特征</th><th>例子</th><th>引擎中如何表示</th></tr>
+<tr><td>静态世界几何</td><td>不会动、不交互</td><td>地面、建筑、地形</td><td>静态网格体（Static Mesh）</td></tr>
+<tr><td>动态刚体</td><td>受物理驱动</td><td>箱子、碎片、车辆</td><td>GameObject + RigidBody组件</td></tr>
+<tr><td>角色</td><td>有AI/玩家控制</td><td>玩家、NPC、敌人</td><td>Pawn/Character + AI控制器</td></tr>
+<tr><td>道具/可拾取物</td><td>可交互的小物件</td><td>武器、药水、钥匙</td><td>GameObject + Interactable组件</td></tr>
+</table>
+
+<h3 id="16-1-2">16.1.2 游戏对象模型</h3>
+
+<div class="guizang-figure"><img src="images/ch16/01_component_model.png" alt="组件模型"><div class="guizang-caption">图16-1：组件式游戏对象模型——空容器+组件拼装（Guizang流程生成）</div></div>
+
+<h4 id="16-1-2-1">16.1.2.1 组合优于继承</h4>
+<pre><code>// ❌ 深度继承链（脆弱的层级）
+class Character : public DynamicObject { ... };
+class Enemy : public Character { ... };
+class Boss : public Enemy { ... };
+
+// ✅ 组件模型（灵活组合）
+GameObject boss;
+boss.AddComponent&lt;TransformComponent&gt;();
+boss.AddComponent&lt;MeshComponent&gt;();
+boss.AddComponent&lt;HealthComponent&gt;(1000);  // Boss有1000血
+boss.AddComponent&lt;AIComponent&gt;();
+boss.AddComponent&lt;BossSpecialAttackComponent&gt;(); // 只有Boss有这个！</code></pre>
+
+<h4 id="16-1-2-2">16.1.2.2 组件模型的四个优势</h4>
+<ul><li><strong>灵活：</strong> 给任何对象加任何组件，不需要修改继承链</li><li><strong>可复用：</strong> FlightComponent 可以给 DragonBoss 也可以给 PlayerHelicopter</li><li><strong>解耦：</strong> 各组件独立开发、独立测试</li><li><strong>数据驱动：</strong> 设计师在编辑器中拖放组件，不用碰代码</li></ul>
+
+<hr>
+
+<h2 id="16-2">16.2 游戏对象模型</h2>
+<h3 id="16-2-1">16.2.1 Unity/Unreal的实现对比</h3>
+<h4 id="16-2-1-1">16.2.1.1 两大引擎的组件哲学</h4>
+<table><tr><th></th><th>Unity</th><th>Unreal Engine</th></tr>
+<tr><td>对象基类</td><td>GameObject</td><td>Actor</td></tr>
+<tr><td>组件基类</td><td>MonoBehaviour</td><td>UActorComponent</td></tr>
+<tr><td>脚本语言</td><td>C#</td><td>C++ / Blueprint</td></tr>
+<tr><td>组件添加</td><td>AddComponent&lt;T&gt;()</td><td>CreateDefaultSubobject&lt;T&gt;()</td></tr>
+<tr><td>核心哲学</td><td>"万物皆GameObject+组件"</td><td>"Actor是基本单位，Component赋予能力"</td></tr>
+</table>
+
+<hr>
+
+<h2 id="16-3">16.3 事件与消息</h2>
+<h3 id="16-3-1">16.3.1 事件驱动架构</h3>
+<h4 id="16-3-1-1">16.3.1.1 为什么需要事件</h4>
+<p>组件之间<strong>不直接调用</strong>——它们通过事件总线间接通信。"HealthComponent 降到 0→发送 OnDeath 事件→UI组件收到→显示死亡画面；音效组件收到→播放死亡音效"。发送者不知道谁在听，接收者不知道谁发的。</p>
+<pre><code>// 事件系统简化示例
+// 注册：UI组件监听死亡事件
+EventManager::Register("OnDeath", [](EventData data){
+    ShowDeathScreen(data.GetString("killerName"));
+});
+
+// 触发：Health组件降到0时发送事件
+void HealthComponent::TakeDamage(int amount) {
+    hp -= amount;
+    if (hp <= 0) {
+        EventManager::Fire("OnDeath", {{"killerName", lastAttacker}});
+        // HealthComponent 不知道也不关心谁会处理这个事件
+    }
+}</code></pre>
+
+<hr>
+
+<h2 id="insight">本章核心洞察</h2>
+<div class="key-box"><strong>🔑 游戏对象 = 空容器 + 组件拼装 + 事件通信</strong><br>现代游戏引擎的三大设计支柱汇聚在这一章：① 组合优于继承——用组件赋予对象能力 ② 事件驱动——组件间通过消息松耦合通信 ③ 数据驱动——设计师在编辑器中操作，不写代码。这是你理解Unity/Unreal"为什么这样设计"的钥匙。</div>
+
+<hr>
+
+<h2 id="exercises">📝 课后练习题（含答案）</h2>
+<div class="qa-section">
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题1</span>为什么组件模型优于深度继承？</span><span class="arrow">▶</span></div><div class="qa-a"><p>灵活——任何对象加任何组件。可复用——同一组件跨类型复用。解耦——各组件独立开发。数据驱动——编辑器拖放操作。</p></div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题2</span>事件系统如何帮助组件解耦？</span><span class="arrow">▶</span></div><div class="qa-a"><p>发送者不知道谁在听（甚至可能没人听），接收者不知道谁发的。两者通过事件总线间接通信，各自独立演化。HealthComponent 不知道 UIComponent 的存在——它只发送 OnDeath 事件。</p></div></div>
+</div>
+<hr><h2 id="qaagent">🤖 qAagent问答区</h2>
+<div class="qa-section">
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">实践</span>组件 vs 继承——什么时候该用继承？</span><span class="arrow">▶</span></div><div class="qa-a"><p>组件处理<strong>能力</strong>（会飞、会游泳、有血量）。继承处理<strong>身份</strong>（Enemy 是 Character 的子类型）。好的设计：浅继承（1-2层深度）+ 深层组件组合。Unity/Unreal 的核心类继承都只有 2-3 层。</p></div></div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li class="nav-header">Vol.2 章节</li>
+  <li class=""><a href="ch11_渲染引擎.html">11 渲染引擎<span class="en"></span></a></li>
+  <li class=""><a href="ch12_光照与后处理.html">12 光照与后处理<span class="en"></span></a></li>
+  <li class=""><a href="ch13_动画系统.html">13 动画系统<span class="en"></span></a></li>
+  <li class=""><a href="ch14_碰撞与刚体动力学.html">14 碰撞与刚体动力学<span class="en"></span></a></li>
+  <li class=""><a href="ch15_音频.html">15 音频<span class="en"></span></a></li>
+  <li class=" active"><a href="ch16_游戏性系统入门.html">16 游戏性系统入门<span class="en"></span></a></li>
+  <li class=""><a href="ch17_运行时游戏玩法.html">17 运行时游戏玩法<span class="en"></span></a></li>
+  <li class=""><a href="ch18_更多内容.html">18 更多内容<span class="en"></span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div>
+<ul class="toc-list">
+<li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#16-1">16.1 游戏世界的解剖</a></li>
+  <li class="toc-h3"><a href="#16-1-1">16.1.1 世界元素分类</a></li>
+  <li class="toc-h4"><a href="#16-1-1-1">16.1.1.1 四大类型</a></li>
+  <li class="toc-h3"><a href="#16-1-2">16.1.2 游戏对象模型</a></li>
+  <li class="toc-h4"><a href="#16-1-2-1">16.1.2.1 组合优于继承</a></li>
+  <li class="toc-h4"><a href="#16-1-2-2">16.1.2.2 组件模型的四个优势</a></li>
+  <li class="toc-h2"><a href="#16-2">16.2 游戏对象模型</a></li>
+  <li class="toc-h3"><a href="#16-2-1">16.2.1 Unity/Unreal的实现对比</a></li>
+  <li class="toc-h4"><a href="#16-2-1-1">16.2.1.1 两大引擎的组件哲学</a></li>
+  <li class="toc-h2"><a href="#16-3">16.3 事件与消息</a></li>
+  <li class="toc-h3"><a href="#16-3-1">16.3.1 事件驱动架构</a></li>
+  <li class="toc-h4"><a href="#16-3-1-1">16.3.1.1 为什么需要事件</a></li>
+  <li class="toc-h2"><a href="#insight">本章核心洞察</a></li>
+  <li class="toc-h2"><a href="#exercises">📝 课后练习题（含答案）</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+function toggleQA(el){
+  var item=el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+</body></html>

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>GEA Vol.1 Ch01: 引言 — 零基础讲义 (Guizang版)</title>
+<style>/* GEA Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+svg{max-width:100%;height:auto}
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content h4{font-size:14px;font-weight:600;margin:14px 0 6px;color:#444;padding-left:14px;border-left:2px solid #b2b2ff}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img,#content figure svg{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+.info-box{background:#eef0ff;border-left:4px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.thought-box{background:#fff8e1;border-left:4px solid #ffc107;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.key-box{background:#e8f8f5;border-left:4px solid #00b894;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.guizang-figure{text-align:center;margin:16px 0}
+.guizang-figure svg{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.guizang-caption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+.lesson-box{background:#faf8ff;border:1px dashed #b2b2ff;padding:12px 16px;margin:16px 0;border-radius:6px}
+.lesson-tag{display:inline-block;background:#5b5bff;color:#fff;font-size:11px;padding:2px 8px;border-radius:3px;margin-right:8px}
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list li.toc-h4{padding-left:48px;color:#888;font-size:11px;font-style:italic}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+.qa-section{margin:20px 0}
+.qa-item{border:1px solid #e8e8e3;border-radius:8px;margin:8px 0;overflow:hidden}
+.qa-q{background:#fafaf8;padding:10px 14px;cursor:pointer;font-weight:600;font-size:14px;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.qa-q:hover{background:#f0f0ec}
+.qa-q .arrow{color:#999;font-size:12px;transition:transform .2s}
+.qa-item.open .qa-q .arrow{transform:rotate(90deg)}
+.qa-a{display:none;padding:12px 14px;background:#fff;font-size:14px;line-height:1.8;border-top:1px solid #eee}
+.qa-item.open .qa-a{display:block}
+.qa-a code{background:#f0f0eb;padding:1px 4px;border-radius:3px;font-size:.9em;color:#d6336c}
+.qa-tag{display:inline-block;background:#eef0ff;color:#5b5bff;font-size:10px;padding:1px 6px;border-radius:3px;margin-right:6px}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">GEA V1</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch01 引言</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<!-- CH03 DETAILED WITH x.x.x SUBSECTIONS -->
+<h1>第1章：引言 — 零基础讲义</h1>
+
+<blockquote>
+<p><strong>讲义说明</strong><br>
+本讲义基于 Jason Gregory 所著《Game Engine Architecture Volume I》第4版第1章（Introduction, p.1-57），逐节翻译推导，面向零基础读者。<br>
+<em>本版插画由 ImageGen + Guizang 材质插画标准流程生成。</em></p>
+</blockquote>
+
+<div class="toc"><strong>目录</strong>
+<ul>
+<li><a href="#学习目标">学习目标</a></li>
+<li><a href="#1-1">1.1 什么是游戏？</a></li>
+<li><a href="#1-2">1.2 什么是游戏引擎？</a></li>
+<li><a href="#1-3">1.3 各类型游戏的引擎差异</a></li>
+<li><a href="#1-4">1.4 游戏引擎生态</a></li>
+<li><a href="#1-5">1.5 引擎运行时架构</a></li>
+<li><a href="#1-6">1.6 工具与资产管线</a></li>
+<li><a href="#1-7">1.7 全章总结</a></li>
+<li><a href="#insight">本章核心洞察</a></li>
+<li><a href="#exercises">课后练习题</a></li>
+<li><a href="#qaagent">qAagent 零基础问答区</a></li>
+</ul></div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+<li>理解"游戏"和"游戏引擎"的概念边界</li>
+<li>知道不同类型的游戏需要不同技术侧重的引擎</li>
+<li>了解主流商业引擎（Unreal/Unity）和自研引擎的区别</li>
+<li>掌握引擎运行时架构的基本分层（Core Systems → Gameplay → Rendering → Platform）</li>
+<li>建立"工具链 = 引擎的一部分"的认知</li>
+</ol>
+<hr>
+
+<h2 id="1-1">1.1 什么是游戏？</h2>
+
+<div class="guizang-figure">
+<img src="images/ch01/01_game_definition.png" alt="游戏定义三要素">
+<div class="guizang-caption">图1-1：游戏定义三要素（Guizang流程生成）</div>
+</div>
+
+<h3 id="1-1-1">1.1.1 游戏的学术定义</h3>
+
+<h4 id="1-1-1-1">1.1.1.1 四个必备要素</h4>
+<p>Gregory 引用游戏学者 Jesse Schell 的定义，一款"游戏"必须同时具备以下四个要素：</p>
+<table>
+<tr><th>要素</th><th>含义</th><th>举例</th></tr>
+<tr><td><strong>机制（Mechanics）</strong></td><td>游戏规则、运作方式</td><td>"按下A键角色跳跃"</td></tr>
+<tr><td><strong>故事（Story）</strong></td><td>事件展开的顺序</td><td>"拯救公主的冒险"</td></tr>
+<tr><td><strong>美学（Aesthetics）</strong></td><td>画面、音乐、感觉</td><td>写实风格 or 像素风</td></tr>
+<tr><td><strong>技术（Technology）</strong></td><td>让前三者能运作的媒介</td><td>游戏引擎、渲染管线、物理系统</td></tr>
+</table>
+
+<h4 id="1-1-1-2">1.1.1.2 四要素之间的关系</h4>
+<p>技术是底层基础：没有技术，机制无法执行，故事无法呈现，美学无法渲染。但<strong>技术服务于设计</strong>——优秀的引擎隐藏技术的复杂性，让设计师和艺术家专注于机制、故事和美学。</p>
+
+<h3 id="1-1-2">1.1.2 电子游戏的独特性</h3>
+
+<h4 id="1-1-2-1">1.1.2.1 互动性（Interactivity）</h4>
+<p>电子游戏区别于小说和电影的核心特征是<strong>互动性</strong>：玩家的输入实时改变虚拟世界的状态。电影是"观看"，游戏是"参与"。</p>
+
+<h4 id="1-1-2-2">1.1.2.2 实时性（Real-Time）</h4>
+<p>游戏必须<strong>每一帧</strong>（通常 16.7ms）完成输入处理→状态更新→画面渲染。任何一个环节超过时间预算就会导致丢帧。</p>
+
+<h3 id="1-1-3">1.1.3 游戏的组成模型</h3>
+
+<h4 id="1-1-3-1">1-1-3-1 对象模型（Object Model）</h4>
+<p>游戏世界被抽象为一组<strong>游戏对象（Game Objects）</strong>。每个对象有属性和行为：</p>
+<ul>
+<li><strong>代理型（Agent-based）：</strong> 世界中有多个独立的实体相互交互——敌人、队友、NPC（Non-Player Character，非玩家角色）、道具</li>
+<li><strong>属性：</strong> 位置、旋转、缩放、生命值、速度</li>
+<li><strong>行为：</strong> AI 决策、物理碰撞、动画播放</li>
+</ul>
+
+<h4 id="1-1-3-2">1-1-3-2 组件模型（Component Model）</h4>
+<p>单个游戏对象 <strong>不是一个"巨大的类"</strong>，而是由多个小组件拼起来的。一个敌人可能由这些组件组成：Transform + MeshRenderer + Collider + AIComponent + HealthComponent + AnimationComponent。</p>
+<pre><code>// 组件模型的表示（伪代码）
+class Enemy {
+    TransformComponent transform;
+    MeshComponent       mesh;
+    ColliderComponent   collider;
+    HealthComponent     health;    // HP = 100
+    AIComponent         ai;        // 行为：巡逻/追击/攻击
+    AnimationComponent  anim;      // 播放走路/跑步/攻击动画
+}
+// 每个组件独立运作，通过消息（Event）互相通信
+// 比如：collider 检测到子弹 → 发消息给 health → health 减少 HP</code></pre>
+
+<div class="thought-box"><strong>想一想</strong>：如果一个角色既有"可破坏的护盾"又有"生命值"，这两个血量应该放在一个 HealthComponent 里还是分开？
+<blockquote style="background:transparent;border:none;padding:0;margin:4px 0 0">建议分两个组件——ShieldComponent 和 HealthComponent——因为它们的规则完全不同（护盾会随时间恢复、不同武器对护盾和本体的伤害系数不同）。组件化让每个"职责"独立演化，不互相纠缠。</blockquote></div>
+
+<hr>
+
+<h2 id="1-2">1.2 什么是游戏引擎？</h2>
+
+<div class="guizang-figure">
+<img src="images/ch01/02_engine_reusability.png" alt="引擎可复用性光谱">
+<div class="guizang-caption">图1-2：引擎可复用性光谱（Guizang流程生成）</div>
+</div>
+
+<h3 id="1-2-1">1.2.1 游戏引擎的定义</h3>
+
+<h4 id="1-2-1-1">1.2.1.1 一个实用定义</h4>
+<p>Gregory 给出的定义："<strong>游戏引擎是一套可扩展的软件框架</strong>，它提供游戏开发所需的核心功能，并允许开发者在此基础上构建特定的游戏内容。"</p>
+
+<h4 id="1-2-1-2">1.2.1.2 引擎 vs 游戏的边界</h4>
+<p>这条边界是模糊的——同一个代码模块在不同语境下可能属于"引擎"或"游戏"。一般来说：</p>
+<ul>
+<li><strong>引擎层：</strong> 可复用的通用功能（渲染、物理、音频、输入、文件系统）</li>
+<li><strong>游戏层：</strong> 特定于当前游戏的数据和逻辑（角色技能、关卡布局、对话树）</li>
+</ul>
+
+<h3 id="1-2-2">1.2.2 引擎的可复用性光谱</h3>
+
+<h4 id="1-2-2-1">1.2.2.1 从专用到通用的五级光谱</h4>
+<table>
+<tr><th>级别</th><th>描述</th><th>例子</th><th>复用性</th></tr>
+<tr><td>L1: 无引擎</td><td>每个游戏从零写</td><td>1980年代街机游戏</td><td>★☆☆☆☆</td></tr>
+<tr><td>L2: 代码复用</td><td>从前作复制粘贴代码</td><td>GTA3→GTA Vice City</td><td>★★☆☆☆</td></tr>
+<tr><td>L3: 内部引擎</td><td>公司内部共享引擎</td><td>EA Frostbite、Capcom RE</td><td>★★★☆☆</td></tr>
+<tr><td>L4: 授权引擎</td><td>卖给其他公司的引擎</td><td>Unreal、Unity、CryEngine</td><td>★★★★☆</td></tr>
+<tr><td>L5: 通用引擎</td><td>覆盖所有类型和平台</td><td>Unreal Engine 5（接近）</td><td>★★★★★</td></tr>
+</table>
+
+<h4 id="1-2-2-2">1.2.2.2 为什么自研引擎还存在？</h4>
+<p>尽管 Unreal 和 Unity 几乎"能做什么游戏"，自研引擎仍有一席之地：</p>
+<ul>
+<li><strong>完全控制：</strong> 不需要等待 Epic/Unity 修 bug</li>
+<li><strong>极致优化：</strong> 针对特定游戏类型深度优化（如 id Tech 针对 FPS）</li>
+<li><strong>无授权费：</strong> 大厂每年省下数百万美元引擎授权费</li>
+<li><strong>技术壁垒：</strong> 自研引擎本身是竞争优势</li>
+</ul>
+
+<h3 id="1-2-3">1.2.3 引擎的典型边界</h3>
+
+<h4 id="1-2-3-1">1.2.3.1 引擎通常包含什么</h4>
+<ul>
+<li>渲染器（Renderer）——把 3D 数据变成屏幕上的像素</li>
+<li>物理引擎（Physics）——碰撞检测、刚体动力学</li>
+<li>音频引擎（Audio）——3D 空间声、混响、动态混合</li>
+<li>动画系统（Animation）——骨骼动画、动作混合、IK</li>
+<li>AI 系统（AI）——寻路、行为树、感知</li>
+<li>输入系统（Input）——键盘/鼠标/手柄→游戏动作</li>
+<li>资源管理（Resource Manager）——加载/卸载/引用计数</li>
+<li>工具管线（Tool Pipeline）——编辑器、资产导入/导出</li>
+</ul>
+
+<h4 id="1-2-3-2">1.2.3.2 引擎通常不包含什么</h4>
+<ul>
+<li>具体游戏逻辑（角色技能、关卡目标、数值平衡）</li>
+<li>具体游戏资源（模型、纹理、音频文件、关卡数据）</li>
+<li>游戏设计决策（虽然引擎提供基础，但设计是团队的工作）</li>
+</ul>
+
+<div class="thought-box"><strong>想一想</strong>：为什么一个"通用引擎"（Unreal）能同时做出堡垒之夜（FPS）和铁拳（格斗游戏）？
+<blockquote style="background:transparent;border:none;padding:0;margin:4px 0 0">因为引擎提供的是<strong>能力</strong>而不是<strong>规则</strong>。渲染系统不管被渲染的是卡通大头还是写实战士；物理引擎不管碰撞的是方块还是拳头。真正区分游戏类型的是<strong>游戏逻辑层</strong>的数据和规则——而这一层不在引擎的职责范围内。</blockquote></div>
+
+<hr>
+
+<h2 id="1-3">1.3 各类型游戏的引擎差异</h2>
+
+<p><strong>生活类比：</strong> 不同类型的游戏就像不同的运动——篮球鞋和跑鞋都是"鞋"，但篮球鞋强调侧向支撑（横向急停），跑鞋强调缓震（纵向冲击）。同理，FPS 引擎和 RTS 引擎都是"引擎"，但技术侧重点完全不同。</p>
+
+<div class="guizang-figure">
+<img src="images/ch01/03_genre_tech.png" alt="六种游戏类型技术对比">
+<div class="guizang-caption">图1-3：六种主流游戏类型的技术关注点对比（Guizang流程生成）</div>
+</div>
+
+<h3 id="1-3-1">1.3.1 不同类型的技术侧重点</h3>
+
+<h4 id="1-3-1-1">1.3.1.1 第一人称射击（FPS）</h4>
+<table>
+<tr><th>技术要点</th><th>为什么重要</th></tr>
+<tr><td>高效渲染大场景</td><td>玩家视野开阔，可见区域大</td></tr>
+<tr><td>精准的相机控制</td><td>鼠标灵敏度、加速度映射直接影响手感</td></tr>
+<tr><td>网络预测与延迟补偿</td><td>多人对战对延迟极其敏感</td></tr>
+<tr><td>高效碰撞检测</td><td>子弹、爆炸物大量实时碰撞</td></tr>
+</table>
+
+<h4 id="1-3-1-2">1.3.1.2 第三人称动作冒险（如战神、刺客信条）</h4>
+<table>
+<tr><th>技术要点</th><th>为什么重要</th></tr>
+<tr><td>角色动画与 IK</td><td>IK（Inverse Kinematics，逆向运动学）让角色脚踩在不同高度地面上自然贴合</td></tr>
+<tr><td>环境交互</td><td>攀爬、游泳、滑索等丰富交互需要复杂的状态机</td></tr>
+<tr><td>流式加载（Streaming）</td><td>开放世界需要无缝加载远处的地形和建筑</td></tr>
+</table>
+
+<h4 id="1-3-1-3">1.3.1.3 大型多人在线（MMO）</h4>
+<table>
+<tr><th>技术要点</th><th>为什么重要</th></tr>
+<tr><td>服务器架构</td><td>需要支持数千玩家同时在线</td></tr>
+<tr><td>数据库与持久化</td><td>角色数据、背包、公会信息需永久保存</td></tr>
+<tr><td>状态同步</td><td>所有玩家看到的游戏世界必须一致</td></tr>
+<tr><td>反作弊</td><td>经济系统不允许刷金币</td></tr>
+</table>
+
+<h4 id="1-3-1-4">1.3.1.4 即时策略（RTS）</h4>
+<table>
+<tr><th>技术要点</th><th>为什么重要</th></tr>
+<tr><td>海量单位管理</td><td>同时移动数千个单位</td></tr>
+<tr><td>高效寻路</td><td>每个单位都要算最短路径</td></tr>
+<tr><td>视野系统（Fog of War）</td><td>只渲染玩家能看到的部分</td></tr>
+<tr><td>确定性同步</td><td>Lockstep 锁步网络模型</td></tr>
+</table>
+
+<h4 id="1-3-1-5">1.3.1.5 体育/竞速游戏</h4>
+<table>
+<tr><th>技术要点</th><th>为什么重要</th></tr>
+<tr><td>高精度物理模拟</td><td>球的旋转、车的悬挂反馈必须真实</td></tr>
+<tr><td>高帧率要求</td><td>竞速游戏通常要求 60fps 最低</td></tr>
+<tr><td>音效同步</td><td>引擎声、碰撞声必须与物理精确对应</td></tr>
+</table>
+
+<h4 id="1-3-1-6">1.3.1.6 格斗游戏</h4>
+<table>
+<tr><th>技术要点</th><th>为什么重要</th></tr>
+<tr><td>精确帧判定</td><td>某些招式窗口只有 1-3 帧</td></tr>
+<tr><td>输入缓冲</td><td>允许提前输入必杀技</td></tr>
+<tr><td>网络回滚（Rollback Netcode）</td><td>格斗游戏延迟不可接受</td></tr>
+</table>
+
+<h3 id="1-3-2">1.3.2 室内 vs 室外引擎的技术取舍</h3>
+
+<h4 id="1-3-2-1">1.3.2.1 两种根本不同的渲染策略</h4>
+<p>Gregory 用一个经典对比说明：同一个引擎不能同时最优处理室内和室外：</p>
+<table>
+<tr><th></th><th>室内引擎（如 DOOM 3）</th><th>室外引擎（如 上古卷轴）</th></tr>
+<tr><td>可见性判断</td><td>BSP 树（Binary Space Partitioning，二元空间分割树——把空间切成小块，被墙挡住的部分不渲染）或 Portal 系统</td><td>LOD（Level-of-Detail，细节层次——远处物体用低精度模型）+ 视锥剔除</td></tr>
+<tr><td>光照</td><td>大量动态点光源、阴影投射</td><td>大量平行光（太阳）、预计算光照</td></tr>
+<tr><td>几何复杂度</td><td>中等（一房间几千面）</td><td>极高（一视野几十万面就需LOD）</td></tr>
+</table>
+
+<h4 id="1-3-2-2">1.3.2.2 混合场景的挑战</h4>
+<p>现代 3A 游戏几乎都是混合场景——既有室内（地牢/建筑内）也有室外（开放世界）。处理这种过渡是现代引擎的重大挑战。Unreal 5 的 <strong>Nanite</strong>（虚拟化几何体）部分解决了这个问题——几何复杂度不再限制引擎选择。</p>
+
+<h3 id="1-3-3">1.3.3 VR/AR/MR 的特殊要求</h3>
+
+<h4 id="1-3-3-1">1.3.3.1 VR（虚拟现实）的极端要求</h4>
+<ul>
+<li><strong>极高帧率：</strong> 最低 72fps，推荐 90fps+（每帧 11ms）</li>
+<li><strong>极低延迟：</strong> "头部旋转→画面更新"必须 < 20ms，否则玩家会晕</li>
+<li><strong>立体渲染：</strong> 每帧渲染两个画面（左右眼），GPU 负载翻倍</li>
+<li><strong>追踪系统：</strong> 6DOF 头部+手柄追踪精度要求毫米级</li>
+<li><strong>TimeWarp/SpaceWarp：</strong> 在帧渲染完成后根据最新头部姿态扭曲画面，将感知延迟降到 1ms</li>
+</ul>
+
+<h4 id="1-3-3-2">1.3.3.2 AR/MR 的额外挑战</h4>
+<p>AR（Augmented Reality，增强现实）和 MR（Mixed Reality，混合现实）还需要：实时环境理解（平面检测、深度感知）、虚拟物体与真实环境的光照一致性。</p>
+
+<div class="thought-box"><strong>想一想</strong>：如果让你做一个能同时支持 FPS 和 RTS 的引擎，哪些系统必须做成可插拔的？
+<blockquote style="background:transparent;border:none;padding:0;margin:4px 0 0">网络层（FPS用客户端预测、RTS用Lockstep）、物理精度（FPS好精度普通、RTS可降低保性能）、渲染策略（FPS近景高精度/RTS远景大量单位）、摄像机系统（FPS第一人称/RTS俯视自由视角）。核心渲染器和文件系统可以共通。</blockquote></div>
+
+<hr>
+
+<h2 id="1-4">1.4 游戏引擎生态</h2>
+
+<h3 id="1-4-1">1.4.1 主流商业引擎</h3>
+
+<h4 id="1-4-1-1">1.4.1.1 Unreal Engine（Epic Games）</h4>
+<ul>
+<li><strong>语言：</strong> C++（引擎核心）+ Blueprint（可视化脚本）</li>
+<li><strong>授权模式：</strong> 收入超过100万美元后收取5%版税</li>
+<li><strong>强项：</strong> 顶级画质、开放世界、Nanite/Lumen、完整工具链</li>
+<li><strong>知名作品：</strong> 堡垒之夜、黑神话：悟空、最终幻想7重制版</li>
+</ul>
+
+<h4 id="1-4-1-2">1.4.1.2 Unity（Unity Technologies）</h4>
+<ul>
+<li><strong>语言：</strong> C#（游戏逻辑）+ C++（引擎底层）</li>
+<li><strong>授权模式：</strong> 多级订阅制（个人免费/Pro/Enterprise）</li>
+<li><strong>强项：</strong> 跨平台极其广泛（25+平台）、上手快、2D 支持出色</li>
+<li><strong>知名作品：</strong> 原神、空洞骑士、Cities: Skylines</li>
+</ul>
+
+<h4 id="1-4-1-3">1.4.1.3 Godot（开源）</h4>
+<ul>
+<li><strong>语言：</strong> GDScript（类Python）+ C# + C++</li>
+<li><strong>授权模式：</strong> 完全免费开源（MIT License）</li>
+<li><strong>强项：</strong> 轻量、零授权费、社区驱动</li>
+</ul>
+
+<h3 id="1-4-2">1.4.2 大厂自研引擎</h3>
+<ul>
+<li><strong>EA Frostbite：</strong> 战地系列、FIFA（已停产自研部分）</li>
+<li><strong>Capcom RE Engine：</strong> 生化危机、怪物猎人</li>
+<li><strong>CD Projekt REDengine：</strong> 巫师3、赛博朋克2077（已转向UE5）</li>
+<li><strong>Rockstar RAGE：</strong> GTA V、荒野大镖客2</li>
+<li><strong>id Tech：</strong> DOOM Eternal（FPS 优化极致）</li>
+</ul>
+
+<h3 id="1-4-3">1.4.3 选择引擎的核心因素</h3>
+
+<h4 id="1-4-3-1">1.4.3.1 六个关键决策维度</h4>
+<table>
+<tr><th>维度</th><th>旗舰引擎(UE/Unity)</th><th>自研引擎</th></tr>
+<tr><td>开发速度</td><td>快（已有完整工具链）</td><td>慢（先造工具）</td></tr>
+<tr><td>技术控制</td><td>受制于开发商路线图</td><td>完全自主</td></tr>
+<tr><td>人才获取</td><td>容易（市场上有经验者多）</td><td>困难（需要内部培训）</td></tr>
+<tr><td>授权费用</td><td>版税/订阅</td><td>无版税（但有人力成本）</td></tr>
+<tr><td>性能上限</td><td>通用优化</td><td>可针对特定游戏极致优化</td></tr>
+<tr><td>技术负债</td><td>引擎更新可能破坏项目</td><td>自行决定升级节奏</td></tr>
+</table>
+
+<hr>
+
+<h2 id="1-5">1.5 引擎运行时架构</h2>
+
+<h3 id="1-5-1">1.5.1 引擎的分层结构</h3>
+
+<h4 id="1-5-1-1">1.5.1.1 经典五层架构（自底向上）</h4>
+<table>
+<tr><th>层</th><th>职责</th><th>例子</th></tr>
+<tr><td><strong>平台层</strong></td><td>操作系统抽象、硬件访问</td><td>文件IO、线程、网络、GPU</td></tr>
+<tr><td><strong>核心系统</strong></td><td>引擎基础模块</td><td>内存分配器、数学库、容器、字符串ID</td></tr>
+<tr><td><strong>资源层</strong></td><td>资源管理</td><td>资源加载/卸载、异步IO、包文件</td></tr>
+<tr><td><strong>功能层</strong></td><td>各子系统</td><td>渲染、物理、音频、动画、AI</td></tr>
+<tr><td><strong>游戏层</strong></td><td>具体游戏逻辑</td><td>角色、技能、关卡、UI</td></tr>
+</table>
+
+<h4 id="1-5-1-2">1.5.1.2 层间依赖规则</h4>
+<p>严格从上到下依赖：游戏层依赖功能层，功能层依赖核心系统，核心系统依赖平台层。<strong>绝不允许反向依赖</strong>——渲染器不应该知道"玩家"的存在。</p>
+
+<h3 id="1-5-2">1.5.2 各子系统详解</h3>
+
+<h4 id="1-5-2-1">1.5.2.1 渲染器（Renderer）</h4>
+<p>将 3D 场景转化为屏幕像素。涉及：视锥剔除、LOD 选择、绘制调用提交、着色器执行、后处理（抗锯齿/运动模糊/HDR）。这是引擎中代码量最大、性能要求最高的子系统。</p>
+
+<h4 id="1-5-2-2">1.5.2.2 物理引擎（Physics）</h4>
+<p>模拟真实世界中的碰撞和运动。包括：刚体动力学（F=ma）、碰撞检测（Broad Phase → Narrow Phase）、约束求解（关节/铰链/弹簧）、射线检测。常用方案：集成第三方物理库（PhysX/Havok/Bullet）。</p>
+
+<h4 id="1-5-2-3">1.5.2.3 音频引擎（Audio）</h4>
+<p>管理音效的播放、混合、空间化。包括：3D 定位（离声源距离→音量衰减）、环境效果（混响/遮挡）、动态混合（音乐+音效+语音的实时音量平衡）。常用方案：Wwise/FMOD。</p>
+
+<h4 id="1-5-2-4">1.5.2.4 前端/UI（Front-End）</h4>
+<p>用户界面系统：HUD（Heads-Up Display，平视显示器——血条/弹药/小地图）、菜单、过场动画、游戏状态管理（主菜单→加载→游戏中→暂停→结束）。</p>
+
+<div class="thought-box"><strong>想一想</strong>：为什么一般引擎把 UI 和 3D 渲染分开处理？
+<blockquote style="background:transparent;border:none;padding:0;margin:4px 0 0">UI 是"2D叠加层"，需要精确的像素对齐和事件响应（点击按钮）。3D 渲染是透视投影的空间变换。混合处理会让 UI 画质受损（如抗锯齿撕裂UI文字），也会让 UI 事件的"点击了哪个按钮"的拾取变复杂。分开处理让两者各得其所。</blockquote></div>
+
+<h3 id="1-5-3">1.5.3 游戏循环（Game Loop）</h3>
+
+<h4 id="1-5-3-1">1.5.3.1 主循环的基本结构</h4>
+<pre><code>// 简化的游戏主循环
+while (gameRunning) {
+    ProcessInput();          // 1. 收集输入
+    UpdateGameLogic(dt);     // 2. 更新游戏状态
+    RenderFrame();           // 3. 渲染画面
+    SwapBuffers();           // 4. 交换前后缓冲区（显示到屏幕）
+}</code></pre>
+
+<h4 id="1-5-3-2">1.5.3.2 帧率与时间步长</h4>
+<p>时间步长 dt（delta time）是"上一帧到这一帧过去了多少秒"，用来保证游戏速度与帧率解耦——60fps 和 30fps 时角色移动速度一样快。</p>
+<pre><code>// 使用 deltaTime 解耦帧率和游戏速度
+void Update(float dt) {
+    position += velocity * dt;         // 角色移动
+    timer    -= dt;                    // 冷却倒计时
+    animState += dt * animSpeed;       // 动画进度
+}
+// 这样：无论 dt=0.016（60fps）还是 dt=0.033（30fps）——角色每秒移动的速度都是一样的</code></pre>
+
+<hr>
+
+<h2 id="1-6">1.6 工具与资产管线</h2>
+
+<h3 id="1-6-1">1.6.1 工具链 = 引擎的重要组成</h3>
+
+<h4 id="1-6-1-1">1.6.1.1 Gregory 的核心观点</h4>
+<p>引擎不是只有运行时代码。一套完整的游戏引擎至少包含：</p>
+<ul>
+<li><strong>运行时（Runtime）：</strong> 玩家机器上运行的可执行文件</li>
+<li><strong>工具（Tools）：</strong> 编辑器、资产导入器、构建工具</li>
+<li><strong>管线（Pipeline）：</strong> 资产从 DCC（Digital Content Creation，数字内容创作工具，如 Maya/Blender/Photoshop）到引擎的完整流程</li>
+</ul>
+
+<h4 id="1-6-1-2">1.6.1.2 资产管线流程图</h4>
+<pre><code>// 典型 3D 模型资产管线
+Maya/Blender 导出 .fbx
+    ↓
+引擎的 Asset Importer 解析 .fbx
+    ↓
+Cook/Build 处理（压缩、LOD 生成、碰撞体生成）
+    ↓
+运行时加载为 GameObject（含 Mesh + Material + Collider）</code></pre>
+
+<h3 id="1-6-2">1.6.2 典型开发工具</h3>
+
+<h4 id="1-6-2-1">1.6.2.1 关卡编辑器（Level Editor）</h4>
+<p>这是<strong>设计师最常使用的工具</strong>。允许拖拽放置模型、调整光照、绘制地形、设置触发区域。"做游戏"的过程在相当程度上就是"在编辑器里摆关卡"的过程。</p>
+
+<h4 id="1-6-2-2">1.6.2.2 资产浏览器（Asset Browser）</h4>
+<p>管理游戏中的所有数字资产：纹理、模型、音频、动画、字体。支持搜索、标签、缩略图预览、依赖关系查看。</p>
+
+<h4 id="1-6-2-3">1.6.2.3 脚本编辑器</h4>
+<p>允许设计师编写游戏逻辑（如 Blueprint、Lua）。<strong>可视化脚本</strong>（Blueprint）极大地降低了编程门槛——拖线连接节点就能实现逻辑。</p>
+
+<h4 id="1-6-2-4">1.6.2.4 Profiler & 调试工具</h4>
+<p>引擎内置的性能分析和调试工具。见第10章的详细讲解。</p>
+
+<hr>
+
+<h2 id="1-7">1.7 全章总结</h2>
+<p>这一章建立了游戏引擎的<strong>宏观概念地图</strong>：</p>
+<ol>
+<li>游戏 = 机制+故事+美学+技术，技术是底层支撑</li>
+<li>游戏引擎是可复用的软件框架，边界在"通用能力"和"特定逻辑"之间</li>
+<li>不同类型游戏需要不同的技术侧重点（"没有万能引擎"是原书核心观点之一）</li>
+<li>主流选择：商业引擎（UE/Unity）降本增效，自研引擎提供极致控制权</li>
+<li>引擎分层架构（平台→核心→资源→功能→游戏）是设计和理解引擎的基石</li>
+<li>工具链不是引擎的附属品——它就是引擎的一部分</li>
+</ol>
+
+<hr>
+
+<h2 id="insight">本章核心洞察</h2>
+<div class="key-box"><strong>🔑 游戏引擎的"矛盾"本质</strong><br>
+游戏引擎有一个根本矛盾：<strong>越通用，越不高效；越专用，越不灵活。</strong>一个"能做所有类型游戏"的引擎必然带着大量你用不到的代码——这就是 Unreal 安装包 30GB+ 的原因。而一个针对你的游戏极致优化的自研引擎，可能在另一个类型上表现糟糕。理解这个矛盾，就理解了整个游戏引擎行业的生态格局。<br><br>
+<strong>三条入门准则：</strong><br>
+1. <strong>先理解架构，再深入细节：</strong> 知道"每个系统在五层架构的哪里"比知道"某个 API 怎么调用"重要得多<br>
+2. <strong>引擎是基础设施：</strong> 从项目第1天就开始构建日志/Profiler/编辑器——不是"做完游戏再加"<br>
+3. <strong>One Engine Does NOT Fit All：</strong> Gregory 在书中不断强调——没有完美的引擎，只有适合你项目的引擎</div>
+
+<hr>
+
+<h2 id="exercises">📝 课后练习题（含答案）</h2>
+<div class="qa-section">
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题1</span>用你自己的话定义"游戏引擎"。和无引擎开发相比，引擎解决了什么问题？</span><span class="arrow">▶</span></div><div class="qa-a"><p>游戏引擎是<strong>可复用的软件框架</strong>，提供渲染/物理/音频/输入/资源管理等通用功能。解决的问题：① 避免每款游戏从零写渲染器 ② 让团队关注游戏内容而非底层技术 ③ 跨平台（一次开发多平台发布） ④ 提供工具链（编辑器/资产管线）让非程序员也能参与开发。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题2</span>游戏四要素（技术/机制/故事/美学）中，引擎主要覆盖哪些？不覆盖哪些？</span><span class="arrow">▶</span></div><div class="qa-a"><p><strong>覆盖：</strong> 技术（全量覆盖——渲染/物理/音频/输入/文件系统/工具链）<br><strong>提供基础但不覆盖：</strong> 机制（提供组件模型/脚本系统但不规定"你的游戏怎么玩"）、美学（提供渲染能力但不规定"你的画面长什么样"）、故事（提供过场动画工具但不规定"剧情是什么"）。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题3</span>解释可复用性光谱的五个级别。现代 3A 游戏通常处于哪个级别？</span><span class="arrow">▶</span></div><div class="qa-a"><p>L1无引擎→L2代码复用→L3内部引擎→L4授权引擎→L5通用引擎。现代 3A 游戏分布：约 60% 用 UE5（L4-L5），约 30% 用自研引擎（L3），约 10% 用 Unity（L4）。大厂（EA/Rockstar/Capcom）仍坚持 L3 自研。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题4</span>FPS 引擎和 RTS 引擎最大的技术差异在哪里？至少列举三点。</span><span class="arrow">▶</span></div><div class="qa-a"><p>① <strong>渲染策略：</strong> FPS 近景高精度（单个敌人几百面）+材质细节/RTS 远景大量单位（数千单位同屏）→用 instance 渲染+LOD。② <strong>网络模型：</strong> FPS 用客户端预测（低延迟体验）/RTS 用 Lockstep 锁步（完全同步）。③ <strong>物理模拟：</strong> FPS 高精度（子弹轨迹）/RTS 简化（兵种碰撞用简单圆形）。④ <strong>AI 规模：</strong> FPS 几个敌人→精细行为树/RTS 数百单位→简化的群体AI。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题5</span>引擎的经典五层架构是怎样的？为什么层间不能反向依赖？</span><span class="arrow">▶</span></div><div class="qa-a"><p>从底向上：平台层→核心系统→资源层→功能层→游戏层。不能反向依赖的原因：如果渲染器（功能层）依赖"玩家"（游戏层），那么换成另一个游戏（没有"玩家"，只有"赛车"）时渲染器就崩溃了。引擎应该是<strong>通用平台</strong>，不知道也不应该知道上面跑的是什么游戏。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题6</span>为什么工具链被视为"引擎的一部分"而不是独立工具？</span><span class="arrow">▶</span></div><div class="qa-a"><p>因为工具和运行时共享同一套数据结构和资源格式。关卡编辑器保存的文件格式 = 引擎加载时读取的格式。如果编辑器"不理解引擎"，导出的格式必然有损或需要转换——费时且易出错。好的引擎让"编辑器里看到的就是游戏里得到的"（WYSIWYG，所见即所得）。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题7</span>解释 BSP 树和 LOD 的用途和区别。</span><span class="arrow">▶</span></div><div class="qa-a"><p><strong>BSP（Binary Space Partitioning）树：</strong> 把空间递归切成两半，建立"哪些面在哪些空间块中"的数据库。适用于室内——被墙挡住的房间不渲染。<strong>LOD（Level of Detail）：</strong> 远处的物体用低面数模型替换。适用于室外——远处的一座山可能只用 50 个三角形。区别：BSP 解决"看不见的不渲染"，LOD 解决"看得见但看不清的简化渲染"。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题8</span>为什么 VR 对帧率和延迟要求远高于传统游戏？</span><span class="arrow">▶</span></div><div class="qa-a"><p>因为人类前庭系统（内耳平衡器官）和视觉系统是紧密耦合的。当你转头但画面更新延迟超过 20ms，眼睛说"转了"但内耳说"没转"→大脑判断为"中毒了"→触发呕吐反射。这就是晕动症（Motion Sickness）。传统屏幕视野占比小，延迟会被大脑解释为"外面世界卡了一下"——不会触发呕吐反射。</p></div></div>
+
+</div>
+
+<hr>
+
+<h2 id="qaagent">🤖 qAagent 零基础问答区</h2>
+<div class="qa-section">
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">入门</span>零基础学游戏引擎应该从哪里开始？</span><span class="arrow">▶</span></div><div class="qa-a"><p>三条路：① <strong>学 Unreal：</strong> 下载 UE5，跟着官方教程做一个简单游戏（2-3天入门）。用 Blueprint 不用写 C++。② <strong>学 Unity：</strong> 下载 Unity，更轻量，C# 易上手。③ <strong>读这本书：</strong> Game Engine Architecture——不教你做游戏，但告诉你引擎是怎么设计的。建议先①/②感受"引擎能做什么"，再③理解"引擎是怎么做到的"。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">选择</span>UE 和 Unity 怎么选？</span><span class="arrow">▶</span></div><div class="qa-a"><p><strong>选 UE5：</strong> 追求顶级画质、做 3A 级 3D 游戏、想进大厂（Epic/EA/CDPR 等都用 UE）。代价：学习曲线陡、硬件要求高。 <strong>选 Unity：</strong> 快速原型、2D 游戏、移动端游戏、小团队。C# 比 C++ 友好太多。2023 的定价风波后社区受伤但仍是最大独立开发平台。简单规则：想进 AAA 行业用 UE，想快速做游戏用 Unity。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">概念</span>"游戏引擎"到底包含哪些代码？有没有一个清晰的边界？</span><span class="arrow">▶</span></div><div class="qa-a"><p>没有硬边界，但有一个实用的检测标准：<strong>"删掉当前游戏的数据和逻辑，剩下的代码还能给另一个游戏用吗？"</strong>能用的→引擎。不能用的→游戏层。比如：渲染器（能）→引擎。玩家技能系统（不能，只适用于这个游戏）→游戏层。关卡数据（不能）→游戏资源。关卡编辑器（能）→引擎工具。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">行业</span>为什么有些大厂还在用自研引擎而不转向 Unreal？</span><span class="arrow">▶</span></div><div class="qa-a"><p>四个核心原因：<strong>① 完全控制：</strong> 引擎源码在手，想改什么改什么。UE 虽然开源但你提交的改动不一定被 Epic 合并。<strong>② 极致性能：</strong> 针对自家游戏深度优化——id Tech 的 FPS 性能远超 UE 做同类型。<strong>③ 技术壁垒：</strong> RAGE 引擎的开放世界流式加载是 Rockstar 的核心竞争力。<strong>④ 历史投资：</strong> 已经投入数千人年的自研引擎，切换成本太高（重新培训所有人、迁移所有资产和工具）。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">基础知识</span>Component（组件）和 GameObject（游戏对象）到底是什么关系？</span><span class="arrow">▶</span></div><div class="qa-a"><p><strong>GameObject 是容器，Component 是功能块。</strong>类比：一个人（GameObject）有大脑（AI Component）、心脏（Health Component）、骨骼（Animation Component）、皮肤（Mesh Component）。单独一个空的 GameObject 什么都做不了。添加 Transform Component → 有了位置；添加 Mesh Component → 有了外观；添加 Collider → 能碰撞。这就是"组合优于继承"的设计——不需要一个庞大的"Enemy 类"继承自"Character 类"继承自"Entity 类"。只需往空容器里加组件就行。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">概念</span>引擎分层架构中的"平台层"具体做什么？</span><span class="arrow">▶</span></div><div class="qa-a"><p>平台层是一层<strong>抽象</strong>——把所有操作系统差异封装掉。上层代码调用 <code>FileSystem::Open("data.bin")</code> 而不知道底层是 Windows 的 CreateFileW 还是 PS5 的 sceKernelOpen。典型的平台层模块：文件IO、线程创建/管理、网络Socket、GPU 命令提交（DX12/Vulkan/Metal 的选择）、内存分配（系统 malloc 或控制台专用 API）、时间/计时器。这层的存在意义：<strong>加一个新平台只需实现这层，上层所有代码不变。</strong></p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">实践</span>读这本书之前需要掌握什么前提知识？</span><span class="arrow">▶</span></div><div class="qa-a"><p>如果能写基本的 C++（类/继承/虚函数/指针/引用），就能读。书中用到 3D 数学（向量/矩阵/四元数），但 Gregory 在第5章从头讲起。不需要：① 学过计算机图形学 ② 做过游戏 ③ 掌握汇编。需要的唯一习惯：<strong>不怕长</strong>——这本书 1000+ 页，读它像读百科全书而不是小说。每章独立，按需查阅。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">总结</span>第一章读完我最应该记住什么？</span><span class="arrow">▶</span></div><div class="qa-a"><p><strong>三个核心认知：</strong><br>1. 引擎 = 通用平台，游戏 = 特定内容——这个边界贯穿全书。<br>2. 没有万能引擎——每种引擎都是针对特定类型的技术选择。<br>3. 工具链不是引擎的附带品——关卡编辑器、资产导入器、Profiler 和运行时一样重要。理解这三条，后面的章节就是不断展开这些概念的具体技术细节。</p></div></div>
+
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li class=" active"><a href="ch01_引言.html">01 引言<span class="en"></span></a></li>
+  <li class=""><a href="ch02_工具的技艺.html">02 工具的技艺<span class="en"></span></a></li>
+  <li class=""><a href="ch03_软件工程基础.html">03 软件工程基础<span class="en"></span></a></li>
+  <li class=""><a href="ch04_并行与并发.html">04 并行与并发<span class="en"></span></a></li>
+  <li class=""><a href="ch05_3D数学基础.html">05 3D数学基础<span class="en"></span></a></li>
+  <li class=""><a href="ch06_引擎支持系统.html">06 引擎支持系统<span class="en"></span></a></li>
+  <li class=""><a href="ch07_资源与文件系统.html">07 资源与文件系统<span class="en"></span></a></li>
+  <li class=""><a href="ch08_游戏循环与实时模拟.html">08 游戏循环与实时模拟<span class="en"></span></a></li>
+  <li class=""><a href="ch09_人机交互设备.html">09 人机交互设备<span class="en"></span></a></li>
+  <li class=""><a href="ch10_调试与开发工具.html">10 调试与开发工具<span class="en"></span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div>
+<ul class="toc-list">
+<li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#1-1">1.1 什么是游戏？</a></li>
+  <li class="toc-h3"><a href="#1-1-1">1.1.1 游戏的学术定义</a></li>
+  <li class="toc-h4"><a href="#1-1-1-1">1.1.1.1 四个必备要素</a></li>
+  <li class="toc-h4"><a href="#1-1-1-2">1.1.1.2 四要素之间的关系</a></li>
+  <li class="toc-h3"><a href="#1-1-2">1.1.2 电子游戏的独特性</a></li>
+  <li class="toc-h4"><a href="#1-1-2-1">1.1.2.1 互动性（Interactivity）</a></li>
+  <li class="toc-h4"><a href="#1-1-2-2">1.1.2.2 实时性（Real-Time）</a></li>
+  <li class="toc-h3"><a href="#1-1-3">1.1.3 游戏的组成模型</a></li>
+  <li class="toc-h4"><a href="#1-1-3-1">1-1-3-1 对象模型（Object Model）</a></li>
+  <li class="toc-h4"><a href="#1-1-3-2">1-1-3-2 组件模型（Component Model）</a></li>
+  <li class="toc-h2"><a href="#1-2">1.2 什么是游戏引擎？</a></li>
+  <li class="toc-h3"><a href="#1-2-1">1.2.1 游戏引擎的定义</a></li>
+  <li class="toc-h4"><a href="#1-2-1-1">1.2.1.1 一个实用定义</a></li>
+  <li class="toc-h4"><a href="#1-2-1-2">1.2.1.2 引擎 vs 游戏的边界</a></li>
+  <li class="toc-h3"><a href="#1-2-2">1.2.2 引擎的可复用性光谱</a></li>
+  <li class="toc-h4"><a href="#1-2-2-1">1.2.2.1 从专用到通用的五级光谱</a></li>
+  <li class="toc-h4"><a href="#1-2-2-2">1.2.2.2 为什么自研引擎还存在？</a></li>
+  <li class="toc-h3"><a href="#1-2-3">1.2.3 引擎的典型边界</a></li>
+  <li class="toc-h4"><a href="#1-2-3-1">1.2.3.1 引擎通常包含什么</a></li>
+  <li class="toc-h4"><a href="#1-2-3-2">1.2.3.2 引擎通常不包含什么</a></li>
+  <li class="toc-h2"><a href="#1-3">1.3 各类型游戏的引擎差异</a></li>
+  <li class="toc-h3"><a href="#1-3-1">1.3.1 不同类型的技术侧重点</a></li>
+  <li class="toc-h4"><a href="#1-3-1-1">1.3.1.1 第一人称射击（FPS）</a></li>
+  <li class="toc-h4"><a href="#1-3-1-2">1.3.1.2 第三人称动作冒险（如战神、刺客信条）</a></li>
+  <li class="toc-h4"><a href="#1-3-1-3">1.3.1.3 大型多人在线（MMO）</a></li>
+  <li class="toc-h4"><a href="#1-3-1-4">1.3.1.4 即时策略（RTS）</a></li>
+  <li class="toc-h4"><a href="#1-3-1-5">1.3.1.5 体育/竞速游戏</a></li>
+  <li class="toc-h4"><a href="#1-3-1-6">1.3.1.6 格斗游戏</a></li>
+  <li class="toc-h3"><a href="#1-3-2">1.3.2 室内 vs 室外引擎的技术取舍</a></li>
+  <li class="toc-h4"><a href="#1-3-2-1">1.3.2.1 两种根本不同的渲染策略</a></li>
+  <li class="toc-h4"><a href="#1-3-2-2">1.3.2.2 混合场景的挑战</a></li>
+  <li class="toc-h3"><a href="#1-3-3">1.3.3 VR/AR/MR 的特殊要求</a></li>
+  <li class="toc-h4"><a href="#1-3-3-1">1.3.3.1 VR（虚拟现实）的极端要求</a></li>
+  <li class="toc-h4"><a href="#1-3-3-2">1.3.3.2 AR/MR 的额外挑战</a></li>
+  <li class="toc-h2"><a href="#1-4">1.4 游戏引擎生态</a></li>
+  <li class="toc-h3"><a href="#1-4-1">1.4.1 主流商业引擎</a></li>
+  <li class="toc-h4"><a href="#1-4-1-1">1.4.1.1 Unreal Engine（Epic Games）</a></li>
+  <li class="toc-h4"><a href="#1-4-1-2">1.4.1.2 Unity（Unity Technologies）</a></li>
+  <li class="toc-h4"><a href="#1-4-1-3">1.4.1.3 Godot（开源）</a></li>
+  <li class="toc-h3"><a href="#1-4-2">1.4.2 大厂自研引擎</a></li>
+  <li class="toc-h3"><a href="#1-4-3">1.4.3 选择引擎的核心因素</a></li>
+  <li class="toc-h4"><a href="#1-4-3-1">1.4.3.1 六个关键决策维度</a></li>
+  <li class="toc-h2"><a href="#1-5">1.5 引擎运行时架构</a></li>
+  <li class="toc-h3"><a href="#1-5-1">1.5.1 引擎的分层结构</a></li>
+  <li class="toc-h4"><a href="#1-5-1-1">1.5.1.1 经典五层架构（自底向上）</a></li>
+  <li class="toc-h4"><a href="#1-5-1-2">1.5.1.2 层间依赖规则</a></li>
+  <li class="toc-h3"><a href="#1-5-2">1.5.2 各子系统详解</a></li>
+  <li class="toc-h4"><a href="#1-5-2-1">1.5.2.1 渲染器（Renderer）</a></li>
+  <li class="toc-h4"><a href="#1-5-2-2">1.5.2.2 物理引擎（Physics）</a></li>
+  <li class="toc-h4"><a href="#1-5-2-3">1.5.2.3 音频引擎（Audio）</a></li>
+  <li class="toc-h4"><a href="#1-5-2-4">1.5.2.4 前端/UI（Front-End）</a></li>
+  <li class="toc-h3"><a href="#1-5-3">1.5.3 游戏循环（Game Loop）</a></li>
+  <li class="toc-h4"><a href="#1-5-3-1">1.5.3.1 主循环的基本结构</a></li>
+  <li class="toc-h4"><a href="#1-5-3-2">1.5.3.2 帧率与时间步长</a></li>
+  <li class="toc-h2"><a href="#1-6">1.6 工具与资产管线</a></li>
+  <li class="toc-h3"><a href="#1-6-1">1.6.1 工具链 = 引擎的重要组成</a></li>
+  <li class="toc-h4"><a href="#1-6-1-1">1.6.1.1 Gregory 的核心观点</a></li>
+  <li class="toc-h4"><a href="#1-6-1-2">1.6.1.2 资产管线流程图</a></li>
+  <li class="toc-h3"><a href="#1-6-2">1.6.2 典型开发工具</a></li>
+  <li class="toc-h4"><a href="#1-6-2-1">1.6.2.1 关卡编辑器（Level Editor）</a></li>
+  <li class="toc-h4"><a href="#1-6-2-2">1.6.2.2 资产浏览器（Asset Browser）</a></li>
+  <li class="toc-h4"><a href="#1-6-2-3">1.6.2.3 脚本编辑器</a></li>
+  <li class="toc-h4"><a href="#1-6-2-4">1.6.2.4 Profiler & 调试工具</a></li>
+  <li class="toc-h2"><a href="#1-7">1.7 全章总结</a></li>
+  <li class="toc-h2"><a href="#insight">本章核心洞察</a></li>
+  <li class="toc-h2"><a href="#exercises">📝 课后练习题（含答案）</a></li>
+  <li class="toc-h2"><a href="#qaagent">🤖 qAagent 零基础问答区</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+function toggleQA(el){
+  var item=el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+</body></html>

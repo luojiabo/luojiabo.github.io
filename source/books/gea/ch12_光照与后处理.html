@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>GEA Vol.2 Ch12: 光照与后处理 — 零基础讲义 (Guizang版)</title>
+<style>/* GEA Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+svg{max-width:100%;height:auto}
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content h4{font-size:14px;font-weight:600;margin:14px 0 6px;color:#444;padding-left:14px;border-left:2px solid #b2b2ff}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img,#content figure svg{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+.info-box{background:#eef0ff;border-left:4px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.thought-box{background:#fff8e1;border-left:4px solid #ffc107;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.key-box{background:#e8f8f5;border-left:4px solid #00b894;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.guizang-figure{text-align:center;margin:16px 0}
+.guizang-figure svg{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.guizang-caption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+.lesson-box{background:#faf8ff;border:1px dashed #b2b2ff;padding:12px 16px;margin:16px 0;border-radius:6px}
+.lesson-tag{display:inline-block;background:#5b5bff;color:#fff;font-size:11px;padding:2px 8px;border-radius:3px;margin-right:8px}
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list li.toc-h4{padding-left:48px;color:#888;font-size:11px;font-style:italic}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+.qa-section{margin:20px 0}
+.qa-item{border:1px solid #e8e8e3;border-radius:8px;margin:8px 0;overflow:hidden}
+.qa-q{background:#fafaf8;padding:10px 14px;cursor:pointer;font-weight:600;font-size:14px;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.qa-q:hover{background:#f0f0ec}
+.qa-q .arrow{color:#999;font-size:12px;transition:transform .2s}
+.qa-item.open .qa-q .arrow{transform:rotate(90deg)}
+.qa-a{display:none;padding:12px 14px;background:#fff;font-size:14px;line-height:1.8;border-top:1px solid #eee}
+.qa-item.open .qa-a{display:block}
+.qa-a code{background:#f0f0eb;padding:1px 4px;border-radius:3px;font-size:.9em;color:#d6336c}
+.qa-tag{display:inline-block;background:#eef0ff;color:#5b5bff;font-size:10px;padding:1px 6px;border-radius:3px;margin-right:6px}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">GEA V1</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch12 光照与后处理</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<!-- CH03 DETAILED WITH x.x.x SUBSECTIONS -->
+<h1>第12章：光照与后处理 — 零基础讲义</h1>
+
+<blockquote><p><strong>讲义说明</strong><br>本讲义基于 Jason Gregory 所著《Game Engine Architecture Volume II》第4版第12章（Lighting and Post-Processing, p.136-235）。光照是实时渲染皇冠上的明珠——它决定了画面是"塑料感"还是"照片感"。<br><em>本版插画由 ImageGen + Guizang 材质插画标准流程生成。</em></p></blockquote>
+
+<div class="toc"><strong>目录</strong><ul>
+<li><a href="#学习目标">学习目标</a></li><li><a href="#12-1">12.1 光照问题</a></li><li><a href="#12-2">12.2 辐射度量学基础</a></li><li><a href="#12-3">12.3 渲染方程</a></li><li><a href="#12-4">12.4 着色方程</a></li><li><a href="#12-5">12.5 光栅化光照技术</a></li><li><a href="#12-6">12.6 光线追踪光照</a></li><li><a href="#12-7">12.7 后处理</a></li><li><a href="#insight">本章核心洞察</a></li><li><a href="#exercises">课后练习题</a></li><li><a href="#qaagent">qAagent 零基础问答区</a></li>
+</ul></div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol><li>理解光照问题的物理本质——光线如何与表面交互</li><li>掌握 Phong/Blinn-Phong 光照模型的三个分量</li><li>理解 PBR（基于物理的渲染）的核心概念</li><li>区分前向渲染和延迟渲染的架构差异</li><li>了解光线追踪如何解决传统光栅化的光照局限</li><li>掌握常见后处理效果的原理</li></ol>
+<hr>
+
+<h2 id="12-1">12.1 光照问题</h2>
+
+<h3 id="12-1-1">12.1.1 光照的物理本质</h3>
+<h4 id="12-1-1-1">12.1.1.1 光是什么？</h4>
+<p>光是<strong>电磁辐射</strong>——一束光子从光源出发，在场景中传播、反弹、被吸收和散射，最终一部分光子进入你的眼睛（或相机），形成你看到图像。游戏渲染的目标就是<strong>近似模拟这个过程</strong>，在16.7ms内完成。</p>
+
+<h4 id="12-1-1-2">12.1.1.2 渲染中的两类光照</h4>
+<table><tr><th></th><th>直接光照</th><th>间接光照（全局光照/GI）</th></tr>
+<tr><td>定义</td><td>光源→物体表面→眼睛（一次弹射）</td><td>光源→多个表面弹射→眼睛</td></tr>
+<tr><td>计算难度</td><td>简单（一次 dot product）</td><td>极难（需积分所有入射方向）</td></tr>
+<tr><td>视觉效果</td><td>只看到直接受光的面</td><td>阴影不纯黑、颜色溢散到相邻面</td></tr>
+<tr><td>实时实现</td><td>标准操作</td><td>光线追踪 / Light Probe / 烘焙</td></tr>
+</table>
+
+<div class="thought-box"><strong>想一想</strong>：为什么没有GI的场景看起来"像塑料"而GI场景看起来"真实"？<br><blockquote style="background:transparent;border:none;padding:0;margin:4px 0 0">因为真实世界中，几乎没有纯黑的阴影。光线到达物体表面后会<strong>反弹无数次</strong>——红色墙壁会把红色光"染"到旁边的白色球上。没有GI的渲染把"没被直接光照到"的地方设为黑色（或简单的环境光），失去了真实光线的复杂交互。</blockquote></div>
+
+<hr>
+
+<h2 id="12-2">12.2 辐射度量学基础</h2>
+
+<h3 id="12-2-1">12.2.1 核心物理量</h3>
+<h4 id="12-2-1-1">12.2.1.1 从能量到亮度</h4>
+<table><tr><th>物理量</th><th>符号</th><th>单位</th><th>含义</th></tr>
+<tr><td>辐射通量</td><td>Φ</td><td>W(瓦)</td><td>光源每秒发出的总能量</td></tr>
+<tr><td>辐射强度</td><td>I</td><td>W/sr</td><td>单位立体角的能量（点光源的"多亮"）</td></tr>
+<tr><td>辐亮度</td><td>L</td><td>W/(sr·m²)</td><td>单位面积+单位立体角的能量——<strong>渲染的核心量</strong></td></tr>
+</table>
+
+<h3 id="12-2-2">12.2.2 BRDF</h3>
+<h4 id="12-2-2-1">12.2.2.1 双向反射分布函数</h4>
+<p><strong>BRDF（Bidirectional Reflectance Distribution Function）</strong> 是描述"表面如何反射光"的数学函数——给定入射方向 ω<sub>i</sub> 和出射方向 ω<sub>o</sub>，BRDF 告诉你反射比例。金属和塑料的 BRDF 完全不同。</p>
+<pre><code>// BRDF 的输入输出
+f(ωi, ωo) = 反射辐亮度 / 入射辐照度
+
+// PBR 中常用的 Cook-Torrance BRDF 有三个分量：
+// ① 法线分布函数 (NDF)：这个表面有多粗糙
+// ② 几何遮蔽函数 (G)：微表面互相遮挡
+// ③ 菲涅尔方程 (F)：掠射角反射更多光</code></pre>
+
+<hr>
+
+<h2 id="12-3">12.3 渲染方程</h2>
+
+<h3 id="12-3-1">12.3.1 光照的统一数学框架</h3>
+<h4 id="12-3-1-1">12.3.1.1 Kajiya 渲染方程（1986）</h4>
+<pre><code>// 渲染方程——所有光照计算的统一理论
+Lo(p, ωo) = Le(p, ωo) + ∫ f(p, ωi, ωo) × Li(p, ωi) × (n·ωi) dωi
+
+// Lo: 从点 p 向方向 ωo 射出的光
+// Le: 自身发光（如发光表面）
+// f: BRDF（表面如何反射）
+// Li: 从方向 ωi 进入点 p 的光
+// n·ωi: 光线方向和法线的夹角余弦（倾斜=暗）</code></pre>
+<p>这个方程是<strong>所有实时和离线渲染的理论基础</strong>。积分符号在实时渲染中通过求和近似（离散化），在光线追踪中通过蒙特卡洛采样逼近。</p>
+
+<hr>
+
+<h2 id="12-4">12.4 着色方程</h2>
+
+<div class="guizang-figure"><img src="images/ch12/01_phong_lighting.png" alt="Phong光照模型"><div class="guizang-caption">图12-1：Phong光照模型三组件（Guizang流程生成）</div></div>
+
+<h3 id="12-4-1">12.4.1 Phong / Blinn-Phong 光照模型</h3>
+<h4 id="12-4-1-1">12.4.1.1 三个分量</h4>
+<p>这是最经典的教学模型——虽然不是物理精确，但直观清晰。</p>
+<pre><code>// Phong 光照 = 环境 + 漫反射 + 镜面高光
+color = ambient + diffuse + specular
+
+// ① 环境光：最简单的"防止纯黑"的方法
+ambient = material.ambientColor * scene.ambientLight
+
+// ② 漫反射：表面法线和光线方向的夹角决定亮度
+float NdotL = max(dot(normal, lightDir), 0.0);
+diffuse = albedo * lightColor * NdotL
+
+// ③ 镜面高光：反射光线和视线越近越亮
+float3 reflectDir = reflect(-lightDir, normal);
+float specFactor = pow(max(dot(reflectDir, viewDir), 0.0), shininess);
+specular = specColor * lightColor * specFactor
+
+// Blinn-Phong 改进（用半程向量替代反射向量，更快）
+float3 halfVec = normalize(lightDir + viewDir);
+float specFactor = pow(max(dot(normal, halfVec), 0.0), shininess);</code></pre>
+
+<h3 id="12-4-2">12.4.2 PBR（基于物理的渲染）</h3>
+<h4 id="12-4-2-1">12.4.2.1 核心原则</h4>
+<table><tr><th>原则</th><th>含义</th></tr>
+<tr><td><strong>能量守恒</strong></td><td>反射光不能超过入射光。镜面高光亮→漫反射必须暗</td></tr>
+<tr><td><strong>微表面理论</strong></td><td>看似光滑的表面在微观上是不规则的微小镜子</td></tr>
+<tr><td><strong>菲涅尔效应</strong></td><td>所有表面在掠射角都变得像镜子（看远处水面→看到反射）</td></tr>
+<tr><td><strong>金属/非金属区分</strong></td><td>金属吸收折射光（无漫反射），非金属两者都有</td></tr>
+</table>
+<h4 id="12-4-2-2">12.4.2.2 标准 PBR 纹理集</h4>
+<p>现代 3A 游戏的资产通常包含这些基于物理定义的纹理：Albedo（基础色，无光照信息）、Normal Map（法线扰动——用小纹理模拟大凹凸）、Roughness（粗糙度，0=镜面/1=完全漫反射）、Metallic（金属度，0=非金属/1=金属）、AO（环境光遮蔽——角落处加暗）。</p>
+
+<hr>
+
+<h2 id="12-5">12.5 光栅化光照技术</h2>
+
+<div class="guizang-figure"><img src="images/ch12/02_deferred_rendering.png" alt="延迟渲染"><div class="guizang-caption">图12-2：延迟渲染G-Buffer架构（Guizang流程生成）</div></div>
+
+<h3 id="12-5-1">12.5.1 前向渲染 vs 延迟渲染</h3>
+<h4 id="12-5-1-1">12.5.1.1 核心差异</h4>
+<table><tr><th></th><th>前向渲染（Forward）</th><th>延迟渲染（Deferred）</th></tr>
+<tr><td>思路</td><td>每个物体×每个光源=一次Pass</td><td>先存几何信息，再统一光照</td></tr>
+<tr><td>优点</td><td>支持透明、MSAA、简单</td><td>光源多时性能好、光照和几何解耦</td></tr>
+<tr><td>缺点</td><td>光源×物体复杂度爆炸</td><td>显存大（G-Buffer）、不支持MSAA</td></tr>
+<tr><td>使用场景</td><td>VR（需MSAA）、移动端</td><td>3A主机/PC游戏（大量动态光源）</td></tr>
+</table>
+
+<h4 id="12-5-1-2">12.5.1.2 G-Buffer 的内容</h4>
+<pre><code>// 延迟渲染的第一阶段：写入 G-Buffer（不计算光照）
+// 实际是多个渲染目标（MRT）同时写入
+GBuffer0: 漫反射颜色（Albedo RGB）+ 材质标志
+GBuffer1: 世界空间法线（Normal XYZ）
+GBuffer2: 粗糙度 + 金属度 + AO（打包到一个32位）
+GBuffer3: 世界空间位置（或从深度重建）
+
+// 第二阶段：光照Pass——对每个光源，读取G-Buffer计算贡献
+for each light:
+    for each screen pixel:
+        vec3 pos = GBuffer3[pos]
+        vec3 N = GBuffer1[pos]
+        vec3 V = normalize(cameraPos - pos)
+        // ... BRDF 计算 ...
+        color += CalcLightContribution(light, pos, N, V, GBuffer0, GBuffer2)</code></pre>
+
+<h3 id="12-5-2">12.5.2 阴影技术</h3>
+<h4 id="12-5-2-1">12.5.2.1 Shadow Map（阴影贴图）</h4>
+<p>最广泛使用的实时阴影技术：从光源位置渲染一遍场景到一张深度纹理→正常渲染时检查每个像素是否在阴影中（比较它的深度和Shadow Map中对应位置的深度）。<strong>问题：</strong>锯齿、自阴影失真、分辨率受限。</p>
+<h4 id="12-5-2-2">12.5.2.2 级联阴影贴图（CSM）</h4>
+<p>近处用高分辨率 Shadow Map，远处用低分辨率——多张 Shadow Map 覆盖不同距离范围。开放世界游戏标配。</p>
+
+<hr>
+
+<h2 id="12-6">12.6 光线追踪光照</h2>
+
+<h3 id="12-6-1">12.6.1 路径追踪原理</h3>
+<h4 id="12-6-1-1">12.6.1.1 蒙特卡洛积分</h4>
+<p>渲染方程中的积分在解析上是无解的——但可以用随机采样逼近。<strong>路径追踪 = 从相机发射光线 → 碰撞物体 → 随机采样 BRDF 决定下一个方向 → 继续追踪直到击中光源或达到最大深度</strong>。累积数千条路径的样本取平均，就得到了这个像素的近似颜色。这就是皮克斯渲染一部电影要花数小时的原因——需要大量样本来消除噪声。</p>
+
+<h3 id="12-6-2">12.6.2 混合渲染管线</h3>
+<h4 id="12-6-2-1">12.6.2.1 光栅化主力+光线追踪辅助</h4>
+<p>当前游戏没有"全光线追踪"——GPU 不够快。实际做法：光栅化处理主画面，光线追踪仅用于：反射（替代模糊的 SSR）、环境光遮蔽（替代 SSAO）、阴影精化（替代 Shadow Map 的锯齿）、全局光照（替代烘焙 Light Probe）。每一帧可能只追踪每条光线 1-2 次（1 SPP），用时间域累积+Temporal Denoising 重建清晰的图像。</p>
+
+<hr>
+
+<h2 id="12-7">12.7 后处理</h2>
+
+<h3 id="12-7-1">12.7.1 色调映射（Tone Mapping）</h3>
+<h4 id="12-7-1-1">12.7.1.1 HDR→LDR 的必要性</h4>
+<p>引擎内部用 HDR（高动态范围）计算光照——一个像素亮度可能是 0.001（暗处）到 1000（直视太阳）。但显示器只能显示 0-255（LDR）。色调映射把巨大的亮度范围"压缩"到显示器能显示的范围内，同时保留明暗细节。常用算法：ACES（电影工业标准）、Reinhard。</p>
+
+<h3 id="12-7-2">12.7.2 抗锯齿（Anti-Aliasing）</h3>
+<h4 id="12-7-2-1">12.7.2.1 TAA 的工作原理</h4>
+<p><strong>TAA（Temporal Anti-Aliasing）</strong>是当前游戏标配：每帧微调相机投影矩阵（亚像素偏移），把多帧的采样混合在一起。一帧有锯齿、两帧减少锯齿、四帧几乎完美——用人眼的时间累积来补足单帧的空间采样不足。代价：快速移动时有鬼影（需要 Velocity Buffer 和拒绝采样来消除）。</p>
+
+<h3 id="12-7-3">12.7.3 环境光遮蔽（AO）</h3>
+<h4 id="12-7-3-1">12.7.3.1 SSAO 与 RTAO</h4>
+<p><strong>SSAO：</strong> 纯后处理——基于深度缓冲在屏幕空间采样邻近像素的深度差异。角落和缝隙的深度差异大→判定为闭塞→加暗。快但局限性明显（不知道屏幕外的几何体）。<strong>RTAO：</strong> 用光线追踪从表面点发射短射线探测周围几何体的存在→物理正确的环境光遮蔽。比 SSAO 精确但需要 RT 硬件。</p>
+
+<hr>
+
+<h2 id="insight">本章核心洞察</h2>
+<div class="key-box"><strong>🔑 光照 = 解渲染方程</strong><br>
+所有光照技术——从最简单的 Phong 模型到最复杂的路径追踪——都试图以不同的精度和速度<strong>近似求解 Kajiya 的渲染方程</strong>。Phong 用三个简单公式近似，PBR 用微表面理论近似，路径追踪用蒙特卡洛积分逼近。<br><br><strong>三条光照准则：</strong><br>1. <strong>能量守恒是第一原则：</strong> 不合能量守恒的光照模型必定产生不真实结果<br>2. <strong>光照和几何解耦：</strong> 延迟渲染的核心思想——先存几何，再算光<br>3. <strong>正确的光照靠物理，好看的光照靠艺术：</strong> 好的游戏光照是 PBR 物理正确 + 艺术家手动调整的结合</div>
+
+<hr>
+
+<h2 id="exercises">📝 课后练习题（含答案）</h2>
+<div class="qa-section">
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题1</span>Phong 光照模型的三个分量是什么？用公式和文字分别说明。</span><span class="arrow">▶</span></div><div class="qa-a"><p>① <strong>环境光：</strong> ambientColor * ambientLight。最简单的全局近似——防止暗面纯黑。② <strong>漫反射：</strong> albedo * lightColor * max(dot(N,L),0)。表面法线和光线的夹角决定亮度。③ <strong>镜面高光：</strong> specColor * lightColor * pow(max(dot(R,V),0), shininess)。反射向量越接近视线越亮。三者相加=最终颜色。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题2</span>PBR的四大核心原则是什么？</span><span class="arrow">▶</span></div><div class="qa-a"><p>① <strong>能量守恒：</strong> 出射光≤入射光。② <strong>微表面理论：</strong> 表面在微观上是微小镜子。③ <strong>菲涅尔效应：</strong> 掠射角反射增强。④ <strong>金属/非金属区分：</strong> 金属无漫反射，非金属两者都有。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题3</span>前向渲染和延迟渲染的核心区别？G-Buffer存了什么？</span><span class="arrow">▶</span></div><div class="qa-a"><p>前向：物体×光源，在像素着色器中一次性算光照。延迟：先存几何到G-Buffer（位置/法线/颜色/材质），再统一光照。G-Buffer存的：Albedo、法线、粗糙度+金属度+AO、深度（或位置）。延迟渲染的优势：光照计算复杂度从O(物体×光源)降到O(像素×光源)。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题4</span>Shadow Map的工作原理是什么？有什么先天缺陷？</span><span class="arrow">▶</span></div><div class="qa-a"><p>从光源位置渲染深度图→正常渲染时比较像素深度和Shadow Map深度→更深=在阴影中。缺陷：分辨率导致的锯齿(Shadow Acne)、自阴影失真(需加bias)、硬边缘(需PCF滤波)。CSM用多张级联Shadow Map缓解分辨率和距离的矛盾。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题5</span>为什么光线追踪能天然处理反射但光栅化不行？</span><span class="arrow">▶</span></div><div class="qa-a"><p>光栅化的思路是"把三角形投影到屏幕"——只关心当前三角形的像素，不关心它之外的世界。反射需要知道"从表面反弹的光来自哪个方向"——光栅化没有这个信息（它能看到的只有屏幕空间内已经渲染好的像素）。光线追踪的天生优势：射线击中表面后，它拥有该点的完整几何和材质信息，可以继续追踪下一个弹射方向。</p></div></div>
+
+</div>
+
+<hr>
+
+<h2 id="qaagent">🤖 qAagent 零基础问答区</h2>
+<div class="qa-section">
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">概念</span>为什么有些游戏画面"塑料感"重？</span><span class="arrow">▶</span></div><div class="qa-a"><p>主要原因：① 没有 PBR——用了不遵循能量守恒的老式光照模型（Phong/Blinn-Phong），导致高光过亮或过暗。② 没有全局光照——暗面用常数环境光代替间接光照，失去了弹射光的真实感。③ 粗糙度映射不准确——所有表面感觉像同一种材质。解决方案：上 PBR + 环境光遮蔽 + 实时GI（如Lumen）。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">概念</span>TAA 为什么会导致画面模糊？怎么解决？</span><span class="arrow">▶</span></div><div class="qa-a"><p>TAA 用过去几帧的像素混合当前帧——这天然导致"时间域模糊"（特别是移动中）。解决：① 锐化后处理（如 CAS / FidelityFX Sharpening）。② Velocity Buffer 检测移动像素→减少混合权重。③ 更好的拒绝采样——丢弃和前帧差异过大的像素。DLSS/DLAA 用AI替代传统TAA，在反走样的同时保持锐度。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">实践</span>怎么判断一个材质是"好的PBR材质"？</span><span class="arrow">▶</span></div><div class="qa-a"><p>三个快速判断：① Albedo 贴图的亮度——暗处（木炭）0.02-0.04，中等（红砖）0.2-0.3，亮色（白雪）0.7-0.8。超过 0.9 的基本不是真实材质。② 金属的 Albedo 应该有颜色（金=黄色，铜=红棕色），非金属的 Albedo 不饱和。③ 粗糙度可以通过边缘模糊反射程度目测——光滑表面反射清晰，粗糙表面反射模糊。</p></div></div>
+
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li class="nav-header">Vol.2 章节</li>
+  <li class=""><a href="ch11_渲染引擎.html">11 渲染引擎<span class="en"></span></a></li>
+  <li class=" active"><a href="ch12_光照与后处理.html">12 光照与后处理<span class="en"></span></a></li>
+  <li class=""><a href="ch13_动画系统.html">13 动画系统<span class="en"></span></a></li>
+  <li class=""><a href="ch14_碰撞与刚体动力学.html">14 碰撞与刚体动力学<span class="en"></span></a></li>
+  <li class=""><a href="ch15_音频.html">15 音频<span class="en"></span></a></li>
+  <li class=""><a href="ch16_游戏性系统入门.html">16 游戏性系统入门<span class="en"></span></a></li>
+  <li class=""><a href="ch17_运行时游戏玩法.html">17 运行时游戏玩法<span class="en"></span></a></li>
+  <li class=""><a href="ch18_更多内容.html">18 更多内容<span class="en"></span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div>
+<ul class="toc-list">
+<li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#12-1">12.1 光照问题</a></li>
+  <li class="toc-h3"><a href="#12-1-1">12.1.1 光照的物理本质</a></li>
+  <li class="toc-h4"><a href="#12-1-1-1">12.1.1.1 光是什么？</a></li>
+  <li class="toc-h4"><a href="#12-1-1-2">12.1.1.2 渲染中的两类光照</a></li>
+  <li class="toc-h2"><a href="#12-2">12.2 辐射度量学基础</a></li>
+  <li class="toc-h3"><a href="#12-2-1">12.2.1 核心物理量</a></li>
+  <li class="toc-h4"><a href="#12-2-1-1">12.2.1.1 从能量到亮度</a></li>
+  <li class="toc-h3"><a href="#12-2-2">12.2.2 BRDF</a></li>
+  <li class="toc-h4"><a href="#12-2-2-1">12.2.2.1 双向反射分布函数</a></li>
+  <li class="toc-h2"><a href="#12-3">12.3 渲染方程</a></li>
+  <li class="toc-h3"><a href="#12-3-1">12.3.1 光照的统一数学框架</a></li>
+  <li class="toc-h4"><a href="#12-3-1-1">12.3.1.1 Kajiya 渲染方程（1986）</a></li>
+  <li class="toc-h2"><a href="#12-4">12.4 着色方程</a></li>
+  <li class="toc-h3"><a href="#12-4-1">12.4.1 Phong / Blinn-Phong 光照模型</a></li>
+  <li class="toc-h4"><a href="#12-4-1-1">12.4.1.1 三个分量</a></li>
+  <li class="toc-h3"><a href="#12-4-2">12.4.2 PBR（基于物理的渲染）</a></li>
+  <li class="toc-h4"><a href="#12-4-2-1">12.4.2.1 核心原则</a></li>
+  <li class="toc-h4"><a href="#12-4-2-2">12.4.2.2 标准 PBR 纹理集</a></li>
+  <li class="toc-h2"><a href="#12-5">12.5 光栅化光照技术</a></li>
+  <li class="toc-h3"><a href="#12-5-1">12.5.1 前向渲染 vs 延迟渲染</a></li>
+  <li class="toc-h4"><a href="#12-5-1-1">12.5.1.1 核心差异</a></li>
+  <li class="toc-h4"><a href="#12-5-1-2">12.5.1.2 G-Buffer 的内容</a></li>
+  <li class="toc-h3"><a href="#12-5-2">12.5.2 阴影技术</a></li>
+  <li class="toc-h4"><a href="#12-5-2-1">12.5.2.1 Shadow Map（阴影贴图）</a></li>
+  <li class="toc-h4"><a href="#12-5-2-2">12.5.2.2 级联阴影贴图（CSM）</a></li>
+  <li class="toc-h2"><a href="#12-6">12.6 光线追踪光照</a></li>
+  <li class="toc-h3"><a href="#12-6-1">12.6.1 路径追踪原理</a></li>
+  <li class="toc-h4"><a href="#12-6-1-1">12.6.1.1 蒙特卡洛积分</a></li>
+  <li class="toc-h3"><a href="#12-6-2">12.6.2 混合渲染管线</a></li>
+  <li class="toc-h4"><a href="#12-6-2-1">12.6.2.1 光栅化主力+光线追踪辅助</a></li>
+  <li class="toc-h2"><a href="#12-7">12.7 后处理</a></li>
+  <li class="toc-h3"><a href="#12-7-1">12.7.1 色调映射（Tone Mapping）</a></li>
+  <li class="toc-h4"><a href="#12-7-1-1">12.7.1.1 HDR→LDR 的必要性</a></li>
+  <li class="toc-h3"><a href="#12-7-2">12.7.2 抗锯齿（Anti-Aliasing）</a></li>
+  <li class="toc-h4"><a href="#12-7-2-1">12.7.2.1 TAA 的工作原理</a></li>
+  <li class="toc-h3"><a href="#12-7-3">12.7.3 环境光遮蔽（AO）</a></li>
+  <li class="toc-h4"><a href="#12-7-3-1">12.7.3.1 SSAO 与 RTAO</a></li>
+  <li class="toc-h2"><a href="#insight">本章核心洞察</a></li>
+  <li class="toc-h2"><a href="#exercises">📝 课后练习题（含答案）</a></li>
+  <li class="toc-h2"><a href="#qaagent">🤖 qAagent 零基础问答区</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+function toggleQA(el){
+  var item=el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+</body></html>

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>GEA Vol.2 Ch14: 碰撞与刚体动力学 — 零基础讲义 (Guizang版)</title>
+<style>/* GEA Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+svg{max-width:100%;height:auto}
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content h4{font-size:14px;font-weight:600;margin:14px 0 6px;color:#444;padding-left:14px;border-left:2px solid #b2b2ff}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img,#content figure svg{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+.info-box{background:#eef0ff;border-left:4px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.thought-box{background:#fff8e1;border-left:4px solid #ffc107;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.key-box{background:#e8f8f5;border-left:4px solid #00b894;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.guizang-figure{text-align:center;margin:16px 0}
+.guizang-figure svg{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.guizang-caption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+.lesson-box{background:#faf8ff;border:1px dashed #b2b2ff;padding:12px 16px;margin:16px 0;border-radius:6px}
+.lesson-tag{display:inline-block;background:#5b5bff;color:#fff;font-size:11px;padding:2px 8px;border-radius:3px;margin-right:8px}
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list li.toc-h4{padding-left:48px;color:#888;font-size:11px;font-style:italic}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+.qa-section{margin:20px 0}
+.qa-item{border:1px solid #e8e8e3;border-radius:8px;margin:8px 0;overflow:hidden}
+.qa-q{background:#fafaf8;padding:10px 14px;cursor:pointer;font-weight:600;font-size:14px;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.qa-q:hover{background:#f0f0ec}
+.qa-q .arrow{color:#999;font-size:12px;transition:transform .2s}
+.qa-item.open .qa-q .arrow{transform:rotate(90deg)}
+.qa-a{display:none;padding:12px 14px;background:#fff;font-size:14px;line-height:1.8;border-top:1px solid #eee}
+.qa-item.open .qa-a{display:block}
+.qa-a code{background:#f0f0eb;padding:1px 4px;border-radius:3px;font-size:.9em;color:#d6336c}
+.qa-tag{display:inline-block;background:#eef0ff;color:#5b5bff;font-size:10px;padding:1px 6px;border-radius:3px;margin-right:6px}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">GEA V1</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch14 碰撞与刚体动力学</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<!-- CH03 DETAILED WITH x.x.x SUBSECTIONS -->
+<h1>第14章：碰撞与刚体动力学 — 零基础讲义</h1>
+
+<blockquote><p><strong>讲义说明</strong><br>本讲义基于 Jason Gregory 所著《Game Engine Architecture Volume II》第4版第14章（Collision and Rigid Body Dynamics, p.335-424），逐节翻译推导。碰撞检测是游戏物理的基石，也是计算几何中最具挑战性的实时算法之一。<br><em>本版插画由 ImageGen + Guizang 材质插画标准流程生成。</em></p></blockquote>
+
+<div class="toc"><strong>目录</strong><ul>
+<li><a href="#学习目标">学习目标</a></li><li><a href="#14-1">14.1 游戏需要物理吗？</a></li><li><a href="#14-2">14.2 碰撞检测系统</a></li><li><a href="#14-3">14.3 刚体动力学</a></li><li><a href="#14-4">14.4 集成物理引擎</a></li><li><a href="#14-5">14.5 高级物理特性</a></li><li><a href="#insight">本章核心洞察</a></li><li><a href="#exercises">课后练习题</a></li><li><a href="#qaagent">qAagent 零基础问答区</a></li>
+</ul></div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol><li>理解碰撞检测的 Broad Phase / Narrow Phase 两阶段架构及常见算法</li><li>掌握刚体动力学基础（F=ma、冲量、约束、积分器）</li><li>了解主流物理中间件（PhysX/Havok/Bullet/Jolt）的集成方式</li><li>理解游戏物理和"真实物理"的区别——游戏物理首先要"好玩"</li><li>了解布娃娃、布料、破坏等高级物理特性</li></ol>
+<hr>
+
+<h2 id="14-1">14.1 游戏需要物理吗？</h2>
+
+<h3 id="14-1-1">14.1.1 物理在游戏中的角色演变</h3>
+<h4 id="14-1-1-1">14.1.1.1 从预渲染到实时模拟</h4>
+<p>早期游戏（DOOM、Quake）几乎没有物理——角色碰撞用简单AABB检测，爆炸是预录动画。2004年Half-Life 2的<strong>重力枪</strong>标志着实时物理从"可有可无的噱头"变成"核心玩法"。今天的游戏——从塞尔达的物理谜题到GTA的车辆碰撞——物理已经整合到游戏设计的最深层面。</p>
+
+<h4 id="14-1-1-2">14.1.1.2 "好玩"优先于"正确"</h4>
+<p><strong>生活类比：</strong> 马里奥跳起后下落加速度 ≠ 9.8m/s²——真实重力下他跳不够高。游戏物理被调整到"手感最好"。赛车游戏重力减弱让特技更精彩，格斗游戏重力加强让角色快速落地。游戏物理是<strong>真实物理的"戏剧化版本"</strong>。</p>
+
+<h3 id="14-1-2">14.1.2 物理中间件生态</h3>
+<h4 id="14-1-2-1">14.1.2.1 主流选择一览</h4>
+<table><tr><th>引擎</th><th>开发商</th><th>知名游戏</th><th>关键特性</th></tr>
+<tr><td>PhysX</td><td>NVIDIA</td><td>绝大部分Unreal/Unity 3A游戏</td><td>GPU加速、布料/流体、最广泛生态</td></tr>
+<tr><td>Havok</td><td>Microsoft</td><td>使命召唤、刺客信条、荒野大镖客2</td><td>主机优化出色、工具链成熟</td></tr>
+<tr><td>Bullet</td><td>开源</td><td>GTA V、Red Dead Redemption 2</td><td>免费、跨平台、C++源码可改</td></tr>
+<tr><td>Jolt Physics</td><td>开源（Jorrit Rouwe）</td><td>Horizon Forbidden West</td><td>新一代设计、简洁API、确定性模拟</td></tr>
+</table>
+<p><strong>极少有工作室自己写物理引擎</strong>——这是行业中少有的"完全没有争议"的结论。</p>
+
+<hr>
+
+<h2 id="14-2">14.2 碰撞检测系统</h2>
+
+<div class="guizang-figure"><img src="images/ch14/01_collision_phases.png" alt="碰撞检测两阶段"><div class="guizang-caption">图14-1：Broad Phase 粗筛 → Narrow Phase 精判（Guizang流程生成）</div></div>
+
+<h3 id="14-2-1">14.2.1 两阶段架构</h3>
+<h4 id="14-2-1-1">14.2.1.1 为什么需要两个阶段？</h4>
+<p>场景中有 10,000 个物体，两两测试需要 C(10000,2) ≈ 5000万次 Narrow Phase 检测。即使用最快的GJK算法（每次~1μs），也要 50 秒——一帧才 16.7ms！<strong>Broad Phase 把候选对从 5000 万缩小到几百</strong>，Narrow Phase 再逐对精判。</p>
+
+<h3 id="14-2-2">14.2.2 Broad Phase 算法</h3>
+<h4 id="14-2-2-1">14.2.2.1 三种经典算法</h4>
+<table><tr><th>算法</th><th>原理</th><th>优缺点</th></tr>
+<tr><td><strong>空间哈希（Spatial Hash）</strong></td><td>世界切成格子→物体放入格子→只在同格/邻格检测</td><td>极快O(n)但格子大小敏感</td></tr>
+<tr><td><strong>扫描裁剪（Sweep and Prune）</strong></td><td>按坐标轴排序包围盒→只比较重叠区间</td><td>对移动少的物体极高效</td></tr>
+<tr><td><strong>BVH（包围体层级树）</strong></td><td>建立物体包围盒的树结构→递归遍历检测</td><td>最通用、现代引擎主流</td></tr>
+</table>
+
+<h4 id="14-2-2-2">14.2.2.2 空间哈希的核心思想</h4>
+<pre><code>// 空间哈希简化实现
+struct SpatialHash {
+    float cellSize = 2.0f;  // 每格2米
+    unordered_map&lt;int64_t, vector&lt;Collider*&gt;&gt; cells;
+
+    void Insert(Collider* obj) {
+        // 把物体放入它覆盖的所有格子
+        for (int x = gridMin.x; x &lt;= gridMax.x; x++)
+        for (int y = gridMin.y; y &lt;= gridMax.y; y++)
+        for (int z = gridMin.z; z &lt;= gridMax.z; z++)
+            cells[Hash(x,y,z)].push_back(obj);
+    }
+
+    void FindPairs() {
+        for (auto& [hash, objects] : cells) {
+            // 只在同一个或相邻格子内检测碰撞
+            for (int i = 0; i &lt; objects.size(); i++)
+            for (int j = i+1; j &lt; objects.size(); j++)
+                if (AABBOverlap(objects[i], objects[j]))
+                    NarrowPhase(objects[i], objects[j]);
+        }
+    }
+};</code></pre>
+
+<h3 id="14-2-3">14.2.3 Narrow Phase 算法</h3>
+<h4 id="14-2-3-1">14.2.3.1 GJK ——现代碰撞检测的核心</h4>
+<p><strong>GJK（Gilbert-Johnson-Keerthi）算法</strong>是检测任意两个<strong>凸形状</strong>是否相交的标准方法。它的精妙之处：不求显式的交集，而是<strong>迭代地判断两个形状的 Minkowski 差是否包含原点</strong>——包含原点=相交。</p>
+<pre><code>// GJK的核心思想（极大简化）
+bool GJK(Shape A, Shape B) {
+    // 构建 A 和 B 的 Minkowski 差的近似（一个单纯形——点/线/三角形/四面体）
+    Simplex simplex;
+    Vector3 direction = (A.center - B.center);
+
+    while (true) {
+        Vector3 supportPoint = Support(A, B, direction);
+        // supportPoint = A的最远点(direction) - B的最远点(-direction)
+
+        if (Dot(supportPoint, direction) &lt; 0)
+            return false;  // 无法包含原点→不相交
+
+        simplex.Add(supportPoint);
+        if (simplex.ContainsOrigin())
+            return true;   // 单纯形包含原点→相交！
+
+        direction = simplex.ClosestPointToOrigin();
+    }
+}</code></pre>
+
+<h4 id="14-2-3-2">14.2.3.2 EPA——扩展深入计算穿透信息</h4>
+<p>GJK 只告诉你"是否相交"。EPA（Expanding Polytope Algorithm）在GJK的结果单纯形上<strong>向外扩展</strong>，找到最接近原点的 Minkowski 差表面点——这个距离就是<strong>穿透深度</strong>，方向就是<strong>碰撞法线</strong>。</p>
+
+<h3 id="14-2-4">14.2.4 碰撞形状</h3>
+<h4 id="14-2-4-1">14.2.4.1 从快到精的光谱</h4>
+<pre><code>// 碰撞形状速度排名（最快→最慢）
+① 球体：      圆心+半径，测试=距离比较（~2ns）
+② 胶囊：      线段+半径，角色碰撞标配（~5ns）
+③ 盒子/OBB：   中心+半长+朝向（~8ns，SAT算法）
+④ 凸包：      任意凸多面体（~50ns，GJK）← 这是游戏中最常用的精确形状
+⑤ 高度场：    地形碰撞（~20ns，射线投射） 
+⑥ 三角网格：   完整几何（~500ns+，通常分解为凸包集）</code></pre>
+
+<h4 id="14-2-4-2">14.2.4.2 为什么角色用胶囊而不是精确轮廓？</h4>
+<p>三个原因：① 速度（胶囊测试比网格快 100+倍）。② 平滑（没有尖角——沿墙跑不会卡住）。③ 精度够用（玩家不会看到碰撞体）。</p>
+
+<h3 id="14-2-5">14.2.5 碰撞响应</h3>
+<h4 id="14-2-5-1">14.2.5.1 检测到碰撞后的四步操作</h4>
+<pre><code>// 碰撞响应流程
+1. 计算穿透深度 & 法线 ← EPA 算法输出
+2. 分离重叠物体 ← 各推一半穿透距离（或按质量比例）
+3. 施加冲量 ← 改变速度模拟"弹开"
+   J = -(1+e) * Vrel·n / (1/mA + 1/mB)  // 碰撞冲量公式
+4. 触发回调 ← 播放音效/粒子/伤害/脚本事件</code></pre>
+
+<h4 id="14-2-5-2">14.2.5.2 接触流形（Contact Manifold）</h4>
+<p>真实碰撞不是"一个点"——两个面接触时生成<strong>多个接触点集合</strong>（典型4点），每个点独立计算摩擦力和法向力。这对稳定性至关重要——单点接触的物体会<strong>旋转不稳定</strong>。</p>
+
+<hr>
+
+<h2 id="14-3">14.3 刚体动力学</h2>
+
+<h3 id="14-3-1">14.3.1 牛顿力学基础</h3>
+<h4 id="14-3-1-1">14.3.1.1 六自由度刚体状态</h4>
+<pre><code>// 刚体的完整状态（13个分量）
+struct RigidBody {
+    // 线运动（3 DOF）
+    Vector3 position;
+    Vector3 linearVelocity;
+    // 角运动（3 DOF）
+    Quaternion orientation;
+    Vector3 angularVelocity;
+    // 质量属性
+    float mass;
+    float invMass;          // 1/mass（静物=0）
+    Matrix3x3 inertiaTensor; // 转动惯量
+};</code></pre>
+
+<h3 id="14-3-2">14.3.2 数值积分</h3>
+<h4 id="14-3-2-1">14.3.2.1 三种积分器</h4>
+<table><tr><th>方法</th><th>公式</th><th>稳定性</th><th>用途</th></tr>
+<tr><td>显式Euler</td><td>v+=a·dt; x+=v·dt</td><td>差（能量不守恒）</td><td>教学原理</td></tr>
+<tr><td>半隐式Euler</td><td>v+=a·dt; x+=v·dt（先v后x）</td><td>较好（广泛使用）</td><td>游戏物理标配</td></tr>
+<tr><td>Verlet</td><td>x(t+dt)=2x(t)-x(t-dt)+a·dt²</td><td>极好（能量守恒）</td><td>粒子/布料/分子模拟</td></tr>
+</table>
+
+<pre><code>// 半隐式 Euler——游戏物理的行业标准
+void Integrate(RigidBody& body, float dt) {
+    // ① 先更新速度
+    body.linearVelocity += (body.netForce * body.invMass) * dt;
+    body.angularVelocity += (body.invInertiaTensor * body.netTorque) * dt;
+
+    // ② 用新速度更新位置（半隐式的关键）
+    body.position += body.linearVelocity * dt;
+    body.orientation = Quaternion::Integrate(body.orientation, body.angularVelocity, dt);
+
+    // ③ 清除累积力（下一帧重新计算）
+    body.netForce = Vector3::Zero;
+    body.netTorque = Vector3::Zero;
+}</code></pre>
+
+<h3 id="14-3-3">14.3.3 约束（Constraints）</h3>
+<h4 id="14-3-3-1">14.3.3.1 从简单到复杂的约束类型</h4>
+<table><tr><th>约束</th><th>限制的自由度</th><th>游戏应用</th></tr>
+<tr><td>接触约束</td><td>穿透方向（1 DOF）</td><td>地面碰撞、墙壁碰撞</td></tr>
+<tr><td>铰链（Hinge）</td><td>仅绕1轴旋转（5 DOF受限）</td><td>门、肘、膝</td></tr>
+<tr><td>球窝（Ball-Socket）</td><td>位置固定、自由旋转（3 DOF受限）</td><td>肩、髋</td></tr>
+<tr><td>滑轨（Slider）</td><td>仅沿1轴平移（5 DOF受限）</td><td>活塞、电梯</td></tr>
+<tr><td>固定（Fixed）</td><td>完全绑定（6 DOF全受限）</td><td>焊接复合体</td></tr>
+</table>
+
+<h4 id="14-3-3-2">14.3.3.2 布娃娃（Ragdoll）实现</h4>
+<p>把角色骨骼每一根替换为刚体，关节替换为对应约束。死亡时从主动动画突然切换到物理模拟——各刚体受重力+惯性+约束作用自然"瘫倒"。</p>
+<pre><code>// 布娃娃的约束映射
+骨骼: Spine → 刚体: SpineBody
+关节: Shoulder → 约束: BallSocket(ClavicleBody, UpperArmBody)
+关节: Elbow    → 约束: Hinge(UpperArmBody, ForearmBody)
+关节: Knee     → 约束: Hinge(UpperLegBody, LowerLegBody, limitMin=-5°, limitMax=130°)
+// 膝不能反弯（限制旋转范围），肘同理</code></pre>
+
+<div class="thought-box"><strong>想一想</strong>：为什么布娃娃死后手臂会"疯狂抖动"？<br><blockquote style="background:transparent;border:none;padding:0;margin:4px 0 0">这是约束求解器<strong>不收敛</strong>的表现。当多个约束互相矛盾时（如肘铰链和肩球窝产生冲突的力），求解器在有限迭代次数内无法找到一致的解，导致残余能量来回传递→抖动。解决方案：①增加约束求解迭代次数 ②降低关节最大力 ③死亡后对身体部位加额外阻尼。</blockquote></div>
+
+<hr>
+
+<h2 id="14-4">14.4 集成物理引擎</h2>
+
+<h3 id="14-4-1">14.4.1 物理世界与游戏世界的桥梁</h3>
+<h4 id="14-4-1-1">14.4.1.1 典型的三层架构</h4>
+<pre><code>// 游戏对象 ↔ 物理代理 ↔ 物理引擎
+class GameObject {
+    PhysicsActor* physicsBody;  // PhysX/Havok的物理代理
+    Transform     renderTransform;
+};
+
+// 每帧同步：物理 → 渲染
+void SyncPhysicsToRender() {
+    for (auto& obj : dynamicObjects) {
+        if (obj.physicsBody) {
+            obj.renderTransform = obj.physicsBody->GetWorldTransform();
+        }
+    }
+}
+
+// 角色移动：游戏逻辑 → 物理
+void MoveCharacter(GameObject& player, Vector3 input) {
+    Vector3 targetVel = input * player.moveSpeed;
+    Vector3 currentVel = player.physicsBody->GetLinearVelocity();
+    // 应用冲量让角色加速到目标速度
+    player.physicsBody->AddForce((targetVel - currentVel) * player.mass / dt);
+}</code></pre>
+
+<h4 id="14-4-1-2">14.4.1.2 游戏物理的"作弊"清单</h4>
+<ul><li>重力被调低/高——修改 gravity 常量</li><li>子弹用 Raycast 而非模拟弹道——即时光线检测，无限速度</li><li>角色碰撞体比视觉模型小——减少"我以为能过去"的卡住</li><li>"Coyote Time"——玩家跑出悬崖后还有几帧可以跳跃（真实物理没有）</li><li>空气控制——在空中改变移动方向（真实物理不允许）</li></ul>
+
+<hr>
+
+<h2 id="14-5">14.5 高级物理特性</h2>
+
+<h3 id="14-5-1">14.5.1 可破坏物体</h3>
+<h4 id="14-5-1-1">14.5.1.1 预碎裂 vs 实时断裂</h4>
+<p><strong>预碎裂：</strong> 美术师手动把物体切成碎片，碰撞时碎片飞到预设位置→激活物理。Unreal Chaos Destruction 的主流方式。<strong>实时断裂：</strong> 物理引擎实时计算断裂平面+生成碎片。效果好但计算量巨大，当前游戏较少使用。</p>
+
+<h3 id="14-5-2">14.5.2 布料模拟</h3>
+<h4 id="14-5-2-1">14.5.2.1 质点-弹簧网络</h4>
+<p>布料 = 规则网格上的质点（粒子）+ 弹簧连接（结构弹簧保持形状+弯曲弹簧对抗折叠）。每个质点受重力+弹簧力+碰撞响应作用。GPU 计算着色器可同时模拟数万个质点。</p>
+
+<h3 id="14-5-3">14.5.3 车辆物理</h3>
+<h4 id="14-5-3-1">14.5.3.1 射线投射悬挂</h4>
+<p>游戏中最常用的车辆模型：4个轮子=4条向下的<strong>射线</strong>。每条射线和地面碰撞距离 = 悬挂压缩量。根据 Hooke 定律计算弹簧力推回车体向上。引擎力施加在驱动轮切线方向。</p>
+
+<hr>
+
+<h2 id="insight">本章核心洞察</h2>
+<div class="key-box"><strong>🔑 碰撞检测 = 空间组织 + 几何计算；物理学 = 牛顿定律 + 数值近似</strong><br>
+碰撞检测和物理模拟是两门<strong>完全不同的学科</strong>：碰撞检测是计算几何问题——必须精确；动力学是牛顿力学的数值解——可以容忍误差。"游戏物理"还有第三层：<strong>"好玩"的微调</strong>——重力、摩擦力、冲量被参数调整到"手感最佳"而非"模拟最准"。这三层合起来才是完整的游戏物理。<br><br>
+<strong>三条准则：</strong><br>
+1. <strong>Broad Phase 是性能核心：</strong> 99%的时间用于"不要做什么"，不是"做什么"——空间哈希和BVH是答案<br>
+2. <strong>GJK = 现代碰撞检测的心脏：</strong> 理解 Minkowski 差的概念比理解算法细节更重要<br>
+3. <strong>别自己写物理引擎：</strong> PhysX/Havok/Jolt 已经解决了所有已知的物理难题——把精力放在"怎么用"上</div>
+
+<hr>
+
+<h2 id="exercises">📝 课后练习题（含答案）</h2>
+<div class="qa-section">
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题1</span>Broad Phase 和 Narrow Phase 各做什么？列出两种 Broad Phase 算法。</span><span class="arrow">▶</span></div><div class="qa-a"><p>Broad Phase: 快速过滤非碰撞对（用空间哈希/扫描裁剪/BVH）。Narrow Phase: 精确判断是否相交（GJK/EPA）。Broad Phase 算法：①空间哈希——世界切格子，同格检测。②扫描裁剪——按轴排序包围盒，只比较重叠的。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题2</span>简述 GJK 算法的核心思想。它为什么高效？</span><span class="arrow">▶</span></div><div class="qa-a"><p>GJK 不直接求交集，而是判断"两个形状的 Minkowski 差是否包含原点"。它通过迭代构建单纯形来逼近答案——大多数情况几次迭代就出结果。高效原因：每次迭代只需要一次 Support() 函数调用。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题3</span>半隐式Euler比显式Euler好在哪里？写出半隐式Euler的步骤。</span><span class="arrow">▶</span></div><div class="qa-a"><p>显式：x+=v*dt; v+=a*dt（用旧v更新x→能量膨胀）。半隐式：v+=a*dt; x+=v*dt（用新v更新x→能量更好守恒）。虽然都是一阶方法，半隐式的稳定性显著优于显式。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题4</span>布娃娃Ragdoll是怎么实现的？为什么有时会抖动？</span><span class="arrow">▶</span></div><div class="qa-a"><p>骨骼→刚体，关节→约束。肘=铰链，肩=球窝。更新：重力+约束力→刚体速度→约束求解器迭代修正。抖动原因：约束求解器在有限迭代内不收敛（矛盾约束=残余能量来回传递）。解决方案：增加迭代/减少关节力/加阻尼。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题5</span>列举至少三个"游戏物理作弊"的例子。</span><span class="arrow">▶</span></div><div class="qa-a"><p>① Coyote Time——跑出悬崖后几帧还能跳。② 空气控制——空中改移动方向。③ 子弹 Raycast——不模拟弹道。④ 角色碰撞体缩小——减少卡边。⑤ 重力调低——让跳跃更飘逸。</p></div></div>
+
+</div>
+
+<hr>
+
+<h2 id="qaagent">🤖 qAagent 零基础问答区</h2>
+<div class="qa-section">
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">原理</span>Minkowski 差是什么？为什么它能帮我们检测碰撞？</span><span class="arrow">▶</span></div><div class="qa-a"><p>Minkowski差 A⊖B = {a-b | a∈A, b∈B}。它的关键性质：<strong>如果 A 和 B 相交，那么 A⊖B 一定包含原点</strong>（因为交点的a-b=0）。反过来也成立。所以碰撞检测问题转化为"Minkowski差包含原点吗？"——GJK算法就是高效地回答这个问题。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">概念</span>确定性物理（Deterministic Physics）是什么？为什么难实现？</span><span class="arrow">▶</span></div><div class="qa-a"><p>同样的输入→同样的物理结果（逐帧逐bit完全相同）。对网络游戏（特别是RTS Lockstep模式）至关重要。难点：浮点运算的精度因CPU而异（x86内部80bit，SSE用32/64bit），而且约束求解器中的迭代顺序略微不同就会放大为宏观差异。Jolt Physics是少数原生支持确定性模拟的引擎。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">实践</span>做一个小项目时应该用哪个物理引擎？</span><span class="arrow">▶</span></div><div class="qa-a"><p><strong>Unity 项目：</strong> 内置 PhysX（或新的 Unity Physics）。不用选择。<br><strong>Unreal 项目：</strong> 内置 Chaos Physics。不用选择。<br><strong>自己写引擎：</strong> Jolt Physics——MIT开源、API简洁、文档好、确定性支持。<br><strong>学习物理引擎原理：</strong> 读 Box2D Lite（Erin Catto，1500行C++）——这是全功能2D物理引擎的最小教学版，一天能读完。</p></div></div>
+
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li class="nav-header">Vol.2 章节</li>
+  <li class=""><a href="ch11_渲染引擎.html">11 渲染引擎<span class="en"></span></a></li>
+  <li class=""><a href="ch12_光照与后处理.html">12 光照与后处理<span class="en"></span></a></li>
+  <li class=""><a href="ch13_动画系统.html">13 动画系统<span class="en"></span></a></li>
+  <li class=" active"><a href="ch14_碰撞与刚体动力学.html">14 碰撞与刚体动力学<span class="en"></span></a></li>
+  <li class=""><a href="ch15_音频.html">15 音频<span class="en"></span></a></li>
+  <li class=""><a href="ch16_游戏性系统入门.html">16 游戏性系统入门<span class="en"></span></a></li>
+  <li class=""><a href="ch17_运行时游戏玩法.html">17 运行时游戏玩法<span class="en"></span></a></li>
+  <li class=""><a href="ch18_更多内容.html">18 更多内容<span class="en"></span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div>
+<ul class="toc-list">
+<li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#14-1">14.1 游戏需要物理吗？</a></li>
+  <li class="toc-h3"><a href="#14-1-1">14.1.1 物理在游戏中的角色演变</a></li>
+  <li class="toc-h4"><a href="#14-1-1-1">14.1.1.1 从预渲染到实时模拟</a></li>
+  <li class="toc-h4"><a href="#14-1-1-2">14.1.1.2 "好玩"优先于"正确"</a></li>
+  <li class="toc-h3"><a href="#14-1-2">14.1.2 物理中间件生态</a></li>
+  <li class="toc-h4"><a href="#14-1-2-1">14.1.2.1 主流选择一览</a></li>
+  <li class="toc-h2"><a href="#14-2">14.2 碰撞检测系统</a></li>
+  <li class="toc-h3"><a href="#14-2-1">14.2.1 两阶段架构</a></li>
+  <li class="toc-h4"><a href="#14-2-1-1">14.2.1.1 为什么需要两个阶段？</a></li>
+  <li class="toc-h3"><a href="#14-2-2">14.2.2 Broad Phase 算法</a></li>
+  <li class="toc-h4"><a href="#14-2-2-1">14.2.2.1 三种经典算法</a></li>
+  <li class="toc-h4"><a href="#14-2-2-2">14.2.2.2 空间哈希的核心思想</a></li>
+  <li class="toc-h3"><a href="#14-2-3">14.2.3 Narrow Phase 算法</a></li>
+  <li class="toc-h4"><a href="#14-2-3-1">14.2.3.1 GJK ——现代碰撞检测的核心</a></li>
+  <li class="toc-h4"><a href="#14-2-3-2">14.2.3.2 EPA——扩展深入计算穿透信息</a></li>
+  <li class="toc-h3"><a href="#14-2-4">14.2.4 碰撞形状</a></li>
+  <li class="toc-h4"><a href="#14-2-4-1">14.2.4.1 从快到精的光谱</a></li>
+  <li class="toc-h4"><a href="#14-2-4-2">14.2.4.2 为什么角色用胶囊而不是精确轮廓？</a></li>
+  <li class="toc-h3"><a href="#14-2-5">14.2.5 碰撞响应</a></li>
+  <li class="toc-h4"><a href="#14-2-5-1">14.2.5.1 检测到碰撞后的四步操作</a></li>
+  <li class="toc-h4"><a href="#14-2-5-2">14.2.5.2 接触流形（Contact Manifold）</a></li>
+  <li class="toc-h2"><a href="#14-3">14.3 刚体动力学</a></li>
+  <li class="toc-h3"><a href="#14-3-1">14.3.1 牛顿力学基础</a></li>
+  <li class="toc-h4"><a href="#14-3-1-1">14.3.1.1 六自由度刚体状态</a></li>
+  <li class="toc-h3"><a href="#14-3-2">14.3.2 数值积分</a></li>
+  <li class="toc-h4"><a href="#14-3-2-1">14.3.2.1 三种积分器</a></li>
+  <li class="toc-h3"><a href="#14-3-3">14.3.3 约束（Constraints）</a></li>
+  <li class="toc-h4"><a href="#14-3-3-1">14.3.3.1 从简单到复杂的约束类型</a></li>
+  <li class="toc-h4"><a href="#14-3-3-2">14.3.3.2 布娃娃（Ragdoll）实现</a></li>
+  <li class="toc-h2"><a href="#14-4">14.4 集成物理引擎</a></li>
+  <li class="toc-h3"><a href="#14-4-1">14.4.1 物理世界与游戏世界的桥梁</a></li>
+  <li class="toc-h4"><a href="#14-4-1-1">14.4.1.1 典型的三层架构</a></li>
+  <li class="toc-h4"><a href="#14-4-1-2">14.4.1.2 游戏物理的"作弊"清单</a></li>
+  <li class="toc-h2"><a href="#14-5">14.5 高级物理特性</a></li>
+  <li class="toc-h3"><a href="#14-5-1">14.5.1 可破坏物体</a></li>
+  <li class="toc-h4"><a href="#14-5-1-1">14.5.1.1 预碎裂 vs 实时断裂</a></li>
+  <li class="toc-h3"><a href="#14-5-2">14.5.2 布料模拟</a></li>
+  <li class="toc-h4"><a href="#14-5-2-1">14.5.2.1 质点-弹簧网络</a></li>
+  <li class="toc-h3"><a href="#14-5-3">14.5.3 车辆物理</a></li>
+  <li class="toc-h4"><a href="#14-5-3-1">14.5.3.1 射线投射悬挂</a></li>
+  <li class="toc-h2"><a href="#insight">本章核心洞察</a></li>
+  <li class="toc-h2"><a href="#exercises">📝 课后练习题（含答案）</a></li>
+  <li class="toc-h2"><a href="#qaagent">🤖 qAagent 零基础问答区</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+function toggleQA(el){
+  var item=el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+</body></html>

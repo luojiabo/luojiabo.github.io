@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>GEA Vol.1 Ch05: 3D数学基础 — 零基础讲义 (Guizang版)</title>
+<style>/* GEA Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+svg{max-width:100%;height:auto}
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content h4{font-size:14px;font-weight:600;margin:14px 0 6px;color:#444;padding-left:14px;border-left:2px solid #b2b2ff}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img,#content figure svg{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+.info-box{background:#eef0ff;border-left:4px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.thought-box{background:#fff8e1;border-left:4px solid #ffc107;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.key-box{background:#e8f8f5;border-left:4px solid #00b894;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.guizang-figure{text-align:center;margin:16px 0}
+.guizang-figure svg{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.guizang-caption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+.lesson-box{background:#faf8ff;border:1px dashed #b2b2ff;padding:12px 16px;margin:16px 0;border-radius:6px}
+.lesson-tag{display:inline-block;background:#5b5bff;color:#fff;font-size:11px;padding:2px 8px;border-radius:3px;margin-right:8px}
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list li.toc-h4{padding-left:48px;color:#888;font-size:11px;font-style:italic}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+.qa-section{margin:20px 0}
+.qa-item{border:1px solid #e8e8e3;border-radius:8px;margin:8px 0;overflow:hidden}
+.qa-q{background:#fafaf8;padding:10px 14px;cursor:pointer;font-weight:600;font-size:14px;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.qa-q:hover{background:#f0f0ec}
+.qa-q .arrow{color:#999;font-size:12px;transition:transform .2s}
+.qa-item.open .qa-q .arrow{transform:rotate(90deg)}
+.qa-a{display:none;padding:12px 14px;background:#fff;font-size:14px;line-height:1.8;border-top:1px solid #eee}
+.qa-item.open .qa-a{display:block}
+.qa-a code{background:#f0f0eb;padding:1px 4px;border-radius:3px;font-size:.9em;color:#d6336c}
+.qa-tag{display:inline-block;background:#eef0ff;color:#5b5bff;font-size:10px;padding:1px 6px;border-radius:3px;margin-right:6px}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">GEA V1</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch05 3D数学基础</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<!-- CH03 DETAILED WITH x.x.x SUBSECTIONS -->
+<h1>第5章：3D数学基础 — 零基础讲义</h1>
+
+<blockquote><p><strong>讲义说明</strong><br>本讲义基于 Jason Gregory 所著《Game Engine Architecture Volume I》第4版第5章（3D Math for Games, p.333-386），逐节翻译推导。<br><em>本版插画由 ImageGen + Guizang 材质插画标准流程生成。</em></p></blockquote>
+
+<div class="toc"><strong>目录</strong><ul>
+<li><a href="#学习目标">学习目标</a></li>
+<li><a href="#5-1">5.1 点和向量</a></li>
+<li><a href="#5-2">5.2 矩阵</a></li>
+<li><a href="#5-3">5.3 四元数</a></li>
+<li><a href="#5-4">5.4 旋转表示对比</a></li>
+<li><a href="#5-5">5.5 坐标空间与变换</a></li>
+<li><a href="#5-6">5.6 数学库实现</a></li>
+<li><a href="#insight">本章核心洞察</a></li>
+<li><a href="#exercises">课后练习题</a></li>
+<li><a href="#qaagent">qAagent 零基础问答区</a></li>
+</ul></div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+<li>理解向量加法、点积、叉积的几何含义和游戏中的应用</li>
+<li>理解 4×4 变换矩阵的结构和齐次坐标的意义</li>
+<li>理解四元数是什么、为什么需要它、以及它如何解决欧拉角的万向节锁</li>
+<li>比较三种旋转表示（欧拉角/矩阵/四元数）的优劣</li>
+<li>掌握游戏引擎中常见的坐标变换链（局部→世界→相机→屏幕）</li>
+</ol>
+<hr>
+
+<h2 id="5-1">5.1 点和向量</h2>
+
+<div class="guizang-figure"><img src="images/ch05/01_vector_ops.png" alt="向量运算"><div class="guizang-caption">图5-1：向量运算可视化（Guizang流程生成）</div></div>
+
+<h3 id="5-1-1">5.1.1 点（Point）与向量（Vector）的区别</h3>
+<h4 id="5-1-1-1">5.1.1.1 核心概念</h4>
+<table><tr><th></th><th>点（Point）</th><th>向量（Vector）</th></tr>
+<tr><td>含义</td><td>空间中的一个位置</td><td>从一个位置到另一个位置的<strong>方向和距离</strong></td></tr>
+<tr><td>类比</td><td>"图书馆在东经120°北纬30°"</td><td>"从这里往东北方向走500米"</td></tr>
+<tr><td>运算</td><td>没有方向，不能加减两点（无意义）</td><td>有方向，可以加减缩放</td></tr>
+<tr><td>坐标系</td><td>固定在原点上</td><td>游离（可以沿任意位置平移）</td></tr></table>
+
+<h4 id="5-1-1-2">5.1.1.2 齐次坐标 w 分量</h4>
+<p>在 3D 图形中，点用 (x, y, z, w=1) 表示，向量用 (x, y, z, w=0) 表示。这看似奇怪的设计有一个巧妙的目的：把平移变换统一到矩阵乘法中。w=0 的向量乘以平移矩阵不受平移影响（这符合"向量没有位置"的特性），w=1 的点则会被平移。这就是齐次坐标的妙用。</p>
+
+<h3 id="5-1-2">5.1.2 向量基本运算</h3>
+<table><tr><th>运算</th><th>公式</th><th>几何含义</th><th>游戏应用</th></tr>
+<tr><td>加法</td><td>a + b</td><td>先走 a 再走 b</td><td>力合成（推力+风力）</td></tr>
+<tr><td>减法</td><td>b - a</td><td>从 a 指向 b</td><td>目标方向 = enemyPos - playerPos</td></tr>
+<tr><td>数乘</td><td>k × v</td><td>缩放向量的长度</td><td>speed × direction = velocity</td></tr>
+<tr><td>长度</td><td>|v|</td><td>向量有多长</td><td>距离 = distance(player, enemy)</td></tr>
+<tr><td>归一化</td><td>v / |v|</td><td>变成长度为1的方向</td><td>标准化方向向量</td></tr>
+</table>
+
+<h3 id="5-1-3">5.1.3 点积（Dot Product）</h3>
+<h4 id="5-1-3-1">5.1.3.1 公式与几何意义</h4>
+<p><strong>公式：</strong> a·b = a₁b₁ + a₂b₂ + a₃b₃ = |a||b|cos(θ)</p>
+<p>两个单位向量的点积 = 它们夹角的余弦值。cos(0)=1（同向），cos(90)=0（垂直），cos(180)=-1（反向）。</p>
+<h4 id="5-1-3-2">5.1.3.2 游戏中的应用</h4>
+<pre><code>// 判断敌人是否在玩家前方
+Vector3 forward = player.GetForwardVector();
+Vector3 toEnemy = (enemy.position - player.position).Normalized();
+float dot = Vector3::Dot(forward, toEnemy);
+if (dot > 0.5f)  // 夹角 < 60°，敌人在前方视野内
+
+// 计算光照强度
+float lightIntensity = Vector3::Dot(surfaceNormal, -lightDirection);
+// 表面法线和光线方向越接近平行→光照越强</code></pre>
+
+<h3 id="5-1-4">5.1.4 叉积（Cross Product）</h3>
+<h4 id="5-1-4-1">5.1.4.1 公式与几何意义</h4>
+<p>a × b 得到一个<strong>垂直于 a 和 b</strong>的新向量，方向由右手定则确定。|a × b| = |a||b|sin(θ)——两向量构成的平行四边形的面积。</p>
+<h4 id="5-1-4-2">5.1.4.2 游戏中的应用</h4>
+<pre><code>// 计算表面法线
+Vector3 edge1 = p2 - p1;
+Vector3 edge2 = p3 - p1;
+Vector3 normal = Vector3::Cross(edge1, edge2).Normalized();
+
+// 构建相机坐标系：前×上 = 右方向
+Vector3 right = Vector3::Cross(forward, up).Normalized();
+Vector3 correctedUp = Vector3::Cross(right, forward).Normalized();</code></pre>
+
+<h4 id="5-1-4-3">5.1.4.3 点积 vs 叉积 速查表</h4>
+<table><tr><th></th><th>点积</th><th>叉积</th></tr>
+<tr><td>结果</td><td>标量（一个数）</td><td>向量（有方向）</td></tr>
+<tr><td>几何意义</td><td>"有多像同向"（cosθ）</td><td>"组成的平面朝哪"（法线方向）</td></tr>
+<tr><td>游戏用途</td><td>前后判断、光照计算、投影</td><td>法线计算、左右判断、坐标系构建</td></tr></table>
+
+<div class="thought-box"><strong>想一想</strong>：怎么判断一个点在平面的正面还是背面？<br>
+<blockquote style="background:transparent;border:none;padding:0;margin:4px 0 0">计算 (point - planePoint)·planeNormal 的点积。正数=在正面，负数=在背面，0=恰好在平面上。这是背面剔除（Backface Culling）的基本原理——三角形法线方向背离摄影机则不需要绘制。</blockquote></div>
+
+<hr>
+
+<h2 id="5-2">5.2 矩阵</h2>
+
+<h3 id="5-2-1">5.2.1 4×4 变换矩阵</h3>
+<h4 id="5-2-1-1">5.2.1.1 矩阵作为"批量运算器"</h4>
+<p>矩阵的威力：<strong>一次乘法完成"旋转+缩放+平移"三项操作</strong>。4×4 齐次变换矩阵的结构：前三列是 3×3 旋转+缩放，第四列是平移。最下一行 [0,0,0,1] 保持齐次坐标。</p>
+
+<pre><code>// 构造世界变换矩阵
+Matrix4x4 S = Scale(2.0f, 2.0f, 2.0f);         // 缩放到2倍
+Matrix4x4 R = RotateY(pi/4);                     // 绕Y轴旋转45°
+Matrix4x4 T = Translate(10, 0, 5);               // 平移到(10,0,5)
+
+Matrix4x4 worldMatrix = T * R * S;               // 组合=先缩放→再旋转→最后平移
+Vector4 worldPos = worldMatrix * localPos;       // 将局部坐标变换到世界空间</code></pre>
+
+<h4 id="5-2-1-2">5.2.1.2 矩阵乘法为什么"从右往左读"？</h4>
+<p>数学约定：矩阵乘法 T*(R*(S*v))——最右边的 S（缩放）最先应用到向量 v 上，然后 R（旋转），最后 T（平移）。类比"穿衣顺序"——先穿内衣（S）、再穿衬衫（R）、最后套外套（T）。</p>
+
+<h3 id="5-2-2">5.2.2 坐标变换链</h3>
+<h4 id="5-2-2-1">5.2.2.1 模型→世界→相机→屏幕</h4>
+<pre><code>局部空间 → [世界矩阵] → 世界空间 → [视图矩阵] → 相机空间 → [投影矩阵] → 裁剪空间 → [透视除法] → NDC → [视口变换] → 屏幕像素
+
+// 四个矩阵连乘——这是一个顶点从模型文件到屏幕像素的全部旅程
+Matrix4x4 mvp = projectionMatrix * viewMatrix * worldMatrix;
+Vector4 screenPos = mvp * Vector4(modelPos, 1.0f);</code></pre>
+
+<h3 id="5-2-3">5.2.3 矩阵的逆</h3>
+<h4 id="5-2-3-1">5.2.3.1 为什么需要逆矩阵？</h4>
+<p>世界矩阵把局部坐标→世界坐标。逆矩阵反过来：世界坐标→局部坐标。如果玩家站在世界(10,0,5)，一个世界坐标(15,0,5)的宝箱相对于玩家在哪？= inv(worldMatrix) × 宝箱世界坐标。</p>
+
+<hr>
+
+<h2 id="5-3">5.3 四元数</h2>
+
+<div class="guizang-figure"><img src="images/ch05/02_rotation_comparison.png" alt="旋转对比"><div class="guizang-caption">图5-2：三种旋转表示对比（Guizang流程生成）</div></div>
+
+<h3 id="5-3-1">5.3.1 为什么需要四元数？</h3>
+<h4 id="5-3-1-1">5.3.1.1 欧拉角的"万向节锁"</h4>
+<p>当你用三个数 (pitch, yaw, roll) 表示旋转时，绕中间轴旋转 90° 会导致另外两个旋转轴<strong>重合</strong>——你失去了一个旋转自由度。这是数学上的必然结果，不是"某个引擎的 bug"。任何使用欧拉角的系统（相机、骨骼动画）都会受此困扰。</p>
+
+<h4 id="5-3-1-2">5.3.1.2 四元数的形式</h4>
+<p>q = w + xi + yj + zk，其中 i²=j²=k²=ijk=-1。实际使用中把它当成 (w, x, y, z) 四个浮点数存储。w 控制旋转角度，x,y,z 控制旋转轴方向。</p>
+
+<h3 id="5-3-2">5.3.2 四元数的优势</h3>
+<h4 id="5-3-2-1">5.3.2.1 三大核心优势</h4>
+<table><tr><th>优势</th><th>说明</th></tr>
+<tr><td>无万向节锁</td><td>四元数用四个数表示旋转，天然避免了欧拉角的三轴耦合</td></tr>
+<tr><td>SLERP 平滑插值</td><td>在球面上匀速插值——从姿态A到姿态B的动画过渡极其平滑</td></tr>
+<tr><td>省内存</td><td>4个数 vs 旋转矩阵的9个数（3×3），对动画系统（每根骨骼、每帧）意味着巨大节省</td></tr>
+</table>
+
+<h4 id="5-3-2-2">5.3.2.2 四元数的缺点</h4>
+<p>不直观——你不能看着 (0.707, 0, 0.707, 0) 就说出"这是绕Y轴旋转 90°"。所以编辑器界面通常显示欧拉角（人类可读），内部存储用四元数（数学正确）。</p>
+
+<hr>
+
+<h2 id="5-4">5.4 旋转表示对比</h2>
+
+<h3 id="5-4-1">5.4.1 三种方式总览</h3>
+<h4 id="5-4-1-1">5.4.1.1 对比表</h4>
+<table><tr><th>方式</th><th>数据量</th><th>直观</th><th>插值</th><th>万向节锁</th><th>使用场景</th></tr>
+<tr><td>欧拉角</td><td>3f</td><td>★★★★★</td><td>不能</td><td>有</td><td>编辑器输入、显示给用户</td></tr>
+<tr><td>旋转矩阵</td><td>9f</td><td>★★</td><td>难</td><td>无</td><td>渲染管线（MVP矩阵的一部分）</td></tr>
+<tr><td>四元数</td><td>4f</td><td>★★</td><td>SLERP完美</td><td>无</td><td>角色动画、相机旋转、骨骼蒙皮</td></tr>
+</table>
+
+<h4 id="5-4-1-2">5.4.1.2 转换关系</h4>
+<pre><code>// 三种表示可以互相转换
+Quaternion → Matrix4x4:  用于渲染（着色器需要矩阵）
+EulerAngles → Quaternion: 编辑器中输入后转为内部四元数
+Matrix4x4 → EulerAngles:  提取矩阵中隐含的旋转角度（有歧义，谨慎使用）</code></pre>
+
+<hr>
+
+<h2 id="5-5">5.5 坐标空间与变换</h2>
+
+<h3 id="5-5-1">5.5.1 三种基本坐标空间</h3>
+<h4 id="5-5-1-1">5.5.1.1 局部空间 vs 世界空间 vs 相机空间</h4>
+<table><tr><th>空间</th><th>含义</th><th>类比</th></tr>
+<tr><td>局部空间</td><td>以物体自身为原点</td><td>"方向盘距离座椅50cm"——和车在哪条街无关</td></tr>
+<tr><td>世界空间</td><td>以世界原点为原点</td><td>"这辆车在长安街100号"——绝对坐标</td></tr>
+<tr><td>相机空间</td><td>以相机为原点</td><td>"那辆车在我的右前方15米"——相对于观察者</td></tr>
+</table>
+
+<h3 id="5-5-2">5.5.2 骨骼动画中的空间变换</h3>
+<h4 id="5-5-2-1">5.5.2.1 骨骼层级链</h4>
+<p>角色的手腕骨骼位于"模型空间→腰部→脊椎→肩膀→上臂→前臂→手腕"。这是一个变换链——每根骨骼的旋转逐层传递。四元数的 SLERP 在这里至关重要——它让骨骼之间的过渡自然平滑。</p>
+
+<hr>
+
+<h2 id="5-6">5.6 数学库实现</h2>
+
+<h3 id="5-6-1">5.6.1 游戏引擎的数学库</h3>
+<h4 id="5-6-1-1">5.6.1.1 常见实现选择</h4>
+<table><tr><th>引擎/库</th><th>主要类型</th><th>实现方式</th></tr>
+<tr><td>Unreal Engine</td><td>FVector / FMatrix / FQuat</td><td>自研（大量使用 SSE）</td></tr>
+<tr><td>Unity</td><td>Vector3 / Quaternion / Matrix4x4</td><td>C# 封装 + C++ 底层 SIMD</td></tr>
+<tr><td>GLM (OpenGL Math)</td><td>glm::vec3 / glm::mat4 / glm::quat</td><td>纯头文件 C++，对标 GLSL</td></tr>
+<tr><td>DirectXMath</td><td>XMFLOAT3 / XMMATRIX</td><td>微软官方，SSE/AVX 深度优化</td></tr>
+</table>
+
+<h4 id="5-6-1-2">5.6.1.2 SIMD 向量化</h4>
+<p>现代数学库大量使用 SIMD 指令。4×4 矩阵乘法用 SSE 可以提速约 3 倍——因为一次 SSE 操作处理 4 个 float，恰好是一行/一列。引擎数学库的性能直接影响每帧数百万次顶点变换的总耗时。</p>
+
+<hr>
+
+<h2 id="insight">本章核心洞察</h2>
+<div class="key-box"><strong>🔑 游戏编程 = 向量编程</strong><br>
+位置、速度、加速度、力、颜色（RGBA）——全都是向量。面向游戏引擎的开发，你不能把向量当成"数学课上的箭头"——它们是你<strong>每一行代码都在操作的核心数据类型</strong>。"敌人是在我前面还是后面？"就是一次点积。"人物的右手方向是什么？"就是一次叉积。"世界空间中的这个坐标，在屏幕上显示在哪里？"就是一次矩阵链乘。掌握这三种运算的直觉，你就掌握了游戏编程的数学语言。<br><br>
+<strong>三条数学准则：</strong><br>
+1. <strong>任何时候需要旋转都用四元数存储：</strong> 只在编辑器显示和渲染时转换为欧拉角/矩阵，内部永远用四元数<br>
+2. <strong>点积判断方向，叉积构造方向：</strong> 这是两条贯穿整本引擎的数学操作<br>
+3. <strong>矩阵链乘从右往左读：</strong> local × world × view × proj，先应用的在最右边</div>
+
+<hr>
+
+<h2 id="exercises">📝 课后练习题（含答案）</h2>
+<div class="qa-section">
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题1</span>点积公式是什么？两个单位向量的点积为 0、1、-1 各代表什么？</span><span class="arrow">▶</span></div><div class="qa-a"><p>a·b = |a||b|cosθ。单位向量点积 = cosθ。0 → 垂直（90°），1 → 同向（0°），-1 → 反向（180°）。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题2</span>如何用点积判断敌人在玩家前方还是后方？</span><span class="arrow">▶</span></div><div class="qa-a"><p>计算 playerForward · (enemyPos - playerPos).Normalized()。dot > 0 → 前方，dot < 0 → 后方。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题3</span>什么是万向节锁？为什么用四元数可以避免？</span><span class="arrow">▶</span></div><div class="qa-a"><p>万向节锁：绕中间轴旋转90°后，另外两个旋转轴重合，丢失一个自由度。四元数避免的原因：它用四维表示三维旋转，旋转是"绕一个轴转一个角"——永远只有一个旋转轴和一个角度，不存在三个独立轴的耦合问题。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题4</span>四元数相比欧拉角和旋转矩阵各有什么优势？</span><span class="arrow">▶</span></div><div class="qa-a"><p>vs 欧拉角：无万向节锁、可平滑插值（SLERP）。vs 旋转矩阵：省内存（4f vs 9f）、插值更自然、易于归一化（消除累积误差）。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题5</span>齐次坐标中的 w 分量有什么用？点和向量的 w 值分别是多少？</span><span class="arrow">▶</span></div><div class="qa-a"><p>w=1 表示"点"——用于位置，可被平移。w=0 表示"向量"——用于方向，不受平移影响。这样设计的巧妙之处：平移矩阵只影响 w=1 的行（第四列乘w），w=0 的向量自然不受平移影响——这正是我们想要的几何语义。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题6</span>写出从局部空间到屏幕像素的完整变换链（四个矩阵按顺序排列）。</span><span class="arrow">▶</span></div><div class="qa-a"><p>Model Matrix → View Matrix → Projection Matrix → Viewport Transform。即：screenPos = viewport( projection( view( world( model( localPos ) ) ) ) )。合在一起：MVP = Projection × View × Model。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题7</span>游戏引擎中的数学库为什么需要 SIMD 优化？</span><span class="arrow">▶</span></div><div class="qa-a"><p>每帧数百万次顶点变换（矩阵×向量），每次 4×4 矩阵乘法涉及 16 次乘法和 12 次加法。SIMD（SSE一次性处理4个float）将矩阵乘法速度提升约3倍。这对维持 60fps 至关重要——数学库是整个渲染管线的"发动机"。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题8</span>为什么编辑器显示欧拉角但内部存储四元数？</span><span class="arrow">▶</span></div><div class="qa-a"><p>因为人类理解"绕X轴转30°"很容易，但无法直观理解四元数(0.966, 0.259, 0, 0)是什么。而内部存储用四元数避免了万向节锁，且动画插值（SLERP）天然平滑。这是"人性化界面 + 数学正确存储"的经典设计模式。</p></div></div>
+
+</div>
+
+<hr>
+
+<h2 id="qaagent">🤖 qAagent 零基础问答区</h2>
+<div class="qa-section">
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">入门</span>我数学不好，这章学得动吗？</span><span class="arrow">▶</span></div><div class="qa-a"><p>能。你不需要成为数学家。游戏编程中只需三条核心运算：① 点积——判断前后。② 叉积——计算垂直方向。③ 矩阵乘法——坐标变换。花一个下午理解这三条，比你啃三周线性代数课本有用得多。强烈推荐 3Blue1Brown 的《线性代数的本质》视频系列——17 分钟帮你建立几何直觉。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">概念</span>四元数的 i²=j²=k²=ijk=-1 到底啥意思？</span><span class="arrow">▶</span></div><div class="qa-a"><p>这是四元数的<strong>乘法规则</strong>——类似于复数的 i²=-1。不用理解为什么，只需要知道：它定义了一种"四维数的算术"，而这种算术恰好能漂亮地表示三维旋转。类比：你不需理解为什么 e^(iπ)+1=0 才能使用复数解决交流电计算——四元数对旋转也一样，"会用就行"。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">实践</span>Unreal 的 FVector 和我自己写的 Vector3 有什么区别？</span><span class="arrow">▶</span></div><div class="qa-a"><p>核心区别：<strong>SIMD 优化</strong>。Unreal 的 FVector 底层使用 SSE 指令，一次操作处理多个分量。你的 Vector3 可能是最简单的 struct{float x,y,z;}——功能正确但指令数多 3-4 倍。其他差异：FVector 有完整运算符重载、与 FMatrix/FQuat 的无缝转换、编辑器序列化支持。学习阶段你的 Vector3 完全够用——生产环境用引擎内置类型。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">概念</span>为什么光照计算要用点积？</span><span class="arrow">▶</span></div><div class="qa-a"><p>Lambert 光照模型：表面亮度 = 表面法线和光线方向的点积的绝对值。法线和光线完全平行（光从正上方直射）→ cos(0)=1 → 最亮。法线和光线 90°（光贴地擦过）→ cos(90)=0 → 全暗。这就是为什么物体的"迎光面"亮、"背光面"暗——本质上就是一个点积。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">概念</span>什么是 SLERP？为什么它比线性插值好？</span><span class="arrow">▶</span></div><div class="qa-a"><p>SLERP = Spherical Linear Interpolation（球面线性插值）。在四维单位球面上<strong>沿最短弧</strong>匀速插值。线性插值（LERP）直接对四个分量线性混合——结果不在单位球面上（"不是合法旋转"），需要归一化之后会有速度不均匀的畸变。SLERP 保证了旋转速度恒定平滑——这就是为什么角色动画过渡看起来自然。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">实践</span>如何判断"敌人在我左边还是右边"？</span><span class="arrow">▶</span></div><div class="qa-a"><p>使用叉积：<code>cross(forward, toEnemy)</code> 得到垂直于两者的向量。如果结果向量的 y 分量 > 0，敌人在右边；< 0，在左边。这是因为 "前×目标方向" 产生的向量朝上（右手定则），y 分量的正负就告诉你目标在前方的左侧还是右侧。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">概念</span>透视投影矩阵到底做了什么？</span><span class="arrow">▶</span></div><div class="qa-a"><p>它把三维世界的"透视效果"编码到一个矩阵中。近处的物体占据屏幕更大区域（符合人眼），远处的物体缩小。背后的数学：把 3D 坐标的 z 分量映射为齐次坐标的 w 分量，硬件自动做透视除法（x/w, y/w）——z 越大（越远），除以的 w 越大，结果越小。这个矩阵是"把三维世界投影到二维屏幕"的唯一桥梁。</p></div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">总结</span>这一章我到底需要记多少东西？</span><span class="arrow">▶</span></div><div class="qa-a"><p>三个核心概念 + 两个关键操作：<br>概念：① 向量=箭头 ② 矩阵=变换器 ③ 四元数=旋转器<br>操作：① 点积=判断方向关系 ② 矩阵乘法=变换坐标<br>不必背公式。需要的是<strong>直觉</strong>——"这个问题用点积还是叉积？"比"点积公式是什么"重要得多。公式可以查，直觉不能。</p></div></div>
+
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li class=""><a href="ch01_引言.html">01 引言<span class="en"></span></a></li>
+  <li class=""><a href="ch02_工具的技艺.html">02 工具的技艺<span class="en"></span></a></li>
+  <li class=""><a href="ch03_软件工程基础.html">03 软件工程基础<span class="en"></span></a></li>
+  <li class=""><a href="ch04_并行与并发.html">04 并行与并发<span class="en"></span></a></li>
+  <li class=" active"><a href="ch05_3D数学基础.html">05 3D数学基础<span class="en"></span></a></li>
+  <li class=""><a href="ch06_引擎支持系统.html">06 引擎支持系统<span class="en"></span></a></li>
+  <li class=""><a href="ch07_资源与文件系统.html">07 资源与文件系统<span class="en"></span></a></li>
+  <li class=""><a href="ch08_游戏循环与实时模拟.html">08 游戏循环与实时模拟<span class="en"></span></a></li>
+  <li class=""><a href="ch09_人机交互设备.html">09 人机交互设备<span class="en"></span></a></li>
+  <li class=""><a href="ch10_调试与开发工具.html">10 调试与开发工具<span class="en"></span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div>
+<ul class="toc-list">
+<li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#5-1">5.1 点和向量</a></li>
+  <li class="toc-h3"><a href="#5-1-1">5.1.1 点（Point）与向量（Vector）的区别</a></li>
+  <li class="toc-h4"><a href="#5-1-1-1">5.1.1.1 核心概念</a></li>
+  <li class="toc-h4"><a href="#5-1-1-2">5.1.1.2 齐次坐标 w 分量</a></li>
+  <li class="toc-h3"><a href="#5-1-2">5.1.2 向量基本运算</a></li>
+  <li class="toc-h3"><a href="#5-1-3">5.1.3 点积（Dot Product）</a></li>
+  <li class="toc-h4"><a href="#5-1-3-1">5.1.3.1 公式与几何意义</a></li>
+  <li class="toc-h4"><a href="#5-1-3-2">5.1.3.2 游戏中的应用</a></li>
+  <li class="toc-h3"><a href="#5-1-4">5.1.4 叉积（Cross Product）</a></li>
+  <li class="toc-h4"><a href="#5-1-4-1">5.1.4.1 公式与几何意义</a></li>
+  <li class="toc-h4"><a href="#5-1-4-2">5.1.4.2 游戏中的应用</a></li>
+  <li class="toc-h4"><a href="#5-1-4-3">5.1.4.3 点积 vs 叉积 速查表</a></li>
+  <li class="toc-h2"><a href="#5-2">5.2 矩阵</a></li>
+  <li class="toc-h3"><a href="#5-2-1">5.2.1 4×4 变换矩阵</a></li>
+  <li class="toc-h4"><a href="#5-2-1-1">5.2.1.1 矩阵作为"批量运算器"</a></li>
+  <li class="toc-h4"><a href="#5-2-1-2">5.2.1.2 矩阵乘法为什么"从右往左读"？</a></li>
+  <li class="toc-h3"><a href="#5-2-2">5.2.2 坐标变换链</a></li>
+  <li class="toc-h4"><a href="#5-2-2-1">5.2.2.1 模型→世界→相机→屏幕</a></li>
+  <li class="toc-h3"><a href="#5-2-3">5.2.3 矩阵的逆</a></li>
+  <li class="toc-h4"><a href="#5-2-3-1">5.2.3.1 为什么需要逆矩阵？</a></li>
+  <li class="toc-h2"><a href="#5-3">5.3 四元数</a></li>
+  <li class="toc-h3"><a href="#5-3-1">5.3.1 为什么需要四元数？</a></li>
+  <li class="toc-h4"><a href="#5-3-1-1">5.3.1.1 欧拉角的"万向节锁"</a></li>
+  <li class="toc-h4"><a href="#5-3-1-2">5.3.1.2 四元数的形式</a></li>
+  <li class="toc-h3"><a href="#5-3-2">5.3.2 四元数的优势</a></li>
+  <li class="toc-h4"><a href="#5-3-2-1">5.3.2.1 三大核心优势</a></li>
+  <li class="toc-h4"><a href="#5-3-2-2">5.3.2.2 四元数的缺点</a></li>
+  <li class="toc-h2"><a href="#5-4">5.4 旋转表示对比</a></li>
+  <li class="toc-h3"><a href="#5-4-1">5.4.1 三种方式总览</a></li>
+  <li class="toc-h4"><a href="#5-4-1-1">5.4.1.1 对比表</a></li>
+  <li class="toc-h4"><a href="#5-4-1-2">5.4.1.2 转换关系</a></li>
+  <li class="toc-h2"><a href="#5-5">5.5 坐标空间与变换</a></li>
+  <li class="toc-h3"><a href="#5-5-1">5.5.1 三种基本坐标空间</a></li>
+  <li class="toc-h4"><a href="#5-5-1-1">5.5.1.1 局部空间 vs 世界空间 vs 相机空间</a></li>
+  <li class="toc-h3"><a href="#5-5-2">5.5.2 骨骼动画中的空间变换</a></li>
+  <li class="toc-h4"><a href="#5-5-2-1">5.5.2.1 骨骼层级链</a></li>
+  <li class="toc-h2"><a href="#5-6">5.6 数学库实现</a></li>
+  <li class="toc-h3"><a href="#5-6-1">5.6.1 游戏引擎的数学库</a></li>
+  <li class="toc-h4"><a href="#5-6-1-1">5.6.1.1 常见实现选择</a></li>
+  <li class="toc-h4"><a href="#5-6-1-2">5.6.1.2 SIMD 向量化</a></li>
+  <li class="toc-h2"><a href="#insight">本章核心洞察</a></li>
+  <li class="toc-h2"><a href="#exercises">📝 课后练习题（含答案）</a></li>
+  <li class="toc-h2"><a href="#qaagent">🤖 qAagent 零基础问答区</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+function toggleQA(el){
+  var item=el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+</body></html>

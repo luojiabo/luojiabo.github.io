@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>GEA Vol.2 Ch15: 音频 — 零基础讲义 (Guizang版)</title>
+<style>/* GEA Wolai 样式 */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#333;background:#fff;font-size:15px;line-height:1.7}
+body{display:flex;flex-direction:column}
+img{max-width:100%;height:auto}
+table{max-width:100%;overflow-x:auto;display:block}
+pre{white-space:pre-wrap;word-break:break-word}
+svg{max-width:100%;height:auto}
+#top{position:sticky;top:0;height:48px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 10px;z-index:100;flex-shrink:0}
+#logo{font-weight:700;color:#333;margin-right:6px;font-size:14px}
+#sep{color:#999;margin-right:6px}
+#cur{color:#666;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btns{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+#btns button{background:#fff;border:1px solid #ddd;border-radius:4px;padding:5px 10px;font-size:12px;color:#666;cursor:pointer}
+#btns button:hover{background:#f0f0ec;color:#5b5bff}
+#btns button.a{background:#5b5bff;color:#fff;border-color:#5b5bff}
+#main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#content{max-width:800px;margin:0 auto;padding:24px 32px 60px}
+#content h1{font-size:28px;font-weight:700;margin:0 0 16px;border-bottom:1px solid #eee;padding-bottom:12px}
+#content h2{font-size:20px;font-weight:600;margin:24px 0 12px;border-left:4px solid #5b5bff;padding-left:10px}
+#content h3{font-size:16px;font-weight:600;margin:18px 0 8px}
+#content h4{font-size:14px;font-weight:600;margin:14px 0 6px;color:#444;padding-left:14px;border-left:2px solid #b2b2ff}
+#content p{margin:8px 0;line-height:1.8}
+#content ul,#content ol{margin:8px 0 8px 22px;line-height:1.8}
+#content li{margin:3px 0}
+#content hr{border:0;border-top:1px solid #eee;margin:24px 0}
+#content strong{font-weight:600}
+#content code{background:#f0f0eb;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:.9em;color:#d6336c}
+#content pre{background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:6px;overflow-x:auto;margin:12px 0;font-family:Consolas,monospace;font-size:.88em}
+#content blockquote{background:#f6f7f9;border-left:3px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+#content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+#content th{background:#eef0ff;padding:6px 10px;text-align:left;font-weight:600;border:1px solid #e8e8e3;color:#5b5bff}
+#content td{padding:6px 10px;border:1px solid #e8e8e3}
+#content tr:nth-child(even) td{background:#fafaf8}
+#content figure{margin:16px 0;text-align:center}
+#content figure img,#content figure svg{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#content figure figcaption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+.info-box{background:#eef0ff;border-left:4px solid #5b5bff;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.thought-box{background:#fff8e1;border-left:4px solid #ffc107;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.key-box{background:#e8f8f5;border-left:4px solid #00b894;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.guizang-figure{text-align:center;margin:16px 0}
+.guizang-figure svg{max-width:100%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.guizang-caption{margin-top:4px;font-size:.85em;color:#999;font-style:italic}
+.lesson-box{background:#faf8ff;border:1px dashed #b2b2ff;padding:12px 16px;margin:16px 0;border-radius:6px}
+.lesson-tag{display:inline-block;background:#5b5bff;color:#fff;font-size:11px;padding:2px 8px;border-radius:3px;margin-right:8px}
+#overlay{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:80}
+#overlay.o{display:block}
+#leftPanel,#rightPanel{position:fixed;top:48px;bottom:0;background:#fafaf8;z-index:90;overflow-y:auto;display:none;width:300px}
+#leftPanel{left:0;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+#rightPanel{right:0;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+#leftPanel.o,#rightPanel.o{display:block}
+#leftHdr,#rightHdr{padding:14px 18px 8px;font-weight:700;font-size:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+#leftHdr span,#rightHdr span{cursor:pointer;color:#999;font-size:18px;padding:0 4px}
+#leftHdr span:hover,#rightHdr span:hover{color:#5b5bff}
+#leftPanel .chapter-list{list-style:none}
+#leftPanel .chapter-list li{padding:5px 18px;margin:1px 6px;border-radius:4px;font-size:13px}
+#leftPanel .chapter-list li:hover{background:#f0f0ec}
+#leftPanel .chapter-list li.active{background:#eef0ff}
+#leftPanel .chapter-list a{color:#333;text-decoration:none;display:flex;justify-content:space-between}
+#leftPanel .chapter-list li.active a{color:#5b5bff;font-weight:600}
+#leftPanel .chapter-list .en{color:#999;font-size:11px}
+#rightPanel .toc-list{list-style:none;padding:6px 0}
+#rightPanel .toc-list li{padding:4px 18px;font-size:13px;line-height:1.6}
+#rightPanel .toc-list li.toc-h2{font-weight:600;padding-top:8px}
+#rightPanel .toc-list li.toc-h3{padding-left:32px;color:#666;font-size:12px}
+#rightPanel .toc-list li.toc-h4{padding-left:48px;color:#888;font-size:11px;font-style:italic}
+#rightPanel .toc-list a{color:inherit;text-decoration:none}
+#rightPanel .toc-list a:hover{color:#5b5bff}
+.qa-section{margin:20px 0}
+.qa-item{border:1px solid #e8e8e3;border-radius:8px;margin:8px 0;overflow:hidden}
+.qa-q{background:#fafaf8;padding:10px 14px;cursor:pointer;font-weight:600;font-size:14px;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.qa-q:hover{background:#f0f0ec}
+.qa-q .arrow{color:#999;font-size:12px;transition:transform .2s}
+.qa-item.open .qa-q .arrow{transform:rotate(90deg)}
+.qa-a{display:none;padding:12px 14px;background:#fff;font-size:14px;line-height:1.8;border-top:1px solid #eee}
+.qa-item.open .qa-a{display:block}
+.qa-a code{background:#f0f0eb;padding:1px 4px;border-radius:3px;font-size:.9em;color:#d6336c}
+.qa-tag{display:inline-block;background:#eef0ff;color:#5b5bff;font-size:10px;padding:1px 6px;border-radius:3px;margin-right:6px}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:700px){
+#content{padding:14px 12px 50px;max-width:100%}
+#content h1{font-size:22px}
+#content h2{font-size:17px}
+#leftPanel{width:80vw;max-width:300px}
+#rightPanel{width:80vw;max-width:280px}
+#btns button{font-size:11px;padding:4px 7px}
+}
+@media(max-width:400px){
+#content{padding:10px 8px 40px}
+#content h1{font-size:18px}
+#content h2{font-size:15px}
+#btns button{font-size:10px;padding:3px 5px}
+}
+</style></head><body>
+<header id="top">
+  <span id="logo">GEA V1</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch15 音频</span>
+  <span id="btns">
+    <button id="bCh">[=] 目录</button>
+    <button id="bSec">[+] 章节</button>
+  </span>
+</header>
+<div id="main">
+<div id="content">
+<div class="container">
+
+<!-- CH03 DETAILED WITH x.x.x SUBSECTIONS -->
+<h1>第15章：音频 — 零基础讲义</h1>
+
+<blockquote><p><strong>讲义说明</strong>本讲义基于 Jason Gregory 所著《Game Engine Architecture Volume II》第4版第15章（Audio, p.425-521）。<br><em>本版插画由 ImageGen + Guizang 材质插画标准流程生成。</em></p></blockquote>
+
+<div class="toc"><strong>目录</strong><ul>
+<li><a href="#学习目标">学习目标</a></li><li><a href="#15-1">15.1 声音的物理</a></li><li><a href="#15-2">15.2 声音的数学</a></li><li><a href="#15-3">15.3 声音的技术</a></li><li><a href="#15-4">15.4 3D音频渲染</a></li><li><a href="#15-5">15.5 音频引擎架构</a></li><li><a href="#insight">本章核心洞察</a></li><li><a href="#exercises">课后练习题</a></li><li><a href="#qaagent">qAagent问答区</a></li>
+</ul></div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol><li>理解声音的物理原理和数字采样基础</li><li>掌握3D音频空间化五大技术（衰减/平移/HRTF/混响/遮挡）</li><li>了解主流音频中间件（Wwise/FMOD）的架构</li></ol>
+<hr>
+
+<h2 id="15-1">15.1 声音的物理</h2>
+<h3 id="15-1-1">15.1.1 声波基础</h3>
+<h4 id="15-1-1-1">15.1.1.1 三个核心属性</h4>
+<table><tr><th>属性</th><th>物理量</th><th>感知</th><th>游戏应用</th></tr>
+<tr><td>振幅</td><td>声压（Pa）</td><td>响度（dB）</td><td>距离衰减曲线</td></tr>
+<tr><td>频率</td><td>赫兹（Hz）</td><td>音高</td><td>多普勒效应（警车驶过）</td></tr>
+<tr><td>波形</td><td>谐波成分</td><td>音色</td><td>材质区分（木质/金属地面脚步声）</td></tr>
+</table>
+
+<h3 id="15-1-2">15.1.2 人类听觉关键参数</h3>
+<h4 id="15-1-2-1">15.1.2.1 人耳的工程规格</h4>
+<ul><li><strong>频率范围：</strong> 20Hz-20kHz（随年龄衰减高频）</li>
+<li><strong>动态范围：</strong> 0dB（听觉阈值）到 120dB（痛阈）</li>
+<li><strong>等响曲线：</strong> 人耳对 3-4kHz 最敏感（婴儿哭声频率）——这就是为什么警报器在这个频段</li>
+<li><strong>双耳定位：</strong> ITD（时间差——声音先到左耳=来自左边）+ ILD（响度差——左耳大声=来自左边）+ HRTF（频谱差——辨别前后上下）</li></ul>
+<hr>
+
+<h2 id="15-2">15.2 声音的数学</h2>
+<h3 id="15-2-1">15.2.1 数字音频基础</h3>
+<h4 id="15-2-1-1">15.2.1.1 PCM采样三参数</h4>
+<pre><code>// 数字音频 = 采样率 × 位深度 × 通道数
+// CD音质：44100Hz × 16bit × 2ch = 172KB/秒 = 10MB/分钟
+// 游戏音效：48000Hz × 16bit × 1ch = 94KB/秒（常用妥协）
+
+// 奈奎斯特定理：采样率 ≥ 最高频率的 2 倍
+// 44100Hz → 最高还原 22050Hz（覆盖人耳上限）
+// 48000Hz → 最高还原 24000Hz（留有余量）</code></pre>
+<h4 id="15-2-1-2">15.2.1.2 分贝（dB）— 对数标度</h4>
+<p>人耳对响度的感知是<strong>对数</strong>关系。10倍功率=+10dB（感觉"响了大约一倍"）。游戏中音量滑块用 dB 作为单位正是因为这个原因。</p>
+<hr>
+
+<h2 id="15-3">15.3 声音的技术</h2>
+<h3 id="15-3-1">15.3.1 音频中间件</h3>
+<h4 id="15-3-1-1">15.3.1.1 Wwise vs FMOD 对比</h4>
+<table><tr><th></th><th>Wwise</th><th>FMOD</th></tr>
+<tr><td>市场定位</td><td>3A 主机游戏主流</td><td>独立游戏/中小型项目</td></tr>
+<tr><td>授权费</td><td>收入分成（3A项目昂贵）</td><td>分级订阅（有免费版）</td></tr>
+<tr><td>核心优势</td><td>极其灵活的音频总线、强大Profiler</td><td>易上手、集成快、DAW风格界面</td></tr>
+<tr><td>交互音乐</td><td>强（多层音乐轨+实时过渡）</td><td>强（自适应音乐系统）</td></tr>
+</table>
+<p>几乎没有任何工作室自己写音频引擎——<strong>Wwise和FMOD统治了整个行业</strong>。</p>
+<hr>
+
+<h2 id="15-4">15.4 3D音频渲染</h2>
+
+<div class="guizang-figure"><img src="images/ch15/01_3d_audio.png" alt="3D音频空间化"><div class="guizang-caption">图15-1：3D音频空间化——距离衰减与双耳差异（Guizang流程生成）</div></div>
+
+<h3 id="15-4-1">15.4.1 五项空间化核心技术</h3>
+<h4 id="15-4-1-1">15.4.1.1 技术速查表</h4>
+<table><tr><th>技术</th><th>做法</th><th>效果</th><th>计算代价</th></tr>
+<tr><td>距离衰减</td><td>音量随距离指数/线性下降</td><td>远=小声</td><td>最低（一次乘法）</td></tr>
+<tr><td>立体声平移</td><td>按方位角分配左右声道权重</td><td>左边=左耳大声</td><td>低（sin/cos查表）</td></tr>
+<tr><td>混响</td><td>模拟声音在空间反弹造成的余音</td><td>大教堂=长混响（2-5秒）</td><td>中（FIR/卷积）</td></tr>
+<tr><td>遮挡/衍射</td><td>墙后声音的高频衰减+衍射路径计算</td><td>"墙后有声音"的感知</td><td>高（需要几何信息）</td></tr>
+<tr><td>HRTF</td><td>用头部传递函数模拟耳朵对声音的频响改变</td><td>分辨前/后/上/下来源</td><td>中（卷积）</td></tr>
+</table>
+
+<h4 id="15-4-1-2">15.4.1.2 距离衰减曲线</h4>
+<pre><code>// 典型的游戏音频衰减
+// 近距离（0-5m）：音量不变（满）
+// 中距离（5-50m）：线性下降
+// 远距离（50-100m）：快速衰减到0
+
+float Attenuation(float distance) {
+    if (distance < minDist) return 1.0f;            // 满音量区
+    if (distance > maxDist) return 0.0f;             // 完全听不到
+    float t = (distance - minDist) / (maxDist - minDist);
+    return 1.0f - t;                                 // 线性衰减（或用对数）
+}</code></pre>
+
+<h3 id="15-4-2">15.4.2 空间音频API</h3>
+<h4 id="15-4-2-1">15.4.2.1 平台原生空间音频</h4>
+<p>现代平台提供硬件加速的空间音频：Windows Sonic / Dolby Atmos（Xbox/PC）、PS5 Tempest 3D AudioTech（极低延迟+数百个声源同时空间化）、Apple Spatial Audio（AirPods 头部追踪）。引擎只需提供声源的3D位置+方向，平台负责HRTF渲染。</p>
+<hr>
+
+<h2 id="15-5">15.5 音频引擎架构</h2>
+<h3 id="15-5-1">15.5.1 分层架构</h3>
+<h4 id="15-5-1-1">15.5.1.1 从游戏逻辑到扬声器的五层</h4>
+<pre><code>// 音频系统的完整分层
+游戏逻辑（C++/Blueprint）
+  ↓ "播放脚步声"
+引擎音频包装层（封装 Wwise/FMOD API）
+  ↓ 设置 GameObject 位置、触发 Event
+音频中间件（Wwise/FMOD 核心）
+  ↓ 空间化、混合、DSP 效果、总线路由
+平台音频 API（XAudio2 / WASAPI / CoreAudio）
+  ↓ 提交 PCM 缓冲
+音频驱动 → DAC（数模转换器） → 扬声器/耳机</code></pre>
+
+<h3 id="15-5-2">15.5.2 交互音乐系统</h3>
+<h4 id="15-5-2-1">15.5.2.1 自适应音乐</h4>
+<p>现代游戏音乐不是"一首MP3循环播放"——而是<strong>多层音乐轨</strong>实时混合：基础层（一直播放的低频弦乐）+ 紧张层（战斗中叠加鼓点）+ 高潮层（Boss战加入合唱）。Wwise/FMOD 根据游戏状态（战斗/探索/Boss）改变各层的音量和过渡时长。</p>
+<hr>
+
+<h2 id="insight">本章核心洞察</h2>
+<div class="key-box"><strong>🔑 好音频 = 玩家听不到音频引擎的存在</strong><br>游戏音频的最高境界是完全沉浸——玩家不意识到"这是技术实现的"。而背后需要的引擎支持非常复杂：3D定位、混响、遮挡、交互音乐、动态混合……但<strong>没有工作室自己写音频引擎</strong>——Wwise/FMOD已完美解决所有已知难题。你的精力应该放在"如何用好中间件"而非"如何实现音频管线"。</div>
+
+<hr>
+
+<h2 id="exercises">📝 课后练习题（含答案）</h2>
+<div class="qa-section">
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题1</span>人耳如何判断声音来自"左边"还是"右边"？</span><span class="arrow">▶</span></div><div class="qa-a"><p>双耳定位三要素：① ITD（时间差）——左边声音先到左耳 ② ILD（响度差）——头遮住部分声音，左耳更响 ③ HRTF（频谱差）——耳朵形状对不同方向有不同滤波效果。对前后上下的判断主要靠 HRTF。</p></div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">题2</span>CD采样率44100Hz怎么来的？</span><span class="arrow">▶</span></div><div class="qa-a"><p>奈奎斯特定理：采样率 ≥ 最高频率×2。人耳上限≈20kHz→需40kHz。44100 > 40000，恰好也有历史原因——早期数字录音用录像带，每行可存3个采样，NTSC制式245行×60Hz×3=44100。</p></div></div>
+</div>
+<hr><h2 id="qaagent">🤖 qAagent问答区</h2>
+<div class="qa-section">
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span><span class="qa-tag">实践</span>自己项目应该选 Wwise 还是 FMOD？</span><span class="arrow">▶</span></div><div class="qa-a"><p><strong>大团队/3A项目 → Wwise：</strong> 更强大的混合总线、Profiler、互动音乐系统。<strong>小团队/独立游戏 → FMOD：</strong> 免费版可用、上手快、DAW风格界面让音频设计师零学习成本。两者功能都已远超任何游戏的实际需求——"选哪个都不会错"。</p></div></div>
+</div>
+<div id="overlay"></div>
+<div id="leftPanel"><div id="leftHdr">目录 <span id="closeL">X</span></div><ul class="chapter-list">
+  <li class="nav-header">Vol.2 章节</li>
+  <li class=""><a href="ch11_渲染引擎.html">11 渲染引擎<span class="en"></span></a></li>
+  <li class=""><a href="ch12_光照与后处理.html">12 光照与后处理<span class="en"></span></a></li>
+  <li class=""><a href="ch13_动画系统.html">13 动画系统<span class="en"></span></a></li>
+  <li class=""><a href="ch14_碰撞与刚体动力学.html">14 碰撞与刚体动力学<span class="en"></span></a></li>
+  <li class=" active"><a href="ch15_音频.html">15 音频<span class="en"></span></a></li>
+  <li class=""><a href="ch16_游戏性系统入门.html">16 游戏性系统入门<span class="en"></span></a></li>
+  <li class=""><a href="ch17_运行时游戏玩法.html">17 运行时游戏玩法<span class="en"></span></a></li>
+  <li class=""><a href="ch18_更多内容.html">18 更多内容<span class="en"></span></a></li>
+</ul></div>
+<div id="rightPanel"><div id="rightHdr">章节 <span id="closeR">X</span></div>
+<ul class="toc-list">
+<li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#学习目标">学习目标</a></li>
+  <li class="toc-h2"><a href="#15-1">15.1 声音的物理</a></li>
+  <li class="toc-h3"><a href="#15-1-1">15.1.1 声波基础</a></li>
+  <li class="toc-h4"><a href="#15-1-1-1">15.1.1.1 三个核心属性</a></li>
+  <li class="toc-h3"><a href="#15-1-2">15.1.2 人类听觉关键参数</a></li>
+  <li class="toc-h4"><a href="#15-1-2-1">15.1.2.1 人耳的工程规格</a></li>
+  <li class="toc-h2"><a href="#15-2">15.2 声音的数学</a></li>
+  <li class="toc-h3"><a href="#15-2-1">15.2.1 数字音频基础</a></li>
+  <li class="toc-h4"><a href="#15-2-1-1">15.2.1.1 PCM采样三参数</a></li>
+  <li class="toc-h4"><a href="#15-2-1-2">15.2.1.2 分贝（dB）— 对数标度</a></li>
+  <li class="toc-h2"><a href="#15-3">15.3 声音的技术</a></li>
+  <li class="toc-h3"><a href="#15-3-1">15.3.1 音频中间件</a></li>
+  <li class="toc-h4"><a href="#15-3-1-1">15.3.1.1 Wwise vs FMOD 对比</a></li>
+  <li class="toc-h2"><a href="#15-4">15.4 3D音频渲染</a></li>
+  <li class="toc-h3"><a href="#15-4-1">15.4.1 五项空间化核心技术</a></li>
+  <li class="toc-h4"><a href="#15-4-1-1">15.4.1.1 技术速查表</a></li>
+  <li class="toc-h4"><a href="#15-4-1-2">15.4.1.2 距离衰减曲线</a></li>
+  <li class="toc-h3"><a href="#15-4-2">15.4.2 空间音频API</a></li>
+  <li class="toc-h4"><a href="#15-4-2-1">15.4.2.1 平台原生空间音频</a></li>
+  <li class="toc-h2"><a href="#15-5">15.5 音频引擎架构</a></li>
+  <li class="toc-h3"><a href="#15-5-1">15.5.1 分层架构</a></li>
+  <li class="toc-h4"><a href="#15-5-1-1">15.5.1.1 从游戏逻辑到扬声器的五层</a></li>
+  <li class="toc-h3"><a href="#15-5-2">15.5.2 交互音乐系统</a></li>
+  <li class="toc-h4"><a href="#15-5-2-1">15.5.2.1 自适应音乐</a></li>
+  <li class="toc-h2"><a href="#insight">本章核心洞察</a></li>
+  <li class="toc-h2"><a href="#exercises">📝 课后练习题（含答案）</a></li>
+</ul></div>
+<script>
+var bCh=document.getElementById('bCh'),bSec=document.getElementById('bSec');
+var lP=document.getElementById('leftPanel'),rP=document.getElementById('rightPanel');
+var ov=document.getElementById('overlay');
+function cl(){lP.className='';rP.className='';ov.className='';bCh.className='';bSec.className=''}
+function op(w){
+  cl();
+  if(w==='l'){lP.className='o';ov.className='o';bCh.className='a'}
+  if(w==='r'){rP.className='o';ov.className='o';bSec.className='a'}
+}
+bCh.onclick=function(e){e.preventDefault();if(lP.className==='o')cl();else op('l')};
+bSec.onclick=function(e){e.preventDefault();if(rP.className==='o')cl();else op('r')};
+ov.onclick=cl;
+document.getElementById('closeL').onclick=cl;
+document.getElementById('closeR').onclick=cl;
+function toggleQA(el){
+  var item=el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+</body></html>
