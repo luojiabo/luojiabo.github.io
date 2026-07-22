@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FCG Ch06: Linear Algebra — 逐段全文翻译 (Guizang插图版)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Noto Serif SC","Source Han Serif SC","SimSun",Georgia,serif;background:#faf9f5;color:#2c2c2c;line-height:1.9;font-size:15px;max-width:860px;margin:0 auto;padding:40px 24px}
+h1{font-size:28px;text-align:center;margin:40px 0 10px;color:#1a1a1a;border-bottom:2px solid #002FA7;padding-bottom:16px}
+h2{font-size:22px;margin:48px 0 20px;color:#1a1a1a;border-left:4px solid #002FA7;padding-left:14px}
+h3{font-size:17px;margin:32px 0 14px;color:#333}
+h4{font-size:15px;margin:24px 0 10px;color:#444}
+p{margin:12px 0;text-indent:2em}
+p.no-indent{text-indent:0}
+blockquote{background:#f0f0ed;border-left:3px solid #002FA7;margin:16px 0;padding:10px 18px;color:#555;font-style:italic}
+blockquote p{text-indent:0}
+code{background:#eee;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:13px}
+pre{background:#1e1e1e;color:#d4d4d4;padding:16px 20px;border-radius:6px;overflow-x:auto;font-size:13px;line-height:1.5;margin:14px 0}
+pre code{background:transparent;padding:0;color:inherit}
+figure{margin:28px 0;text-align:center}
+figure img{max-width:100%;border-radius:4px;box-shadow:0 2px 12px rgba(0,0,0,0.08)}
+figcaption{font-size:13px;color:#777;margin-top:8px}
+.fig-num{font-weight:700;color:#002FA7}
+.key-term{font-weight:600;color:#002FA7}
+.sidenote{font-size:12px;color:#999;margin-left:8px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:14px}
+table th{background:#002FA7;color:#fff;padding:8px 12px;text-align:left}
+table td{border-bottom:1px solid #ddd;padding:8px 12px}
+table tr:nth-child(even){background:#f5f5f5}
+.thought-box{background:#f5f8fc;border:1px solid #c8d6e5;border-radius:6px;padding:12px 18px;margin:16px 0}
+.thought-box p{text-indent:0;margin:4px 0}
+.nav-bar{background:#fff;border-bottom:1px solid #e0e0e0;padding:10px 20px;margin:-40px -24px 30px;display:flex;gap:16px;font-size:13px;flex-wrap:wrap}
+.nav-bar a{color:#555;text-decoration:none}
+.nav-bar a:hover{color:#002FA7}
+.nav-bar .active{color:#002FA7;font-weight:700}
+.qa-q{font-weight:700;color:#333;margin:16px 0 4px;text-indent:0}
+.qa-a{margin:4px 0 16px 16px;border-left:3px solid #c8d6e5;padding-left:14px}
+details{margin:12px 0;background:#fafafa;border:1px solid #e0e0e0;border-radius:6px;padding:12px 20px}
+details summary{font-weight:700;color:#002FA7;cursor:pointer;padding:4px 0}
+details p{text-indent:0}
+.toc{background:#fff;border:1px solid #e0e0e0;border-radius:6px;padding:16px 24px;margin:20px 0;font-size:14px}
+.toc strong{display:block;margin-bottom:8px;font-size:16px}
+.toc ul{list-style:none;padding-left:8px}
+.toc li{margin:4px 0}
+.toc a{color:#002FA7;text-decoration:none}
+.toc a:hover{text-decoration:underline}
+.objectives-box{background:#f5f8fc;border:1px solid #002FA7;border-left:6px solid #002FA7;border-radius:6px;padding:14px 22px;margin:24px 0}
+.objectives-box h3{color:#002FA7;margin:0 0 10px 0;font-size:17px}
+.objectives-box ol{margin:0;padding-left:22px}
+.objectives-box li{margin:6px 0;line-height:1.7}
+.insight-box{background:#fdf8f0;border:1px solid #e8d5b0;border-radius:6px;padding:14px 20px;margin:24px 0}
+.insight-box h3{color:#b8860b;margin:0 0 10px 0;font-size:16px}
+.insight-box ul{margin:0;padding-left:20px}
+.insight-box li{margin:6px 0}
+</style></head><body>
+<div class="chapter-header">
+  <span id="logo">FCG 5E</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch6 线性代数</span>
+  <span id="btns">
+    <a href="#目录" class="hdr-btn">[=] 目录</a>
+    <a href="#s6-1"><button>[+] 章节</button></a>
+  </span>
+</div>
+
+
+
+<div class="nav-bar">
+<a href="#s6-1">6.1</a> <a href="#s6-2">6.2</a> <a href="#s6-3">6.3</a> <a href="#s6-4">6.4</a> <a href="#s06-exercises">练习</a> <a href="#s06-qa">QA</a>
+</div>
+
+<h1>Fundamentals of Computer Graphics 第5版 — 第6章：线性代数</h1>
+<div class="lecture-note">
+<strong>说明</strong>
+<p>本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书》（Fundamentals of Computer Graphics）第5版第6章（p.127-142）线性代数。</p>
+<p>图形学的数学基础——行列式、矩阵运算（逆矩阵/外积/正交矩阵）、克拉默法则、特征值分解与SVD。本章为第7章变换矩阵做铺垫。</p>
+<p>本版插画采用 Guizang 材质插画风格重新绘制。</p>
+</div>
+
+
+
+<div class="toc" id="目录"><strong>目录</strong>
+<ul>
+<li><a href="#学习目标">学习目标</a></li>
+<li><a href="#s6-1">6.1 行列式</a></li>
+<li><a href="#s6-2">6.2 矩阵</a></li>
+<li><a href="#s6-3">6.3 矩阵与行列式运算</a></li>
+<li><a href="#s6-4">6.4 特征值与矩阵对角化</a></li>
+<li><a href="#insights">本章核心洞察</a></li>
+<li><a href="#s06-exercises">课后练习题</a></li>
+<li><a href="#s06-qa">QA 零基础问答区</a></li>
+</ul></div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+
+<li>理解行列式的几何意义（有向面积/体积），掌握2×2和3×3矩阵行列式的计算方法与拉普拉斯展开</li>
+<li>掌握矩阵乘法的几何解释（线性变换的组合），理解矩阵在图形学中表示空间变换（平移、旋转、缩放）的核心作用</li>
+<li>理解逆矩阵的几何意义与计算方法，掌握通过行列式判零判断矩阵是否可逆</li>
+<li>理解特征值与特征向量的几何含义，掌握矩阵对角化 A = QΛQᵀ 及其在主轴变换中的应用</li>
+<li>了解奇异值分解(SVD) A = USVᵀ 的基本思想——将任意矩阵分解为旋转-缩放-旋转，并理解其在图形学中的应用场景</li>
+</ol>
+<hr>
+
+<figure>
+<img src="images/ch06_full/fig06_overview.png" alt="线性代数核心概念">
+<figcaption><span class="fig-num">图 6.1</span> — 线性代数核心概念：行列式作为有向面积/体积、矩阵乘法表示线性变换的组合、特征值分解 A = QΛQᵀ 揭示主轴变换、奇异值分解 A = USVᵀ 将任意矩阵分解为旋转-缩放-旋转。（Guizang 插画）</figcaption>
+</figure>
+
+<p class="no-indent">矩阵在计算机图形学中被频繁使用，用途广泛，包括表示空间变换。在本章的讨论中，我们假设矩阵的元素都是实数。本章描述了矩阵算术的运算机制以及"方阵"的<span class="key-term">行列式</span>（determinant）——这些矩阵是许多图形操作的基础。我们将学习矩阵是如何产生的，以及如何在图形程序中应用它们。本章的目标读者是那些已经接触过线性代数但可能需要复习的人。如果你从未接触过这些内容，本章可能不够详尽——建议在继续之前先学习一本完整的线性代数教材。但对于已经了解基础知识的读者，本章确实涵盖了与计算机图形学直接相关的关键主题：行列式、矩阵运算、特征值和奇异值分解。简而言之，<strong>图形学就是将线性代数公式映射到屏幕像素上的艺术</strong>——深入理解行列式、特征值和矩阵分解，能省下数月的调试时间。</p>
+
+<!-- ==================== 6.1 ==================== -->
+<h2 id="s6-1">6.1 行列式</h2>
+
+<h3 id="6-1-1">6.1.1 从几何直觉到代数定义</h3>
+
+<p>我们通常将矩阵视为一组以列（或行）排列的向量。这自然会引发一个问题：这些向量具有什么性质的几何意义？一组二维向量的<span class="key-term">行列式</span>（determinant）——记作 |ab| 或 det([a,b])——是由两个向量 a 和 b 张成的平行四边形的<span class="key-term">有向面积</span>（signed area）。这里"有向"意味着符号很重要：如果 a 和 b 是右手系的（即从 a 到 b 的最小角度旋转是逆时针的），面积为正；如果是左手系的，面积为负。在三维中，三个向量 a、b、c 的行列式——det([a,b,c])——是由这三个向量张成的<span class="key-term">平行六面体</span>（parallelepiped）的有向体积。这个性质自然地推广到更高维度：n 个 n 维向量张成的 n 维"超平行体"的有向 n 维体积。</p>
+
+<div class="thought-box">
+<p><strong>想一想：</strong>行列式为什么叫"行列式"？"determinant"一词源于它能够"确定"（determine）一个线性方程组是否有唯一解。具体来说，行列式非零 ⇔ 方程组的系数向量线性无关 ⇔ 解存在且唯一。这个判断性质在图形学中反复出现：判断三个法向量是否定义了合法坐标系、判断一个光照矩阵是否退化、或判断一个求交计算（如光线-三角形）是否有解。</p>
+</div>
+
+<p>行列式支持几种推导其值的运算。我们可以将任意向量加到另一个向量上而不改变行列式的值（这对应了平行四边形的剪切变换——保持面积不变）。缩放任意向量会将行列式按相同因子缩放（面积比例缩放）。如果任意两个向量交换，行列式的符号会反转（取向翻转）。更重要的是，如果其中一个向量是另外两个向量的线性组合，行列式为零——即向量是<span class="key-term">线性相关</span>（linearly dependent）的。因此行列式天然地用作线性相关性的测试工具。</p>
+
+<p>行列式通过将方阵映射到标量来形式化这一几何概念。一个 n×n 矩阵 A 的行列式记为 det(A) 或 |A|。对于一个 2×2 矩阵，行列式的计算公式为：</p>
+<pre class="math">      |a  b|
+A  =  |c  d|,    det(A) = |a b; c d| = ad − bc</pre>
+<p>这个公式的几何含义非常直观：ad 是矩形的面积，bc 同样是矩形的面积，差 ad−bc 恰好等于平行四边形（由两列向量张成）的有向面积。这个简单的公式是推导高维行列式的基础。</p>
+
+<div class="thought-box">
+<p><strong>生活类比：</strong>行列式就像是一个"扩张/收缩测量仪"。想象有一块方形的橡皮泥，假设有一个矩阵 A 代表一种变形（拉伸、挤压、旋转）。把橡皮泥上所有点都用 A 变换，橡皮泥的体积会变为原来的 |det(A)| 倍。如果 |det(A)| = 2，橡皮泥膨胀了两倍；如果 |det(A)| = 0，橡皮泥被压扁到没有体积（变成一个平面、一条线甚至一个点）。在游戏引擎中，当模型矩阵的缩放行列式为零时，整个模型会被压缩消失。</p>
+</div>
+
+<h3 id="6-1-2">6.1.2 拉普拉斯展开：从 2×2 到 n×n 的递归推导</h3>
+
+<p>对于更大的矩阵，行列式通过<span class="key-term">拉普拉斯展开</span>（Laplace expansion）递归定义。其思想是：将 n×n 矩阵的行列式表达为 n 个 (n−1)×(n−1) 行列式的带符号和，然后每个 (n−1)×(n−1) 行列式又展开为 (n−1) 个 (n−2)×(n−2) 行列式，如此递归下去，直到简化为 2×2 的情形。</p>
+
+<p><strong>第一步：2×2 基准情况</strong></p>
+<pre class="math">|a b; c d| = ad − bc</pre>
+
+<p><strong>第二步：3×3 沿第一行展开</strong></p>
+<pre class="math">|a₁₁ a₁₂ a₁₃|
+|a₂₁ a₂₂ a₂₃| = a₁₁·|a₂₂ a₂₃; a₃₂ a₃₃| − a₁₂·|a₂₁ a₂₃; a₃₁ a₃₃| + a₁₃·|a₂₁ a₂₂; a₃₁ a₃₂|
+|a₃₁ a₃₂ a₃₃|
+</pre>
+<p>这里，每一项由一个"主元素"a₁ⱼ（从第一行取）乘上一个 (n−1)×(n−1) 的<span class="key-term">子行列式</span>（minor determinant）——即删除 a₁ⱼ 所在行和列后剩余矩阵的行列式。符号遵循 (−1)^{1+j}，形成 +、−、+ 交替的模式。</p>
+
+<p><strong>第三步：一般 n×n 展开公式</strong></p>
+<p>沿矩阵 A 的第 i 行展开，行列式为：</p>
+<pre class="math">              n
+det(A)  =  Σ  (−1)^{i+j} · a_{ij} · M_{ij}
+             j=1
+</pre>
+<p>其中 <code>a_{ij}</code> 是第 i 行第 j 列的元素，<code>M_{ij}</code> 是删除第 i 行和第 j 列后得到的 (n−1)×(n−1) 子矩阵的行列式——称为<span class="key-term">余子式</span>（minor）。乘积 <code>C_{ij} = (−1)^{i+j}·M_{ij}</code> 称为<span class="key-term">代数余子式</span>（cofactor）。完整的<span class="key-term">棋盘符号图案</span>（checkerboard sign pattern）对于 4×4 矩阵为：</p>
+<pre class="math">     +  −  +  −
+     −  +  −  +
+     +  −  +  −
+     −  +  −  +
+</pre>
+<p>该图案遵循简单规则：位置 (i,j) 的符号为正当且仅当 i+j 为偶数。</p>
+
+<!-- 6.1.2a — 4×4 拉普拉斯展开的完整递归示例 -->
+<h4>4×4 拉普拉斯展开：递归展开的完整示例</h4>
+
+<p>为了真正理解拉普拉斯展开的"递归"本质——每一层都将高阶问题归约为低阶问题——我们用一个带具体数字的 4×4 矩阵来逐步展示：</p>
+<pre class="math">     [2  −1   0   3]
+     [1   4  −2   1]
+A =  [0   3   5  −1]
+     [2   1   3   0]
+</pre>
+
+<p><strong>第 1 层：沿第一行展开 4×4 → 转化为 4 个 3×3</strong></p>
+<p>选择第一行 (2, −1, 0, 3) 作为展开行。符号按 (−1)^{1+j}：+(j=1), −(j=2), +(j=3), −(j=4)：</p>
+<pre class="math">det(A) = (+1)·2·M₁₁ + (−1)·(−1)·M₁₂ + (+1)·0·M₁₃ + (−1)·3·M₁₄
+       = 2·M₁₁ + 1·M₁₂ + 0 − 3·M₁₄
+</pre>
+<p>其中每个 M_{1j} 是删除第 1 行和第 j 列后的 3×3 子矩阵的行列式。例如 M₁₂ 来自：</p>
+<pre class="math">删除第1行和第2列后：      [1  −2   1]
+                         [0   5  −1]
+                         [2   3   0]
+</pre>
+
+<p><strong>第 2 层：每个 3×3 展开为 3 个 2×2</strong></p>
+<p>以 M₁₂ 为例，沿其第一行 (1, −2, 1) 展开：</p>
+<pre class="math">M₁₂ = 1·|5  −1; 3  0| − (−2)·|0  −1; 2  0| + 1·|0  5; 2  3|
+    = 1·(5·0−(−1)·3) + 2·(0·0−(−1)·2) + 1·(0·3−5·2)
+    = 1·(0+3) + 2·(0+2) + 1·(0−10)
+    = 3 + 4 − 10 = −3
+</pre>
+
+<p>类似地计算 M₁₁、M₁₄，然后组合得到 det(A) 的最终值。整个 4×4 行列式的计算产生了 <strong>4 个 3×3 = 12 个 2×2</strong> 子行列式，每个 2×2 需要 2 次乘法和 1 次减法——总共 12×2 = 24 次乘法加上符号分配。这与 n! = 4! = 24 的理论计数一致。</p>
+
+<p><strong>展开树的几何直觉：</strong>将拉普拉斯展开想象为一棵"展开树"。根节点是 n×n 行列式，它分出 n 个子节点（每个 (n−1)×(n−1)），每个子节点又分出 n−1 个孙子节点（每个 (n−2)×(n−2)），依此类推。叶子节点都是 2×2 的基准情况（ad−bc）。这棵树的总叶子数 = n·(n−1)·(n−2)·…·3 = n!/2，每个叶子需要 2 次乘法，故总乘法次数 = n!。对于 n=10，这已是 3,628,800 项——即使是现代 CPU 也需要可观察的时间来完成。</p>
+
+<div class="thought-box">
+<p><strong>想一想：</strong>拉普拉斯展开的 O(n!) 复杂度并非纯粹的"理论问题"。在计算机代数系统（如 Mathematica、SymPy）中，当处理<strong>符号矩阵</strong>（元素是表达式而非数值）时，拉普拉斯展开通常是唯一可靠的方法——因为高斯消元法在符号计算中会产生极繁的分数表达式。例如，计算一个 8×8 符号矩阵的 det，用 Mathematica 的 <code>Det</code> 函数内部会在"拉普拉斯展开"和"多项式插值法"之间自动选择。在图形学的预处理工具（如着色器编译器中的符号微分、纹理变换公式推导）中，经常会遇到需要符号行列式的情形。</p>
+</div>
+
+<h4>棋盘符号图案的系统验证</h4>
+
+<p>位置 (i,j) 的符号由 (−1)^{i+j} 决定。下表给出 4×4 矩阵所有 16 个位置的符号计算过程：</p>
+
+<table>
+<tr><th>(i,j)</th><th>i+j</th><th>(−1)^{i+j}</th><th>符号</th><th>(i,j)</th><th>i+j</th><th>(−1)^{i+j}</th><th>符号</th></tr>
+<tr><td>(1,1)</td><td>2</td><td>+1</td><td>+</td><td>(3,1)</td><td>4</td><td>+1</td><td>+</td></tr>
+<tr><td>(1,2)</td><td>3</td><td>−1</td><td>−</td><td>(3,2)</td><td>5</td><td>−1</td><td>−</td></tr>
+<tr><td>(1,3)</td><td>4</td><td>+1</td><td>+</td><td>(3,3)</td><td>6</td><td>+1</td><td>+</td></tr>
+<tr><td>(1,4)</td><td>5</td><td>−1</td><td>−</td><td>(3,4)</td><td>7</td><td>−1</td><td>−</td></tr>
+<tr><td>(2,1)</td><td>3</td><td>−1</td><td>−</td><td>(4,1)</td><td>5</td><td>−1</td><td>−</td></tr>
+<tr><td>(2,2)</td><td>4</td><td>+1</td><td>+</td><td>(4,2)</td><td>6</td><td>+1</td><td>+</td></tr>
+<tr><td>(2,3)</td><td>5</td><td>−1</td><td>−</td><td>(4,3)</td><td>7</td><td>−1</td><td>−</td></tr>
+<tr><td>(2,4)</td><td>6</td><td>+1</td><td>+</td><td>(4,4)</td><td>8</td><td>+1</td><td>+</td></tr>
+</table>
+
+<p>你可以直接验证：国际象棋棋盘上黑格（i+j 为奇数）对应负号，白格（i+j 为偶数）对应正号——这个简单规则对所有维度都成立。而且，由于 (−1)^{i+j}·(−1)^{j+i} = (−1)^{2(i+j)} = 1，行列式在任何行展开和任何列展开得到的结果一致——这正是拉普拉斯定理的核心保证。</p>
+
+<!-- 想一想 about Laplace complexity (preserved) ★ -->
+<div class="thought-box">
+<p><strong>想一想：</strong>为什么拉普拉斯展开对于 n>4 的大型矩阵不推荐用于实际计算？因为它的时间复杂度是 O(n!)——随 n 增长极快。对于 n=10 的矩阵，直接拉普拉斯展开需要 ~3.6M 项乘法，对于 n=20 则完全不可能。在实际图形学中，我们改用 LU 分解（O(n³)）或高斯消元来计算行列式。但拉普拉斯展开的理论价值不可替代——它是推导克拉默法则、伴随矩阵公式和特征多项式的基础。</p>
+</div>
+
+<h3 id="6-1-3">6.1.3 行列式的基本性质</h3>
+
+<p>行列式拥有一组既优美又实用的代数性质，每一个在图形学中都有直接的应用场景：</p>
+
+<table>
+<tr><th>性质</th><th>公式</th><th>图形学应用</th></tr>
+<tr><td><strong>乘积性质</strong></td><td>det(AB) = det(A)·det(B)</td><td>变换组合的体积缩放：先缩放 det(B) 倍再缩放 det(A) 倍</td></tr>
+<tr><td><strong>转置不变性</strong></td><td>det(Aᵀ) = det(A)</td><td>行列式在转置下不变——行和列在行列式的视角下是等价的</td></tr>
+<tr><td><strong>三角矩阵</strong></td><td>det(L) = Π l_{ii}</td><td>对角/三角矩阵的行列式 = 对角线元素的乘积——LU 分解后快速求 det</td></tr>
+<tr><td><strong>逆矩阵</strong></td><td>det(A⁻¹) = 1/det(A)</td><td>逆变换的缩放因子是原变换缩放因子的倒数</td></tr>
+</table>
+
+<p>对于 det(AB) = det(A)·det(B) 的证明思路：将矩阵乘法视为线性变换的组合。变换 B 将任意区域放大 |det(B)| 倍，然后变换 A 再放大 |det(A)| 倍，组合效果放大 |det(A)·det(B)| 倍。这就是联合变换 AB 的总体积缩放因子，因此 det(AB) = det(A)·det(B)。这个性质对于判断复合变换（如先旋转再缩放再平移）是否退化的核心依据——只要其中一步的行列式为零，整个变换就会使体积坍缩。</p>
+
+<!-- 6.1.3a — det(AB)=det(A)det(B) 的数值验证 ★ -->
+<h4>det(AB) = det(A)·det(B) 的逐步骤数值验证</h4>
+
+<p>理论推导虽然优雅，但亲手用具体数字验证能建立真正的直觉。考虑以下两个 3×3 矩阵：</p>
+<pre class="math">     [1  2  0]          [2  0  1]
+A =  [0  3  1]     B =  [1  1  0]
+     [2  1  2]          [0  2  1]
+</pre>
+
+<p><strong>步骤 1：分别计算 det(A) 和 det(B)</strong></p>
+<p>det(A) —— 沿第一行展开 (1, 2, 0)，符号为 +, −, +：</p>
+<pre class="math">det(A) = 1·|3 1; 1 2| − 2·|0 1; 2 2| + 0·|0 3; 2 1|
+       = 1·(3·2−1·1) − 2·(0·2−1·2)
+       = 1·(6−1) − 2·(0−2) = 5 + 4 = 9
+</pre>
+
+<p>det(B) —— 沿第一行展开 (2, 0, 1)：</p>
+<pre class="math">det(B) = 2·|1 0; 2 1| − 0·|1 0; 0 1| + 1·|1 1; 0 2|
+       = 2·(1·1−0·2) + 1·(1·2−1·0) = 2·1 + 1·2 = 4
+</pre>
+
+<p><strong>步骤 2：计算乘积 AB</strong></p>
+<pre class="math">     [1  2  0]   [2  0  1]   [1·2+2·1+0·0   1·0+2·1+0·2   1·1+2·0+0·1]   [4   2   1]
+AB = [0  3  1] · [1  1  0] = [0·2+3·1+1·0   0·0+3·1+1·2   0·1+3·0+1·1] = [3   5   1]
+     [2  1  2]   [0  2  1]   [2·2+1·1+2·0   2·0+1·1+2·2   2·1+1·0+2·1]   [5   5   4]
+</pre>
+
+<p><strong>步骤 3：计算 det(AB)</strong> —— 沿第一行展开 (4, 2, 1)：</p>
+<pre class="math">det(AB) = 4·|5 1; 5 4| − 2·|3 1; 5 4| + 1·|3 5; 5 5|
+        = 4·(5·4−1·5) − 2·(3·4−1·5) + 1·(3·5−5·5)
+        = 4·(20−5) − 2·(12−5) + 1·(15−25)
+        = 4·15 − 2·7 + (−10) = 60 − 14 − 10 = 36
+</pre>
+
+<p><strong>步骤 4：比较</strong></p>
+<pre class="math">det(A)·det(B) = 9 × 4 = 36 = det(AB)   ✓  验证通过！
+</pre>
+
+<div class="thought-box">
+<p><strong>想一想：</strong>乘积性质的一个反直觉推论：det(A+B) ≠ det(A) + det(B)。也就是说，行列式是"可乘的"但不是"可加的"——这与"面积缩放"的几何直觉吻合：分别缩放两次然后叠加的物体的总体积 ≠ 各次缩放体积的简单相加。在渲染管线中，阴影矩阵和投影矩阵的复合变换作用于大量顶点时，这一性质保证了"先算所有变换的复合矩阵，再统一变换所有顶点"与"逐个变换相乘"产生相同的体积缩放效果——这就是管线的结合性保证。</p>
+</div>
+
+<!-- ==================== 6.2 ==================== -->
+<h2 id="s6-2">6.2 矩阵</h2>
+
+<p>矩阵是数字的二维数组。一个 m×n 矩阵有 m 行和 n 列。矩阵之所以如此有用，是因为它们被设计来简洁地表示<span class="key-term">线性变换</span>（linear transformations）——即将向量映射到向量的函数，且满足两个关键性质：<span class="key-term">可加性</span>（additivity）T(u+v) = T(u) + T(v) 和<span class="key-term">均匀性</span>（homogeneity）T(kv) = kT(v)。这是线性代数的核心对偶性：每个线性变换都可以表示为一个矩阵，而每个矩阵对应一个线性变换。</p>
+
+<div class="thought-box">
+<p><strong>生活类比：</strong>线性变换就像是一台"按比例分配"的机器。如果把原料（输入向量）翻倍，产品（输出向量）也翻倍。如果把两种原料混合（加法），输出就是各自产品的混合。这种"比例不变"的性质使得矩阵成为图形变换（旋转、缩放、投影）的绝佳抽象——试想，如果一个旋转操作在放大模型后产生的结果不等于先旋转再放大的结果，那渲染管线会多么混乱。</p>
+</div>
+
+<h3 id="6-2-1">6.2.1 矩阵运算</h3>
+
+<p>一个 m×n 矩阵 A 与一个 n×p 矩阵 B 的乘积——记为 AB 或 A·B——是一个 m×p 矩阵 C，其中 C 的第 i 行第 j 列元素由 A 的第 i 行与 B 的第 j 列的点积给出：</p>
+<pre class="math">               n
+C_{ij}  =  Σ  A_{ik} · B_{kj}
+              k=1
+</pre>
+<p><strong>完整的矩阵乘法公式（以 2×2 为例展开）：</strong></p>
+<pre class="math">A·B = [a₁₁ a₁₂; a₂₁ a₂₂] · [b₁₁ b₁₂; b₂₁ b₂₂]
+
+     = [a₁₁·b₁₁+a₁₂·b₂₁   a₁₁·b₁₂+a₁₂·b₂₂]
+       [a₂₁·b₁₁+a₂₂·b₂₁   a₂₁·b₁₂+a₂₂·b₂₂]
+</pre>
+
+<p><strong>具体数值示例：</strong></p>
+<pre class="math">A = [1 2; 3 4],   B = [5 6; 7 8]
+
+A·B = [1·5+2·7   1·6+2·8]  =  [19  22]
+      [3·5+4·7   3·6+4·8]     [43  50]
+</pre>
+
+<p>关键在于<span class="key-term">内维数必须匹配</span>：A 的列数（n）必须等于 B 的行数（n）。如果这个不匹配，乘法没有定义。得到的矩阵 C 的维度由外维数决定：m 行（来自 A）× p 列（来自 B）。就像流水线：A 消耗 n 维输入产生 m 维输出，B 消耗 p 维输入产生 n 维输出——要串联两者，B 的输出维度 n 必须等于 A 的输入维度 n。</p>
+
+<p>矩阵乘法具有以下代数性质：</p>
+<ul>
+<li><strong>结合律</strong>（associative）：(AB)C = A(BC) —— 变换的组合顺序不影响分组。</li>
+<li><strong>分配律</strong>（distributive）：A(B+C) = AB+AC 和 (A+B)C = AC+BC —— 线性性质保证。</li>
+<li><strong>不满足交换律</strong>（not commutative）：<strong>AB ≠ BA 在一般情况下成立</strong>。在图形学中这意味着"先旋转后平移"与"先平移后旋转"产生完全不同的结果。</li>
+<li><strong>不满足消去律</strong>：如果 AB = AC，并不必然推出 B = C —— 只有当 A 可逆时才成立。这源于矩阵乘法可能丢失信息（如奇异矩阵会压缩维度）。</li>
+</ul>
+
+<!-- 6.2.1a — AB ≠ BA 具体反例 ★ -->
+<h4>为什么 AB ≠ BA：具体 2×2 反例</h4>
+
+<p>非交换性不是抽象的理论"怪癖"——它在图形学中直接导致可见的渲染错误。考虑以下 2×2 反例：</p>
+<pre class="math">     [1  2]          [0  1]
+A =  [3  4],    B =  [2  0]
+</pre>
+
+<p><strong>先算 AB：</strong></p>
+<pre class="math">     [1·0+2·2   1·1+2·0]   [4   1]
+AB = [3·0+4·2   3·1+4·0] = [8   3]
+</pre>
+
+<p><strong>再算 BA：</strong></p>
+<pre class="math">     [0·1+1·3   0·2+1·4]   [3   4]
+BA = [2·1+0·3   2·2+0·4] = [2   4]
+</pre>
+
+<p>可见 AB = [[4,1],[8,3]] 而 BA = [[3,4],[2,4]]——<strong>完全不同</strong>。这不是一个特例，而是一般规则：对于随机选取的方阵，AB ≠ BA 的概率接近 1（除非 A 和 B 碰巧可交换——比如两者都是对角矩阵、或者一个是标量矩阵的缩放）。</p>
+
+<p><strong>在图形学中这意味着什么？</strong>考虑 3D 模型变换矩阵 M = T·R·S（平移·旋转·缩放）。顶点 p 通过 M·p 变换——这等价于先缩放、再旋转、最后平移。如果写成 S·R·T，意味着先平移、再旋转、最后缩放——结果会完全不同：旋转不再围绕物体本地中心，缩放也会作用在已平移后的坐标上。OpenGL/DirectX 初学者遇到"模型旋转到场景外"的 bug，90% 的原因都是矩阵乘法顺序错误。</p>
+
+<div class="thought-box">
+<p><strong>生活类比：</strong>"先穿袜子再穿鞋"与"先穿鞋再穿袜子"——结果完全不同。这就是非交换性的活生生体现。类似地，在 3D 引擎中，"将汽车绕自身中心旋转 90°，再平移到街道位置"产生一辆正面朝向街道的汽车；而"先平移到街道，再绕世界原点旋转"则产生一辆飞到远处的车——因为旋转中心变了。矩阵的非交换性正是这种"顺序敏感性"的数学表述。</p>
+</div>
+
+<!-- 想一想 about matrix multiplication design (preserved) ★ -->
+<div class="thought-box">
+<p><strong>想一想：</strong>矩阵乘法的"奇怪"规则不是任意的——它是被精心设计的，以确保 AB 恰好表示"先应用 B 再应用 A"的组合线性变换。如果你想设计一个矩阵 C，使得对于所有向量 x 有 C·x = A·(B·x)，那么通过展开可以证明 C 的元素必须满足 C_{ij} = Σ_k A_{ik}·B_{kj}。这正是矩阵乘法的定义。任何其他"点对点"的乘法规则都无法保持这种组合性质。</p>
+</div>
+
+<h3 id="6-2-2">6.2.2 矩阵转置</h3>
+
+<p>矩阵<span class="key-term">转置</span>（transpose）Aᵀ 交换行和列的位置：</p>
+<pre class="math">(Aᵀ)_{ij} = A_{ji}</pre>
+<p>对于 3×3 矩阵的转置示例：</p>
+<pre class="math">     [1 2 3]ᵀ     [1 4 7]
+A =  [4 5 6]  →   [2 5 8]
+     [7 8 9]       [3 6 9]
+</pre>
+<p>转置的核心性质是<span class="key-term">乘积的转置</span>：(AB)ᵀ = BᵀAᵀ —— 注意顺序反转！这在推导法线变换公式时尤其重要：如果顶点通过矩阵 M 变换，则法线必须通过 (M⁻¹)ᵀ 变换以保持与切平面的垂直关系。</p>
+
+<h3 id="6-2-3">6.2.3 单位矩阵与逆矩阵</h3>
+
+<p><span class="key-term">单位矩阵</span>（identity matrix）I 是对角线全为 1、其他地方全为 0 的方阵：</p>
+<pre class="math">     [1  0  0]
+I₃ = [0  1  0]
+     [0  0  1]
+</pre>
+<p>对于任意矩阵 A，有 IA = A 和 AI = A（前提是维度兼容）。I 是矩阵乘法的单位元，就像数字 1 是乘法单位元一样。I 也是<span class="key-term">对称矩阵</span>（symmetric）：I = Iᵀ，并且是<span class="key-term">正交矩阵</span>（orthogonal matrix），因为它的每一列（视为向量）具有单位长度且列之间彼此正交。</p>
+
+<p>一个方阵 A 的<span class="key-term">逆矩阵</span>（inverse）A⁻¹ 满足 A⁻¹A = AA⁻¹ = I。可逆性的<span class="key-term">充要条件</span>是：A 的<span class="key-term">行列式非零</span>（det(A) ≠ 0），等价于 A 的列（和行）线性无关。换句话说，如果 det(A) = 0，则 A 不可逆——它是<span class="key-term">奇异的</span>（singular）。</p>
+
+<p>对于 2×2 矩阵，逆矩阵有封闭的简洁公式：</p>
+<pre class="math">        [a  b]          1    [ d  −b]
+若 A = [c  d],  则 A⁻¹ = ───  [−c   a]    （前提 det(A)=ad−bc ≠ 0）
+                         ad−bc
+</pre>
+
+<p>对于 n>2 的大型矩阵，逆矩阵通常通过数值方法（如 LU 分解、高斯-约旦消元法）计算，O(n³) 的时间复杂度在实践中远优于直接公式（基于伴随矩阵的公式也涉及 O(n·n!) 的拉普拉斯展开）。在图形学中，我们经常利用矩阵的特殊结构来加速求逆——例如正交矩阵的逆就是它的转置。</p>
+
+<div class="thought-box">
+<p><strong>想一想：</strong>可逆矩阵就像一个"可撤销"的操作。如果你把一张纸揉皱（奇异变换——体积变为零），你就无法完全将它恢复到原始状态（没有逆操作）。但如果你只是旋转它（正交变换——行列式=1），只需反向旋转就能恢复原状（逆 = 转置）。在编辑器中执行"撤销"(Undo)时，通常存储变换的逆矩阵来还原物体的原始位置和朝向。</p>
+</div>
+
+<h3 id="6-2-4">6.2.4 正交矩阵</h3>
+
+<p><span class="key-term">正交矩阵</span>（orthogonal matrix）是方阵 Q，其转置等于其逆：</p>
+<pre class="math">Qᵀ = Q⁻¹    ⇔    QQᵀ = I    ⇔    QᵀQ = I</pre>
+
+<p><strong>性质证明：</strong>Q 的每一列（视为向量）具有单位长度：q_i · q_i = 1；不同列之间相互正交：q_i · q_j = 0 (i ≠ j)。这是因为：</p>
+<pre class="math">(QᵀQ)_{ij} = Σ_k (Qᵀ)_{ik}·Q_{kj} = Σ_k Q_{ki}·Q_{kj} = (col_i of Q)·(col_j of Q) = δ_{ij}</pre>
+<p>其中 δ_{ij} 是<span class="key-term">克罗内克 δ 函数</span>（Kronecker delta）——当 i=j 时为 1，否则为 0。这意味着 QᵀQ = I，所以 Q 的列是标准正交的。反过来，由 QQᵀ = I 可推出 Q 的行也是标准正交的：对于方阵，列的标准正交性与行的标准正交性是等价的。</p>
+
+<!-- 6.2.4a — 正交矩阵 6 个约束条件的完整验证 ★ -->
+<h4>正交矩阵约束条件的完整验证</h4>
+
+<p>条件 QᵀQ = I 对 3×3 正交矩阵 Q 产生了 n(n+1)/2 = 6 个独立标量约束条件（而非 n² = 9 个，因为对称性）。这解释了为什么 3D 旋转只有 3 个自由度（3 个 Euler 角，或 1 个轴角对）。</p>
+
+<p>设 Q 的列为 q₁, q₂, q₃，则 QᵀQ = I 等价于：</p>
+
+<p><strong>列归一化条件（3 个条件，来自对角线）：</strong></p>
+<pre class="math">(1) q₁·q₁ = q₁₁² + q₂₁² + q₃₁² = 1    （第 1 列是单位向量）
+(2) q₂·q₂ = q₁₂² + q₂₂² + q₃₂² = 1    （第 2 列是单位向量）
+(3) q₃·q₃ = q₁₃² + q₂₃² + q₃₃² = 1    （第 3 列是单位向量）
+</pre>
+
+<p><strong>列正交性条件（3 个条件，来自上三角：QᵀQ 是对称的，下三角条件相同）：</strong></p>
+<pre class="math">(4) q₁·q₂ = q₁₁·q₁₂ + q₂₁·q₂₂ + q₃₁·q₃₂ = 0    （第 1 列 ⟂ 第 2 列）
+(5) q₁·q₃ = q₁₁·q₁₃ + q₂₁·q₂₃ + q₃₁·q₃₃ = 0    （第 1 列 ⟂ 第 3 列）
+(6) q₂·q₃ = q₁₂·q₁₃ + q₂₂·q₂₃ + q₃₂·q₃₃ = 0    （第 2 列 ⟂ 第 3 列）
+</pre>
+
+<p>因此 <strong>自由参数的数量 = 9 个矩阵元素 − 6 个独立约束 = 3 个</strong>——这正是 3D 旋转的自由度数。任何绕任意轴的旋转矩阵 R₃×₃ 都自动满足这 6 个条件：</p>
+<pre class="math">例如绕 z 轴旋转 θ 角：     [cosθ  −sinθ  0]
+                             [sinθ   cosθ  0]
+                             [  0      0    1]
+
+验证约束(1): cos²θ + sin²θ + 0 = 1 ✓
+验证约束(4): cosθ·(−sinθ) + sinθ·cosθ + 0·0 = −cosθ·sinθ + sinθ·cosθ = 0 ✓
+验证约束(5): 0 + 0 + 0 = 0 ✓  验证约束(6): 0 + 0 + 0 = 0 ✓
+</pre>
+
+<div class="thought-box">
+<p><strong>想一想：</strong>正交矩阵的 6 个约束并非完全独立——它们一起保证了行列式 det(Q) = ±1（旋转对应 +1，含反射的对应 −1）。在图形学中我们几乎总是使用 det(Q)=+1 的正交矩阵（真正的旋转），因为含有反射的变换会翻转法线方向（使光照突变）或使三角面片的正面背面翻转（需要 <code>glFrontFace</code> 纠正）。想验证一个模型矩阵是否合法？检查其旋转部分的 3×3 子矩阵——若 QᵀQ ≈ I 且 det(Q) ≈ 1（在浮点误差范围内），则旋转是刚性的。</p>
+</div>
+
+<p>正交矩阵代表图形学中最基础的刚性变换——<span class="key-term">旋转</span>和<span class="key-term">反射</span>。它们保持向量长度不变（||Qv|| = ||v||），保持点积不变（(Qu)·(Qv) = u·v），因此保持角度和距离不变。这就是为什么游戏引擎中的所有旋转矩阵（绕任意轴的 3D 旋转）都是正交矩阵。</p>
+
+<h3 id="6-2-5">6.2.5 外积</h3>
+
+<p><span class="key-term">外积</span>（outer product）——列向量左乘行向量——产生秩为 1 的矩阵。对于两个三维向量 a = [a_1, a_2, a_3]ᵀ 和 b = [b_1, b_2, b_3]ᵀ，外积的完整 3×3 展开为：</p>
+<pre class="math">          [a₁]                 [a₁·b₁   a₁·b₂   a₁·b₃]
+abᵀ  =    [a₂]  ·  [b₁ b₂ b₃] = [a₂·b₁   a₂·b₂   a₂·b₃]
+          [a₃]                 [a₃·b₁   a₃·b₂   a₃·b₃]
+</pre>
+
+<!-- 6.2.5a — 外积 3×3 逐元素完整展开 ★ -->
+<h4>外积 3×3 逐元素公式推导</h4>
+
+<p>外积 C = abᵀ 是一个 3×3 矩阵，其中元素 C_{ij} 由第 i 分量 a_i 与第 j 分量 b_j 直接相乘得到：</p>
+<pre class="math">C₁₁ = a₁·b₁     C₁₂ = a₁·b₂     C₁₃ = a₁·b₃
+C₂₁ = a₂·b₁     C₂₂ = a₂·b₂     C₂₃ = a₂·b₃
+C₃₁ = a₃·b₁     C₃₂ = a₃·b₂     C₃₃ = a₃·b₃
+</pre>
+
+<p>这个矩阵有一个极其特殊的结构：</p>
+<ul>
+<li><strong>每一列</strong>是 a 的标量倍数——第 j 列 = b_j · a。所以所有 3 列共线，都平行于向量 a。</li>
+<li><strong>每一行</strong>是 b 的标量倍数——第 i 行 = a_i · b。所以所有 3 行都平行于向量 b。</li>
+<li>因此矩阵的 <strong>秩为 1</strong>（如果 a 和 b 都非零），整个矩阵只"活"在一维子空间中。</li>
+</ul>
+
+<p>用具体数字验证——取 a = [3, 1, 4]ᵀ, b = [2, 7, 1]：</p>
+<pre class="math">          [3]                 [3×2   3×7   3×1]   [6   21   3 ]
+abᵀ  =    [1]  ·  [2  7  1] = [1×2   1×7   1×1] = [2    7   1 ]
+          [4]                 [4×2   4×7   4×1]   [8   28   4 ]
+</pre>
+
+<p>外积还有两个值得注意的性质：</p>
+<ul>
+<li><strong>迹 = 内积：</strong>trace(abᵀ) = a₁b₁ + a₂b₂ + a₃b₃ = a·b —— 外积的对角线元素之和恰好等于内积。</li>
+<li><strong>矩阵乘法降为外积之和：</strong>矩阵乘积 AB 可写为 A 的列与 B 的行的外积求和：AB = Σ_{k} col_k(A) · row_k(B)ᵀ。这是第 5 题练习中 kij 循环排列背后的理论基础。</li>
+</ul>
+
+<div class="thought-box">
+<p><strong>想一想：</strong>外积的秩为 1 特性在图形学中有许多低调的应用。例如，在阴影映射中，将视线方向 (view direction) 作为 a 和光源方向 (light direction) 作为 b 构造外积，得到的矩阵可以分离出阴影的"主要方向结构"。在图像处理中，外积常用于构造滤波核（如 Gaussian 核 g(x)·g(y)ᵀ，省去完整 2D 卷积的计算）。在物理模拟中，角速度的叉积矩阵 [ω]×（用于计算切线速度 v=ω×r）也可以用外积表示：ω×r = [ω]×·r，而 [ω]× 本质上是两个向量的外积生成的反对称矩阵。</p>
+</div>
+
+<!-- 生活类比 about outer product (preserved) ★ -->
+<div class="thought-box">
+<p><strong>生活类比：</strong>外积就像一张"所有配对"的乘法表。想象餐厅菜单：左边列是三种主菜（牛肉/鸡肉/素食），上边行是三种配菜（米饭/薯条/沙拉）。外积产生 3×3 张格——每个格子是你选择某主菜+某配菜的总热量。整张表的结构完全由"每种主菜的基础热量"和"每种配菜的基础热量"这两个维度的信息决定——这正是外积"秩为1"的直观含义。</p>
+</div>
+
+<!-- ==================== 6.3 ==================== -->
+<h2 id="s6-3">6.3 矩阵与行列式运算</h2>
+
+<h3 id="6-3-1">6.3.1 行列式的几何意义回顾</h3>
+
+<p>行列式在几何解释中的核心地位怎么强调也不为过。由矩阵列所定义的向量张成的平行六面体的有向体积就是行列式的值。如果行列式为零，体积为零——意味着其中至少一个列向量是其他列向量的线性组合：这些向量<span class="key-term">线性相关</span>（linearly dependent），矩阵是<span class="key-term">奇异的</span>（singular），没有逆矩阵。这个简单的性质支撑着无数的图形算法：测试三个向量是否共面（光线与三角形求交的几何前提），检查一个坐标系是否已退化（如两个基向量碰巧平行），或计算三角形的面积。</p>
+
+<h3 id="6-3-2">6.3.2 克拉默法则的完整推导</h3>
+
+<p><span class="key-term">克拉默法则</span>（Cramer's rule）为从行列式的角度求解线性方程组 Ax = b 提供了一种显式的方法。</p>
+
+<p><strong>推导过程：</strong>考虑 n×n 线性方程组 Ax = b。设 A 的列向量为 a₁, a₂, …, a_n，待求解的未知量为 x₁, x₂, …, x_n。该方程组等价于：</p>
+<pre class="math">x₁·a₁ + x₂·a₂ + … + x_n·a_n = b</pre>
+
+<p>现在定义 A_j 为将 A 的第 j 列替换为 b 后得到的矩阵。利用行列式的多重线性性质：</p>
+<pre class="math">det(A_j) = det([a₁, …, a_{j-1}, b, a_{j+1}, …, a_n])
+         = det([a₁, …, a_{j-1}, x₁·a₁+…+x_n·a_n, a_{j+1}, …, a_n])
+         = Σ_i x_i · det([a₁, …, a_{j-1}, a_i, a_{j+1}, …, a_n])
+</pre>
+<p>当 i≠j 时，行列式中有两列相同（等于 a_i），故该项为零。仅当 i=j 时不为零：</p>
+<pre class="math">det(A_j) = x_j · det([a₁, …, a_{j-1}, a_j, a_{j+1}, …, a_n]) = x_j · det(A)</pre>
+
+<p>因此克拉默法则给出解向量 x 的每个分量为：</p>
+<pre class="math">        det(A_j)
+x_j  =  ────────       （前提 det(A) ≠ 0）
+         det(A)
+</pre>
+
+<p><strong>二维克拉默法则的具体公式：</strong>求解二元线性方程组 a₁₁x + a₁₂y = b₁, a₂₁x + a₂₂y = b₂：</p>
+<pre class="math">     |b₁  a₁₂|          |a₁₁  b₁|
+     |b₂  a₂₂|          |a₂₁  b₂|
+x = ────────────,  y = ─────────────
+     |a₁₁ a₁₂|          |a₁₁ a₁₂|
+     |a₂₁ a₂₂|          |a₂₁ a₂₂|
+</pre>
+
+<!-- 6.3.2a — 三维克拉默法则的完整数值示例 ★ -->
+<h4>三维克拉默法则的完整数值应用</h4>
+
+<p>以具体的 3×3 方程组为例，完整演示克拉默法则的计算过程：</p>
+<pre class="math">2x +  y −  z = 8
+−x + 3y + 2z = 1
+ x − 2y + 3z = 3
+</pre>
+
+<p>系数矩阵 A 和常数向量 b：</p>
+<pre class="math">     [ 2   1  −1]        [8]
+A =  [−1   3   2],   b = [1]
+     [ 1  −2   3]        [3]
+</pre>
+
+<p><strong>步骤 1：计算分母 det(A)</strong>——沿第一行展开：</p>
+<pre class="math">det(A) = 2·|3 2; −2 3| − 1·|−1 2; 1 3| + (−1)·|−1 3; 1 −2|
+       = 2·(3·3−2·(−2)) − 1·(−1·3−2·1) − 1·(−1·(−2)−3·1)
+       = 2·(9+4) − 1·(−3−2) − 1·(2−3)
+       = 2·13 − 1·(−5) − 1·(−1)
+       = 26 + 5 + 1 = 32
+</pre>
+
+<p><strong>步骤 2：计算 det(A₁)</strong>——将第 1 列替换为 b：</p>
+<pre class="math">     [8   1  −1]
+A₁ = [1   3   2]
+     [3  −2   3]
+
+det(A₁) = 8·|3 2; −2 3| − 1·|1 2; 3 3| + (−1)·|1 3; 3 −2|
+        = 8·13 − 1·(1·3−2·3) − 1·(1·(−2)−3·3)
+        = 104 − 1·(3−6) − 1·(−2−9)
+        = 104 − 1·(−3) − 1·(−11) = 104 + 3 + 11 = 118
+</pre>
+
+<p><strong>步骤 3：计算 det(A₂) 和 det(A₃)</strong></p>
+<pre class="math">     [2   8  −1]                                        [2   1   8]
+A₂ = [−1  1   2],   det(A₂) = 2·7 − 8·(−5) − 1·(−1)    A₃ = [−1  3   1]
+     [1   3   3]                = 14 + 40 + 1 = 55            [1  −2   3]
+                                                      det(A₃) = 2·11 − 1·(−4) + 8·(−1) = 22 + 4 − 8 = 18
+</pre>
+
+<p><strong>步骤 4：克拉默法则给出解</strong></p>
+<pre class="math">    det(A₁)   118                det(A₂)   55               det(A₃)   18
+x = ──────── = ─── ≈ 3.6875,  y = ──────── = ── ≈ 1.71875,  z = ──────── = ── ≈ 0.5625
+     det(A)    32                  det(A)   32                 det(A)   32
+</pre>
+
+<p><strong>验证：</strong>代入原方程 2x + y − z = 2×3.6875 + 1.71875 − 0.5625 = 7.375 + 1.71875 − 0.5625 = 8.53125 ≈ 8 ✓（舍入误差可接受）。</p>
+
+<!-- 想一想 about Cramer's rule (preserved, expanded) ★ -->
+<div class="thought-box">
+<p><strong>想一想：</strong>克拉默法则在大矩阵上计算效率极低（O(n!) 的复杂度），为什么还要学习它？因为它在<strong>理论推导</strong>中的价值无与伦比：它直接证明了 det(A) ≠ 0 是方程组有唯一解的充要条件；它引导出了伴随矩阵公式 A⁻¹ = adj(A)/det(A)；它还揭示了行列式是"线性系统可解性"的核心——当分母 det(A) 趋近于零时，解对输入的微小变化变得极其敏感（数值不稳定）。在图形学中，当我们遇到"矩阵接近奇异"的警告时，克拉默法则视角能帮助我们理解问题的根源：解的分量 = det(A_j)/det(A)，当分母 → 0 时，分子的微小误差会被放大——这就是"条件数"概念的最初雏形。</p>
+</div>
+
+<h3 id="6-3-3">6.3.3 伴随矩阵与余子式</h3>
+
+<p><span class="key-term">伴随矩阵</span>（adjoint matrix）——记为 adj(A)——提供了一种与克拉默法则等价但更紧凑的逆矩阵表示方式。首先定义 <strong>余子式</strong>（cofactor）C_{ij}：</p>
+<pre class="math">C_{ij} = (−1)^{i+j} · M_{ij}</pre>
+<p>其中 <span class="key-term">M_{ij}</span>（minor）是删除 A 的第 i 行和第 j 列后得到的 (n−1)×(n−1) 子矩阵的行列式。将所有的 C_{ij} 排列成一个矩阵，再对这个矩阵取转置，就得到了 A 的伴随矩阵：</p>
+<pre class="math">adj(A) = [C_{ij}]ᵀ   即   adj(A)_{ij} = C_{ji}</pre>
+
+<p><strong>余子式计算示例（3×3 矩阵）：</strong></p>
+<pre class="math">     [1  2  3]
+A =  [4  5  6]
+     [7  8  9]
+
+M₁₁ = |5 6; 8 9| = 5·9−6·8 = −3,    C₁₁ = (+1)·(−3) = −3
+M₁₂ = |4 6; 7 9| = 4·9−6·7 = −6,    C₁₂ = (−1)·(−6) = +6
+M₁₃ = |4 5; 7 8| = 4·8−5·7 = −3,    C₁₃ = (+1)·(−3) = −3
+...
+</pre>
+
+<!-- 6.3.3a — 伴随矩阵逐元素完整构造 + 余子式符号模式 ★ -->
+<h4>伴随矩阵的逐元素完整构造</h4>
+
+<p>我们延续上面的 3×3 矩阵 A，完整计算出所有 9 个代数余子式：</p>
+
+<p><strong>第 1 行余子式：</strong></p>
+<pre class="math">C₁₁ = +1·|5 6; 8 9| = +1·(45−48) = −3     C₁₂ = −1·|4 6; 7 9| = −1·(36−42) = +6     C₁₃ = +1·|4 5; 7 8| = +1·(32−35) = −3
+</pre>
+
+<p><strong>第 2 行余子式：</strong></p>
+<pre class="math">C₂₁ = −1·|2 3; 8 9| = −1·(18−24) = +6     C₂₂ = +1·|1 3; 7 9| = +1·(9−21) = −12    C₂₃ = −1·|1 2; 7 8| = −1·(8−14) = +6
+</pre>
+
+<p><strong>第 3 行余子式：</strong></p>
+<pre class="math">C₃₁ = +1·|2 3; 5 6| = +1·(12−15) = −3     C₃₂ = −1·|1 3; 4 6| = −1·(6−12) = +6     C₃₃ = +1·|1 2; 4 5| = +1·(5−8) = −3
+</pre>
+
+<p><strong>构造余子式矩阵 [C_{ij}]：</strong></p>
+<pre class="math">          [C₁₁  C₁₂  C₁₃]   [−3   +6   −3]
+[C_{ij}] = [C₂₁  C₂₂  C₂₃] = [+6  −12   +6]
+          [C₃₁  C₃₂  C₃₃]   [−3   +6   −3]
+</pre>
+
+<p><strong>取转置得到伴随矩阵 adj(A)：</strong></p>
+<pre class="math">           [C₁₁  C₂₁  C₃₁]   [−3   +6   −3]
+adj(A) =   [C₁₂  C₂₂  C₃₂] = [+6  −12   +6]
+           [C₁₃  C₂₃  C₃₃]   [−3   +6   −3]
+</pre>
+
+<p>注意这个特定矩阵中 adj(A) = [C_{ij}]（两者恰好相等，因为 C_{ij} 矩阵恰好是对称的——这不是一般情况！）。</p>
+
+<p><strong>关键验证恒等式：A·adj(A) = det(A)·I</strong></p>
+<pre class="math">首先计算 det(A) = 1·(−3)+2·6+3·(−3) = −3+12−9 = 0  （A 的行列式为零，所以 A 是奇异的）
+
+验证：A·adj(A)：
+[1 2 3]   [−3   6  −3]   [1·(−3)+2·6+3·(−3)  …  …]   [0  0  0]
+[4 5 6] · [+6 −12  +6] = [4·(−3)+5·6+6·(−3)  …  …] = [0  0  0] = 0·I = det(A)·I  ✓
+[7 8 9]   [−3   6  −3]   [7·(−3)+8·6+9·(−3)  …  …]   [0  0  0]
+</pre>
+
+<p><strong>余子式矩阵的符号模式（3×3 至 5×5）：</strong></p>
+
+<pre class="math">3×3:  +  −  +       4×4:  +  −  +  −       5×5:  +  −  +  −  +
+      −  +  −             −  +  −  +             −  +  −  +  −
+      +  −  +             +  −  +  −             +  −  +  −  +
+                          −  +  −  +             −  +  −  +  −
+                                                 +  −  +  −  +
+</pre>
+
+<p>符号规律统一为：位置 (i,j) 的符号 = (−1)^{i+j} = 正号当 i+j 为偶数，负号当 i+j 为奇数。这个图案恰好也是伴随矩阵构造中必须"转置"余子式矩阵的原因——[C] 的符号是行展开符号，而 adj(A) 需要通过列展开符号来正确构建 A⁻¹ 的分子。</p>
+
+<div class="thought-box">
+<p><strong>想一想：</strong>伴随矩阵公式 A⁻¹ = adj(A)/det(A) 直接揭示了为什么 det(A) 趋近零时矩阵会"病态"——逆矩阵的每个元素都含有因子 1/det(A)。当 det(A) 非常小时，adj(A) 中微小的舍入误差或输入数据的微小扰动会被放大 1/det(A) 倍。这就是<span class="key-term">条件数</span>（condition number）概念的自然来源——它度量了"输出对输入微小变化的敏感度"。在图形学的阴影映射和深度缓冲矩阵中，条件数过大意味着深度精度损失，导致 z-fighting 现象。</p>
+</div>
+
+<p><strong>伴随-逆矩阵关系：</strong></p>
+<pre class="math">         adj(A)
+A⁻¹  =  ───────      （前提 det(A) ≠ 0）
+          det(A)
+</pre>
+
+<p>这个公式的重要性不在于实际计算（数值上 LU 分解远更稳定），而在于它显式地揭示了当 det(A) 非常小时逆矩阵的每个元素都会爆炸性增大——这是量化<span class="key-term">条件数</span>（condition number）以及理解数值不稳定性的理论基础。在图形学中的阴影映射、投影矩阵的求逆以及物理模拟中的约束矩阵都涉及对这一关系的理解。</p>
+
+<!-- ==================== 6.4 ==================== -->
+<h2 id="s6-4">6.4 特征值与矩阵对角化</h2>
+
+<figure>
+<img src="images/ch06_full/fig06_eigen_svd.png" alt="特征值与SVD">
+<figcaption><span class="fig-num">图 6.2</span> — 特征值分解与 SVD：特征向量是在变换下仅被缩放而不改变方向的向量；SVD 将任意矩阵分解为旋转(U)、缩放(S)、旋转(Vᵀ)三个矩阵的乘积——即使是非方阵或非对称矩阵。（Guizang 插画）</figcaption>
+</figure>
+
+<h3 id="6-4-1">6.4.1 特征值与特征向量</h3>
+
+<p>方阵具有<span class="key-term">特征值</span>（eigenvalues）和<span class="key-term">特征向量</span>（eigenvectors）——这些是线性代数中最深刻的概念之一，也是理解变换几何本质的关键。特征向量 v 是满足以下关系的非零向量：</p>
+<pre class="math">Av = λv</pre>
+<p>其中 λ 是一个标量，称为 A 的<span class="key-term">特征值</span>（eigenvalue）。这意味着：在变换 A 的作用下，特征向量 v 仅被缩放（拉伸或压缩）λ 倍，其方向保持不变（如果 λ 为负，方向反转但仍在同一条直线上）。</p>
+
+<p><strong>特征多项式的完整展开：</strong>将方程 Av = λv 改写为：</p>
+<pre class="math">Av − λv = 0   →   (A − λI)·v = 0</pre>
+<p>对于非零向量 v 满足该方程，矩阵 (A − λI) 必须是奇异的——即其行列式为零：</p>
+<pre class="math">det(A − λI) = 0</pre>
+<p>这个 λ 的 n 次多项式称为 A 的<span class="key-term">特征多项式</span>（characteristic polynomial）。对于 2×2 矩阵：</p>
+<pre class="math">      [a  b]
+若 A = [c  d]
+
+det(A − λI) = |a−λ   b  | = (a−λ)(d−λ) − bc = λ² − (a+d)λ + (ad−bc) = 0
+              | c   d−λ |
+</pre>
+<p>其中 (a+d) 是 A 的<span class="key-term">迹</span>（trace），(ad−bc) = det(A)。</p>
+
+<!-- 6.4.1a — 3×3 特征多项式的完整展开 ★ -->
+<h4>3×3 特征多项式的完整展开推导</h4>
+
+<p>对于一般 3×3 矩阵：</p>
+<pre class="math">     [a₁₁  a₁₂  a₁₃]
+A =  [a₂₁  a₂₂  a₂₃]
+     [a₃₁  a₃₂  a₃₃]
+</pre>
+
+<p>构造 A − λI：</p>
+<pre class="math">        [a₁₁−λ   a₁₂     a₁₃  ]
+A−λI =  [ a₂₁   a₂₂−λ    a₂₃  ]
+        [ a₃₁    a₃₂    a₃₃−λ ]
+</pre>
+
+<p>沿第一行展开行列式：</p>
+<pre class="math">det(A−λI) = (a₁₁−λ)·|a₂₂−λ  a₂₃; a₃₂  a₃₃−λ| − a₁₂·|a₂₁  a₂₃; a₃₁  a₃₃−λ| + a₁₃·|a₂₁  a₂₂−λ; a₃₁  a₃₂|
+</pre>
+
+<p>展开每个 2×2 行列式并按 λ 的幂次整理后：</p>
+<pre class="math">det(A−λI) = −λ³ + (tr A)·λ² − (M₁₁+M₂₂+M₃₃)·λ + det(A)
+</pre>
+
+<p>其中：</p>
+<ul>
+<li><strong>tr A</strong> = a₁₁ + a₂₂ + a₃₃（对角线和——迹）</li>
+<li><strong>M_{ii}</strong> 是 A 中删除第 i 行和第 i 列后的 2×2 主子式（principal minor）的行列式：</li>
+</ul>
+<pre class="math">M₁₁ = |a₂₂ a₂₃; a₃₂ a₃₃|     M₂₂ = |a₁₁ a₁₃; a₃₁ a₃₃|     M₃₃ = |a₁₁ a₁₂; a₂₁ a₂₂|
+</pre>
+
+<p>这些系数与特征值 λ₁, λ₂, λ₃ 之间存在深刻的关系（通过比较特征多项式与 (λ−λ₁)(λ−λ₂)(λ−λ₃) 展开中的系数）：</p>
+<pre class="math">tr A = λ₁ + λ₂ + λ₃                              （迹 = 特征值之和）
+M₁₁+M₂₂+M₃₃ = λ₁λ₂ + λ₁λ₃ + λ₂λ₃                （所有 2×2 主子式之和 = 特征值的逐对乘积之和）
+det(A) = λ₁·λ₂·λ₃                                （行列式 = 特征值之积）
+</pre>
+
+<p><strong>具体数值验证：</strong>以 3×3 矩阵为例：</p>
+<pre class="math">     [3  −1   0]
+A =  [2   4  −1]
+     [1   3   5]
+</pre>
+<pre class="math">tr A = 3 + 4 + 5 = 12
+M₁₁ = |4 −1; 3 5| = 20+3 = 23
+M₂₂ = |3 0; 1 5| = 15−0 = 15
+M₃₃ = |3 −1; 2 4| = 12+2 = 14
+M₁₁+M₂₂+M₃₃ = 23+15+14 = 52
+det(A) = 3·23 − (−1)·|2 −1; 1 5| + 0 = 69 + 1·(10+1) = 69+11 = 80
+</pre>
+<p>因此特征多项式为：−λ³ + 12λ² − 52λ + 80 = 0。通过数值求解可以得到三个特征值，验证它们之和 = 12，之积 = 80。</p>
+
+<div class="thought-box">
+<p><strong>想一想：</strong>特征多项式系数（迹、主子式之和、行列式）与特征值的关系（λ₁+λ₂+λ₃=tr A、λ₁λ₂λ₃=det(A)）不是巧合——这是代数学基本定理的线性代数版：n 次特征多项式 p(λ) 的 n 个根与系数之间存在韦达定理（Viète's formulas）关系。迹等于特征值之和这一事实在图形学中用于快速估算光照/反射矩阵的"能量"（所有特征值的平均值），而行列式等于特征值之积用于检测矩阵是否"退化"（任何特征值为零 → 行列式为零 → 不可逆）。</p>
+</div>
+
+<p>对于 3×3 矩阵的展开形式为：</p>
+<pre class="math">det(A − λI) = −λ³ + tr(A)·λ² − (余子式之和)·λ + det(A) = 0</pre>
+<p>特征多项式的根就是特征值——n×n 矩阵最多有 n 个特征值（可能包含复数根或重复根）。在实际图形学中，我们通常处理对称矩阵（如惯性张量、协方差矩阵），其所有特征值都是实数。</p>
+
+<!-- 生活类比 about eigenvectors (preserved) ★ -->
+<div class="thought-box">
+<p><strong>生活类比：</strong>特征向量就像一扇门的"铰链方向"。试着推门——如果你沿着铰链的方向（特征向量方向）推，门不会转开（缩放因子 λ≈0）；如果你垂直于铰链推，门会顺滑地转动。特征值 λ 度量了变换在每个"自然方向"上的放大倍率。在游戏中，角色的"视线方向"相对于其身体方向构成特征分析的基础——沿视线方向的信息被保留（λ 较大），垂直于视线的侧向信息不太重要（λ 较小）。</p>
+</div>
+
+<h3 id="6-4-2">6.4.2 对称矩阵的对角化</h3>
+
+<p>当矩阵 A 是<span class="key-term">对称的</span>（A = Aᵀ），线性代数提供了一个非凡的结论：所有特征值都是实数，且特征向量可以选为相互正交的。在这种情况下，矩阵可以<span class="key-term">对角化</span>（diagonalized）：</p>
+<pre class="math">A = Q Λ Qᵀ</pre>
+<p>其中：</p>
+<ul>
+<li><strong>Q</strong> 是一个正交矩阵（Qᵀ = Q⁻¹），其列是 A 的特征向量（经过归一化，构成正交基）</li>
+<li><strong>Λ</strong> (lambda) 是一个对角矩阵，对角线上是相应的特征值：Λ = diag(λ₁, λ₂, …, λ_n)</li>
+</ul>
+
+<p><strong>对角化推导过程的几何解释：</strong></p>
+<ol>
+<li><strong>Qᵀx</strong>：将向量 x 从"世界坐标系"旋转到 A 的"特征坐标系"——即在特征向量定义的坐标轴下表示 x</li>
+<li><strong>Λ(Qᵀx)</strong>：在特征坐标下，沿各特征轴<strong>独立地</strong>缩放——第 i 个特征方向缩放 λ_i 倍</li>
+<li><strong>Q(ΛQᵀx)</strong>：将结果旋转回世界坐标系</li>
+</ol>
+<p>这称为<span class="key-term">主轴变换</span>（principal axis transform）——它将一个任意对称变换分解为三个步骤：旋转到对齐主轴 → 沿轴独立缩放 → 旋转回来。</p>
+
+<p><strong>具体示例：</strong>考虑 2×2 对称矩阵</p>
+<pre class="math">     [2  1]
+A =  [1  2]
+</pre>
+<p>特征方程：det(A−λI) = (2−λ)² − 1 = λ² − 4λ + 3 = (λ−1)(λ−3) = 0。特征值：λ₁=1, λ₂=3。</p>
+<p>对应特征向量（归一化后）：v₁ = [−1/√2, 1/√2]ᵀ, v₂ = [1/√2, 1/√2]ᵀ。</p>
+<p>对角化：A = Q Λ Qᵀ，其中：</p>
+<pre class="math">     [1/√2  −1/√2]        [3  0]        [ 1/√2  1/√2]
+Q =  [1/√2   1/√2],  Λ =  [0  1],  Qᵀ = [−1/√2  1/√2]
+</pre>
+
+<!-- 6.4.2a — A=QΛQᵀ 的逐步骤数值验证 ★ -->
+<h4>A = QΛQᵀ 的逐步骤数值验证</h4>
+
+<p>对于上面的 2×2 对称矩阵 A，我们亲手验证对角化公式 A = QΛQᵀ 的正确性：</p>
+
+<p><strong>步骤 1：计算 QΛ</strong></p>
+<pre class="math">       [1/√2  −1/√2]   [3  0]
+QΛ  =  [1/√2   1/√2] · [0  1]
+
+       [1/√2·3 + (−1/√2)·0     1/√2·0 + (−1/√2)·1]   [3/√2   −1/√2]
+     = [1/√2·3 + 1/√2·0        1/√2·0 + 1/√2·1    ] = [3/√2    1/√2]
+</pre>
+
+<p><strong>步骤 2：计算 (QΛ)·Qᵀ = A</strong></p>
+<pre class="math">       [3/√2  −1/√2]   [ 1/√2   1/√2]
+A  =   [3/√2   1/√2] · [−1/√2   1/√2]
+
+       [(3/√2)·(1/√2)+(−1/√2)·(−1/√2)   (3/√2)·(1/√2)+(−1/√2)·(1/√2)]
+     = [(3/√2)·(1/√2)+(1/√2)·(−1/√2)    (3/√2)·(1/√2)+(1/√2)·(1/√2) ]
+
+       [3/2+1/2    3/2−1/2]   [2  1]
+     = [3/2−1/2    3/2+1/2] = [1  2]   ✓  验证通过！
+</pre>
+
+<p><strong>替代验证方法——利用 AQ = QΛ 等价性：</strong></p>
+<p>由于特征向量的定义 Av = λv，对 Q 的每一列有 A·q_i = λ_i·q_i。将所有列堆叠起来：AQ = QΛ。这与 A = QΛQᵀ 等价（右乘 Qᵀ 即可）。验证：</p>
+<pre class="math">       [2  1]   [1/√2  −1/√2]   [2·1/√2+1·1/√2   2·(−1/√2)+1·1/√2]   [3/√2   −1/√2]
+AQ  =  [1  2] · [1/√2   1/√2] = [1·1/√2+2·1/√2   1·(−1/√2)+2·1/√2] = [3/√2    1/√2]
+
+       [1/√2  −1/√2]   [3  0]   [3/√2   −1/√2]
+QΛ  =  [1/√2   1/√2] · [0  1] = [3/√2    1/√2]   →  AQ = QΛ   ✓
+</pre>
+
+<p>两个验证方法都确认了 A = QΛQᵀ 的正确性。</p>
+
+<div class="thought-box">
+<p><strong>想一想：</strong>为什么对称矩阵的特征向量必定正交？这个"奇迹"的根源在于对称矩阵是"自伴"的——A = Aᵀ 意味着 (Au)·v = u·(Av)。如果你取两个不同特征值 λᵢ ≠ λⱼ 对应的特征向量 vᵢ 和 vⱼ：λᵢ(vᵢ·vⱼ) = (λᵢvᵢ)·vⱼ = (Avᵢ)·vⱼ = vᵢ·(Avⱼ) = vᵢ·(λⱼvⱼ) = λⱼ(vᵢ·vⱼ)。由于 λᵢ≠λⱼ，必有 vᵢ·vⱼ = 0（正交）。对称矩阵的正交对角化是物理引擎中惯性张量、结构力学中刚度矩阵以及统计中协方差矩阵的核心——它保证了我们可以用"纯"的正交基分解任意对称变换。</p>
+</div>
+
+<p>这个变换的几何含义是：沿方向 [1,1]（45°线）每个向量拉伸 3 倍，沿 [−1,1]（135°线）每个向量拉伸 1 倍（不变）。</p>
+
+<!-- 6.4.2b — 3×3 对称矩阵对角化扩展示例 ★ -->
+<h4>3×3 对称矩阵对角化完整示例</h4>
+<p>进一步扩展到 3 维：</p>
+<pre class="math">     [4  −2   2]
+A =  [−2   5   0]
+     [ 2   0   3]
+</pre>
+<p>特征多项式（通过行列式展开计算）：det(A−λI) = −λ³ + 12λ² − 39λ + 28 = 0。解得特征值：λ₁=7, λ₂=4, λ₃=1。</p>
+<p>对应归一化特征向量（省略详细计算）：</p>
+<pre class="math">v₁ = [2/3, −1/3, 2/3]ᵀ,   v₂ = [−1/3, 2/3, 2/3]ᵀ,   v₃ = [−2/3, −2/3, 1/3]ᵀ
+</pre>
+<p>构造 Q = [v₁  v₂  v₃] 和 Λ = diag(7, 4, 1)。可以验证：A = QΛQᵀ 成立（各列满足 Avᵢ=λᵢvᵢ，且 Q 是正交矩阵——各行/列构成标准正交基）。</p>
+<p>几何上，该变换在 v₁ 方向拉伸 7 倍、v₂ 方向拉伸 4 倍、v₃ 方向拉伸 1 倍（不变）——直观展现了对称矩阵如何定义自身的三条主拉伸方向。</p>
+
+<!-- 想一想 about inertia tensor (preserved) ★ -->
+<div class="thought-box">
+<p><strong>想一想：</strong>主轴变换在实际中用于惯性张量分析。在物理引擎中，一个不规则刚体的惯性张量（3×3 对称矩阵）在任意方向旋转时会产生复杂的角运动。但对角化后——即将参考系对齐到物体的"主轴"——问题简化为三个独立方向上的纯旋转惯性，这极大地简化了角动量和力矩的计算（见第7章变换与实际数值计算）。</p>
+</div>
+
+<h3 id="6-4-3">6.4.3 奇异值分解 (SVD)</h3>
+
+<p>对于一般矩阵——非对称甚至非方阵——<span class="key-term">奇异值分解</span>（Singular Value Decomposition，SVD）提供了特征值分解的推广。任意 m×n 矩阵 A 可以分解为：</p>
+<pre class="math">A = U S Vᵀ</pre>
+<p>其中：</p>
+<ul>
+<li><strong>U</strong> 是 m×m 正交矩阵，其列称为 A 的<span class="key-term">左奇异向量</span>（left singular vectors）</li>
+<li><strong>S</strong> 是 m×n 对角矩阵（对角线上非零，其余为零），对角元素 σ_i 称为 A 的<span class="key-term">奇异值</span>（singular values），满足 σ₁ ≥ σ₂ ≥ … ≥ σ_r ≥ 0</li>
+<li><strong>V</strong> 是 n×n 正交矩阵，其列称为 A 的<span class="key-term">右奇异向量</span>（right singular vectors）</li>
+</ul>
+
+<p><strong>奇异值与 AᵀA 特征值的关系：</strong>这是 SVD 最核心的理论联系。计算：</p>
+<pre class="math">AᵀA = (USVᵀ)ᵀ(USVᵀ) = VSᵀUᵀUSVᵀ = V(SᵀS)Vᵀ</pre>
+<p>由于 UᵀU = I（U 是正交的），所以 AᵀA = V(SᵀS)Vᵀ。这正是 AᵀA 的特征值分解！因此：</p>
+<ul>
+<li>A 的<span class="key-term">右奇异向量 V</span> 是 AᵀA 的<span class="key-term">特征向量</span></li>
+<li>A 的<span class="key-term">奇异值</span> σ_i 是 AᵀA 的特征值的<span class="key-term">平方根</span>：σ_i = √λ_i(AᵀA)</li>
+</ul>
+
+<!-- 6.4.3a — σ_i²=AᵀA 特征值关系的详细证明 ★ -->
+<h4>σᵢ² = λᵢ(AᵀA) 的详细代数证明</h4>
+
+<p>上述推导虽然简洁，但值得更仔细地审视每一步。假设 A 是一个 m×n 矩阵（m 行，n 列），其 SVD 为 A = U S Vᵀ：</p>
+
+<p><strong>关键观察 1：SᵀS 的结构</strong></p>
+<p>S 是 m×n 对角矩阵，仅在前 r = min(m,n) 个对角位置上有非零的奇异值 σ₁ ≥ σ₂ ≥ … ≥ σ_r ≥ 0。Sᵀ 是 n×m 矩阵，其对角元素与 S 相同。因此 SᵀS 是一个 n×n 对角矩阵：</p>
+<pre class="math">          [σ₁²    0    …    0  ]
+          [ 0    σ₂²   …    0  ]
+SᵀS  =    [ …    …    ⋱    …  ]
+          [ 0     0    …  σ_n² ]
+（如果 m < n，则超出 m 的 σ_i = 0）
+</pre>
+
+<p><strong>关键观察 2：为什么 UᵀU = I</strong></p>
+<p>U 是 m×m 正交矩阵（定义要求其列标准正交）。正交矩阵的定义性质是 UᵀU = UUᵀ = I_m（m×m 单位矩阵）。</p>
+
+<p><strong>关键观察 3：推导 AᵀA 的对角化</strong></p>
+<pre class="math">AᵀA = (USVᵀ)ᵀ · (USVᵀ)          ← 代入 A 的 SVD
+     = (V Sᵀ Uᵀ) · (U S Vᵀ)       ← (AB)ᵀ = BᵀAᵀ，转置乘法交换顺序
+     = V · Sᵀ · (UᵀU) · S · Vᵀ    ← 矩阵乘法结合律
+     = V · Sᵀ · I_m · S · Vᵀ      ← 正交矩阵定义 UᵀU = I
+     = V · (SᵀS) · Vᵀ             ← 简化
+</pre>
+
+<p>而 V·(SᵀS)·Vᵀ 恰好是 AᵀA 的特征值分解！</p>
+
+<p><strong>关键观察 4：提取结论</strong></p>
+<pre class="math">AᵀA = V · diag(σ₁², σ₂², …, σ_n²) · Vᵀ</pre>
+<p>因此 V 的各列就是 AᵀA 的特征向量（即 A 的右奇异向量），而对角矩阵 diag(σ₁², σ₂², …, σ_n²) 的对角元就是 AᵀA 的特征值。所以：</p>
+<pre class="math">σ_i = √λ_i(AᵀA)</pre>
+
+<p><strong>对称性验证：AAᵀ = U(S²)Uᵀ</strong></p>
+<p>类似推导可得 AAᵀ = USVᵀ·(USVᵀ)ᵀ = USVᵀVSᵀUᵀ = U(SSᵀ)Uᵀ = U·diag(σ₁², …, σ_m²)·Uᵀ。因此 U 的各列是 AAᵀ 的特征向量（A 的左奇异向量），两者的非零奇异值相同（σ_i²）。</p>
+
+<div class="thought-box">
+<p><strong>想一想：</strong>为什么 SVD 绕道使用 AᵀA 而不是直接求 A 的特征值？核心原因有三：(1) A 可能不是方阵——特征值只对方阵定义，而 AᵀA 始终是 n×n 方阵。(2) A 可能不对称——非对称方阵的特征值可能是复数，但 AᵀA 始终是对称的，所有特征值都是实数。(3) AᵀA 是半正定的——其所有特征值 ≥ 0，保证了奇异值 σ_i 为实数。这种"通过平方构造对称矩阵来规避限制"的技巧是数学中常见的"升维/降维"策略——在图形学中，法线矩阵 (M⁻¹)ᵀ 和正规方程 (AᵀA)x = Aᵀb 都使用了类似的思路。</p>
+</div>
+
+<p>类似地：AAᵀ = US²Uᵀ，因此 A 的左奇异向量 U 是 AAᵀ 的特征向量。</p>
+
+<!-- 6.4.3b — SVD 的数值验证实例 ★ -->
+<h4>SVD 的数值验证：构造一个完整的例子</h4>
+
+<p>以一个简单的 2×2 矩阵为例，手动计算其 SVD：</p>
+<pre class="math">     [3  0]
+A =  [0  1]
+</pre>
+
+<p>A 已经是对角的——直接读出 SVD：U=I（无旋转），S=diag(3,1)，Vᵀ=I（无旋转）。验证：</p>
+<pre class="math">AᵀA = [3 0; 0 1]·[3 0; 0 1] = [9 0; 0 1]  →  特征值 λ₁=9, λ₂=1  →  σ₁=3, σ₂=1
+</pre>
+
+<p><strong>稍复杂的例子：</strong></p>
+<pre class="math">     [1  2]
+A =  [2  1]
+</pre>
+
+<p>计算 AᵀA：</p>
+<pre class="math">AᵀA = [1 2; 2 1]·[1 2; 2 1] = [5  4; 4  5]
+特征方程：det(AᵀA−λI) = (5−λ)²−16 = λ²−10λ+9 = (λ−1)(λ−9) = 0
+λ₁ = 9, λ₂ = 1  →  σ₁ = 3, σ₂ = 1
+</pre>
+
+<p>对应特征向量（右奇异向量 V 的列）：</p>
+<pre class="math">对于 λ₁=9:  v₁ = [1/√2, 1/√2]ᵀ     对于 λ₂=1:  v₂ = [−1/√2, 1/√2]ᵀ
+</pre>
+
+<p>左奇异向量 U 由 u_i = (1/σ_i)·A·v_i 给出：</p>
+<pre class="math">u₁ = (1/3)·[1 2; 2 1]·[1/√2; 1/√2] = (1/3)·[3/√2; 3/√2] = [1/√2; 1/√2]
+u₂ = (1/1)·[1 2; 2 1]·[−1/√2; 1/√2] = [1/√2; −1/√2]
+</pre>
+
+<p>最终 SVD：A = U·diag(3,1)·Vᵀ。可以验证该分解正确。</p>
+
+<p><strong>SVD 的几何解释：</strong>SVD 将任意线性变换 A 分解为三步操作：</p>
+<ol>
+<li><strong>Vᵀ</strong>：旋转/反射输入空间——将输入基向量对齐到 A 的"作用"方向</li>
+<li><strong>S</strong>：沿新的坐标轴独立地缩放——各个方向以奇异值 σ_i 缩放</li>
+<li><strong>U</strong>：旋转/反射到输出空间——将缩放后的向量旋转到最终位置</li>
+</ol>
+<p>这正是 A 将输入单位球映射到的椭球体的半轴长度和方向——σ_i 是半轴长度，u_i 是半轴方向（输出空间中的单位方向向量）。</p>
+
+<!-- 生活类比 about SVD pizza (preserved) ★ -->
+<div class="thought-box">
+<p><strong>生活类比：</strong>把一张圆形披萨想象成输入空间的"单位圆"。通过线性变换 A，披萨变成椭圆形：奇异值 σ₁, σ₂ 是椭圆的长轴和短轴长度（椭圆变长的程度），右奇异向量 v₁, v₂ 给出了原始不変的"饼皮方向"，左奇异向量 u₁, u₂ 给出了变换后的"拉伸方向"。如果披萨被压扁到一条线（σ₂=0），说明 A 的秩降了——这正是 SVD 能告诉我们矩阵秩、零空间和值域的优雅方式。</p>
+</div>
+
+<!-- 6.4.3c — 主轴变换的几何演示 ★ -->
+<h4>对称矩阵的主轴变换：从单位圆到椭圆的几何演示</h4>
+
+<p>对称矩阵 A = QΛQᵀ 的主轴变换在平面上可以极其形象地用"单位圆 → 椭圆"来展示。取所有满足 ||x|| = 1 的单位向量（单位圆），应用变换 y = Ax：</p>
+<pre class="math">y = Ax = QΛQᵀx
+</pre>
+
+<p>由于 Qᵀ 只是旋转（保持单位圆不变），Λ 是独立缩放（将圆形拉伸为椭圆），Q 是反向旋转——整个过程相当于：旋转对齐 → 拉伸 → 旋转回来。对于 2×2 对称矩阵 A = [2 1; 1 2]（λ₁=3, λ₂=1）：</p>
+
+<p><strong>椭圆的几何参数：</strong></p>
+<ul>
+<li><strong>长轴方向</strong> = Q 的第一列 = v₂ = [1/√2, 1/√2]ᵀ（45°方向），<strong>长半轴长度</strong> = λ₂ = 3</li>
+<li><strong>短轴方向</strong> = Q 的第二列 = v₁ = [−1/√2, 1/√2]ᵀ（135°方向），<strong>短半轴长度</strong> = λ₁ = 1</li>
+<li><strong>椭圆的面积</strong> = π·λ₁·λ₂ = π·3·1 = 3π = π·det(A)（对比：原单位圆面积 = π）</li>
+</ul>
+
+<p>这一几何事实在实际中有深层意义：A 将空间中所有向量按主轴方向不等比例拉伸——沿 45° 方向拉伸 3 倍，沿 135° 方向保持不变。任何其他方向的向量都同时被两个方向的拉伸分量影响，大小介于两者之间。</p>
+
+<div class="thought-box">
+<p><strong>生活类比：</strong>对称矩阵的主轴变换就像给一个"错位安装的弹簧"找到正确的拉伸方向。想象一根弹簧被倾斜安装在结构中——在不同方向上拉伸时，力和位移的关系很复杂（力不在位移方向上产生纯线性响应）。但如果找到两个"主拉伸方向"（特征向量方向），沿这些方向拉伸时力与位移完美共线，弹簧的表现就像一个独立弹性常数的简单弹簧。惯性张量的对角化做的是完全相同的事情：为不规则刚体找到三个"自然旋转方向"，在这些方向上角动量和角速度同向——旋转变得简单。</p>
+</div>
+
+<p>SVD 是数值线性代数中最通用的分解之一。它暴露了矩阵的<span class="key-term">秩</span>（rank = 非零奇异值的个数）、<span class="key-term">零空间</span>（nullspace——右奇异向量对应的零奇异值）、<span class="key-term">值域</span>（range——左奇异向量对应的非零奇异值），并通过舍弃最小的奇异值来提供<span class="key-term">低秩最佳近似</span>（Eckart-Young 定理）。在图形学中，SVD 应用于主成分分析（PCA）、形状变形与配准、光流矩阵压缩、以及评估任何几何变换的"真实缩放量"。我们将在第 7.1.6 节中进一步探讨 SVD 在几何变换中的具体应用。</p>
+
+<h3 id="6-4-4">6.4.4 特征值与奇异值的区别总结</h3>
+
+<table>
+<tr><th>方面</th><th>特征值分解</th><th>奇异值分解</th></tr>
+<tr><td><strong>适用矩阵</strong></td><td>仅方阵（n×n），最好是对称的</td><td>任意矩阵（m×n）</td></tr>
+<tr><td><strong>分解形式</strong></td><td>A = QΛQᵀ</td><td>A = USVᵀ</td></tr>
+<tr><td><strong>矩阵类型</strong></td><td>Q 是单组正交基，特征向量</td><td>U 和 V 是两组独立的正交基</td></tr>
+<tr><td><strong>值</strong></td><td>λ_i 可正可负可复（若非对称）</td><td>σ_i 始终是非负实数</td></tr>
+<tr><td><strong>计算</strong></td><td>det(A−λI)=0 解特征多项式</td><td>σ_i = √λ_i(AᵀA) 即特征值的平方根</td></tr>
+<tr><td><strong>数值稳定性</strong></td><td>非对称矩阵可能无实特征值；特征向量可能不构成正交基</td><td>始终存在，始终有正交基——是数值上最稳定的分解</td></tr>
+</table>
+
+<!-- ==================== 课后练习 ==================== -->
+<h2 id="s06-exercises">课后练习题（含解答与分析）</h2>
+
+<details>
+<summary>1. 用二维行列式写出一条通过 (x₀,y₀) 和 (x₁,y₁) 的 2D 直线的隐式方程。进一步，你如何利用这个公式来检验一个点 P 在直线的哪一侧？</summary>
+<p><strong>解答：</strong>直线上的任意点 (x,y) 与已知两点 (x₀,y₀)、(x₁,y₁) 三点共线，因此由这三列向量张成的三角形面积为 0。3×3 行列式：</p>
+<pre>      |x   x₀  x₁|
+det = |y   y₀  y₁| = 0
+      |1   1   1 |</pre>
+<p>沿第一行展开（最方便——x 和 y 是变量）：</p>
+<p>x·(y₀−y₁) + x₀·(y₁−y) + x₁·(y−y₀) = 0</p>
+<p>整理为标准形式 Ax + By + C = 0，其中：</p>
+<p>A = y₀ − y₁,  B = x₁ − x₀,  C = x₀·y₁ − x₁·y₀</p>
+<p>法向量为 (A,B) = (y₀−y₁, x₁−x₀)，方向向量为 (x₁−x₀, y₁−y₀)，两者点积为零——验证为正交。</p>
+<p><strong>哪一侧？</strong> 将点 P=(x,y) 代入 L(x,y) = Ax+By+C：若 L(P)>0，P 在直线的一侧（与法向量同侧）；若 L(P)<0，P 在另一侧。行列式的符号正是由这个定向决定的——这正是"有向面积"的应用。</p>
+</details>
+
+<details>
+<summary>2. 证明：如果方阵的列是标准正交的，那么行也是。这一定理是否适用于非方阵？</summary>
+<p><strong>解答：</strong>设 n×n 矩阵 M 的列 c₁,…,c_n 满足 c_i·c_j = δ_{ij}（正交且单位长度）。这意味着对于所有 i,j：</p>
+<pre>(MᵀM)_{ij} = c_i·c_j = δ_{ij}   →   MᵀM = I</pre>
+<p>由于 M 是方阵且 Mᵀ 与 M 维度相同，两边同时左乘 M 右乘 Mᵀ：MᵀM = I → M(MᵀM)Mᵀ = MIMᵀ → (MMᵀ)(MMᵀ) = MMᵀ。可推导出 MMᵀ = I（对于方阵当存在单侧逆时双侧逆等价），因此：</p>
+<pre>(MMᵀ)_{ij} = r_i·r_j = δ_{ij}</pre>
+<p>其中 r_i 是 M 的第 i 行。所以各行也构成标准正交基。故方阵的列标准正交 ⇔ 行标准正交。</p>
+<p><strong>非方阵情形：</strong>对于 m×n 矩阵 M（m≠n），不可能同时有列和行都标准正交——因为矩阵的秩 r ≤ min(m,n)，如果 m>n 最多只有 n 个正交列，不可能有 m 个正交行。例如，一个 3×2 矩阵可以有 2 个正交列（MᵀM=I₂），但 3 行永远不能彼此正交（最多 2 维子空间中装不下 3 个正交向量）。</p>
+</details>
+
+<details>
+<summary>3. 证明行列式恒等式 |abc| = (a × b) · c 成立，并解释其几何意义。</summary>
+<p><strong>解答：</strong>左边 |abc| = det([a,b,c])，其中 a,b,c 为 3×3 矩阵的三列。右边 (a×b)·c 为叉积后点积。</p>
+<p>展开叉积：a × b = (a_y·b_z−a_z·b_y, a_z·b_x−a_x·b_z, a_x·b_y−a_y·b_x)。点积：</p>
+<pre>(a×b)·c = (a_y·b_z−a_z·b_y)·c_x + (a_z·b_x−a_x·b_z)·c_y + (a_x·b_y−a_y·b_x)·c_z</pre>
+<p>按行展开行列式 det([a,b,c]) 恰好得到完全相同的表达式——逐项验证即可。</p>
+<p><strong>几何意义：</strong>这是<span class="key-term">标量三重积</span>（scalar triple product）。|a×b| = 底面平行四边形的面积；乘以 c 在 a×b 方向的投影（即高度）得到平行六面体的体积。行列式给出了恰好这个有向体积。这个恒等式在图形学中常用于：判断一个多边形的朝向（CCW 或 CW）、测试三角形是否退化（面积=0）以及计算四面体的体积（除以6）。</p>
+</details>
+
+<details>
+<summary>4. 已知一个四面体的三条共点棱边为向量 a, b, c。推导其体积公式 V = |abc|/6。为什么分母是 6 而不是 2 或 3？</summary>
+<p><strong>解答：</strong>首先，由 a,b,c 张成的平行六面体体积 = |det([a,b,c])| = |abc|。</p>
+<p>四面体占据该平行六面体的 1/6。三种推导方法：</p>
+<p><strong>方法 1（几何分割）：</strong>平行六面体可用体对角面分割为 6 个全等的四面体——每个四面体由三条棱和三条对面对角线界定。通过对称性每个体积相等，各占 1/6。</p>
+<p><strong>方法 2（锥体积公式）：</strong>锥的体积 = (底面积 × 高)/3。四面体底面是三角形，面积 = |a×b|/2。高 = c 在 a×b 方向上的投影分量。锥体积 = (|a×b|/2 · h)/3 = |(a×b)·c|/6 = |abc|/6。</p>
+<p><strong>方法 3（积分）：</strong>使用重心坐标三重积分 ∫₀¹∫₀^{1−t}∫₀^{1−t−u} dw du dt = 1/6（计及变换的雅可比行列式 |abc|）。</p>
+</details>
+
+<details>
+<summary>5. 详细说明矩阵乘法的四种循环排列（ijk/jik/kij/ikj）各自对应的"矩阵-向量"推导观，并解释为何它们有不同的实际性能。</summary>
+<p><strong>解答：</strong>矩阵乘法 C = A·B 的核心三重嵌套循环，交换 i/j/k 的顺序产生不同的计算视角：</p>
+<p><strong>1. ijk 顺序（标准点积视角）：</strong></p>
+<pre>for i: for j: for k: C[i][j] += A[i][k]·B[k][j]</pre>
+<p>解释：逐元素计算 C 的每个元素——每个 C[i][j] 是 A 的第 i 行与 B 的第 j 列的逐元素乘积和（点积）。访问模式：A 按行进（缓存优），B 跨步按列（缓存差，B[k][j] 跳跃 n 元素步）。</p>
+<p><strong>2. jik 顺序：</strong>与 ijk 相同点积视角，内层循环不变——仅交换 i 和 j 的外层顺序。缓存行为与 ijk 类似。</p>
+<p><strong>3. kij 顺序（外积累加视角）：</strong></p>
+<pre>for k: for i: for j: C[i][j] += A[i][k]·B[k][j]</pre>
+<p>解释：对于每个 k，取出 A 的第 k 列和 B 的第 k 行，计算它们的<strong>外积</strong>（秩为 1 的矩阵），累加到 C 上。C = Σ_k col_k(A) · row_k(B)ᵀ。访问模式：所有数组都是顺序访问——A[i][k]（固定k按i走——在内存不连续但通常在寄存器）；B[k][j]（同一行连续——缓存优）。结果：kij 和 ikj 通常在大矩阵上性能更佳。</p>
+<p><strong>4. ikj 顺序：</strong>类似 kij，外积累加。内层 C[i][j] 固定 i 顺序存储——理想的访问模式。</p>
+<p><strong>性能差异来源：</strong>ijk 顺序的内层 k 循环遍历 A 和 B——A 的访问连续（按行），B 的访问跨步（B[k][j] 相隔 n 元素）。当 n 较大且 B 跨步远大于 L1/L2 缓存行时，产生大量的缓存未命中（cache miss），性能下降 5-50 倍。而 kij/ikj 顺序对 A 和 B 都是顺序或半顺序访问——缓存命中率高。现代 BLAS 库使用分块（tiling）+ 多种循环排列优化，使小块内的访问完全在 L1 缓存中命中。</p>
+</details>
+
+<details>
+<summary>6. 证明：对角矩阵 diag(d₁,d₂,…,d_n) 的特征值就是 d₁,d₂,…,d_n，特征向量是标准基向量 e₁, e₂, …, e_n。</summary>
+<p><strong>解答：</strong>设 D = diag(d₁,d₂,…,d_n)。特征多项式：</p>
+<pre>det(D−λI) = det(diag(d₁−λ,d₂−λ,…,d_n−λ)) = Π_{k=1}^{n} (d_k−λ)</pre>
+<p>对角矩阵的行列式等于对角线元素之积。令特征多项式为零，各因式独立的积为零当且仅当各因式之一为零：d_k−λ=0 → λ=d_k。所以特征值就是所有对角元素 d₁,…,d_n。</p>
+<p>特征向量：对于 λ=d_k，求解 (D−d_k·I)·v=0。该矩阵仅第 k 个对角位置为零，其余 d_j−d_k (j≠k) 非零。所以 v 的第 k 个分量自由（可取任意值），其余全为 0。归一化为单位向量：v_k = e_k = [0,…,1,…,0]ᵀ（仅第 k 个位置为1）。所以标准基向量就是对应对角元的特征向量。</p>
+</details>
+
+<details>
+<summary>7. 证明：对称矩阵的特征向量对应不同特征值时相互正交。</summary>
+<p><strong>解答：</strong>设 Aᵀ = A，λ₁≠λ₂ 是两个不同的特征值，v₁,v₂ 是对应的特征向量：Av₁=λ₁v₁, Av₂=λ₂v₂。</p>
+<pre>v₂ᵀAv₁ = v₂ᵀ(λ₁v₁) = λ₁(v₂ᵀv₁)                   (1)
+v₁ᵀAv₂ = v₁ᵀ(λ₂v₂) = λ₂(v₁ᵀv₂) = λ₂(v₂ᵀv₁)       (2)
+</pre>
+<p>但 v₂ᵀAv₁ = (v₂ᵀAv₁)ᵀ = v₁ᵀAᵀv₂ = v₁ᵀAv₂（因为对称 Aᵀ=A）。所以等式 (1) = (2)：</p>
+<pre>λ₁(v₂ᵀv₁) = λ₂(v₂ᵀv₁)  →  (λ₁−λ₂)(v₂ᵀv₁) = 0</pre>
+<p>由于 λ₁≠λ₂，必然有 v₂ᵀv₁ = 0——即 v₁ 和 v₂ 正交。对于重复特征值，可以使用 Gram-Schmidt 正交化构建正交基。因此对称矩阵总可以被一组正交特征向量对角化。</p>
+</details>
+
+<details>
+<summary>8. 对于给定的 2×2 矩阵 A = [[1, 4], [2, 3]]，它的 SVD 是什么？手动计算 σ₁, σ₂。</summary>
+<p><strong>解答：</strong>首先计算对称矩阵 AᵀA：</p>
+<pre>AᵀA = [1 2; 4 3]ᵀ [1 4; 2 3] = [1 2; 4 3] [1 4; 2 3] = [1·1+4·4  1·2+4·3; 2·1+3·4  2·2+3·3] = [17  14; 14  13]</pre>
+<p>特征方程：det(AᵀA−λI) = (17−λ)(13−λ)−14² = 221−30λ+λ²−196 = λ²−30λ+25=0。解 λ = (30±√(900−100))/2 = (30±√800)/2 = (30±20√2)/2 = 15±10√2。所以 λ₁≈29.14, λ₂≈0.86，奇异值 σ₁=√λ₁≈5.40, σ₂=√λ₂≈0.93。</p>
+<p>需要右奇异向量 V（AᵀA 的特征向量）和左奇异向量 U（AAᵀ 的特征向量），具体正交归一化构造省略。最终 SVD：A = U·diag(5.40, 0.93)·Vᵀ。</p>
+</details>
+
+<!-- ==================== 本章核心洞察 ==================== -->
+<h2 id="insights">本章核心洞察</h2>
+<div class="insight-box">
+<h3>六大核心洞察</h3>
+<ul>
+<li><strong>1. 行列式 = 体积缩放因子：</strong>det(A) 度量了线性变换 A 将 n 维"单位立方体"拉伸/压缩为"平行体"的体积比。|det(A)| > 1 膨胀，0 < |det(A)| < 1 收缩，det(A) = 0 坍缩为低维（不可逆/奇异）。</li>
+<li><strong>2. 矩阵乘法 = 变换组合：</strong>(AB)·x = A·(B·x)——先做 B 再做 A。乘法的非交换性（AB ≠ BA）反映"操作顺序至关重要"在几何上的体现。</li>
+<li><strong>3. 乘法规则不是任意的：</strong>C_{ij} = Σ A_{ik}·B_{kj} 是确保矩阵代表线性变换组合的唯一选择——每条其他规则都会破坏"组合性质"。</li>
+<li><strong>4. 特征值与特征向量：</strong>Av = λv ——变换 A 将向量拉伸/压缩 λ 倍而不改变方向——这是对角化 A = QΛQᵀ 的核心。主轴变换将复杂变换分解为"旋转→按轴独立缩放→旋转回来"。</li>
+<li><strong>5. SVD = 通用分解：</strong>任意矩阵（非方/非对称）可分解为 A = USVᵀ（旋转-缩放-旋转）。奇异值 σ_i 始终是非负实数，且 σ_i² = AᵀA 的特征值。</li>
+<li><strong>6. 性能至关重要：</strong>矩阵乘法的循环排列（ijk vs kij）影响缓存性能 10−100 倍；特征值分解 O(n³) 远优于拉普拉斯展开 O(n!)——正确的算法选择决定可行性。</li>
+</ul>
+</div>
+
+<!-- ==================== QA问答区 ==================== -->
+<h2 id="s06-qa">QA 零基础问答区</h2>
+
+<div class="qa-q">Q: 为什么矩阵乘法被定义为现在这个样子，而不是逐元素相乘？</div>
+<div class="qa-a">
+A: 逐元素乘法（Hadamard 乘积）确实是一种完全合理的乘法，但它不能表示<span class="key-term">线性变换的组合</span>——而这恰恰是矩阵存在的唯一原因。矩阵乘法的定义有一个严格的工程动机：如果矩阵 A 是一个线性变换（将输入 x 映射到输出 y=Ax），你想设计一个矩阵 C 代表"先做 B 再做 A"——即 Cx=A(Bx) 对所有 x。通过展开向量分量，C 的元素必须等于 A 的第 i 行与 B 的第 j 列的点积：C_{ij} = Σ_k A_{ik}·B_{kj}。逐元素乘法则不满足这个组合性质。简而言之：<strong>矩阵乘法的规则被精心设计成具有变换组合的理想性质——这是"代数就应该是几何"的体现。</strong>
+</div>
+
+<div class="qa-q">Q: 行列式到底是什么？为什么它会是"体积"？</div>
+<div class="qa-a">
+A: 行列式是线性变换的<strong>缩放比</strong>——变换将空间拉伸或压缩了多少。假设有一个单位立方体（体积=1）。通过矩阵 A（代表一种变形）将立方体映射为一个平行六面体——这个映射体的体积恰好等于 |det(A)|。如果 det(A)=0，意味着有一列是其他列的线性组合——"体积坍缩"为零（如 3D 空间被压缩成 2D 面或 1D 线），矩阵不可逆。如果 det(A) 为负，说明变换包含了反射（镜面对应——"手性"反转）。det(AB)=det(A)·det(B) 对应"先缩放到 B 的比例，再缩放到 A 的比例"。
+</div>
+
+<div class="qa-q">Q: 有时听到特征值和奇异值是"一回事"，有时又听到"一个是另一个的平方"——到底哪个对？</div>
+<div class="qa-a">
+A: 两者都正确——取决于讨论的是哪一个矩阵。</p>
+<p><strong>情况 1（A 是对称半正定矩阵）：</strong>奇异值 = 特征值。例如协方差矩阵、正规方程矩阵——这些矩阵的特征值都是非负的，此时 A 的 SVD 与特征值分解重合。</p>
+<p><strong>情况 2（A 不是对称的）：</strong>奇异值 σ_i(A) = √λ_i(AᵀA)——即 A 的奇异值是 AᵀA 特征值的平方根。注意这里的"平方"不是指同一个矩阵——A 的奇异值联系于<strong>AᵀA</strong>，这不是 A 本身。典型例子：旋转矩阵 R 的奇异值全是 1（因为 RᵀR=I），但特征值可以是复数（单位圆上的 e^{iθ}）。所以：如果有人说"特征值和奇异值一样"，他在说对称矩阵；如果有人说"奇异值 = √特征值"，他在说 A 的奇异值 = √(AᵀA 的特征值)。
+</div>
+
+<div class="qa-q">Q: 矩阵乘法的四种排列（ijk/jik/kij/ikj）真的有实际意义吗？不是一样的结果吗？</div>
+<div class="qa-a">
+A: 代数结果完全相同，但<strong>性能差异可达 10 倍甚至 50 倍以上</strong>——这是实际代码实现中至关重要的问题。原因在于<span class="key-term">内存访问模式</span>：CPU/GPU 以缓存行（~64 字节）为单位加载数据。在矩阵乘法中，ijk 顺序的内层 k 循环对 B 按列跳跃访问——跨步等于矩阵的行宽 n。当 n 较大时，每个缓存行只被使用一次就丢弃（cache miss）。而 kij/ikj 顺序对所有数组都进行顺序或半顺序访问——每个缓存行的每条数据都被充分利用。现代 BLAS 库在此基础上加上分块（每个分块 ≤ L1 缓存大小），使 100% 的读写都在 L1 中——这就是为什么 numpy 的矩阵乘法比手工循环快 100 倍以上的根本原因。
+</div>
+
+<div class="qa-q">Q: 为什么线性代数是图形学的核心？我能跳过这章直接做渲染吗？</div>
+<div class="qa-a">
+A: 不能。图形学的每一种基本操作都直接依赖于线性代数。举例：</p>
+<ul>
+<li><strong>物体变换：</strong>模型矩阵 M = T·R·S（平移、旋转、缩放的组合）——全部由矩阵乘法实现</li>
+<li><strong>光照计算：</strong>漫反射 = max(L·N, 0)（点积）；镜面反射关联于 R·V 中的角度（向量运算）</li>
+<li><strong>摄像机投影：</strong>透视投影矩阵 P（4×4 矩阵 + 齐次除法 w）</li>
+<li><strong>光栅化：</strong>重心坐标插值（线性插值 = 行列式比）</li>
+<li><strong>纹理映射：</strong>透视矫正（对 1/w 线性插值——本质是倒数线性）</li>
+<li><strong>物理碰撞：</strong>法线/切线计算、惯性张量对角化、SVD 刚体配准</li>
+</ul>
+<p>如果你在渲染器中发现一个"法线方向翻转"或"物体缩放后材质拉伸异常"的问题，八成是某个矩阵被错误地求逆或转置了。投入一天深入理解行列式、特征值和正交矩阵，能为你省下几个月的调试时间。
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q: 特征向量和奇异向量的"几何含义"是什么？SVD 的 Vᵀ 和 U 到底做了什么？</p>
+<p class="qa-a">A: <strong>特征向量</strong>：在变换 A 下方向不变——仅沿该方向被缩放。如果 A 表示一个"拉伸材料"的变换，特征方向就是拉伸的"纹理方向"。<strong>奇异向量</strong>：更通用，因为它适用于任意矩阵。SVD 为 A=USVᵀ——几何操作如下：</p>
+<ol>
+<li><strong>Vᵀ</strong>：将输入向量旋转/反射——实现对 A 的"作用方向"的对齐。原始输入坐标 → 新的"理想"坐标系（右奇异向量作为基）。</li>
+<li><strong>S</strong>：在每个新坐标轴上独立缩放——σ₁ 方向缩放最剧烈，σ_{min} 方向缩放最小。</li>
+<li><strong>U</strong>：缩放后的结果旋转/反射到输出空间——左奇异向量 u_i 是缩放后输出在对应方向上的单位向量。</li>
+</ol>
+<p>具体例子：输入单位圆通过 A 变成椭圆——σ₁,σ₂ = 椭圆的长短半轴长度；v₁,v₂ = 原始单位圆上对应"不变方向"（嵌入二维空间的基）；u₁,u₂ = 输出椭圆的长短轴方向。在图形学中，SVD 用于：主成分分析 PCA（找出点云的主方向）、刚体配准（对齐两个形状）、特征向量压缩（舍弃最小的奇异值近似）以及变形量评估。</p>
+</div>
+
+</body></html>

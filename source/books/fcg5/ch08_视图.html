@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FCG Ch08: Viewing — 全文翻译 (Guizang插图版)</title>
+<style>
+/* === GEA 全文翻译样式表 === */
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Noto Serif SC","Source Han Serif SC","SimSun",Georgia,serif;background:#faf9f5;color:#2c2c2c;line-height:1.9;font-size:15px;max-width:860px;margin:0 auto;padding:40px 24px}
+h1{font-size:28px;text-align:center;margin:40px 0 10px;color:#1a1a1a;border-bottom:2px solid #002FA7;padding-bottom:16px}
+h2{font-size:22px;margin:48px 0 20px;color:#1a1a1a;border-left:4px solid #002FA7;padding-left:14px}
+h3{font-size:17px;margin:32px 0 14px;color:#333}
+p{margin:12px 0;text-indent:2em}
+p.no-indent{text-indent:0}
+blockquote{background:#f0f0ed;border-left:3px solid #002FA7;margin:16px 0;padding:10px 18px;color:#555;font-style:italic}
+blockquote p{text-indent:0}
+code{background:#eee;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:13px}
+pre{background:#1e1e1e;color:#d4d4d4;padding:16px 20px;border-radius:6px;overflow-x:auto;font-size:13px;line-height:1.5;margin:14px 0}
+pre code{background:transparent;padding:0;color:inherit}
+pre.math{background:#f8f4ed;color:#2c2c2c;border:1px solid #e0d5c0;font-family:"Latin Modern Math","Cambria Math","Times New Roman",serif;font-size:14px;white-space:pre;padding:16px 20px}
+figure{margin:28px 0;text-align:center}
+figure img{max-width:100%;border-radius:4px;box-shadow:0 2px 12px rgba(0,0,0,0.08)}
+figcaption{font-size:13px;color:#777;margin-top:8px}
+.fig-num{font-weight:700;color:#002FA7}
+.key-term{font-weight:600;color:#002FA7}
+.sidenote{font-size:12px;color:#999;margin-left:8px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:14px}
+table th{background:#002FA7;color:#fff;padding:8px 12px;text-align:left}
+table td{border-bottom:1px solid #ddd;padding:8px 12px}
+table tr:nth-child(even){background:#f5f5f5}
+
+/* === TOC === */
+.toc{background:#fff;border:1px solid #e0e0e0;border-radius:6px;padding:16px 24px;margin:20px 0;font-size:14px}
+.toc strong{display:block;margin-bottom:8px;font-size:16px}
+.toc ul{list-style:none;padding-left:8px}
+.toc li{margin:4px 0}
+.toc a{color:#002FA7;text-decoration:none}
+
+/* === 学习目标 === */
+.objectives-box{background:#f5f8fc;border:1px solid #002FA7;border-left:6px solid #002FA7;border-radius:6px;padding:14px 22px;margin:24px 0}
+.objectives-box h3{color:#002FA7;margin:0 0 10px 0;font-size:17px}
+.objectives-box ol{margin:0;padding-left:22px}
+.objectives-box li{margin:6px 0;line-height:1.7}
+
+/* === 想一想 === */
+.thought-box{background:#f5f8fc;border:1px solid #c8d6e5;border-radius:6px;padding:12px 18px;margin:16px 0}
+.thought-box p{text-indent:0;margin:4px 0}
+
+/* === 洞察盒 === */
+.insight-box{background:#fdf8f0;border:1px solid #e8d5b0;border-radius:6px;padding:14px 20px;margin:24px 0}
+.insight-box h3{color:#b8860b;margin:0 0 10px 0;font-size:16px}
+.insight-box ul{margin:0;padding-left:20px}
+.insight-box li{margin:6px 0}
+
+/* === Q&A === */
+.qa-item{margin:16px 0;padding:10px 16px;background:#fafafa;border-left:3px solid #002FA7}
+.qa-item .qa-q{font-weight:600;color:#002FA7;text-indent:0;margin:0 0 6px 0}
+.chapter-header{display:flex;align-items:center;gap:12px;padding:12px 0;margin:-40px -24px 24px;border-bottom:2px solid #002FA7;font-family:"Noto Sans SC",sans-serif;background:#faf9f5}
+.chapter-header #logo{font-weight:700;color:#002FA7;font-size:14px;letter-spacing:0.5px}
+.chapter-header #sep{color:#999;font-size:14px}
+.chapter-header #cur{color:#333;font-size:14px;flex:1}
+.chapter-header #btns{display:flex;gap:8px}
+.hdr-btn{background:#fff;border:1px solid #002FA7;color:#002FA7;padding:4px 12px;font-size:12px;border-radius:4px;text-decoration:none;display:inline-block}
+.hdr-btn:hover{background:#002FA7;color:#fff}
+.chapter-header button{background:#fff;border:1px solid #002FA7;color:#002FA7;padding:4px 12px;font-size:12px;cursor:pointer;border-radius:4px;font-family:inherit}
+.chapter-header button:hover{background:#002FA7;color:#fff}
+
+.lecture-note{background:#f5f8fc;border:1px solid #b8c8d8;border-left:5px solid #002FA7;border-radius:6px;padding:14px 22px;margin:24px 0 18px}
+.lecture-note strong{display:block;color:#002FA7;font-size:16px;margin-bottom:8px}
+.lecture-note p{margin:6px 0;text-indent:0;font-size:14px;line-height:1.75;color:#444}
+
+.qa-item .qa-a{text-indent:0;margin:0}
+
+/* === 练习 === */
+details{margin:12px 0;padding:8px 16px;background:#f9f9f9;border:1px solid #e0e0e0;border-radius:4px}
+details summary{font-weight:600;cursor:pointer;color:#002FA7}
+details p,details ol,details ul{margin:8px 0;text-indent:0}
+
+/* === 类比 === */
+.analogy{background:#eef7ee;border:1px solid #a3c9a3;border-radius:6px;padding:10px 16px;margin:14px 0;font-size:14px}
+.analogy p{text-indent:0;margin:4px 0}
+.analogy .label{font-weight:700;color:#2d6a2d}
+
+/* === 导航 === */
+.nav-bar{background:#fff;border-bottom:1px solid #e0e0e0;padding:10px 20px;margin:-40px -24px 30px;display:flex;gap:16px;font-size:13px;flex-wrap:wrap}
+.nav-bar a{color:#555;text-decoration:none}
+.nav-bar a:hover{color:#002FA7}
+.nav-bar .active{color:#002FA7;font-weight:700}
+</style></head><body>
+<div class="chapter-header">
+  <span id="logo">FCG 5E</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch8 视图</span>
+  <span id="btns">
+    <a href="#目录" class="hdr-btn">[=] 目录</a>
+    <a href="#s8-1"><button>[+] 章节</button></a>
+  </span>
+</div>
+
+
+
+<div class="nav-bar">
+<a href="#s8-1">8.1 视图变换</a> <a href="#s8-2">8.2 正交投影</a> <a href="#s8-3">8.3 透视投影</a> <a href="#s8-4">8.4 透视性质</a> <a href="#s8-5">8.5 视场角</a> <a href="#insights">洞察</a> <a href="#exercises">练习</a> <a href="#qa">QA</a>
+</div>
+
+<h1>第8章：视图</h1>
+<div class="lecture-note">
+<strong>说明</strong>
+<p>本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书》（Fundamentals of Computer Graphics）第5版第8章（p.174-190）视图。</p>
+<p>从世界到屏幕的三矩阵序列——摄像机矩阵、正交投影、透视投影与齐次除法、视场角 FOV。理解视图是理解一切实时渲染的前提。</p>
+<p>本版插画采用 Guizang 材质插画风格重新绘制。</p>
+</div>
+
+
+
+<!-- TOC 必须在 objectives-box 前面 -->
+<div class="toc" id="目录"><strong>目录</strong>
+<ul>
+<li><a href="#学习目标">学习目标</a></li>
+<li><a href="#s8-1">8.1 视图变换</a></li>
+<li><a href="#s8-2">8.2 正交投影</a></li>
+<li><a href="#s8-3">8.3 透视投影</a></li>
+<li><a href="#s8-4">8.4 透视变换的一些性质</a></li>
+<li><a href="#s8-5">8.5 视场角</a></li>
+<li><a href="#insights">本章核心洞察</a></li>
+<li><a href="#exercises">课后练习题</a></li>
+<li><a href="#qa">QA 零基础问答区</a></li>
+</ul></div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+
+<li><strong>掌握三矩阵视图变换序列</strong>：理解摄像机变换（M_cam，世界→眼空间）→ 投影变换（眼空间→裁剪空间）→ 视口变换（裁剪空间→像素坐标）的分解逻辑，以及每步解耦的设计哲学。</li>
+<li><strong>推导和应用正交投影矩阵</strong>：掌握 M_ortho 将任意轴对齐盒体 [l,r]×[b,t]×[n,f] 映射到规范视图体 [−1,1]³ 的平移-缩放构造方法，理解 z 分量保留用于深度缓冲的意义。</li>
+<li><strong>推导透视投影矩阵并使用齐次除法</strong>：掌握 P 矩阵的构造原理——前三行编码缩放和 z 映射、第四行将深度值写入 w 以触发硬件透视除法，理解视锥体 → 规范盒体的完整变换链 M_per = M_ortho · P。</li>
+<li><strong>理解深度精度分布与 z-fighting</strong>：掌握透视变换后深度值的非均匀分布特性——近平面附近精度高、远平面附近精度低——及其对 z 缓冲伪影的根本影响，能够解释为什么必须合理设置近远裁剪面距离。</li>
+<li><strong>使用 FOV 和宽高比参数化视锥体</strong>：掌握从垂直视场角 θ_v 和宽高比 a = n_x/n_y 推导透视投影窗口参数 l/r/b/t 的三角函数关系，理解 FOV 变化对视觉效果的影响。</li>
+</ol>
+<hr>
+
+<figure>
+<img src="images/ch08_full/fig08_viewing_pipeline.png" alt="视图变换管线">
+<figcaption><span class="fig-num">图 8.1</span> — 视图变换管线：摄像机变换（世界→眼空间）→ 投影变换（眼空间→裁剪空间）→ 视口变换（→屏幕坐标）。正交投影与透视投影的对比。三大矩阵分解的"关注分离"设计——摄像机位置、投影类型、屏幕分辨率各自独立调整。（Guizang 插画）</figcaption>
+</figure>
+
+<p class="no-indent">在第 4 章中，我们探讨了如何根据给定的视图生成视线以达到光线追踪的目的——一种生成图像的方法，其中我们寻找沿每条视线的最近物体。本章讨论相反的过程：如何使用矩阵变换来表达任何平行视图（正交投影）或透视视图。这些变换将场景中的三维点投影到图像空间中的二维位置——即给定像素的视线反向映射到该像素在图像空间中的位置。这是光栅化渲染管线的基础：在屏幕空间中对几何体进行排序，并将其光栅化为像素。</p>
+
+<p>我们将在本章中讨论的变换将三维点映射到一个三维空间中，该空间在投影坐标中被压缩，使得前两个坐标对应于图像平面中的位置，而第三个坐标携带深度信息（遮挡排序和 z 缓冲所需）。在阅读本章之前，建议回顾第 4 章中关于透视和视线生成的讨论。本章建立了从世界空间到屏幕的完整数学桥梁——也是整个光栅化管线中最关键的一段。</p>
+
+<!-- ==== 8.1 ==== -->
+<h2 id="s8-1">8.1 视图变换</h2>
+
+<p><span class="key-term">视图变换</span>（viewing transformation）负责将三维位置（表示为 (x,y,z) 坐标）映射到图像中的二维位置（表示为 (x,y) 像素坐标）。这是一个涉及许多因素的复杂映射，包括摄像机位置和朝向、投影类型、视场角以及图像的分辨率。与所有复杂变换一样，我们通过将整个过程分解为几个较简单变换的乘积来处理它。大多数图形系统通过三个矩阵的序列来实现这一点：</p>
+
+<ol>
+<li><span class="key-term">摄像机变换</span>（camera transformation）或<span class="key-term">眼变换</span>（eye transformation）——一个刚体变换，将摄像机放置在原点并调整为便利的朝向。它仅取决于摄像机的位置和朝向（统称为<span class="key-term">姿态</span> pose）。经过此变换后，所有点都在<span class="key-term">眼空间</span>（eye space）中。</li>
+<li><span class="key-term">投影变换</span>（projection transformation）——将眼空间中的点投影到图像平面上，同时对 x 和 y 应用缩放以将可见区域映射到标准范围（通常为 [−1,1]²），并重新映射 z 以保留深度排序。经过此变换后，点处于<span class="key-term">裁剪空间</span>（clip space）中。</li>
+<li><span class="key-term">视口变换</span>（viewport transformation）或<span class="key-term">窗口变换</span>（windowing transformation）——将 [−1,1]² 中的标准化设备坐标映射到图像中的像素坐标（例如 [0, n_x−1] × [0, n_y−1]）。</li>
+</ol>
+
+<p>这种分解分离了不同的关注点：摄像机放置、投影类型和最终图像分辨率。摄像机变换编码了第 7 章中讨论的坐标变化——将世界空间点带到以摄像机为中心的眼空间。投影变换封装了几何光学：正交投影用于工程视图，透视投影用于真实感渲染。视口变换处理最终图像分辨率，将标准化范围拉伸到实际像素坐标。我们可以依次考虑每个变换。</p>
+
+<figure>
+<img src="images/ch08_full/fig08_camera_transform.png" alt="摄像机变换">
+<figcaption><span class="fig-num">图 8.2</span> — 摄像机变换：将摄像机从世界空间位置 e 移动到原点，并将其基向量 (u,v,w) 与标准坐标轴对齐。这是一个刚体变换——旋转加平移。注意 w 指向观察方向的反方向（从场景指向摄像机），沿 −z 轴。（Guizang 插画）</figcaption>
+</figure>
+
+<p>摄像机变换是一个刚体变换——平移加旋转。它由摄像机的位置 e（眼点）和其朝向定义，朝向由三个标准正交基向量指定：u（指向摄像机右侧）、v（指向上方）、w（指向观察方向的反方向，即从场景指向摄像机）。摄像机变换将摄像机移动到原点并使 u、v、w 分别与 x、y、z 轴对齐。摄像机矩阵 M_cam 由以下公式给出：</p>
+
+<pre class="math">        [u_x  u_y  u_z  −u·e]
+        [v_x  v_y  v_z  −v·e]
+M_cam = [w_x  w_y  w_z  −w·e]
+        [ 0    0    0     1  ]</pre>
+
+<p>前三列将世界坐标旋转到摄像机坐标（通过点积将世界向量投影到摄像机基向量上）。第四列添加平移以将视点移至原点。注意摄像机变换是第 7.5 节中坐标变换的直接应用——将点从世界框架变换到摄像机框架。左上角的 3×3 旋转矩阵 R 由摄像机基向量构成——它的每一行是一个摄像机坐标轴在世界空间中的方向。平移部分 −R·e 确保世界坐标中的摄像机位置 e 被映射到眼空间的原点。</p>
+
+<div class="analogy"><p><span class="label">生活类比：自由女神像自拍</span> — 想象你在纽约自由港，站在自由女神像脚下掏出手机自拍。你的手机（摄像机）有一个位置 e（你站的地方），有一个朝向——屏幕对着你（w 方向指向你身后，即观察反方向），顶部朝上（v 方向），右侧朝右（u 方向）。M_cam 做的事就是把整个世界"搬"到你面前——以自由女神像为世界中心，M_cam 把它拉到你手机屏幕的坐标系中：自由女神像位于"画面中央偏右上方"这些事，全靠 M_cam 里面那堆矩阵数字在悄悄算。这就是为什么 M_cam 又叫"视图矩阵"——它定义了你"怎么看"这个世界。</p></div>
+
+<div class="thought-box">
+<p><strong>想一想：</strong> M_cam 为什么是仿射逆？——摄像机变换 M_cam 本质上不是"正向放置摄像机"，而是<strong>把整个世界反向搬动</strong>，使得摄像机恰好处于原点。如果你知道摄像机的世界位置 e 和朝向矩阵 [u v w]，它的"正向"仿射矩阵（模型矩阵）是 M_model = [u v w e; 0 0 0 1]——这是把摄像机"放"到世界中。而摄像机矩阵 M_cam = M_model⁻¹ = [Rᵀ  −Rᵀ·e; 0 1] ——恰好是它的逆！因为 R 是正交矩阵（Rᵀ = R⁻¹），旋转部分取转置、平移部分取 −Rᵀ·e。理解这个关系后，模型矩阵和视图矩阵的对称美跃然纸上：一个是"把物体放出去"，一个是"把世界收回来"。</p>
+</div>
+
+<div class="thought-box">
+<p><strong>想一想：</strong> 为什么不把三个矩阵直接乘成一个？——是的，最终传给 GPU 的确实是一个合成矩阵 MVP = M_proj × M_view × M_model。但拆成三段的根本原因不是"数学上必需"，而是<strong>软件工程上的关注分离</strong>：修改摄像机位置只需改 M_view、切换正交/透视只需改 M_proj、改变屏幕分辨率只需改 M_viewport——三者互不干扰。如果你把它们捏成一个大矩阵，每改一次 FOV 就得重新解算整个矩阵，而分开后只需替换投影那一环。这种模块化设计让多摄像机渲染（阴影贴图、反射探针、后处理）成为可能——只需为每个 pass 换一个 M_view 即可，场景物体和投影参数保持不变。</p>
+</div>
+
+<!-- ==== 8.2 ==== -->
+<h2 id="s8-2">8.2 正交投影</h2>
+
+<p><span class="key-term">正交投影</span>（orthographic projection）是最简单的投影：它简单地丢弃 z 坐标，保持 x 和 y 不变。这对应于所有投影线平行的视图——在工程制图和俯视图中有用，因为没有透视缩短，平行线保持平行。与透视投影不同，正交投影不模拟人眼或相机的光学行为——它是一种纯粹的几何映射，将三维空间"压缩"到二维平面上。</p>
+
+<p>在实践中，正交投影通常映射到一个标准化的<span class="key-term">规范视图体</span>（canonical view volume）——一个轴对齐的盒体 [−1,1]³。这个盒体之外的点被裁剪（丢弃），盒体内的点被投影到图像平面上。正交投影矩阵将任意轴对齐盒体 [l,r]×[b,t]×[n,f] 映射到 [−1,1]³：</p>
+
+<pre class="math">           [2/(r−l)      0          0      −(r+l)/(r−l)]
+           [    0     2/(t−b)       0      −(t+b)/(t−b)]
+M_ortho =  [    0         0     2/(n−f)   −(n+f)/(n−f)]
+           [    0         0          0            1    ]</pre>
+
+<p>这个矩阵的设计逻辑非常直观。它分两步：(1) <strong>平移</strong>使盒体中心对齐原点——即第四列用 −(r+l)/(r−l)、−(t+b)/(t−b)、−(n+f)/(n−f) 将中心移至零点；(2) <strong>缩放</strong>使每个维度从 −1 到 1——即对角线上的 2/(r−l)、2/(t−b)、2/(n−f) 将宽度拉伸到 2。注意 z 坐标也被缩放——尽管我们在正交投影中丢弃了 z 用于显示，但 z 在裁剪空间中仍然被保留，用于隐藏表面消除（z 缓冲）。窗口 [n,f] 定义了可见的深度范围：近平面和远平面之外的任何物体都会被裁剪。常规约定是看向 −z 方向，因此 n 和 f 都是负值，且 n > f（即近平面比远平面更接近摄像机，它的数值更大因为负方向）。</p>
+
+<div class="analogy"><p><span class="label">生活类比：工程蓝图</span> — 正交投影就是建筑设计师的平面图。房子的三维结构——墙多高、屋顶多斜——在蓝图上被"压平"了：所有的垂直线从上方投射下来，一楼和二楼的墙线完全重合，没有任何"远小近大"。每一根线都是真实长度和角度——工程师用尺子一量，就能说出这根梁长 3.5 米，而不是像照片上那样需要推算。CAD 软件默认用正交投影正是这个原因——精确性永远优先于真实感。正交投影丢弃了 z，换来了"平行永远平行"的几何保真度。</p></div>
+
+<div class="thought-box">
+<p><strong>想一想：</strong> 正交投影为什么用左手系？——在标准图形学约定中，眼空间使用右手系：x 向右、y 向上、z 从屏幕指向外（摄像机看向 −z 方向）。但在规范视图体 [−1,1]³ 中，OpenGL 使用左手系：x 向右、y 向上、z 向屏幕内。这意味着远平面 z=f（更负的值）映射到规范 z=+1（更"远"），近平面 z=n（更大的值）映射到规范 z=−1（更"近"）。这个符号翻转是刻意的——它使得"更大的规范 z"始终意味着"更远"，符合直觉的编程约定。但这是左手系和右手系之间的转换——如果你看到代码中 n 和 f 取负值使用，那正是因为这个坐标系转换。DirectX 为了避免混淆直接使用 [0,1] 规范体。</p>
+</div>
+
+<div class="thought-box">
+<p><strong>想一想：</strong> 如果正交投影不丢弃 z，z 被用来做什么？——z 缓冲（z-buffer）！即使正交投影不需要深度感来做"近大远小"，它仍然需要知道哪个面在前、哪个面在后，才能在屏幕上正确显示遮挡关系。想象建筑蓝图上两个叠在一起的平面——z 缓冲根据规范 z 的大小决定哪个片元最终被显示，前面的覆盖后面的。正交投影中 z 是线性映射（因为透视除法 w=1），所以深度精度在整个深度范围内是均匀的——这是它和透视投影最大的区别之一。不过代价也很明显：正交投影下远处的物体和近处一样大，所以你分不清哪个在前——必须靠 z 缓冲的隐式排序来"看清"。</p>
+</div>
+
+<!-- ==== 8.3 ==== -->
+<h2 id="s8-3">8.3 透视投影</h2>
+
+<figure>
+<img src="images/ch08_full/fig08_perspective.png" alt="透视投影">
+<figcaption><span class="fig-num">图 8.3</span> — 透视投影：视锥体（frustum）被映射到规范视图体 [−1,1]³。透视矩阵将金字塔形的视锥体"压扁"为轴对齐盒体——在此之后，正交投影的处理方法完全适用。注意近平面上的物体在规范体中占据更大的比例，反映深度精度的非均匀分布。（Guizang 插画）</figcaption>
+</figure>
+
+<p>对于<span class="key-term">透视投影</span>（perspective projection），重要的几何事实是：物体的大小与其到摄像机的距离成反比。如果像平面位于 z = −d（摄像机看向 −z），则通过相似三角形：(y_s, z_s) 投影到 y_p = −d·y/z。在齐次坐标中，这一除法可以由透视矩阵优雅地处理——通过将 z 放入齐次坐标 w 中使得硬件自动执行除以 z。透视投影矩阵为：</p>
+
+<pre class="math">    [n  0    0    0 ]
+    [0  n    0    0 ]
+P = [0  0  n+f  −fn]
+    [0  0    1    0 ]</pre>
+
+<p>将此矩阵应用于齐次点 (x,y,z,1) 产生 (nx, ny, (n+f)z − fn, z)。转换为笛卡尔坐标需要除以齐次坐标 w = z，得到 (nx/z, ny/z, n+f − fn/z)。这正是我们想要的行为：x 和 y 按 1/z 缩放（远物变小），而 z 以保留深度排序的方式重新映射。</p>
+
+<p>第一行和第二行简单地实现了透视方程——将 x 和 y 分别乘以 n（近平面距离），随后由 w=z 的齐次除法完成除以 z 的效果。第三行——与正交矩阵一样——旨在将 z 坐标带入规范范围。然而，在透视投影中，非恒定分母的引入使得矩阵在齐次除法后产生一个随 1/z 变化的深度值。这具有非常理想的特性：z 的顺序被保留，且在近平面附近的 z 精度更高——这恰好是深度精度最需要的地方。第四行将 z 复制到齐次坐标 w，触发透视除法。</p>
+
+<p>透视矩阵的美妙之处在于：一旦应用它，所有正交投影的机制都适用。完整的透视到规范矩阵 M_per 将透视矩阵 P 与正交矩阵 M_orth 结合：</p>
+
+<pre class="math">M_per = M_orth · P</pre>
+
+<p>这个乘积将透视<span class="key-term">视锥体</span>（frustum）——一个截断的金字塔形状——映射到规范视图体——一个轴对齐的盒体。视锥体由六个平面定义：左、右、底、顶、近、远。对于透视，左/右/底/顶通常由近平面上的窗口和视场角（第 8.5 节）确定，而不是直接指定。从物理意义上，M_orth 负责将金字塔压扁为盒体的"缩放-平移"部分，P 负责建立透视所需的齐次除法基础——两者的分工清晰而优雅。</p>
+
+<div class="analogy"><p><span class="label">生活类比：人眼与投影仪</span> — 透视投影模拟的就是你的眼睛。站在铁轨上往远处看——两条铁轨明明是平行的，看起来却在天边"汇聚"于一点。这就是透视除法的魔法：z 出现在分母，远处的铁轨 z 很大，除以 z 后轨道靠得越来越近，最终在无穷远汇合。而<span class="label">齐次除法就是一台投影仪</span>——你把一张幻灯片（场景几何体）放进投影仪，投影仪里面的光源（摄像机原点）把光打出去，幻灯片上的物体被投影到墙面上（像平面）——离墙越近的物体影子越大，离墙越远的影子越小。投影仪的镜头正是齐次除法——w 分量就是"物体到光源的距离"，x/w 和 y/w 就是"影子在墙上的坐标"。光线追踪用射线反推回来找物体，光栅化用投影矩阵推出去映射到屏幕——两种方法共享相同的透视几何原理。</p></div>
+
+<div class="thought-box">
+<p><strong>想一想：</strong> 齐次除法为什么叫"透视除法"？——因为它是透视投影的核心机制！普通的仿射变换（旋转、平移、缩放）中 w 始终为 1，x/w 就是 x，根本没有除法的概念。透视矩阵的第四行是 (0,0,1,0) ——它把 z 分量抄到 w 中，这意味着执行 M·p 之后 w = z（不再是 1）。后续硬件自动执行的硬件除法 (x/w, y/w, z/w) 正是因为 w=z 才能实现透视——数学上等价于 (x/z, y/z, z 映射后)。这个除法是整个管线中唯一一次"除以变化的量"——所有之前的矩阵乘法都是线性（或仿射）的，到这一步才真正产生非线性。正因为它驱动了"透视"的效果，所以叫"透视除法"。在 GPU 中这个操作由固定功能硬件完成，高效且透明——程序员写 P 矩阵，硬件负责除 w。</p>
+</div>
+
+<div class="thought-box">
+<p><strong>想一想：</strong> 视锥体的六个平面如何确定？——近平面 z=n 和远平面 z=f 直接给出两个深度的约束面。左、右、底、顶由近平面上的矩形窗口 [l,r]×[b,t] 定义。在透视投影中，这四个值通常不是直接指定的——而是由视场角（FOV）和宽高比推导（见 8.5 节）。但关键的一步是：透视矩阵在近平面上不改变 x 和 y——如果点在近平面上（z=n），透视除法后 x' = n·x/n = x（乘以 n 再除以 n，抵消）。这保证了近平面窗口的尺寸在像平面上的投影恰好就是原尺寸。而远平面上的窗口经过透视后被严格缩放到近平面窗口的 f/n 比例——这也是"远小近大"的精确数学表达。</p>
+</div>
+
+<p>OpenGL 的透视矩阵采用了略微不同的约定（标准视图体为 [0,1]³ 而非 [−1,1]³），且许多引擎要求用户指定近平面和远平面的绝对值。然而，基本原理保持不变：使用 4×4 矩阵和齐次除法，在一个统一的框架中优雅地处理所有几何投影。DirectX 使用 [0,1] 的 z 范围以更好地利用深度缓冲精度。Vulkan 在 z 映射上做了进一步的改进——使用反向深度缓冲（reversed depth buffer）将远平面映射为 0、近平面为 1，从而进一步优化精度分布。但所有的变体都建立在同一个数学核心之上——4×4 矩阵 × 齐次除法 = 通用投影框架。</p>
+
+<!-- ==== 8.4 ==== -->
+<h2 id="s8-4">8.4 透视变换的一些性质</h2>
+
+<p>透视变换的一个重要性质是它将<span class="key-term">直线映射为直线</span>，将<span class="key-term">平面映射为平面</span>。这意味着三角形在透视投影下保持为三角形——不需要弯曲的边缘或复杂的裁剪。这个性质的根本原因在于：在齐次空间中，矩阵乘法是线性的——直线上任意点 p(t)=q+t·d 变换为 M·p(t)=Mq+t·Md，仍然是 t 的线性组合。齐次除法后虽然产生了非线性，但结果仍然落在两端点投影的连线上——不会"弯曲"为曲线。这些性质对于硬件光栅化至关重要——GPU 假设图元在透视投影后保持其基本形状，三角形的边仍然是直线段。</p>
+
+<p>此外，透视变换将视锥体内的线段映射到规范视图体内的线段，且 z 顺序得以保持。考虑 z 轴上的两点，z₁ < z₂ < 0（两者都在摄像机前方，z₁ 更近）。应用齐次除法的透视变换后，我们得到 z₁' 和 z₂'。透视矩阵的设计使得 z₁' < z₂'（更近的点具有更小的 z' 值），即使变换涉及除以 −z。这个单调性质保证了 z 缓冲正确工作——距离摄像机更近的片元遮挡更远的片元。</p>
+
+<p>深度值的精度分布在透视投影下是非均匀的：近平面附近的深度精度高，远平面附近的精度低。具体来说，规范深度 z_ndc = A + B/z（其中 A 和 B 由 n 和 f 决定），导数 dz_ndc/dz = −B/z²。B 的值通常很大，导致近平面附近的导数很大（z 的微小变化引起 z_ndc 的巨大变化 = 高精度），而远平面附近的导数很小（z 的大变化只引起 z_ndc 的微小变化 = 低精度）。</p>
+
+<div class="analogy"><p><span class="label">生活类比：显微镜</span> — 透视投影的深度精度就像显微镜的焦点。显微镜在最清晰的焦点位置（近平面附近）分辨率极高——你能看清细胞的每一条细微结构。但远离焦平面（远平面区域），图像逐渐模糊，细胞膜的边界变得难以分辨。z 缓冲的精度分布完全类似：近平面附近的 z 值被分配了更多的规范位——两个相隔 0.001 单位的物体在近平面可以清晰区分，在远平面却可能落在同一个 z 缓冲值上，导致 z-fighting。这就是为什么图形引擎反复强调"把近平面设得尽可能远"——不是为了看到更少的东西，而是为了把宝贵的深度精度"拉平"分配。</p></div>
+
+<div class="thought-box">
+<p><strong>想一想：</strong> z 非线性到底有什么实际影响？——z-fighting（z 闪烁）！当场景的深度范围很大时（如太空模拟：近平面 1 米，远平面 10⁹ 米），远平面附近的深度精度几乎为零。两个相距一公里的星球在 z 缓冲中可能映射到同一个值——GPU 不知道该显示哪个，两个面交替出现，产生令人讨厌的闪烁。这就是为什么许多游戏使用<strong>对数深度缓冲</strong>（logarithmic depth buffer）来缓解——对数函数将远平面的精度大幅提升至与近平面相当。另一个常见策略是使用<strong>反向深度缓冲</strong>（reversed z，将 1/z 映射到 [0,1]）——由于浮点数在接近零时精度最高，把远平面对应到 0（高精度区间）可以显著改善深度精度分布。这些都是在统一的透视矩阵框架内的变通——只需调整 P 矩阵的第三行系数。</p>
+</div>
+
+<div class="thought-box">
+<p><strong>想一想：</strong> 透视变换保持直线为直线——为什么这很重要？——因为光栅化管线的核心假设就是三角形的边是直线段。GPU 的光栅化器使用边的线性方程来判断一个像素是否在三角形内部——如果透视变换把直线变成了曲线，那么"点在三角形内部"的计算将变得极其复杂，需要每像素都解非线性方程。矩阵投影的线性保持性质保证了：你只需要变换三角形的三个顶点、在裁剪空间中用线性插值判断覆盖——整个硬件光栅化建基于此。这也是为什么鱼眼镜头（非线性投影）在游戏中使用的是后处理效果而非直接在投影阶段实现——因为非线性投影破坏了直线的线性性，光栅化器无法处理。</p>
+</div>
+
+<!-- ==== 8.5 ==== -->
+<h2 id="s8-5">8.5 视场角</h2>
+
+<p>与其直接指定透视投影的左、右、底、顶平面，不如使用更直观的参数：<span class="key-term">视场角</span>（field of view，FOV）和<span class="key-term">宽高比</span>（aspect ratio）。垂直视场角 θ_v 等价于底和顶平面满足：</p>
+
+<pre class="math">tan(θ_v / 2) = t / |n|</pre>
+
+<p>假设窗口关于视线中心对称（b = −t）。类似地，水平视场角 θ_h 由宽高比 a = n_x/n_y 关联到垂直视场角：</p>
+
+<pre class="math">tan(θ_h / 2) = a · tan(θ_v / 2)</pre>
+
+<p>在实践中，"视场角"一词通常指垂直视场角，而水平视场角由宽高比确定。典型的视场角范围从约 60°（标准摄像机镜头，舒适自然的视角）到 120°（极端广角，边缘处有显著透视失真）。游戏通常允许玩家调整视场角——较高的值提供更多的周边视野（竞技游戏中有用），但会在边缘产生"鱼眼"失真。投影矩阵的相应参数变为：</p>
+
+<pre class="math">r = −l = |n| · a · tan(θ_v/2)
+t = −b = |n| · tan(θ_v/2)</pre>
+
+<p>FOV 和宽高比的组合完全指定了透视投影的所有自由参数。摄像机位置和朝向（通过摄像机矩阵处理）以及近/远裁剪面（n 和 f）构成了其余参数。这些参数共同构成了完整视图变换所需的所有输入。在实践中，大多数游戏引擎提供 SetPerspective(fov, aspect, near, far) 这样的 API——内部实现正是上述公式，将直观参数转化为透视矩阵的数值。</p>
+
+<div class="analogy"><p><span class="label">生活类比：门缝窥视</span> — 想象你通过一扇半开的门看世界：门缝开得窄（小 FOV）——你只能看到门外很窄的一小片，但那一小片被放大得很清楚（望远镜效果）。把门完全推开（大 FOV）——整个走廊全景尽收眼底，但远处的物体变得很小（广角效果）。FOV 就是你"门的开合角度"——宽高比就是你眼球的宽高比例（屏幕的比例）。这就是为什么同一台摄像机镜头，换到不同的屏幕上需要调整——16:9 的宽屏比 4:3 的方屏在相同垂直 FOV 下水平视野更宽。电影拍摄中，宽屏比例的流行正是因为人眼的水平视野比垂直视野更宽——16:9 更像你"自然看到的世界"。</p></div>
+
+<div class="thought-box">
+<p><strong>想一想：</strong> 为什么改变 FOV 会让物体"扭曲"？——当 FOV 极大时（如 150°），屏幕边缘的物体被极端拉伸。这是因为透视投影假设像平面是一个平面——人的眼睛也是曲面成像（视网膜是球面的），但在屏幕这个平面上，远离中心的像素对应的视线角度可能非常大。一个位于屏幕边缘的球体，在宽 FOV 下投影为一个椭圆形——因为球体上离边缘最近的点和离中心最近的点与摄像机的距离不同，透视除法产生的缩放也不同。这种失真在窄 FOV 下不明显（因为视角范围小，平面近似球面），但在宽 FOV 下急剧恶化。有些游戏对此做后处理校正，另一些则直接减小 FOV 来规避。</p>
+</div>
+
+<div class="thought-box">
+<p><strong>想一想：</strong> FOV、近平面距离和窗口尺寸在透视矩阵中是什么关系？——三者通过三角函数绑定在一起：tan(θ_v/2) = t/|n|。这意味着对于固定的 FOV，近平面越远（|n| 越大），窗口就越大（t 越大）——看到的东西更多但是物体也会"变小"。反之，近平面很近时窗口也很小——你看到的视野变窄，物体被放大。这就是为什么第三人称游戏中拉近摄像机（缩小 |n|）会让角色看起来更大——不是因为角色变了，而是因为近平面窗口缩窄了，投影时角色占据了更大的屏幕比例。这个关系也解释了为什么在 VR 渲染中，FOV 必须与人眼的实际 FOV 匹配（约 110°），否则用户会感到不适——大脑预期一个特定角度的透视变形，矩阵必须精确还原这个角度。</p>
+</div>
+
+<!-- ========== 本章核心洞察 ========== -->
+<div class="insight-box" id="insights">
+<h3>本章核心洞察</h3>
+<ul>
+<li><strong>三矩阵分解 = 关注分离的范式</strong>：M_cam 管摄像机姿态、M_proj 管投影类型、M_viewport 管分辨率——三者正交，互不干扰。这种设计不是数学上的必然，而是为多摄像机渲染、分屏游戏和动态分辨率适配提供了工程上的优雅解耦。</li>
+<li><strong>正交投影 = 蓝图，透视投影 = 人眼</strong>：正交投影丢弃 z、保持平行线平行——是精确工程世界的语言。透视投影用齐次除法实现 1/z 缩放——是人眼和相机光学世界的语言。两者的统一在裁剪空间完成——一旦几何体进入 [−1,1]³，后续管线无需关心"来源"。这是抽象层设计在图形学中最成功的案例之一。</li>
+<li><strong>透视矩阵第四行 (0,0,1,0) = 整个管线的"魔法开关"</strong>：其他矩阵底行都是 (0,0,0,1)——保持 w=1，仿射世界安然无恙。透视矩阵改变 w 为非 1 值，触发硬件透视除法，将线性矩阵乘法无缝转化为非线性透视效果。这一行值是整个渲染管线唯一打破线性假设的地方——也是 GPU 固定功能硬件最核心的优化目标。</li>
+<li><strong>深度精度分布 = 场景设计的关键约束</strong>：近平面附近的深度精度极高，远平面附近几乎为零。这不是 bug——是透视变换中 1/z 映射的固有结果。游戏设计师必须据此调整场景：近平面不能太近（浪费精度）、远平面不能太远（精度耗尽）、大场景需要多 pass 分层渲染或对数深度缓冲。</li>
+<li><strong>FOV + 宽高比 = 透视参数的直观表达</strong>：与其指定六个抽象参数（l,r,b,t,n,f）不如用 FOV + aspect + near + far——四个值完成所有设定。这个参数化不仅是用户友好的，而且直接关联到光学模型（镜头的角度范围）。视角理解从"矩阵数字"跃迁到"光学直觉"——是图形学从数学到工程的关键转化。</li>
+</ul>
+</div>
+
+<!-- ========== 课后练习题 ========== -->
+<h2 id="exercises">课后练习题（含解答与分析）</h2>
+
+<details>
+<summary>习题 1：构建像素坐标从上往下计数（而非从下往上）的系统所需的视口矩阵。</summary>
+<p><strong>解答：</strong>标准视口矩阵将规范视体 [−1,1]³ 映射到像素坐标 [0,n_x−1]×[0,n_y−1]：</p>
+<pre class="math">        [n_x/2     0       0    (n_x−1)/2]
+        [  0     n_y/2     0    (n_y−1)/2]
+M_vp =  [  0       0       1        0    ]
+        [  0       0       0        1    ]</pre>
+<p>当像素坐标从上往下计数（y=0 在顶部）时，需要翻转 y 轴：将规范 y 坐标 [−1,1] 映射到像素 [n_y−1, 0]（从上到下）。新的映射：y_pixel = (n_y−1) − (y+1)×(n_y−1)/2 = (n_y−1)/2 − (n_y/2)·y。</p>
+<p>翻转后的视口矩阵：</p>
+<pre class="math">                [n_x/2     0       0    (n_x−1)/2]
+                [  0    −n_y/2     0    (n_y−1)/2]
+M_vp_topdown =  [  0       0       1        0    ]
+                [  0       0       0        1    ]</pre>
+<p>只有第二行的 y 缩放系数取负，平移项不变——因为规范 y=−1（底部）映射到 (n_y−1)（顶部），规范 y=+1（顶部）映射到 0（底部）。</p>
+</details>
+
+<details>
+<summary>习题 2：推导透视矩阵第三行的系数——从"z 在近平面和远平面上不变"的约束出发。</summary>
+<p><strong>解答：</strong>透视矩阵将点 (x,y,z) 映射为：x' = n·x, y' = n·y, z' = A·z + B, w' = z。其中 A 和 B 是待定的第三行系数。</p>
+<p>规范深度 z_ndc = z'/w' = (A·z + B) / z = A + B/z。约束条件（在 [−1,1] 规范体中）：</p>
+<p>近平面 z=n：z_ndc(n) = A + B/n = −1<br>
+远平面 z=f：z_ndc(f) = A + B/f = 1</p>
+<p>解方程组：式(2)−式(1)：B(1/f−1/n) = 2 → B = 2fn/(n−f)。代入式(1)：A = −1 − B/n = −1 − 2f/(n−f) = (f+n)/(f−n)。</p>
+<p>考虑符号约定（视线沿 −z，近平面和远平面为负值），最终得：A = (n+f)/(n−f)，B = 2fn/(n−f)。将这代入矩阵第三行即为 (0, 0, A, B)。证毕。</p>
+</details>
+
+<details>
+<summary>习题 3：代数证明——透视矩阵保持视体内 z 值的顺序。</summary>
+<p><strong>解答：</strong>透视矩阵变换后，z_ndc = A + B/z，其中 A = (n+f)/(n−f)，B = 2fn/(n−f)。注意在常规约定中 n 和 f 均为负值（n > f 是因为近平面数值更大），且场景在摄像机前方（z < 0）。</p>
+<p>计算导数：dz_ndc/dz = −B/z²。由于 B = 2fn/(n−f)，n 和 f 为负，n−f > 0（因为 n > f），所以 fn > 0 → B > 0 → −B < 0。对于 z < 0，z² > 0 → dz_ndc/dz = −B/z² < 0。</p>
+<p>导数恒为负意味着当 z 增大（从负值往零点方向）时 z_ndc 减小。两点 z₁ < z₂ < 0（z₁ 更近，z₁ > z₂ 在数值上）→ z_ndc(z₁) < z_ndc(z₂)，因为函数单调递减（或单调递增取决于视角）。不管方向——关键是单调性保证了顺序不变——最近的总是对应极值。证毕。</p>
+</details>
+
+<details>
+<summary>习题 4：证明——对于前三行任意、底行为 (0,0,0,1) 的 4×4 矩阵，点 (x,y,z,1) 和 (hx,hy,hz,h) 变换到同一点（齐次化后）。</summary>
+<p><strong>解答：</strong>设矩阵 M 底行为 (0,0,0,1)。对点 (x,y,z,1)：M·[x,y,z,1]ᵀ = [row1·p, row2·p, row3·p, 0·x+0·y+0·z+1·1]ᵀ = [x', y', z', 1]ᵀ。齐次化后：(x', y', z')。</p>
+<p>对点 (hx, hy, hz, h)：M·[hx,hy,hz,h]ᵀ = [h·row1·p, h·row2·p, h·row3·p, 0·hx+0·hy+0·hz+1·h]ᵀ = [hx', hy', hz', h]ᵀ。齐次化后：(hx'/h, hy'/h, hz'/h) = (x', y', z')。</p>
+<p>结论：如果底行是 (0,0,0,1)，齐次因子 h 在变换后被保持——变换是齐次线性的，这适用于所有仿射矩阵。<strong>透视矩阵的底行是 (0,0,1,0)，所以这个性质不成立——透视矩阵需要齐次化才能得到有效结果。</strong></p>
+</details>
+
+<details>
+<summary>习题 5：写出 n=1, f=2 的透视矩阵，并计算点 p=(x,y,z,1) 的齐次化和非齐次化结果。</summary>
+<p><strong>解答：</strong>代入 n=1, f=2 到标准透视矩阵系数：A = (n+f)/(n−f) = 3/(−1) = −3，B = 2fn/(n−f) = 4/(−1) = −4。</p>
+<p>设 r=t=n=1（90° FOV）：</p>
+<pre class="math">        [1  0   0   0]
+        [0  1   0   0]
+M_per = [0  0  −3  −4]
+        [0  0  −1   0]</pre>
+<p>对 p=(x,y,z,1)：M·p = (x, y, −3z−4, −z)。</p>
+<p><strong>非齐次化结果：</strong>(x, y, −3z−4, −z) ——仍在齐次空间中。<br>
+<strong>齐次化结果（规范体坐标）：</strong>(−x/z, −y/z, 3+4/z, 1)。验证：对于 z=n=1 → (−x, −y, 7)，对于 z=f=2 → (−x/2, −y/2, 5)。</p>
+</details>
+
+<details>
+<summary>习题 6：对于视线 e=(0,1,0)，观察方向 g=(0,−1,0)，上方向 t=(1,1,0)，求正交的 uvw 基（用于摄像机坐标旋转）。</summary>
+<p><strong>解答：</strong>摄像机坐标系构建（LookAt 标准步骤）：</p>
+<p>w = −g / |g|：g=(0,−1,0) → |g|=1 → w = (0, 1, 0)。（前方向是 −w，所以摄像机沿 −y 方向观察。）</p>
+<p>u = (t × w) / |t × w|：t=(1,1,0), w=(0,1,0)。t × w = (1·0−0·1, 0·0−1·1, 1·1−1·0) = (0, −1, 1)。|t×w| = √(0+1+1) = √2。u = (0, −1/√2, 1/√2)。</p>
+<p>v = w × u：w=(0,1,0), u=(0,−1/√2,1/√2)。v = (1·(1/√2)−0·(−1/√2), 0·0−0·(1/√2), 0·(−1/√2)−1·0) = (1/√2, 0, 0)。</p>
+<p>验证：u·v=0, u·w=0, v·w=0 ——三者正交。u,v,w 均归一化。这三个向量构成摄像机坐标系的三个基——(u,v,w) 矩阵用于将世界坐标旋转到摄像机坐标。M_cam 的左上 3×3 为 [uᵀ; vᵀ; wᵀ]（列主序），平移部分为 (−u·e, −v·e, −w·e)。</p>
+</details>
+
+<!-- ========== QA 零基础问答区 ========== -->
+<h2 id="qa">QA 零基础问答区</h2>
+
+<div class="qa-item">
+<p class="qa-q">Q: 透视投影和正交投影有什么区别？什么时候该用哪一个？</p>
+<p class="qa-a">A: <strong>正交投影</strong>（平行投影）中，投影线相互平行——无论物体离摄像机多远，在屏幕上一样大。没有"近大远小"的效果。常用在 CAD、工程制图、2D 游戏和 UI 渲染中——当你需要精确的尺寸关系时。<strong>透视投影</strong>中，投影线从视点汇聚——远处物体比近处物体小，平行线汇聚于消失点。这模拟了人眼和相机的工作方式，是 3D 游戏、电影和照片级渲染的标准。从数学上：正交投影就是丢弃 z 坐标并做范围映射（2D 仿射，w 恒为 1）；透视投影则需要用 4×4 矩阵实现除以 z（齐次除法），因为 z 出现在分母（远小近大）。选择规则：需要深度感和真实感 → 透视；需要精确几何关系 → 正交。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q: 透视矩阵将负 z 值映射到正 z 值且顺序反转——这会导致问题吗？</p>
+<p class="qa-a">A: 会导致"撕裂"（tearing）现象。透视变换后 z' = n+f − fn/z。想一下：当 z 从正无穷穿过 0 到负无穷，z' 从 n+f（正值）跳到 +∞，然后在 z 为微小的正数时变成 −∞ 随后回升。任何横跨 z=0 的线段会被"撕裂"成两个分离的段。但实际上，<strong>当所有物体都在视体内时，这不构成问题</strong>——裁剪（第九章）确保只有视体内的点被投影，所以 z 的范围在 [n,f] 之间是连续的，不会穿越 0。在管线中，裁剪必须在齐次空间（透视除法前）做，这样眼后的点（w&#60;0）能被正确剔除。只要裁剪到位，撕裂就不会在实际渲染中出现。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q: 透视矩阵改变了齐次坐标的值（w ≠ 1）——这会影响平移和缩放操作吗？</p>
+<p class="qa-a">A: 会，但只在透视除法之前。在裁剪空间（4D 齐次坐标）中，w ≠ 1 意味着点处于"投影形式"——平移矩阵作用在 4D 齐次坐标 [x,y,z,w] 上：M_translate × [x,y,z,w] = [x+tx·w, y+ty·w, z+tz·w, w]。注意平移量被 w 缩放了。但齐次化后 (x/w+tx, y/w+ty, z/w+tz)，结果又回到了标准欧几里得平移。所以<strong>只要在透视除法之前不做几何体修改，这个效应就是"无害的"</strong>——管线裁剪在齐次空间做，着色在除法后的空间做，这条边界很清晰。但如果你打算在裁剪空间中做其他几何操作（如修改顶点），就需要注意 w 的影响。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q: 什么是视场角（FOV）？窄和宽的 FOV 分别带来什么视觉效果？</p>
+<p class="qa-a">A: 视场角（Field of View, FOV）描述摄像机在一次拍摄中能看到的水平或垂直角度范围。标准人眼水平 FOV 约 120°（双目），但中央清晰视野只有约 60°。FOV 通过窗口参数间接定义：宽高比 = n_x/n_y = r/t，其中 tan(θ/2) = t/|n|（对于垂直 FOV θ）。<strong>窄 FOV（如 30°）：</strong>放大了远处物体，看起来像望远镜——透视减弱，接近正交投影的感觉。<strong>宽 FOV（如 120°）：</strong>远处物体急剧缩小，边缘拉伸变形显著（鱼眼效应）——透视夸张，强化了深度感和速度感。游戏常用 60–90° 水平 FOV 作为舒适范围。FOV 也影响画面中的"物体密度"——窄 FOV 排除边缘信息，宽 FOV 包含了更多环境，但物体投影变小。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q: 为什么需要三个矩阵（摄像机、投影、视口）而不是一个？</p>
+<p class="qa-a">A: 理论上可以把三个矩阵乘成一个，但分成三个阶段带来了重要的<strong>概念清晰性和管线灵活性</strong>：（1）<strong>摄像机矩阵（View Matrix）</strong>独立表达了虚拟摄像机的位置和朝向——解耦了场景和摄像机，使得多摄像机渲染（如阴影贴图、反射探针）只需改变这一个矩阵，场景物体不变。（2）<strong>投影矩阵（Projection Matrix）</strong>独立表达了镜头的"光学特性"（FOV、近远裁剪面）——它是摄像机固有的，不受摄像机位置影响。切换正交/透视也只需换这个矩阵。（3）<strong>视口矩阵（Viewport Matrix）</strong>独立表达了最终像素映射——在不同的屏幕分辨率、分割屏幕、小视口渲染中只改这个矩阵。（4）更根本的是，这三个阶段的边界恰好对应着 GPU 管线中的关键硬件单元——顶点着色器输出世界/眼空间坐标、裁剪单元消费裁剪空间坐标、光栅化器消费 NDC 坐标——三矩阵分离是不让硬件溢出的设计。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q: "规范视体"（canonical view volume）是什么？为什么要把所有东西映射到 [−1,1]³？</p>
+<p class="qa-a">A: 规范视体是一个统一的"目标空间"——所有不同的投影（正交的、透视的、窄 FOV 的、宽 FOV 的）最终都把视体内的几何体映射到同一个 [−1,1]³ 盒体中。这样做的原因是<strong>标准化</strong>：裁剪、光栅化和深度测试这些后续阶段只需在 [−1,1]³ 上工作一次，不用为每种投影单独实现。比如裁剪就是在 [−1,1] 的 x,y,z 范围上做——无论来源是正交还是透视，裁剪面永远是 x=±1, y=±1, z=±1（或 [0,1] 在 DirectX 中）。这种统一性使得硬件实现可以高度优化，因为所有后续算法看到的是同一输入范围。规范视体是图形学中最成功的<strong>抽象层</strong>之一——它将"外面的世界如何投射进来"与"投影后如何处理"干净地分开了。类比：不管快递盒子是什么形状（视锥体、正方体、梯形），物流中心统一贴在标准标签（规范体）上——分拣机只看标签，不看盒子。</p>
+</div>
+
+</body></html>

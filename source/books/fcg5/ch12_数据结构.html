@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FCG Ch12: Data Structures for Graphics — 全文翻译 (Guizang插图版)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Noto Serif SC","Source Han Serif SC","SimSun",Georgia,serif;background:#faf9f5;color:#2c2c2c;line-height:1.9;font-size:15px;max-width:860px;margin:0 auto;padding:40px 24px}
+h1{font-size:28px;text-align:center;margin:40px 0 10px;color:#1a1a1a;border-bottom:2px solid #002FA7;padding-bottom:16px}
+h2{font-size:22px;margin:48px 0 20px;color:#1a1a1a;border-left:4px solid #002FA7;padding-left:14px}
+h3{font-size:17px;margin:32px 0 14px;color:#333}
+p{margin:12px 0;text-indent:2em}
+p.no-indent{text-indent:0}
+blockquote{background:#f0f0ed;border-left:3px solid #002FA7;margin:16px 0;padding:10px 18px;color:#555;font-style:italic}
+blockquote p{text-indent:0}
+code{background:#eee;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:13px}
+pre{background:#1e1e1e;color:#d4d4d4;padding:16px 20px;border-radius:6px;overflow-x:auto;font-size:13px;line-height:1.5;margin:14px 0}
+pre code{background:transparent;padding:0;color:inherit}
+pre.math{background:#f5f0e8;color:#2c2c2c;border:1px solid #d4c8a8;padding:14px 18px;font-size:14px}
+figure{margin:28px 0;text-align:center}
+figure img{max-width:100%;border-radius:4px;box-shadow:0 2px 12px rgba(0,0,0,0.08)}
+figcaption{font-size:13px;color:#777;margin-top:8px}
+.fig-num{font-weight:700;color:#002FA7}
+.key-term{font-weight:600;color:#002FA7}
+.thought-box{background:#f5f8fc;border:1px solid #c8d6e5;border-radius:6px;padding:12px 18px;margin:16px 0}
+.thought-box p{text-indent:0;margin:4px 0}
+.analogy-box{background:#fdf6ec;border:1px solid #e8d5a0;border-radius:6px;padding:12px 18px;margin:16px 0}
+.analogy-box p{text-indent:0;margin:4px 0}
+.analogy-box .label{font-weight:700;color:#b8860b}
+.nav-bar{background:#fff;border-bottom:1px solid #e0e0e0;padding:10px 20px;margin:-40px -24px 30px;display:flex;gap:16px;font-size:13px;flex-wrap:wrap}
+.nav-bar a{color:#555;text-decoration:none}
+.nav-bar a:hover{color:#002FA7}
+details{margin:12px 0;border:1px solid #ddd;border-radius:6px;padding:10px 16px;background:#fafafa}
+details summary{cursor:pointer;font-weight:600;color:#333;font-size:14px}
+details p,details pre{margin:8px 0}
+.qa-item{margin:16px 0;border-left:3px solid #b8860b;padding-left:14px}
+.qa-q{font-weight:700;color:#b8860b;margin-bottom:4px}
+.qa-a{margin-left:0}
+.toc{background:#fff;border:1px solid #e0e0e0;border-radius:6px;padding:16px 24px;margin:20px 0;font-size:14px}
+.toc strong{display:block;margin-bottom:8px;font-size:16px}
+.toc ul{list-style:none;padding-left:8px}
+.toc li{margin:4px 0}
+.toc a{color:#002FA7;text-decoration:none}
+.toc a:hover{text-decoration:underline}
+.objectives-box{background:#f5f8fc;border:1px solid #002FA7;border-left:6px solid #002FA7;border-radius:6px;padding:14px 22px;margin:24px 0}
+.objectives-box h3{color:#002FA7;margin:0 0 10px 0;font-size:17px}
+.objectives-box ol{margin:0;padding-left:22px}
+.objectives-box li{margin:6px 0;line-height:1.7}
+.insight-box{background:#fdf8f0;border:1px solid #e8d5b0;border-radius:6px;padding:14px 20px;margin:24px 0}
+.insight-box h3{color:#b8860b;margin:0 0 10px 0;font-size:16px}
+.insight-box ul{margin:0;padding-left:20px}
+.insight-box li{margin:6px 0}
+</style></head><body>
+<div class="chapter-header">
+  <span id="logo">FCG 5E</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch12 数据结构</span>
+  <span id="btns">
+    <a href="#目录" class="hdr-btn">[=] 目录</a>
+    <a href="#s12-1"><button>[+] 章节</button></a>
+  </span>
+</div>
+
+
+
+<div class="nav-bar">
+<a href="#s12-1">12.1 三角网格</a> <a href="#s12-2">12.2 场景图</a> <a href="#s12-3">12.3 空间数据结构</a> <a href="#s12-4">12.4 BSP树</a> <a href="#s12-5">12.5 多维数组平铺</a>
+<a href="#s12-exercises">练习</a> <a href="#s12-qa">QA</a>
+</div>
+
+<h1>第12章：图形数据结构</h1>
+<div class="lecture-note">
+<strong>说明</strong>
+<p>本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书》（Fundamentals of Computer Graphics）第5版第12章（p.308-350）数据结构。</p>
+<p>图形学的空间加速结构——三角网格表示、场景图、AABB包围体、BVH层次包围体、均匀空间细分、BSP树、莫顿码 Z 阶曲线与平铺。</p>
+<p>本版插画采用 Guizang 材质插画风格重新绘制。</p>
+</div>
+
+
+
+<div class="toc" id="目录"><strong>目录</strong>
+<ul>
+<li><a href="#学习目标">学习目标</a></li>
+<li><a href="#s12-1">12.1 三角网格</a></li>
+<li><a href="#s12-2">12.2 场景图</a></li>
+<li><a href="#s12-3">12.3 空间数据结构</a></li>
+<li><a href="#s12-4">12.4 用于可见性的 BSP 树</a></li>
+<li><a href="#s12-5">12.5 多维数组的平铺</a></li>
+<li><a href="#insights">本章核心洞察</a></li>
+<li><a href="#s12-exercises">课后练习题</a></li>
+<li><a href="#s12-qa">QA 零基础问答区</a></li>
+</ul></div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+
+<li>理解三角网格的基本数据结构：顶点-面表示、共享顶点的网格拓扑及其相比无关三角形集合的存储效率优势</li>
+<li>了解翼边/半边数据结构的设计思路，掌握其在动态网格编辑（细分曲面、模型简化）中的应用场景</li>
+<li>理解场景图的分层变换模型：父-子节点的仿射变换传递，及其在管理复杂三维场景中的核心作用</li>
+<li>掌握三类空间数据结构（包围体层次BVH、层次空间细分、均匀空间细分）的设计原理与加速求交的基本思路</li>
+<li>理解BSP树用于可见性排序的算法思想和多维数组平铺用于内存局部性优化的基本概念</li>
+</ol>
+<hr>
+
+<p class="no-indent">某些数据结构在图形应用中反复出现——也许是因为它们处理了表面、空间和场景结构这些基本底层思想。本章讨论几个基本且互不相关的数据结构类别，是图形学中最常见和最有用的：<span class="key-term">网格结构</span>（mesh structures）、<span class="key-term">空间数据结构</span>（spatial data structures）、<span class="key-term">场景图</span>（scene graphs）和<span class="key-term">平铺多维数组</span>（tiled multidimensional arrays）。</p>
+
+<p>对于网格，我们讨论存储静态网格和将网格传输到图形 API 的基本存储方案。我们还讨论<span class="key-term">翼边数据结构</span>（winged-edge data structure，Baumgart, 1974）和相关的<span class="key-term">半边结构</span>（half-edge structure），它们对于管理曲面细分变化时的模型（如细分曲面或模型简化）非常有用。尽管这些方法可推广到任意多边形网格，本章聚焦于三角形网格这一简单情况。</p>
+
+<p>接下来介绍<span class="key-term">场景图</span>数据结构。其各种形式在图形应用中无处不在，因为它在管理物体和变换方面极为有用。所有新版图形 API 都设计为良好支持场景图。</p>
+
+<p>对空间数据结构，我们讨论三种在三维空间中组织模型的方法：<span class="key-term">包围体层次结构</span>（bounding volume hierarchies）、<span class="key-term">层次空间细分</span>（hierarchical space subdivision）和<span class="key-term">均匀空间细分</span>（uniform space subdivision）——以及使用<span class="key-term">BSP 树</span>进行隐藏面消除。这些方法同样用于几何体裁剪和碰撞检测。</p>
+
+<p>最后介绍<span class="key-term">平铺多维数组</span>。它最初为帮助需要将图形数据从磁盘换入的应用中的分页性能而开发，现在对机器的内存局部性至关重要——无论数组是否适合主存。</p>
+
+<!-- ==================== 12.1 ==================== -->
+<h2 id="s12-1">12.1 三角网格</h2>
+
+<p>大多数真实世界模型由共享顶点的三角形复合体组成，通常称为<span class="key-term">三角形网格</span>（triangular meshes）、<span class="key-term">三角网格</span>（triangle meshes）或<span class="key-term">三角形不规则网络</span>（TINs, triangular irregular networks）。高效处理它们对许多图形程序性能至关重要。网格存储在磁盘和内存中，我们希望最小化存储。当网格通过网络或从 CPU 传输到图形系统时，消耗的带宽往往比存储更加珍贵。对于执行网格操作的应用程序——细分曲面、网格编辑、压缩等——对<span class="key-term">邻接信息</span>（adjacency information）的高效访问至关重要。</p>
+
+<p>三角形网格通常用于表示表面，因此网格不仅仅是无关三角形的集合，而是通过共享顶点和边互相连接、形成单一连续表面的三角形网络。这是关于网格的关键洞察：<strong>一个网格可以比相同数量的无关三角形集合更高效地处理</strong>。</p>
+
+<p>三角形网格所需的最小信息是一个三角形集合（顶点的三元组）及其顶点的 3D 位置。但大多数程序需要能够在顶点、边或面上存储附加数据以支持纹理映射、着色、动画等操作。顶点数据是最常见的：每个顶点可以有材质参数、纹理坐标、辐照度——任何值在表面上变化的参数。这些参数在每个三角形上线性插值，以在整个网格表面定义连续函数。偶尔也需要在每条边或每个面上存储数据。</p>
+
+<h3 id="12-1-1">12.1.1 网格拓扑</h3>
+
+<p>网格的表面性质可被形式化为对网格<span class="key-term">拓扑</span>（topology）的约束——三角形相互连接的方式，与顶点位置无关。许多算法只工作于具有可预测连通性的网格，或在此类网格上实现要容易得多。</p>
+
+<p>最简单的、也是最严格的拓扑要求是表面为<span class="key-term">流形</span>（manifold）。术语流形来自拓扑学数学领域；粗略讲，一个<span class="key-term">二维流形</span>（2-manifold）是在每一处都像一个表面的对象。流形网格是"水密的"——无间隙，将表面内部空间与外部空间分开。正式的三个条件为：</p>
+
+<ol>
+<li><strong>每条边恰好被两个三角形共享</strong>（或在边界处被一个三角形共享）。不能有三个或更多三角形共享同一条边。</li>
+<li><strong>每个顶点周围的三角形形成一个单一的循环</strong>（扇）。不能存在两个或多个孤立的三角形组共享同一顶点。</li>
+<li><strong>网格在每一点局部同胚于圆盘</strong>（locally homeomorphic to a disk）。这意味着在网格上的任何点放大看，都应像一块平整的圆盘。</li>
+</ol>
+
+<div class="analogy-box">
+<p class="label">生活类比：</p>
+<p>把流形网格想象成一个充气玩具——它的表面是连续的，没有洞，每一个点周围都可以贴一块小圆片。而非流形网格就像纸折出的"T"形接缝——三张纸粘在同一条边上，那一点附近的拓扑不再是"盘状"的。</p>
+</div>
+
+<p>网格的<span class="key-term">亏格</span>（genus）指其"手柄"的数量。球面亏格为 0，环面（甜甜圈）亏格为 1。著名的<span class="key-term">欧拉公式</span>（Euler's formula）关联顶点数 V、边数 E、面数 F 与亏格 G：</p>
+
+<pre class="math">V − E + F = 2(1 − G)</pre>
+
+<p>对于闭合流形三角网格，每个三角形有 3 条边，每条边被 2 个三角形共享，因此 E ≈ 3F/2。代入欧拉公式得：V − 3F/2 + F = 2(1−G)，整理得 V ≈ F/2 + 2(1−G)。对于球面（G=0）：V ≈ F/2 + 2。这一不变量用于验证网格完整性和检测退化，是许多网格处理算法的基础。</p>
+
+<!-- ===== 12.1 扩充: 欧拉公式详细证明与亏格实例 ===== -->
+<h3>欧拉公式的详细推导与验证</h3>
+
+<p>欧拉公式 V − E + F = 2(1 − G) 是拓扑学中最优美的结果之一。下面给出其推导思路：</p>
+
+<p><strong>步骤 1：平面化</strong>——将闭合曲面去掉一个三角形面，剩余部分可展开到平面上（想象把地球仪表面剥去一块后摊平）。展开后，顶点数 V' = V，边数 E' = E，面数 F' = F − 1。</p>
+
+<p><strong>步骤 2：三角剖分</strong>——在平面上，通过添加对角线将每个非三角形面剖分为三角形。每添加一条对角线，边数和面数各增加 1，V − E + F 不变。</p>
+
+<p><strong>步骤 3：逐步移除边界三角形</strong>——从外部边界开始逐层移除三角形。移除一个边界三角形有三种情况：</p>
+
+<pre class="math">情况 A: 移除一个三角形，它贡献 1 条外部边 → E−1, F−1 (Euler 特征不变)
+情况 B: 移除一个三角形，它贡献 2 条外部边 → V−1, E−2, F−1 (Euler 特征不变)
+情况 C: 移除一个三角形，它贡献 3 条外部边 → V−2, E−3, F−1 (Euler 特征不变)</pre>
+
+<p>无论哪种情况，<strong>每移除一个三角形，V − E + F 的值保持不变</strong>。最终剩余一个三角形：V=3, E=3, F=1，得 V − E + F = 1。由于步骤 1 中去掉了一个面，原始曲面的 V − E + F = 2。</p>
+
+<p><strong>步骤 4：亏格的修正</strong>——以上推导针对球面（亏格 G=0）。具有 G 个"把手"（手柄、环柄）的曲面，相当于球面上附着了 G 个环柄。每个环柄的添加：增加了一个贯穿孔洞，打开两个圆形孔（各减少 1 个面？）。拓扑学严格计算表明，每增加一个亏格，V − E + F 减少 2。因此通式为：</p>
+
+<pre class="math">V − E + F = 2(1 − G) = 2 − 2G</pre>
+
+<h4>亏格 0/1/2 的实例验证</h4>
+
+<p><strong>亏格 0——球面/四面体：</strong>四面体 V=4, E=6, F=4。V − E + F = 4 − 6 + 4 = 2 = 2(1−0) ✓</p>
+
+<p><strong>亏格 0——球面/立方体：</strong>立方体三角剖分后 V=8, E=18, F=12。V − E + F = 8 − 18 + 12 = 2 = 2(1−0) ✓</p>
+
+<p><strong>亏格 1——环面（甜甜圈）：</strong>一个典型的三角化环面有 V=16, E=48, F=32。V − E + F = 16 − 48 + 32 = 0 = 2(1−1) = 0 ✓</p>
+
+<p><strong>亏格 2——双环面（8 字形手柄）：</strong>双环面的 V − E + F = 2(1−2) = <strong>−2</strong>。例如三角化双环面可能 V=24, E=84, F=58 → 24−84+58 = −2 ✓</p>
+
+<div class="thought-box">
+<p><strong>工程实用价值：</strong>欧拉公式在图形学中不是纸上谈兵的数学。当你从 3D 扫描仪导入一个三角网格，发现 V − E + F ≠ 2(1−G) 时，意味着：</p>
+<p>① 存在孤立的顶点（悬空的顶点，不属于任何三角形）——直接删除。<br>
+② 存在非流形边（三个或更多三角形共享同一条边）——需要拓扑修复。<br>
+③ 存在孔洞（边界）——影响 3D 打印的水密性要求。<br>
+④ 存在重叠三角形——导致渲染闪烁和光照计算错误。</p>
+<p>几乎所有网格修复工具（如 MeshLab）的第一步就是验证欧拉不变量。</p>
+</div>
+
+<!-- ===== 12.1 扩充: 欧拉证明与亏格结束 ===== -->
+
+<div class="thought-box">
+<p>想一想：为什么欧拉公式中用边数 E 而不是顶点数 V 作为"桥梁"？因为边同时连接了顶点和面——每条边属于恰好两个面（流形条件下），同时也恰好连接两个顶点。边数的双重角色使它成为 V 和 F 之间的自然"汇率"。</p>
+</div>
+
+<h3 id="12-1-2">12.1.2 索引网格存储</h3>
+
+<p>最紧凑实用的存储方案是<span class="key-term">索引三角形网格</span>（indexed triangle mesh）：</p>
+
+<pre class="math">顶点数组:  Vertex vertices[n_v];  // 每个顶点的 (x,y,z) 位置 + 法线 + 纹理坐标
+索引数组:  int indices[3 * n_t];  // 每三角形 3 个整数，指向 vertices[] 的索引</pre>
+
+<p>该表示消除了所有顶点冗余，对于 GPU 管线处理也高效。每个三角形由三个指向顶点数组的索引定义，一条边由共享两个顶点的两个三角形隐式定义。这种方案是 OBJ、PLY、glTF 等流行三维文件格式的基础。</p>
+
+<p>一个好的网格数据结构应当合理紧凑，并允许对所有邻接查询进行常数时间回答——找到邻居的时间不应依赖于网格大小。我们将讨论三种网格数据结构：一种基于三角形、两种基于边。</p>
+
+<div class="thought-box">
+<p>想一想：为什么索引网格存储如此高效？因为顶点是数据中最大的开销——每个顶点有 3 个坐标 + 法线 + 纹理坐标 = 至少 8 个 float = 32 字节，而每个三角形平均有约 3 个顶点。如果不共享索引，一个 1 万个三角形的网格需要 3 万个顶点 = 960KB；使用索引后只需约 5000 个唯一顶点 = 160KB。（在流形网格中，V ≈ F/2。）</p>
+</div>
+
+<h3 id="12-1-3">12.1.3 三角邻接结构</h3>
+
+<p>最直接但臃肿的实现是显式存储所有关系：</p>
+
+<pre><code>Triangle {
+    Vertex v[3]
+    Edge   e[3]
+}
+Edge {
+    Vertex   v[2]
+    Triangle t[2]
+}
+Vertex {
+    Triangle t[]   // 可变长度！
+    Edge     e[]
+}</code></pre>
+
+<p>这种方法存储了过多信息，且顶点中的可变长度数据结构效率低下。更好的方案是定义类接口来回答邻接查询，背后隐藏更高效的数据结构。我们可以只存储部分连通性信息，在需要时高效恢复其余信息。</p>
+
+<p><strong>精简版三角邻接结构：</strong></p>
+
+<pre><code>Triangle {
+    Triangle nbr[3];  // 相邻三角形，nbr[k] 与边 k 相对
+    Vertex   v[3];
+}
+Vertex {
+    // ... per-vertex data ...
+    Triangle t;   // 任意一个邻接三角形
+}</code></pre>
+
+<p>该结构中，三角形 t 的邻居三角形和顶点可直接获取。通过在三角形间移动，也可常数时间回答顶点的连通性查询。如果三角形 t 以顶点 v 为第 k 个顶点，则 t.nbr[k] 是围绕 v 的顺时针方向的下一个三角形。这导出了<span class="key-term">三角形邻接遍历</span>（TrianglesOfVertex）算法：</p>
+
+<pre><code>TrianglesOfVertex(v) {
+    t = v.t
+    do {
+        // 找到 i 使 t.v[i] == v  (常数时间，因为固定大小)
+        t = t.nbr[i]
+    } while (t != v.t)
+}</code></pre>
+
+<p>该操作每次找下一个三角形是常数时间——虽然需搜索顶点在三角形顶点列表中的位置，但顶点列表大小固定（3），所以搜索也是常数时间。但搜索本身笨拙且需额外分支。</p>
+
+<div class="thought-box">
+<p>想一想：为什么搜索"从哪个方向来的"这么麻烦？因为我们只知道"我在三角形 A 的哪个位置"，但跟着指针跳到三角形 B 后，不知道三角形 B 的哪个顶点对应回三角形 A。这就像你从房间 A 的门出去进入房间 B——但你不知道房间 B 的哪扇门通向房间 A，必须绕房间 B 走一圈找那扇门。</p>
+</div>
+
+<p><strong>改进版：带边索引的三角邻接</strong></p>
+
+<p>通过存储指向相邻三角形<strong>特定边</strong>的指针，可以消除搜索：</p>
+
+<pre><code>Triangle {
+    Edge   nbr[3];  // nbr[k] 对应于 v[(k+1)%3] 到 v[(k+2)%3] 的边
+    Vertex v[3];
+}
+Edge {
+    Triangle t;     // t 的第 i 条边
+    int      i;     // 0, 1, 或 2
+}
+Vertex {
+    // ... per-vertex data ...
+    Edge e;          // 离开该顶点的任一条边
+}</code></pre>
+
+<p>实践中，Edge 可以借用三角形索引的两个位来存储边索引 i，因此总存储需求不变。该结构维护一个重要的<span class="key-term">数据结构不变式</span>（invariant）：对于任意三角形 t 的第 j 条边：</p>
+
+<pre class="math">t.nbr[j].t.nbr[t.nbr[j].i].t == t</pre>
+
+<p>这个不变式保证从三角形 t 的边 j 出发→走到邻居三角形→再走回对应边→能返回 t。利用它，我们可以精简遍历算法：</p>
+
+<pre><code>TrianglesOfVertex(v) {
+    {t, i} = v.e
+    do {
+        {t, i} = t.nbr[i]      // 沿邻接边移动
+        i = (i + 1) mod 3      // 绕顶点顺时针转到下一条边
+    } while (t != v.e.t)
+}</code></pre>
+
+<p>该版本无需搜索，每次迭代常数时间。存储开销：对仅含顶点位置的网格，每顶点存 4 个数（3 坐标 + 1 边），每面存 6 个数（3 个顶点索引 + 3 条边），总计约 4n_v + 6n_t ≈ 16n_v 单位存储，而基本索引网格只需 9n_v。多出的存储换来了常数时间的邻接遍历。</p>
+
+<p>该结构仅适用于无边界流形网格（因为遍历依赖回到起始三角形来终止）。推广到带边界网格不难——为边界三角形的邻居引入哨兵值（如 -1），并确保边界顶点指向最逆时针的邻接三角形。</p>
+
+<h3 id="12-1-4">12.1.4 翼边结构</h3>
+
+<p><span class="key-term">翼边数据结构</span>（winged-edge data structure）将连通性信息存储在边而非面上，使边成为数据结构中的"一等公民"。每条边存储指向它的两个顶点（头顶点 head 和尾顶点 tail）、它所属的两个面（左面 left 和右面 right），以及最重要的——沿左面和右面逆时针方向遍历时的下一条边和前一条边：</p>
+
+<pre><code>Edge {
+    Edge lprev, lnext, rprev, rnext;
+    Vertex head, tail;
+    Face left, right;
+}
+Face {
+    // ... per-face data ...
+    Edge e;   // 任意邻接边
+}
+Vertex {
+    // ... per-vertex data ...
+    Edge e;   // 任意入射边
+}</code></pre>
+
+<!-- ===== 12.1 扩充: 翼边结构详细字段解释 ===== -->
+<h4>翼边结构的完整字段语义</h4>
+
+<p>翼边结构（Baumgart 1974）之所以得名，是因为每条边像一只鸟的身体，左右两个面像展开的翅膀。下面是每条边 <code>Edge</code> 存储的 8 个引用（不含顶点和面）：</p>
+
+<table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px">
+<tr style="background:#f0f0ed"><th style="border:1px solid #ddd;padding:8px;text-align:left">字段</th><th style="border:1px solid #ddd;padding:8px;text-align:left">含义</th><th style="border:1px solid #ddd;padding:8px;text-align:left">几何解释</th></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><code>lprev</code></td><td style="border:1px solid #ddd;padding:8px">左侧面中逆时针方向的前一条边</td><td style="border:1px solid #ddd;padding:8px">沿左面逆时针走的前一步</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><code>lnext</code></td><td style="border:1px solid #ddd;padding:8px">左侧面中逆时针方向的后一条边</td><td style="border:1px solid #ddd;padding:8px">沿左面逆时针走的下一步</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><code>rprev</code></td><td style="border:1px solid #ddd;padding:8px">右侧面中逆时针方向的前一条边</td><td style="border:1px solid #ddd;padding:8px">沿右面逆时针走的前一步</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><code>rnext</code></td><td style="border:1px solid #ddd;padding:8px">右侧面中逆时针方向的后一条边</td><td style="border:1px solid #ddd;padding:8px">沿右面逆时针走的下一步</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><code>head</code></td><td style="border:1px solid #ddd;padding:8px">边的终点（头顶点）</td><td style="border:1px solid #ddd;padding:8px">从 tail 到 head 的有向边</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><code>tail</code></td><td style="border:1px solid #ddd;padding:8px">边的起点（尾顶点）</td><td style="border:1px solid #ddd;padding:8px">有向边的起始端点</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><code>left</code></td><td style="border:1px solid #ddd;padding:8px">边的左侧面</td><td style="border:1px solid #ddd;padding:8px">从 tail→head 看，左侧的面</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><code>right</code></td><td style="border:1px solid #ddd;padding:8px">边的右侧面</td><td style="border:1px solid #ddd;padding:8px">从 tail→head 看，右侧的面</td></tr>
+</table>
+
+<p><strong>左右定向约定：</strong>以有向边 tail→head 为基准，左侧面（left）和右侧面（right）用"右手法则"确定：右手四指从 tail 弯向 head，掌心方向就是右面，手背方向是左面。这等价于：<strong>每个面的边界边按逆时针方向排列</strong>（从面外部看向面内部时）。</p>
+
+<p><strong>8 条指针的拓扑关系：</strong>对左边面而言，<code>lnext</code> 是从当前边出发，沿左面逆时针方向的下一条边。<code>lprev</code> 是前一条边。对称地，<code>rnext</code> 和 <code>rprev</code> 描述右面的边环。这 8 个引用构建了一张图——<strong>每个边都是图中一个节点，引用是出边</strong>——通过追踪引用可以在面、顶点和相邻边之间自由穿梭，且每步都是 O(1)。</p>
+
+<div class="thought-box">
+<p><strong>存储开销计算：</strong>一个三角形网格中 E ≈ 3V（由 V−E+F=2 且 F≈2V 推出 E≈3V）。每条边存储 12 个引用（8 个边引用 + 2 个顶点引用 + 2 个面引用），每个引用 4 字节（32 位指针）或 8 字节（64 位）。在 64 位系统上，每条边 ≈ 96 字节，顶点 ≈ 8 字节（边引用），面 ≈ 8 字节（边引用）。一个 100 万三角形的网格 → E ≈ 150 万 → 约 <strong>144 MB</strong> 仅用于边结构。相比之下，索引网格只需约 <strong>36 MB</strong>。4 倍的内存换来了 O(1) 的邻接查询，这在交互式网格编辑中物有所值。</p>
+</div>
+<!-- ===== 翼边详细字段解释结束 ===== -->
+
+<p>翼边结构支持常数时间访问面或顶点的边，以及从边访问邻接顶点和面。遍历一个顶点的所有边：</p>
+
+<pre><code>EdgesOfVertex(v) {
+    e = v.e
+    do {
+        if (e.tail == v)
+            e = e.lprev    // 绕 v 逆时针移动
+        else
+            e = e.rprev
+    } while (e != v.e)
+}</code></pre>
+
+<p>遍历一个面的所有边：</p>
+
+<pre><code>EdgesOfFace(f) {
+    e = f.e
+    do {
+        if (e.left == f)
+            e = e.lnext    // 沿面顺时针移动
+        else
+            e = e.rnext
+    } while (e != f.e)
+}</code></pre>
+
+<p>这些算法同样适用于非三角形多边形网格，这是基于边的结构的一个重要优势。翼边结构支持各种时间/空间权衡——例如可以去掉 prev 引用以节省空间，但需沿后继边走完整圈来找前驱边，使某些操作变慢。</p>
+
+<div class="analogy-box">
+<p class="label">生活类比：</p>
+<p>翼边结构像一座城市的道路网络——每条路（边）告诉你它连接哪两个街区（顶点），它属于哪两个社区（面），以及沿社区边界顺时针和逆时针的下一条路是什么。有了这些信息，你可以沿任意街区边界完整走一圈，而无需知道整个城市的地图。</p>
+</div>
+
+<h3 id="12-1-5">12.1.5 半边结构</h3>
+
+<p>翼边结构很优雅，但有个尴尬之处——每次移动前必须检查边的朝向。这类似于基础三角邻接结构中的搜索问题。解决方案也同样直接：不存储每条边的数据，而是为每条边存储两个<span class="key-term">半边</span>（half-edge）——共享同一条物理边的两个三角形各有一个半边，朝向相反，各自与其三角形的方向一致：</p>
+
+<pre><code>HEdge {
+    HEdge  pair, next;   // pair: 对面的半边
+    Vertex v;             // 半边指向的顶点 (头顶点)
+    Face   f;             // 半边所在的面
+}
+Face {
+    // ... per-face data ...
+    HEdge h;   // 该面的任意半边
+}
+Vertex {
+    // ... per-vertex data ...
+    HEdge h;   // 指向该顶点的任意半边
+}</code></pre>
+
+<p>遍历半边结构就像遍历翼边结构，但无需检查朝向。我们通过 pair 指针访问对面半边：</p>
+
+<pre><code>EdgesOfVertex(v) {
+    h = v.h
+    do {
+        h = h.pair.next    // 绕顶点遍历
+    } while (h != v.h)
+}
+EdgesOfFace(f) {
+    h = f.h
+    do {
+        h = h.next         // 沿面遍历
+    } while (h != f.h)
+}</code></pre>
+
+<p>半边的 Edge 也可以选择存储 prev 指针（指向面内的前一条半边）或仅存储 next。单指针版本更紧凑，双指针版本支持双向遍历。</p>
+
+<div class="thought-box">
+<p>想一想：为什么半边叫"半边"？物理上的一条边被两个三角形共享，所以这条边有两个"方向"：三角形 A 看到的边从顶点 v1 到 v2，三角形 B 看到的边从顶点 v2 到 v1。半边结构显式地为每个方向创建了一个独立的数据项。这消除了一切"我此刻在哪个朝向"的条件判断。</p>
+</div>
+
+<!-- ===== 12.1 扩充: 半边结构详细互指关系 ===== -->
+<h4>半边结构的数据关系网</h4>
+
+<p>半边结构的核心设计哲学：每个实体类型（HEdge、HEVertex、HEFace）持有指向其他类型的最低限度引用，形成一个高度连通的有向图。下面以三角形网格为例，展示完整的互指关系：</p>
+
+<p><strong>HEdge 的四个引用：</strong></p>
+
+<pre><code>struct HEdge {
+    HEdge*   pair;    // 对侧半边：共享同一条物理边的另一半边
+    HEdge*   next;    // 当前面内，逆时针方向的下一条半边
+    Vertex*  v;       // 该半边指向的终点（头顶点）
+    Face*    f;       // 该半边所属的面（永远非 NULL）
+}</code></pre>
+
+<p><strong>关键不变式：</strong></p>
+
+<pre class="math">不变式 1: h.pair.pair == h           —— 成对对称
+不变式 2: h.next.f == h.f            —— 同面的半边
+不变式 3: h.next.next.next == h      —— 三角形面内三边成环
+不变式 4: h.v == h.pair.next.v       —— 对侧半边的起点是当前边的终点
+不变式 5: h.next.v ≠ h.v            —— 相邻顶点互异</pre>
+
+<p><strong>HEVertex 的角色：</strong></p>
+
+<pre><code>struct HEVertex {
+    float x, y, z;   // 位置
+    // ... 法线、纹理坐标等 ...
+    HEdge* h;        // 任意一条以该顶点为终点的半边
+}</code></pre>
+
+<p>顶点不需要知道"属于哪些面"或"有多少条入射边"——这些信息可通过追踪 h 的引用间接获取。顶点存储的 h 是<strong>入射边集中任意一条</strong>（通常取第一条创建的），遍历所有入射边只需沿着 pair→next→pair→... 的路径走一圈。</p>
+
+<p><strong>HEFace 的角色：</strong></p>
+
+<pre><code>struct HEFace {
+    // ... 面的材质、颜色等属性 ...
+    HEdge* h;        // 该面的边界半环中任意一条半边
+}</code></pre>
+
+<p>面的边界是一个闭半环（half-loop）：从 f.h 出发，连续沿 next 走，经过恰好 n 步后回到 f.h（n 为面中边数）。</p>
+
+<p><strong>从任意半边出发可达的信息：</strong></p>
+
+<pre class="math">h.v          → 终点顶点的所有属性（坐标、法线、纹理坐标）
+h.pair.v     → 起点顶点的所有属性
+h.pair.f     → 对侧面的所有属性
+h.next       → 同面内的下一条边
+h.next.next  → 同面内的下下条边
+h.pair.next.pair.next... → 绕起点顶点的边界环</pre>
+
+<p><strong>遍历算法复杂度对比：</strong></p>
+
+<table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px">
+<tr style="background:#f0f0ed"><th style="border:1px solid #ddd;padding:8px;text-align:left">查询</th><th style="border:1px solid #ddd;padding:8px;text-align:left">翼边</th><th style="border:1px solid #ddd;padding:8px;text-align:left">半边</th><th style="border:1px solid #ddd;padding:8px;text-align:left">索引网格</th></tr>
+<tr><td style="border:1px solid #ddd;padding:8px">面的所有顶点</td><td style="border:1px solid #ddd;padding:8px">O(1)/顶点</td><td style="border:1px solid #ddd;padding:8px">O(1)/顶点</td><td style="border:1px solid #ddd;padding:8px">O(1)/顶点</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px">顶点的所有邻面</td><td style="border:1px solid #ddd;padding:8px">O(度数)</td><td style="border:1px solid #ddd;padding:8px">O(度数)</td><td style="border:1px solid #ddd;padding:8px">O(E) — 需搜索</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px">边的相邻面</td><td style="border:1px solid #ddd;padding:8px">O(1)</td><td style="border:1px solid #ddd;padding:8px">O(1)</td><td style="border:1px solid #ddd;padding:8px">不可直接查询</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px">边翻转 (flip)</td><td style="border:1px solid #ddd;padding:8px">需条件判断</td><td style="border:1px solid #ddd;padding:8px">无需判断</td><td style="border:1px solid #ddd;padding:8px">不支持</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px">删除顶点</td><td style="border:1px solid #ddd;padding:8px">O(度数)</td><td style="border:1px solid #ddd;padding:8px">O(度数)</td><td style="border:1px solid #ddd;padding:8px">O(E+F) — 需重建</td></tr>
+</table>
+
+<div class="analogy-box">
+<p class="label">生活类比：</p>
+<p>翼边 vs 半边的区别，就像<strong>双向街道 vs 单行分隔公路</strong>。翼边是双向街道——你走在路中间，左边是一个街区（左面），右边是另一个街区（右面），每次要问自己"现在是向东还是向西"。半边是单行分隔公路——每条车道（半边）只管一个方向，永远朝着车道方向前进，不需要判断方向。代价是车道数量翻倍，但导航变得简单且不出错。</p>
+</div>
+
+<h4>网格数据结构的实际应用场景</h4>
+
+<table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px">
+<tr style="background:#f0f0ed"><th style="border:1px solid #ddd;padding:8px;text-align:left">应用</th><th style="border:1px solid #ddd;padding:8px;text-align:left">推荐结构</th><th style="border:1px solid #ddd;padding:8px;text-align:left">原因</th></tr>
+<tr><td style="border:1px solid #ddd;padding:8px">GPU 渲染</td><td style="border:1px solid #ddd;padding:8px">索引网格</td><td style="border:1px solid #ddd;padding:8px">紧凑，缓存友好，GPU 直接理解</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px">细分曲面 (Subdivision)</td><td style="border:1px solid #ddd;padding:8px">半边</td><td style="border:1px solid #ddd;padding:8px">频繁的面分割和边翻转</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px">网格简化 (Simplification)</td><td style="border:1px solid #ddd;padding:8px">半边</td><td style="border:1px solid #ddd;padding:8px">边折叠操作需 O(1) 邻接信息</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px">网格平滑 (Smoothing)</td><td style="border:1px solid #ddd;padding:8px">半边或翼边</td><td style="border:1px solid #ddd;padding:8px">需顶点的 1 环邻域</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px">光线追踪BVH构建</td><td style="border:1px solid #ddd;padding:8px">索引网格</td><td style="border:1px solid #ddd;padding:8px">构建BVH只需三角面数组</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px">3D 建模工具 (Blender/Maya)</td><td style="border:1px solid #ddd;padding:8px">半边</td><td style="border:1px solid #ddd;padding:8px">交互式编辑需要丰富的拓扑操作</td></tr>
+</table>
+
+<p>可见，<strong>每种结构有其最佳应用场景</strong>。现代图形引擎通常同时维护多种数据结构：运行时使用紧凑的索引网格进行渲染，编辑时动态转换为半边结构进行拓扑操作，编辑完成后转回索引网格。这种"多表示共存"策略平衡了性能与灵活性。</p>
+<!-- ===== 半边结构互指关系结束 ===== -->
+
+<!-- ==================== 12.2 ==================== -->
+<h2 id="s12-2">12.2 场景图</h2>
+
+<p><span class="key-term">场景图</span>（scene graph）以层次化树或有向无环图（DAG）形式组织场景内容。内部节点表示空间变换（旋转、平移、缩放），叶节点表示几何图元（三角网格）。</p>
+
+<!-- ===== 12.2 扩充: 场景图节点类型枚举 ===== -->
+<h3>场景图节点类型枚举</h3>
+
+<p>现代场景图实现中，节点类型远比"变换"和"几何体"两类丰富。以下是生产级场景图中常见的核心节点类型：</p>
+
+<table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px">
+<tr style="background:#f0f0ed"><th style="border:1px solid #ddd;padding:8px;text-align:left">节点类型</th><th style="border:1px solid #ddd;padding:8px;text-align:left">符号</th><th style="border:1px solid #ddd;padding:8px;text-align:left">功能</th><th style="border:1px solid #ddd;padding:8px;text-align:left">子节点</th></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><strong>Transform</strong>（变换节点）</td><td style="border:1px solid #ddd;padding:8px">T</td><td style="border:1px solid #ddd;padding:8px">持有 4×4 齐次变换矩阵（平移/旋转/缩放/错切），传递给所有子节点</td><td style="border:1px solid #ddd;padding:8px">1..N</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><strong>Shape</strong>（形状节点）</td><td style="border:1px solid #ddd;padding:8px">S</td><td style="border:1px solid #ddd;padding:8px">叶节点，包含几何图元（网格、参数曲面）和材质/纹理引用</td><td style="border:1px solid #ddd;padding:8px">0</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><strong>Group</strong>（组节点）</td><td style="border:1px solid #ddd;padding:8px">G</td><td style="border:1px solid #ddd;padding:8px">无变换，纯粹作为逻辑分组容器（类似 HTML 的 &lt;div&gt;）</td><td style="border:1px solid #ddd;padding:8px">0..N</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><strong>Switch</strong>（切换节点）</td><td style="border:1px solid #ddd;padding:8px">SW</td><td style="border:1px solid #ddd;padding:8px">每次遍历时只激活一个子节点（如 LOD 选择、动画状态切换）</td><td style="border:1px solid #ddd;padding:8px">0..N</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><strong>LOD</strong>（细节层次节点）</td><td style="border:1px solid #ddd;padding:8px">LOD</td><td style="border:1px solid #ddd;padding:8px">根据视距自动选择子节点的细节级别（高模/中模/低模）</td><td style="border:1px solid #ddd;padding:8px">1..N</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><strong>Billboard</strong>（公告板节点）</td><td style="border:1px solid #ddd;padding:8px">BB</td><td style="border:1px solid #ddd;padding:8px">始终面向相机的节点（用于粒子效果、远处树木的 sprite）</td><td style="border:1px solid #ddd;padding:8px">0..N</td></tr>
+</table>
+
+<div class="analogy-box">
+<p class="label">生活类比：</p>
+<p>场景图节点就像乐高图纸上的指令。Transform 节点说"把底板向右旋转 45°"，Group 节点说"这个区域先做腿再做轮子"，Switch 节点说"根据观看距离选择用 100 块还是 50 块零件搭同一个部件"。每种指令有特定的语义，混合搭配构成完整的搭建说明。</p>
+</div>
+
+<!-- ===== 场景图节点类型结束 ===== -->
+
+<h3>层次变换累积的完整推导</h3>
+
+<p>场景图的核心数学机制是<strong>变换的层次累积</strong>。设场景图中从根到叶节点 v 的路径为 root → n₁ → n₂ → ... → n_k = v，每个节点 nᵢ 持有局部变换矩阵 Mᵢ（将点从该节点的局部坐标系变换到父节点坐标系）。</p>
+
+<p><strong>推导过程：</strong></p>
+
+<p>设 p_local 为节点 v 局部坐标系中的点。节点 n_k 的变换将其变换到 n_{k-1} 的坐标系：</p>
+
+<pre class="math">p_{n_{k-1}} = M_k · p_local</pre>
+
+<p>节点 n_{k-1} 的变换将其变换到 n_{k-2} 的坐标系：</p>
+
+<pre class="math">p_{n_{k-2}} = M_{k-1} · p_{n_{k-1}} = M_{k-1} · M_k · p_local</pre>
+
+<p>依此类推，直到世界坐标系：</p>
+
+<pre class="math">p_world = M_1 · M_2 · ... · M_k · p_local</pre>
+
+<p>因此，节点 v 的组合世界变换为：</p>
+
+<pre class="math">M_world(v) = M_root · M_1 · M_2 · ... · M_v</pre>
+
+<p><strong>矩阵乘法顺序的重要性：</strong>M_root·M_1·M_2·... 是左乘顺序。数学上，最靠近 p_local 的矩阵先作用于点。在 OpenGL 和大多数图形库中，这意味着：</p>
+
+<pre class="math">① 先缩放 → ② 再旋转 → ③ 最后平移（作用顺序从最近点开始向外）</pre>
+
+<p>但代码书写顺序（矩阵连乘）是相反的——从世界到局部。这正是第 6 章讨论的变换顺序问题在场景图中的大规模应用。</p>
+
+<p><strong>绕任意轴的层次旋转示例：</strong>假设场景图结构为 Root → RotateX(30°) → Translate(0, 5, 0) → RotateZ(45°) → Box。盒子的世界变换为：</p>
+
+<pre class="math">M_world = Rx(30°) · T(0,5,0) · Rz(45°)</pre>
+
+<p>盒子上一点 p=(1,0,0) 的世界坐标为：先绕 Z 轴旋转 45°→ 平移到 y=5 → 绕 X 轴旋转 30°。注意 Box 绕自己的 Z 轴旋转，然后<strong>连同其坐标系</strong>一起被平移和进一步旋转——这正是场景图层次变换的核心语义。</p>
+
+<div class="thought-box">
+<p><strong>变换累积的工程实现：</strong>实际渲染时，场景图遍历采用深度优先搜索（DFS）。每进入一个节点，先将当前变换矩阵压栈，乘上该节点的局部矩阵，得新 CurrentTransform；遍历子节点后出栈恢复。这等价于在树上维护一个变换状态栈：</p>
+<pre><code>traverse(node, M_parent):
+    M_current = M_parent * node.localMatrix
+    if node is Shape:
+        render(node.geometry, M_current)
+    for each child in node.children:
+        traverse(child, M_current)</code></pre>
+<p>注意 M_current 只在下行时计算，回溯时自动丢弃——不需要显式的"逆变换"，因为栈的弹出自然恢复了父变换。</p>
+</div>
+
+<!-- ===== 变换累积推导结束 ===== -->
+
+<p>施加于一个节点的变换沿树向下<span class="key-term">累积</span>（accumulate）。若节点 i 的局部变换为 4×4 齐次变换矩阵 M_i，则该节点（及其子树）中图元的世界空间变换为：</p>
+
+<pre class="math">M_world(v) = M_root × M_1 × M_2 × ... × M_v</pre>
+
+<p>其中 M_root → M_1 → ... → M_v 是从根到节点 v 的路径上的所有局部变换矩阵的乘积。父节点的旋转会同时旋转其所有子节点——场景图的核心威力。</p>
+
+<div class="analogy-box">
+<p class="label">生活类比：</p>
+<p>场景图就像太阳系模型：地球绕太阳转（根→地球的变换），月球绕地球转（地球→月球的变换）。当"太阳"旋转时，地球自动跟随；当地球绕太阳公转时，月球自动跟随地球运动——月球的最终位置 = 太阳旋转 × 地球公转 × 月球绕地球旋转。每一层只需描述相对于父层的运动。</p>
+</div>
+
+<p><strong>实例化</strong>（instancing）：通过<span class="key-term">有向无环图</span>（DAG）结构，同一几何体可以在场景中多次出现，每次通过不同的变换路径引用。在实现中，一个子树可被多个父节点指向，但本身只存储一份。例如，4 个相同的轮子共享同一轮子几何体，通过 4 条不同的场景图路径（左前、右前、左后、右后）放置。这极大减少了内存消耗和绘制调用。</p>
+
+<!-- ===== 12.2 扩充: DAG实例化详解 ===== -->
+<h4>DAG 共享子图模型详解</h4>
+
+<p>将场景图从<strong>树</strong>（每个节点只有一个父节点）推广为<strong>有向无环图</strong>（DAG，节点可以有多个父节点），是实现实例化的关键一步。关键在于：子节点本身不被复制，只增加指向它的引用边。</p>
+
+<p><strong>实例化 vs 复制的内存对比：</strong></p>
+
+<pre class="math">场景：一辆汽车，含 4 个相同轮子（每轮 10K 三角形）+ 1 个底盘（50K 三角形）
+            无实例化（纯树）    DAG 实例化
+轮子几何体:  4 × 10K = 40K 三角  1 × 10K = 10K 三角  ← 节省 75%
+内存占用:    90K 三角形全部        60K 三角形           ← 节省 33%
+绘制调用:    5 个 draw call       5 个 draw call        ← 相同</pre>
+
+<p><strong>绘制调用不变的原因：</strong>实例化节省的是<strong>几何数据内存</strong>（顶点缓冲、索引缓冲），但每个实例仍需一次绘制调用（不同的变换矩阵传入 GPU）。现代图形 API（DX12, Vulkan, Metal）支持 GPU 实例化（hardware instancing）——单个绘制调用可传递多个变换矩阵，进一步将 5 个调用合并为 2 个（底盘 1 + 轮子×4 合并 1）。</p>
+
+<p><strong>DAG 遍历中的世界变换计算：</strong>对于 DAG 中的节点 N，可能存在多条从根到 N 的路径，每条路径产生不同的世界变换。关键：</p>
+
+<pre class="math">M_world(N, path_i) = M_root × (沿路径 path_i 的所有中间节点的局部变换连乘)</pre>
+
+<p>这意味着：① 同一节点在场景中以不同位置、朝向、大小出现——这正是实例化的语义；② <strong>节点不存储自身的世界变换</strong>——世界变换是遍历中动态计算的，避免存储所有路径的组合；③ 遍历算法需要传递当前的累积变换，而非从节点本身读取。</p>
+
+<p><strong>实例化 vs 引用计数：</strong>DAG 节点需要引用计数来管理生命周期——当所有父节点移除对该子节点的引用时，子节点被释放。这与 C++ 的 shared_ptr 语义一致。</p>
+
+<h4>场景图遍历的完整伪代码</h4>
+
+<p>将遍历算法扩展为支持 DAG（检测重复访问）和属性继承（材质、光照、可见性）：</p>
+
+<pre><code>function traverseWithState(node, parentState, frameID):
+    if node.lastVisited == frameID:
+        return  // 避免 DAG 节点的重复遍历
+    node.lastVisited = frameID
+    
+    // 合并状态
+    currentState = parentState.clone()
+    if node is Transform:
+        currentState.transform *= node.localMatrix
+    if node is Material:
+        currentState.material = node.material
+    if node.isCulled(currentState):
+        return  // 裁剪：包围盒完全在视锥体外
+    
+    if node is Shape:
+        renderWithState(node.geometry, currentState)
+    else:
+        for each child in node.children:
+            traverseWithState(child, currentState, frameID)</code></pre>
+
+<p><strong>frameID</strong> 技巧避免 DAG 中同一节点被多次渲染——每帧给一个唯一 ID，不必在遍历后重置标记。</p>
+
+<div class="analogy-box">
+<p class="label">生活类比：</p>
+<p>DAG 实例化就像<strong>电影中同一个演员扮演多个角色</strong>——演员（几何数据）只有一份身体，但穿上不同的戏服、站在不同的场景位置（不同的变换路径），就变成了不同的角色。导演（渲染器）每场戏告诉灯光师"这个演员现在在舞台左边，扮演国王"，下一场又说"同一个演员现在在舞台右边，扮演乞丐"。不需要克隆演员，只需要告诉他站哪里、穿什么。</p>
+</div>
+<!-- ===== DAG实例化结束 ===== -->
+
+<p>在现代游戏引擎（Unity 的 GameObject 层级，Unreal 的 Actor 附件系统）中，场景图与组件化实体紧密集成——每个节点承载可配置的组件集合（渲染器、碰撞器、脚本等）。场景图还存储辅助信息：包围体（用于视锥体裁剪）、材质指派、光照和动画参数。</p>
+
+<div class="thought-box">
+<p>想一想：为什么场景图不是一条简单的数组，而是一棵树？因为在现实世界中，物体的位置是<strong>相对的</strong>：车把装在车架上，轮子装在车轴上。当自行车前进（车架平移），车把和轮子自动跟随。如果用数组存储绝对坐标，需要手动更新每个相关部件的世界坐标——繁琐且易出错。场景图的层次结构自动处理这种依赖关系。</p>
+</div>
+
+<!-- ==================== 12.3 ==================== -->
+<h2 id="s12-3">12.3 空间数据结构</h2>
+
+<p>当场景包含数千或数百万物体时，对每条光线测试每个物体是 O(N·P) 复杂度——对任何交互式应用都太慢了。<span class="key-term">空间数据结构</span>（spatial data structure）将物体分组到嵌套的空间区域中，允许快速拒绝远离光线路径的组，将每条光线的有效复杂度降至 O(log N)。本节详细讨论三种方法：包围体层次结构（BVH）、均匀空间细分、以及二叉空间划分（BSP 树）。</p>
+
+<h3 id="12-3-1">12.3.1 包围盒与光线求交</h3>
+
+<p>最基本的加速原语是<span class="key-term">轴对齐包围盒</span>（axis-aligned bounding box，AABB）。光线-AABB 求交使用<span class="key-term">平板测试</span>（slab test）——计算光线进入和离开每对轴对齐平面的一维区间，然后找这些区间的交集。</p>
+
+<p>设光线为 <strong>p</strong>(t) = <strong>e</strong> + t<strong>d</strong>，包围盒为 [x_min, x_max] × [y_min, y_max] × [z_min, z_max]。对 x 轴平板：</p>
+
+<pre class="math">x_min = e_x + t·d_x  →  t_xmin = (x_min − e_x) / d_x
+x_max = e_x + t·d_x  →  t_xmax = (x_max − e_x) / d_x</pre>
+
+<p>类似地计算 y 和 z 的区间 [t_ymin, t_ymax] 和 [t_zmin, t_zmax]。光线命中盒子当且仅当三个区间有交集。从二维开始理解：</p>
+
+<pre class="math">t_xmin = (x_min − x_e) / x_d
+t_xmax = (x_max − x_e) / x_d
+t_ymin = (y_min − y_e) / y_d
+t_ymax = (y_max − y_e) / y_d
+
+if (t_xmin > t_ymax) or (t_ymin > t_xmax) then
+    return false     // 区间无重叠 → 光线错过盒子
+else
+    return true</pre>
+
+<p>关键洞察：两个一维区间不重叠意味着一个区间完全在另一个的左边或右边。推广到三维，需要三个轴区间全部重叠。</p>
+
+<p><strong>处理负方向分量：</strong></p>
+
+<p>当 x_d 为负时，光线会先碰到 x_max 而不是 x_min。因此代码扩展为：</p>
+
+<pre><code>if (x_d >= 0) then
+    t_xmin = (x_min − x_e) / x_d
+    t_xmax = (x_max − x_e) / x_d
+else
+    t_xmin = (x_max − x_e) / x_d
+    t_xmax = (x_min − x_e) / x_d</code></pre>
+
+<p><strong>IEEE 浮点除零处理：</strong></p>
+
+<p>使用 IEEE 标准的除零规则可以优雅处理水平和垂直光线（d_x = 0 或 d_y = 0）。根据 IEEE 754：</p>
+
+<pre class="math">+a / 0 = +∞    (a > 0)
+−a / 0 = −∞    (a > 0)</pre>
+
+<p>考虑垂直光线（x_d = 0, y_d > 0）的三种情况：</p>
+
+<pre class="math">情况 1: x_e ≤ x_min → t_xmin = t_xmax = +∞ → 区间 (∞,∞) → 无命中 ✓
+情况 2: x_min < x_e < x_max → t_xmin = −∞, t_xmax = +∞ → 区间 (−∞,∞) → 命中 ✓
+情况 3: x_max ≤ x_e → t_xmin = t_xmax = −∞ → 区间 (−∞,−∞) → 无命中 ✓</pre>
+
+<p>全部按预期工作，无需特殊检查。但 x_d = −0 会导致问题——可以通过测试 x_d 的<strong>倒数</strong>来克服：</p>
+
+<pre><code>a = 1 / x_d
+if (a >= 0) then
+    t_min = a × (x_min − x_e)
+    t_max = a × (x_max − x_e)
+else
+    t_min = a × (x_max − x_e)
+    t_max = a × (x_min − x_e)</code></pre>
+
+<p>这既避免了 −0 问题，也将除法替换为更快的乘法（在光线遍历的数百次调用中节省可观时间）。</p>
+
+<!-- ===== 12.3 扩充: AABB平板测试完整三维推导 ===== -->
+<h4>平板测试的完整三维推导</h4>
+
+<p>将二维平板测试推广到三维。设光线为 <strong>p</strong>(t) = <strong>e</strong> + t<strong>d</strong>，AABB 为 [x_min, x_max] × [y_min, y_max] × [z_min, z_max]。</p>
+
+<p><strong>第一步：计算各轴的进入/离开 t 值。</strong>对每个轴 i ∈ {x, y, z}：</p>
+
+<pre class="math">t_i_min = (box_i_min − e_i) / d_i
+t_i_max = (box_i_max − e_i) / d_i
+
+若 d_i < 0，交换 t_i_min ↔ t_i_max（保证 t_i_min ≤ t_i_max）</pre>
+
+<p><strong>第二步：合并为进入/离开区间的交集。</strong>光线必须在<strong>所有三个轴</strong>上同时处于盒子内部。这意味着进入时间取各轴进入时间的最大值，离开时间取各轴离开时间的最小值：</p>
+
+<pre class="math">t_near = max(t_x_min, t_y_min, t_z_min)    ← 光线最后进入盒子的时刻
+t_far  = min(t_x_max, t_y_max, t_z_max)    ← 光线最早离开盒子的时刻</pre>
+
+<p><strong>第三步：判断命中。</strong>光线命中盒子当且仅当：</p>
+
+<pre class="math">t_near ≤ t_far     AND     t_far ≥ 0</pre>
+
+<p>条件 t_far ≥ 0 确保盒子在光线的前方（而不是背后）。如果只关心光线区间 [t_min, t_max] 内的命中，还需：</p>
+
+<pre class="math">t_near ≤ t_max     AND     t_far ≥ t_min</pre>
+
+<p><strong>为什么取 max 和 min？</strong>几何解释——设想光线是一根针，盒子是一个方形的窗户。针要从窗户穿过去，必须同时满足：</p>
+
+<ol style="margin-left:24px">
+<li>在 <strong>x 方向</strong>上处于窗户左右边框之间（t_x_min ≤ t ≤ t_x_max）</li>
+<li>在 <strong>y 方向</strong>上处于窗户上下边框之间（t_y_min ≤ t ≤ t_y_max）</li>
+<li>在 <strong>z 方向</strong>上处于窗户前后边框之间（t_z_min ≤ t ≤ t_z_max）</li>
+</ol>
+
+<p>针进入窗户的瞬间——是三个方向中最后进入的那一个时刻（max），因为只有等到那时，针才在所有三个方向上都进入了窗户。针离开窗户的瞬间——是三个方向中最早离开的那一个时刻（min），因为一旦在任一方向上离开，针就不再在窗户中了。因此：</p>
+
+<pre class="math">进入 = max(各轴的进入时刻)，离开 = min(各轴的离开时刻)</pre>
+
+<p><strong>完整的命中判断伪代码：</strong></p>
+
+<pre><code>function rayAABB(ray e+td, float t0, float t1, Box b):
+    // 1. 计算各轴平板区间
+    for each axis i in {x, y, z}:
+        invD = 1.0 / d[i]
+        t0_i = (b.min[i] - e[i]) * invD
+        t1_i = (b.max[i] - e[i]) * invD
+        if invD < 0: swap(t0_i, t1_i)
+        t_min[i] = t0_i
+        t_max[i] = t1_i
+    
+    // 2. 合并区间
+    t_near = max(t_min[x], t_min[y], t_min[z])
+    t_far  = min(t_max[x], t_max[y], t_max[z])
+    
+    // 3. 判断
+    if t_near > t_far:    return NO_HIT
+    if t_far < 0:         return NO_HIT  // 盒子在光线后方
+    if t_near > t1:       return NO_HIT  // 超出有效区间
+    if t_far < t0:        return NO_HIT
+    
+    // 4. 最近交点在 t_near（若 t_near ≥ 0）或 t_far（若光线起点在盒内）
+    t_hit = (t_near >= 0) ? t_near : t_far
+    return HIT(t_hit)</code></pre>
+
+<p><strong>与原始 2D 区间重叠测试的等价性：</strong>上述 t_near ≤ t_far 条件等价于原始文中对 2D 的 "两个一维区间必须重叠" 的直接推广。原始测试检查 "不存在任一维度上区间不重叠"，而合并测试通过 max/min 隐式地同时检查所有维度——若 t_near > t_far，意味着至少有一个维度的进入时刻晚于另一个维度的离开时刻，即至少一个维度上区间不重叠。</p>
+
+<div class="thought-box">
+<p><strong>工程优化：预计算倒数。</strong>在光线遍历 BVH 的过程中，同一根光线会测试数十甚至数百个包围盒。光线方向 d 不变，因此 1/d_x, 1/d_y, 1/d_z 可以预先在光线创建时计算好，避免每次 AABB 测试都做除法。更进一步，可以将坐标 (box_min - e) * invD 拆为 box_min * invD - e * invD，其中 e * invD 也是光线常数——这进一步将每轴测试从 2 次乘法和 1 次减法（使用倒数后）优化为 1 次乘法和 1 次减法。</p>
+</div>
+<!-- ===== AABB完整推导结束 ===== -->
+
+<div class="thought-box">
+<p>想一想：为什么不用"近平面/远平面"交集，而用区间重叠检查？近/远平面方法需要取 t_min = max(所有 t_min_i) 和 t_max = min(所有 t_max_i)，然后检查 t_min ≤ t_max。这两种方法是等价的——区间重叠检查更直观地体现了"如果任何一个维度上光线错过，就整个错过"。</p>
+</div>
+
+<h3 id="12-3-2">12.3.2 包围体层次结构 (BVH)</h3>
+
+<p><span class="key-term">包围体层次结构</span>（Bounding Volume Hierarchy，BVH）将物体递归分组为嵌套包围盒的树。内部节点包含包围其所有子节点的包围盒，但不直接包含几何体——只有叶节点包含实际三角形。</p>
+
+<p><strong>BVH 节点定义：</strong></p>
+
+<pre><code>class bvh-node subclass of surface
+    virtual bool hit(ray e+td, real t0, real t1, hit-record rec)
+    virtual box bounding-box()
+    surface-pointer left
+    surface-pointer right
+    box bbox</code></pre>
+
+<p><strong>BVH 光线遍历：</strong></p>
+
+<pre><code>function bool bvh-node::hit(ray a+tb, real t0, real t1, hit-record rec)
+    if (bbox.hitbox(a+tb, t0, t1)) then
+        hit-record lrec, rrec
+        left-hit  = (left != NULL) and (left->hit(a+tb, t0, t1, lrec))
+        right-hit = (right != NULL) and (right->hit(a+tb, t0, t1, rrec))
+        if (left-hit and right-hit) then
+            if (lrec.t < rrec.t) then rec = lrec
+            else rec = rrec
+            return true
+        else if (left-hit) then rec = lrec; return true
+        else if (right-hit) then rec = rrec; return true
+        else return false
+    else
+        return false</code></pre>
+
+<p><strong>SAH 启发式</strong>（Surface Area Heuristic）是构造高质量 BVH 的核心。它估计一条随机光线命中一个节点的概率正比于该节点包围盒的表面积。对于将节点分割为左子 L 和右子 R 的候选划分，SAH 代价函数为：</p>
+
+<pre class="math">C = C_trav + (SA(L)/SA(P)) × C(L) + (SA(R)/SA(P)) × C(R)</pre>
+
+<p>其中 C_trav 是遍历一个节点的固定代价，SA(P) 是父节点 P 的表面积，SA(L) 和 SA(R) 是左右子节点的表面积，C(L) 和 C(R) 是递归计算的两个子树的代价（叶节点代价取决于包含的三角形数量）。选择使 C 最小的划分。</p>
+
+<!-- ===== 12.3 扩充: SAH代价函数逐项解释 ===== -->
+<h4>SAH 代价函数的逐项深度解释</h4>
+
+<p>SAH 公式看似简单，但每项背后都有深刻的几何概率含义。下面逐项拆解：</p>
+
+<pre class="math">C = C_trav + (SA(L)/SA(P)) × C(L) + (SA(R)/SA(P)) × C(R)</pre>
+
+<p><strong>第 1 项：C_trav——遍历开销</strong></p>
+
+<p>这是访问并测试一个内部节点的包围盒所需的固定计算量。在软件光线追踪中，C_trav ≈ 一次 AABB-光线求交测试的时钟周期数（约 8-20 条指令，取决于是否为分支友好实现）。在硬件光线追踪（如 NVIDIA RT Core）中，C_trav 实际上<strong>接近 0</strong>——因为包围盒测试被固化在硅片中，遍历开销几乎完全被硬件流水线掩盖。这意味着在硬件 RT 中，SAH 优化方向会倾向于更深的树（更精确的划分），因为遍历本身几乎无代价。</p>
+
+<p><strong>第 2 项：(SA(L)/SA(P)) × C(L)——左子树的期望代价</strong></p>
+
+<p>这里 SA(L)/SA(P) 是一个<strong>条件概率</strong>：假设一条随机光线从均匀分布的方向射入父节点包围盒 P 并命中 P，则它也命中左子节点包围盒 L 的条件概率正比于 L 的表面积与 P 的表面积之比。推导：</p>
+
+<pre class="math">P(命中 L | 命中 P) ≈ SA(L) / SA(P)</pre>
+
+<p>为什么是表面积而不是体积？直觉上：一个细长方体的体积可能很小，但从外部看，任何射入方向都会先碰到长方体表面。表面积捕捉的是<strong>从外部观察时的"靶心"大小</strong>。数学上，对于凸体，随机均匀方向的射线命中该凸体的概率正比于其表面积——这与柯西曲面积分定理（Cauchy surface area formula）一致。</p>
+
+<p>C(L) 是 L 子树的递归代价。如果 L 是叶节点（包含 n_L 个三角形），则 C(L) ≈ n_L × C_tri（光线与一个三角形求交的代价）。如果 L 是内部节点，则递归应用 SAH 公式。</p>
+
+<p><strong>第 3 项：(SA(R)/SA(P)) × C(R)——右子树的期望代价</strong></p>
+
+<p>与第 2 项完全对称。</p>
+
+<p><strong>SAH 公式的完整递归形式：</strong></p>
+
+<pre class="math">C(node) = 
+  如果 node 是叶节点:  |node.triangles| × C_tri
+  如果 node 是内部节点:
+    C_trav + min_{所有可能划分 P→(L,R)} [
+      SA(L)/SA(P) × C(L) + SA(R)/SA(P) × C(R)
+    ]</pre>
+
+<p>注意：在最优划分中，需要尝试多种划分策略（沿 x/y/z 轴的多个位置），对每种划分计算 SAH 代价，取最小者。</p>
+
+<p><strong>SAH 的关键洞察——"空空间便宜"：</strong>如果 L 是空节点（不含任何三角形），C(L) = 0（叶节点但三角形数为 0）。但 SA(L) 可能很小（空空间被紧凑包裹）或很大（大面积空空间被包含在包围盒中）。SAH 会自然惩罚大面积空空间——因为大的 SA(L) 虽然该项为 0，但划分产生的大包围盒会传给子节点导致后续代价升高。一个好的 SAH 划分确保空空间不被包含在大的包围盒中。</p>
+
+<h4>BVH 构造策略的深入比较</h4>
+
+<table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px">
+<tr style="background:#f0f0ed"><th style="border:1px solid #ddd;padding:8px;text-align:left">策略</th><th style="border:1px solid #ddd;padding:8px;text-align:left">时间复杂度</th><th style="border:1px solid #ddd;padding:8px;text-align:left">BVH 质量</th><th style="border:1px solid #ddd;padding:8px;text-align:left">适用场景</th></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><strong>排序中点划分</strong>（本章算法）</td><td style="border:1px solid #ddd;padding:8px">O(N log² N)</td><td style="border:1px solid #ddd;padding:8px">中等</td><td style="border:1px solid #ddd;padding:8px">快速原型、静态场景</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><strong>SAH 桶划分</strong>（binned SAH）</td><td style="border:1px solid #ddd;padding:8px">O(N log N)</td><td style="border:1px solid #ddd;padding:8px">高</td><td style="border:1px solid #ddd;padding:8px">生产级离线 BVH 构建</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><strong>空间划分</strong>（spatial splits）</td><td style="border:1px solid #ddd;padding:8px">O(N log N)</td><td style="border:1px solid #ddd;padding:8px">最高</td><td style="border:1px solid #ddd;padding:8px">含大量重叠的高密度场景</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><strong>SAH 扫描构建</strong>（full sweep SAH）</td><td style="border:1px solid #ddd;padding:8px">O(N log² N)</td><td style="border:1px solid #ddd;padding:8px">最优</td><td style="border:1px solid #ddd;padding:8px">理论上限，实际较少使用</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px"><strong>LBVH</strong>（线性 BVH，基于莫顿码）</td><td style="border:1px solid #ddd;padding:8px">O(N)</td><td style="border:1px solid #ddd;padding:8px">中低</td><td style="border:1px solid #ddd;padding:8px">GPU 并行构建、动态场景</td></tr>
+</table>
+
+<div class="analogy-box">
+<p class="label">生活类比：</p>
+<p>SAH 的精妙在于它同时考虑了两个因素——"这个盒子有多大"（表面积）和"里面有多少东西"（三角形数）。一只大箱子装了 1 个小玩具 → 低效（表面积大但内容少）；一只小箱子装了 500 个乒乓球 → 仍需仔细翻找（表面积小但内容多）。SAH 的目标是为每个箱子找到最优的大小/内容比——就像快递打包一样追求空间利用最优化。</p>
+</div>
+<!-- ===== SAH逐项解释结束 ===== -->
+
+<div class="analogy-box">
+<p class="label">生活类比：</p>
+<p>BVH 像一个多层收纳盒：大盒子（包围盒）里面有若干小盒子，小盒子里面又有更小的格子。你要找一件东西时，先看大盒子标签——如果东西不可能在这个大盒子里，直接跳过不看里面。只有大盒子标签显示"可能包含"时，才打开继续往里找。SAH 启发的目标是"标签写得最准"——让每个盒子的标签和内容匹配到最优。</p>
+</div>
+
+<p><strong>BVH 构造</strong>——基于排序的划分：</p>
+
+<pre><code>function bvh-node::create(object-array A, int AXIS)
+    N = A.length
+    if (N = 1) then
+        left = A[0];  right = NULL
+        bbox = bounding-box(A[0])
+    else if (N = 2) then
+        left = A[0];  right = A[1]
+        bbox = combine(bounding-box(A[0]), bounding-box(A[1]))
+    else
+        sort A by the object center along AXIS
+        left  = new bvh-node(A[0..N/2−1], (AXIS+1) mod 3)
+        right = new bvh-node(A[N/2..N−1], (AXIS+1) mod 3)
+        bbox = combine(left->bbox, right->bbox)</code></pre>
+
+<p><strong>基于空间的划分</strong>（按空间而非物体数量分区）可能更好：</p>
+
+<pre><code>function bvh-node::create(object-array A, int AXIS)
+    ...
+    else
+        find the midpoint m of the bounding box of A along AXIS
+        partition A into lists with lengths k and (N−k) surrounding m
+        left  = new bvh-node(A[0..k], (AXIS+1) mod 3)
+        right = new bvh-node(A[k+1..N−1], (AXIS+1) mod 3)
+        bbox = combine(left->bbox, right->bbox)</pre></code></pre>
+
+<p>这会产生不平衡树，但允许轻松遍历空空间且构造更便宜——划分比排序快。BVH 已成为现代光线追踪器的主导加速结构，包括 NVIDIA RT 核心的硬件实现。</p>
+
+<h3 id="12-3-3">12.3.3 均匀空间细分</h3>
+
+<p>另一种减少求交测试的思路：划分<strong>空间</strong>而非物体。这本质上不同于 BVH：在 BVH 中，每个物体属于恰好一个子节点，而空间中的点可能属于两个子节点；在空间细分中，空间中每个点属于恰好一个节点，而物体可能属于多个节点。</p>
+
+<p>在<span class="key-term">均匀空间细分</span>（uniform spatial subdivision）中，场景被划分为轴对齐的均匀盒子（体素）。光线按 3D DDA（数字微分分析器，与画线算法同理）步进方式遍历这些盒子。</p>
+
+<p><strong>3D DDA 步进算法：</strong></p>
+
+<p>设网格边界为 (x_min, y_min, z_min) 到 (x_max, y_max, z_max)，有 n_x × n_y × n_z 个单元。单元大小为：</p>
+
+<pre class="math">Δx = (x_max − x_min) / n_x
+Δy = (y_max − y_min) / n_y
+Δz = (z_max − z_min) / n_z</pre>
+
+<p>光线遍历步进——平移到每个轴平行平面的参数 t：</p>
+
+<pre class="math">t_next_x(i) = (x_min + i·Δx − e_x) / d_x    (若 i 为当前单元索引)
+t_next_y(j) = (y_min + j·Δy − e_y) / d_y
+t_next_z(k) = (z_min + k·Δz − e_z) / d_z</pre>
+
+<p>在每一步，选择 t_next_x、t_next_y、t_next_z 中的最小值，沿该轴步进到下一个单元，更新对应轴的 t_next 值（加上 Δx/d_x 或 Δy/d_y 或 Δz/d_z）：</p>
+
+<pre><code>// 初始化
+找到光线起点的单元索引 (i, j, k)
+计算初始的 t_next_x, t_next_y, t_next_z
+计算步长 Δt_x = Δx / d_x, Δt_y = Δy / d_y, Δt_z = Δz / d_z
+
+// 步进循环
+while (光线在网格内)
+    if (t_next_x < t_next_y and t_next_x < t_next_z)
+        i += sign(d_x)
+        t_next_x += Δt_x
+    else if (t_next_y < t_next_z)
+        j += sign(d_y)
+        t_next_y += Δt_y
+    else
+        k += sign(d_z)
+        t_next_z += Δt_z
+    
+    测试当前单元 (i,j,k) 内的物体
+    if (命中) return 命中</code></pre>
+
+<div class="thought-box">
+<p>想一想：为什么用增量步进而不是每次重新计算 t 值？就像爬楼梯——你知道每级台阶的高度，迈一步就加上一步的高度，而不需要每次重新测量离地面的距离。增量步进将每步的 O(1) 除法变为 O(1) 加法，在光线穿越数百个单元时节省大量计算。</p>
+</div>
+
+<!-- ===== 12.3 扩充: 3D DDA增量公式详解 ===== -->
+<h4>3D DDA 增量步进的数学推导</h4>
+
+<p>DDA 算法的核心是<strong>增量公式</strong>，其推导基于一个简单事实：网格单元是均匀的，因此相邻的轴对齐平面之间的距离是固定的。</p>
+
+<p><strong>步长增量（step delta）的推导：</strong>当前单元索引为 (i, j, k)，光线沿 +x 方向行进。下一个 x 平面的位置在 x_min + (i+1)·Δx（光线出当前单元），再下一个在 x_min + (i+2)·Δx。到达这两个平面对应的 t 值分别为：</p>
+
+<pre class="math">t_at_next_x_plane    = (x_min + (i+1)·Δx − e_x) / d_x
+t_at_next_next_x_plane = (x_min + (i+2)·Δx − e_x) / d_x</pre>
+
+<p>两者之差即步长增量：</p>
+
+<pre class="math">Δt_x = t_at_next_next_x_plane − t_at_next_x_plane
+     = [(x_min + (i+2)·Δx − e_x) − (x_min + (i+1)·Δx − e_x)] / d_x
+     = Δx / d_x</pre>
+
+<p>同理可得 Δt_y = Δy / d_y 和 Δt_z = Δz / d_z。这三个值<strong>在整个光线遍历中为常数</strong>——只需在初始化时计算一次。</p>
+
+<p><strong>初始化的完整步骤：</strong></p>
+
+<pre><code>// 步骤 1: 确定光线起点的单元索引
+i = floor((e_x - x_min) / Δx)
+j = floor((e_y - y_min) / Δy)
+k = floor((e_z - z_min) / Δz)
+
+// 步骤 2: 计算初始的 3 个 t_next 值
+// 若光线沿 +x 方向，下一个 x 平面是 x_min + (i+1)*Δx
+// 若光线沿 -x 方向，下一个 x 平面是 x_min + i*Δx
+if (d_x > 0):
+    t_next_x = (x_min + (i+1)*Δx - e_x) / d_x
+    step_x = 1
+else if (d_x < 0):
+    t_next_x = (x_min + i*Δx - e_x) / d_x
+    step_x = -1
+else:
+    t_next_x = +∞   // 光线平行于 x 轴，永不会碰到 x 平面
+    step_x = 0
+
+// d_y 和 d_z 同理
+
+// 步骤 3: 计算恒定的步长增量
+Δt_x = Δx / abs(d_x)   // 使用绝对值，始终为正
+Δt_y = Δy / abs(d_y)
+Δt_z = Δz / abs(d_z)</code></pre>
+
+<p><strong>选择步进轴的条件判断分析：</strong>在步进循环中，每次选择当前 t_next 最小的轴进行步进。这个条件保证光线按距离顺序穿越网格单元——先碰到的平面先穿越。三个 t_next 的比较使用浮点大小关系，在精度上有微妙之处：</p>
+
+<pre class="math">若 t_next_x ≈ t_next_y（光线恰好穿过网格顶角）→
+   优先顺序可由实现任意指定（通常选择 x/y/z 的固定优先级），
+   因为两个 t 几乎相等，穿越两个平面的顺序不影响光线路过的格子集合。</pre>
+
+<p><strong>复杂度分析：</strong>对于 n_x × n_y × n_z 的网格，一条光线最多穿过约 n_x + n_y + n_z 个单元（光线与所有轴平面对相交的总次数）。每次穿越一步，每步都做 2 次浮点比较、1 次整数加减和 1 次浮点加法。与每次步进都重新计算 t_next_x/y/z（每步 3 次除法）相比，增量法在光线穿越数百个单元时可节省上千次除法——这是一项显著的性能提升。</p>
+
+<div class="thought-box">
+<p><strong>DDA 与 BVH 的选择策略：</strong>对于大多数现代光线追踪应用，均匀网格 DDA 已被 BVH 取代。但在以下情况下 DDA 仍有优势：① 场景中物体分布极端均匀（如体素数据）；② 光线需要按空间顺序访问物体（如体积渲染中的从前到后合成）；③ GPU 上的并行实现（CUDA/Wavefront 光线追踪中，每个线程在同一网格中独立步进，不需要递归栈）。对于稀疏体积数据，采用<strong>层次 DDA</strong>（结合八叉树的大步长跳过空区域）可兼顾两种方法的优点。</p>
+</div>
+<!-- ===== 3D DDA增量公式结束 ===== -->
+
+<p><strong>八叉树</strong>（octree）通过按需细分解决均匀网格的"空体素浪费"问题：在高密度区域递归细分为八个子体（二维中为四叉树）。<strong>kd 树</strong>（kd-tree）是一种轴对齐的 BSP 树，递归地以轴对齐平面划分空间，每层交替分割轴——与 BSP 树不同，kd 树的划分平面始终与坐标轴对齐。两者都提供对数遍历时间并自然处理非均匀几何体。</p>
+
+<div class="analogy-box">
+<p class="label">生活类比：</p>
+<p>均匀网格像城市地图上的等大方格——在沙漠地区有很多空格子，在市中心一个格子里有 500 栋楼。八叉树像智能地图：市中心切成小格子，郊区用大格子，沙漠只用一个超大格子。kd 树则是"先南北切一刀，再东西切一刀，再南北……"的递归划分。</p>
+</div>
+
+<!-- ==================== 12.4 ==================== -->
+<h2 id="s12-4">12.4 用于可见性的 BSP 树</h2>
+
+<p><span class="key-term">二叉空间划分树</span>（Binary Space Partition tree）递归地通过平面将空间一分为二。BSP 树最初为可见性排序开发——在没有 z 缓冲的时代，从任意视点以从前到后顺序渲染场景。即使有了 z 缓冲，BSP 树在需要精确排序的操作中仍很有价值。</p>
+
+<h3 id="12-4-1">12.4.1 BSP 树算法概述</h3>
+
+<p>BSP 树算法是<span class="key-term">画家算法</span>（painter's algorithm）的一个实例：从后到前绘制每个物体，新多边形可能覆盖先前的多边形。基本思路：</p>
+
+<pre><code>sort objects back to front relative to viewpoint
+for each object do
+    draw object on screen</code></pre>
+
+<p>排序步骤的问题：多个物体的相对顺序并非总是良定义的——可能出现循环遮挡（如图中三个三角形 A 挡住 B，B 挡住 C，C 挡住 A）。BSP 树通过将场景预先组织为数据结构来解决此问题。</p>
+
+<p>基本思想可用两个三角形 T₁ 和 T₂ 说明。回忆 T₁ 所在平面的隐式平面方程 f₁(p) = 0：半空间的一侧有 f₁(p⁺) > 0，另一侧 f₁(p⁻) < 0。因此对任意视点 e，我们可以确定正确的绘制顺序：</p>
+
+<pre><code>if (f₁(e) < 0) then
+    draw T₁
+    draw T₂
+else
+    draw T₂
+    draw T₁</code></pre>
+
+<p>这个简单逻辑是 BSP 树遍历算法的基石。</p>
+
+<h3 id="12-4-2">12.4.2 BSP 树构建与遍历</h3>
+
+<p>BSP 树构建是递归过程：从包含场景所有多边形的根节点开始，选一个多边形所在平面作为分割平面。将每个剩余多边形分类为：<strong>正面</strong>（全部在正半空间）、<strong>背面</strong>、<strong>横跨</strong>（与平面相交，需分割）或<strong>共面</strong>（位于平面内，与分割多边形同节点）。递归地对正面和背面的多边形列表构建子树。</p>
+
+<p><strong>BSP 树从前到后遍历：</strong></p>
+
+<pre><code>function traverse(node, eye):
+    if (node is NULL) return
+    if (f_node(eye) > 0)    // 视点在正面
+        traverse(node.negative, eye)   // 先画更远的背面
+        draw node.polygon              // 再画当前多边形
+        traverse(node.positive, eye)   // 最后画更近的正面
+    else                     // 视点在背面
+        traverse(node.positive, eye)   // 先画更远的正面
+        draw node.polygon
+        traverse(node.negative, eye)   // 最后画更近的背面</code></pre>
+
+<p>该算法的美妙之处：无需显式排序——正确的从前到后（或从后到前）顺序通过递归遍历自动产生。</p>
+
+<!-- ===== 12.4 扩充: 画家算法详细解析 ===== -->
+<h4>画家算法的从前到后遍历完整解析</h4>
+
+<p>画家算法（Painter's Algorithm）的名称源于传统油画技法：画家先画背景（远景），再画前景（近景），后画的覆盖先画的。BSP 树将这一直觉系统化为算法。下面给出完整的前后遍历逻辑：</p>
+
+<pre><code>// 从前到后渲染（配合 z-buffer，从前到后效率更高）
+function renderFrontToBack(node, eye):
+    if node is NULL: return
+    side = classifyPoint(eye, node.plane)  // > 0: 正面, < 0: 背面, = 0: 在平面上
+    
+    if side >= 0:        // 视点在正面或在平面上
+        renderFrontToBack(node.back, eye)   // 先画远处的背面
+        drawPolygons(node.coplanar)         // 再画平面上的
+        renderFrontToBack(node.front, eye)  // 最后画近处的正面
+    else:                // 视点在背面
+        renderFrontToBack(node.front, eye)  // 先画远处的正面
+        drawPolygons(node.coplanar)
+        renderFrontToBack(node.back, eye)   // 最后画近处的背面
+
+// 从后到前渲染（用于纯画家算法，无 z-buffer）
+function renderBackToFront(node, eye):
+    if node is NULL: return
+    side = classifyPoint(eye, node.plane)
+    
+    if side >= 0:        // 视点在正面，最近的物体在正面
+        renderBackToFront(node.front, eye)  // 先画最近的正面
+        drawPolygons(node.coplanar)
+        renderBackToFront(node.back, eye)   // 后画远处的背面
+    else:
+        renderBackToFront(node.back, eye)
+        drawPolygons(node.coplanar)
+        renderBackToFront(node.front, eye)</code></pre>
+
+<p><strong>为什么从前到后绘制在 z-buffer 场景中更优？</strong>在从前到后顺序下，远处的物体会<strong>先被绘制并写入 z-buffer</strong>。当近处物体稍后绘制时，GPU 的 Early-Z（早期深度测试）机制可以在片元着色器运行之前就丢弃被遮挡的片元——减少不必要的着色计算（即"overdraw 节省"）。反之，从后到前绘制时，近处物体先画，远处物体的每个片元都必须经过完整的着色管线后才能被 z-buffer 丢弃，浪费了大量着色计算。</p>
+
+<p><strong>处理循环遮挡：</strong>当三个三角形 A 挡 B、B 挡 C、C 挡 A 形成循环时，任何单一的排序都不可行。BSP 树通过<strong>切割三角形</strong>（在 12.4.4 节讨论）打破循环——切割一个三角形使其出现在多个子节点中，从而消除循环依赖。代价是三角形数量增加。</p>
+
+<h4>分割平面选择策略</h4>
+
+<p>BSP 树的构建质量高度依赖分割平面选择。常用策略包括：</p>
+
+<ol style="margin-left:24px">
+<li><strong>随机选择：</strong>从多边形列表中随机选一个作为分割平面。优点：快速；缺点：质量不可控。</li>
+<li><strong>最少切割策略：</strong>尝试每个候选平面，选择切割其他多边形最少的那个。优点：控制三角形增长；缺点：构建时间 O(N²)，对大数据集过慢。</li>
+<li><strong>平衡树策略：</strong>选择将多边形数量大致均分的平面，即使切割较多。优点：树深度最小（约 log N），遍历效率高；缺点：三角形数量可能膨胀。</li>
+<li><strong>轴对齐策略：</strong>仅使用轴对齐平面（退化为 kd 树）。优点：平面评估快、遍历硬件友好；缺点：对斜向几何体划分效率低。</li>
+</ol>
+
+<p>在实践中，大多数实现采用"最少切割"与"平衡树"的折中——先用启发式方法选出少数候选平面，再从中选切割最少的。这可在 O(N log N) 内构建质量可接受的 BSP 树。</p>
+
+<div class="analogy-box">
+<p class="label">生活类比：</p>
+<p>画家算法就像在透明胶片上画画——先画的图像在底层，后画的盖在上面。但如果你有三张胶片，A 的部分内容应该在 B 前面，B 的部分在 C 前面，C 的部分又在 A 前面，就无法按单一顺序排列了。唯一的办法是把其中至少一张胶片剪开（切割三角形），使每个小片都能排入正确的顺序。BSP 树就是自动完成"判断是否需要剪、在哪里剪、怎么重组"的系统。</p>
+</div>
+<!-- ===== 画家算法扩展结束 ===== -->
+
+<h3 id="12-4-3">12.4.3 BSP 光线追踪</h3>
+
+<p>BSP 树也可用于加速光线求交。遍历策略：在每个内部节点，检查光线起点在分割平面的哪一侧，先遍历起始侧子树，再遍历另一侧——前提是光线在另一侧的子区间非空（即存在 t 值落入另一侧）：</p>
+
+<pre><code>function bsp-node::hit(ray a+tb, real t0, real t1, hit-record rec)
+    if (xb < 0) then   // 光线方向沿负 x
+        // 对称处理
+    ...
+    xp = xa + t0 * xb
+    if (xp < D) then   // 光线起点在负侧 (case 1)
+        if (xb < 0) then return ... // 光线离开负侧 → 只查 left
+        t = (D − xa) / xb            // 光线穿过平面的参数
+        if (t > t1) then return left->hit(a+tb, t0, t1, rec)
+        if (left->hit(a+tb, t0, t, rec)) then return true
+        return right->hit(a+tb, t, t1, rec)
+    else              // 光线起点在正侧 (case 2)
+        // 对称代码</code></pre>
+
+<p>处理单个 BSP 节点比处理 BVH 节点更快，但同一表面可能存在于多个子树中（因为多边形被分割），导致更多节点和更高内存使用。构建质量决定哪种更快。</p>
+
+<!-- ===== 12.4 扩充: BSP光线追踪t参数区间处理 ===== -->
+<h4>BSP 光线追踪的 t 参数区间处理</h4>
+
+<p>BSP 树光线追踪的核心在于管理光线穿过的参数区间 [t_near, t_far]。每进入一个子节点时，光线在其中的有效参数段被限制在该子节点对应的空间区域内。</p>
+
+<p><strong>扩展的 BSP 光线追踪伪代码（完整版，含 t 区间处理）：</strong></p>
+
+<pre><code>function bsp-node::hit(ray a+tb, real t_near, real t_far, hit-record rec)
+    // 步骤 1: 计算光线起点与分割平面的关系
+    // 分割平面: x = D (简化为轴对齐情况，一般情况推广至任意平面)
+    xp_start = a.x + t_near * b.x    // 光线在 t_near 处的 x 坐标
+    xp_end   = a.x + t_far * b.x     // 光线在 t_far 处的 x 坐标
+    
+    // 步骤 2: 确定光线穿越分割平面的参数 t_split
+    if b.x != 0:
+        t_split = (D - a.x) / b.x
+    else:
+        t_split = +∞  // 光线平行于分割平面
+    
+    // 步骤 3: 根据起点位置 + 方向分类处理
+    
+    if xp_start >= D and xp_end >= D:
+        // 情况 A: 光线完全在正侧 [D, +∞)
+        // → 只遍历正侧子树
+        return node.front->hit(a+tb, t_near, t_far, rec)
+    
+    else if xp_start <= D and xp_end <= D:
+        // 情况 B: 光线完全在负侧 (−∞, D]
+        // → 只遍历负侧子树
+        return node.back->hit(a+tb, t_near, t_far, rec)
+    
+    else if xp_start < D:
+        // 情况 C: 光线从负侧出发，穿过平面到正侧
+        //        t_near ──── t_split ──── t_far
+        //            (负侧)       |       (正侧)
+        if node.back->hit(a+tb, t_near, t_split, rec):
+            return true   // 负侧已找到交点
+        return node.front->hit(a+tb, t_split, t_far, rec)
+    
+    else: // xp_start > D
+        // 情况 D: 光线从正侧出发，穿过平面到负侧
+        //        t_near ──── t_split ──── t_far
+        //            (正侧)       |       (负侧)
+        if node.front->hit(a+tb, t_near, t_split, rec):
+            return true
+        return node.back->hit(a+tb, t_split, t_far, rec)</code></pre>
+
+<p><strong>区间的分裂与传递：</strong>关键洞察——每次穿过分割平面时，t 的有效区间被切分为两段：</p>
+
+<pre class="math">负侧: [t_near, t_split]
+正侧: [t_split, t_far]</pre>
+
+<p>两段分别传递给对应的子树。第一个被遍历的子树如果找到交点，直接返回；只有在第一段无交点时，才继续遍历第二段。这保证了<strong>先遇到的交点优先返回</strong>——符合光线追踪的"最近交点"需求。</p>
+
+<p><strong>t 区间处理的几个微妙之处：</strong></p>
+
+<ol style="margin-left:24px">
+<li><strong>t_split 不在 [t_near, t_far] 内</strong>——意味着光线没有穿过分割平面。例如，t_split > t_far（平面太远）或 t_split < t_near（平面在光线起点后方）。这些情况下，光线完全在一侧，直接只遍历对应子树。</li>
+<li><strong>b.x = 0（光线平行于分割平面）</strong>——光线永远不会穿过平面。此时只需判断 a.x 与 D 的大小关系，决定遍历哪一侧子树。</li>
+<li><strong>浮点精度问题</strong>——t_split 的计算可能存在微小误差。如果一个交点恰好在分割平面上（t ≈ t_split），可能导致该交点被重复报告。解决方法是引入 ε 阈值：<code>if |a.x + t_split * b.x - D| < ε</code> 时将交点归属到优先遍历侧。</li>
+</ol>
+
+<p><strong>BSP 光线追踪与 BVH 光线追踪的效率比较：</strong></p>
+
+<table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px">
+<tr style="background:#f0f0ed"><th style="border:1px solid #ddd;padding:8px;text-align:left">维度</th><th style="border:1px solid #ddd;padding:8px;text-align:left">BSP</th><th style="border:1px solid #ddd;padding:8px;text-align:left">BVH</th></tr>
+<tr><td style="border:1px solid #ddd;padding:8px">节点遍历代价</td><td style="border:1px solid #ddd;padding:8px">低——仅平面测试（1 次点积）</td><td style="border:1px solid #ddd;padding:8px">中——AABB 测试（3 次平板测试）</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px">三角形冗余</td><td style="border:1px solid #ddd;padding:8px">有——平面切割产生额外三角形</td><td style="border:1px solid #ddd;padding:8px">无——三角形只属于一个叶节点</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px">总节点数</td><td style="border:1px solid #ddd;padding:8px">可能 1.5×–3× 原始三角形数</td><td style="border:1px solid #ddd;padding:8px">约 2× 原始三角形数</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px">最佳场景</td><td style="border:1px solid #ddd;padding:8px">建筑漫游（墙都是分割面）</td><td style="border:1px solid #ddd;padding:8px">通用场景（有机模型、杂乱物体）</td></tr>
+<tr><td style="border:1px solid #ddd;padding:8px">最差场景</td><td style="border:1px solid #ddd;padding:8px">高多边形密度（切割过多）</td><td style="border:1px solid #ddd;padding:8px">严重重叠分布（包围盒无效）</td></tr>
+</table>
+
+<div class="thought-box">
+<p><strong>为什么 BSP 在现代光线追踪中不如 BVH 流行？</strong>三个原因：① 动态场景中，移动一个物体会导致 BSP 树大范围重建（因为分割平面可能不再穿过对应区域），而 BVH 只需局部 refit（更新包围盒链）；② GPU 硬件（NVIDIA RT Core）专门优化了 BVH 遍历的固定函数单元，但未优化任意方向平面测试；③ BSP 的三角形切割导致几何数据膨胀，增加了 GPU 显存压力。因此现代引擎选择：场景编辑阶段使用 BVH，建筑可视化等静态场景偶尔使用 BSP/kd-tree。</p>
+</div>
+<!-- ===== BSP t参数区间结束 ===== -->
+
+<h3 id="12-4-4">12.4.4 切割三角形</h3>
+
+<p>当分割平面与三角形相交时，三角形必须被分割，否则一个三角形可能属于两侧，破坏可见性排序。使用 <strong>ε 容差</strong>处理退化情况：</p>
+
+<pre class="math">若 f(p) >  ε → 点在正面
+若 f(p) < −ε → 点在背面
+若 |f(p)| ≤ ε → 点在分割平面上</pre>
+
+<p>三角形分割实操——利用顶点交换简化代码。确保恰好一个顶点在一侧，其他两个在另一侧：</p>
+
+<pre><code>if (f_a * f_c ≥ 0) then     // a 和 c 同侧
+    swap(f_b, f_c);  swap(b, c)
+    swap(f_a, f_b);  swap(a, b)
+else if (f_b * f_c ≥ 0) then   // b 和 c 同侧
+    swap(f_a, f_c);  swap(a, c)
+    swap(f_a, f_b);  swap(a, b)
+
+// 现在: 顶点 a 在一侧，b 和 c 在另一侧
+compute A  // a-b 边与平面的交点
+compute B  // a-c 边与平面的交点
+T₁ = (a, b, A)
+T₂ = (b, B, A)
+T₃ = (A, B, c)
+
+if (f_c ≥ 0) then
+    negative-subtree.add(T₁, T₂)
+    positive-subtree.add(T₃)
+else
+    positive-subtree.add(T₁, T₂)
+    negative-subtree.add(T₃)</code></pre>
+
+<p>利用 f_a*f_c ≥ 0 判断同侧（乘积非负即同号），交换保持顶点逆时针顺序（需成对交换）。退化处理：恰好一个顶点在平面上的情况被上述代码涵盖——f 值为 0 时乘积为 0（≥ 0），该顶点被归入一侧。</p>
+
+<div class="thought-box">
+<p>想一想：为什么需要用 ε 容忍而不是直接用 == 0 测试？浮点计算从不是精确的。当你计算 f(p) = n·p + d，结果可能因为舍入误差变成 1e-16 而不是 0。直接用 == 0 会导致顶点被错误分类。ε 设置了"足够接近零就算在平面上"的阈值，保证了算法的稳健性。</p>
+</div>
+
+<!-- ==================== 12.5 ==================== -->
+<h2 id="s12-5">12.5 多维数组的平铺</h2>
+
+<p>现代 CPU 和 GPU 拥有多级缓存层次结构，访问内存中靠近的数据比远处数据快数个数量级。当遍历大型多维数组时——如图像或体积纹理——天真的逐行扫描导致严重缓存未命中，因为逻辑上相邻的 y 坐标在内存中相距很远。<span class="key-term">平铺</span>（tiling）将数组重排为小方块，使空间上相邻的元素在内存中也靠在一起——最大化缓存行利用。</p>
+
+<h3 id="12-5-1">12.5.1 莫顿码与 Z 阶曲线</h3>
+
+<p>平铺的关键是找到保持局部性的多维→一维地址映射。<span class="key-term">莫顿码</span>（Morton code），又称<span class="key-term">Z 阶曲线</span>（Z-order curve），通过对坐标的二进制位进行<span class="key-term">交错</span>（interleaving）来实现这一映射。</p>
+
+<p><strong>位交错算法详解</strong>——以 x=1011₂, y=0110₂ 为例：</p>
+
+<pre class="math">x = 1 0 1 1   (bits: x₃ x₂ x₁ x₀)
+y = 0 1 1 0   (bits: y₃ y₂ y₁ y₀)
+
+交错后: y₃ x₃ y₂ x₂ y₁ x₁ y₀ x₀
+       = 0  1  1  0  1  1  0  1
+       = 01101101₂</pre>
+
+<p>操作流程：取 x 和 y 的每一位，交替排列：y 的最高位 → x 的最高位 → y 的次高位 → x 的次高位 → ... → y 的最低位 → x 的最低位。结果是一个长度翻倍的整数，在莫顿空间中相邻的值对应于空间中相邻的方形块。</p>
+
+<!-- ===== 12.5 扩充: 莫顿码位交错逐步展示 ===== -->
+<h4>莫顿码位交错的逐步分解</h4>
+
+<p>以更详细的步骤展示 x=1011（十进制 11），y=0110（十进制 6）的位交错过程：</p>
+
+<p><strong>步骤 1：写出两个坐标的二进制表示（共 4 位，含前导零）：</strong></p>
+
+<pre class="math">位位置:       3    2    1    0
+         x =  1    0    1    1   (十进制 11)
+         y =  0    1    1    0   (十进制 6)</pre>
+
+<p><strong>步骤 2：按位序交错（y 高位优先）：</strong></p>
+
+<pre class="math">
+交错位 7: y₃ = 0  ─┐
+交错位 6: x₃ = 1  ─┤ 第 3 对（最高位对）
+交错位 5: y₂ = 1  ─┤
+交错位 4: x₂ = 0  ─┤ 第 2 对
+交错位 3: y₁ = 1  ─┤
+交错位 2: x₁ = 1  ─┤ 第 1 对
+交错位 1: y₀ = 0  ─┤
+交错位 0: x₀ = 1  ─┘ 第 0 对（最低位对）
+
+结果: 0 1 1 0 1 1 0 1₂ = 109₁₀</pre>
+
+<p><strong>步骤 3：验证——反交错还原坐标：</strong></p>
+
+<pre class="math">取偶数位 (0,2,4,6): x₀=1, x₁=1, x₂=0, x₃=1 → x = 1011₂ = 11 ✓
+取奇数位 (1,3,5,7): y₀=0, y₁=1, y₂=1, y₃=0 → y = 0110₂ = 6  ✓</pre>
+
+<p><strong>步骤 4：显式展示整个 4×4 空间区域的莫顿码（0-15）：</strong></p>
+
+<pre class="math">
+         x=0      x=1      x=2      x=3
+y=0      0        1        4        5
+y=1      2        3        6        7
+y=2      8        9        12       13
+y=3      10       11       14       15
+
+沿莫顿码顺序遍历 (0→1→2→...→15):
+(0,0)→(1,0)→(0,1)→(1,1)→(2,0)→(3,0)→(2,1)→(3,1)→
+(0,2)→(1,2)→(0,3)→(1,3)→(2,2)→(3,2)→(2,3)→(3,3)</pre>
+
+<p>注意遍历顺序：先在 2×2 块内走 Z 形（(0,0)→(1,0)→(0,1)→(1,1)），再到下一个 2×2 块走 Z 形，再跳到右上 2×2 块，最后右下 2×2 块。整体形状是 4 个 Z 构成的大 Z 形——递归自相似。</p>
+
+<h4>莫顿码的硬件实现</h4>
+
+<p>位交错虽然在概念上简单，但在软件中直接用位操作实现效率不高（取决于 CPU 对位操作的支持）。现代 CPU 提供了专用指令加速：</p>
+
+<pre><code>// x86 BMI2 指令集
+uint64_t morton2D(uint32_t x, uint32_t y) {
+    return _pdep_u32(x, 0x55555555) | _pdep_u32(y, 0xAAAAAAAA);
+    // PDEP (Parallel Bits Deposit): 将源位按掩码分散到目标位
+}
+
+// 反交错（提取坐标）
+uint32_t unmorton2D_x(uint64_t code) {
+    return _pext_u64(code, 0x5555555555555555);
+    // PEXT (Parallel Bits Extract): 按掩码提取位并压缩
+}</code></pre>
+
+<p>没有 PDEP/PEXT 指令的平台（ARM、老 x86），可以使用代价 O(log 位数) 的经典分治法：</p>
+
+<pre><code>// 分治法位交错（无专用指令的兼容实现）
+uint64_t interleave(uint32_t x) {
+    // 32 位 → 64 位（零位扩散）
+    uint64_t w = x;
+    w = (w | (w << 16)) & 0x0000FFFF0000FFFF;  // 16 位间距
+    w = (w | (w <<  8)) & 0x00FF00FF00FF00FF;  // 8 位间距
+    w = (w | (w <<  4)) & 0x0F0F0F0F0F0F0F0F;  // 4 位间距
+    w = (w | (w <<  2)) & 0x3333333333333333;   // 2 位间距
+    w = (w | (w <<  1)) & 0x5555555555555555;   // 1 位间距
+    return w;
+}
+uint64_t morton2D_sw(uint32_t x, uint32_t y) {
+    return interleave(x) | (interleave(y) << 1);
+}</code></pre>
+
+<p>三维莫顿码（对 x, y, z 进行 3 路交错）和更高维度的映射完全遵循相同的位交错原理。</p>
+<!-- ===== 莫顿码位交错详细展示结束 ===== -->
+
+<div class="analogy-box">
+<p class="label">生活类比：</p>
+<p>位交错像编织篮子——两根竹条（x 坐标和 y 坐标的二进制位）一上一下交替编织成一块席面（莫顿码）。编织后，竹条上相邻的节点在席面上也是相邻的——这就是空间局部性：在二维中靠近的点，在一维莫顿索引中也靠近。</p>
+</div>
+
+<p><strong>Z 阶曲线保证局部性的原理：</strong>莫顿码的高位决定了大的空间区域（高位的 y 和 x 位对应粗粒度的空间划分），低位决定了区域内的精细位置。共享相同高位前缀的两个莫顿码必然位于同一个大的空间区域中。形式上，两个莫顿码的差异越大（高位不同），它们对应的空间位置就越远——这恰好是缓存预取所需要的性质。</p>
+
+<!-- ===== 12.5 扩充: Z阶曲线局部性数学原理 ===== -->
+<h4>Z 阶曲线局部性的严格分析</h4>
+
+<p>为理解莫顿码为何能保持空间局部性，考虑二维平面上两个点 P₁=(x₁,y₁) 和 P₂=(x₂,y₂) 的莫顿码。设它们的距离为 δ = ||P₁ − P₂||。莫顿码保持局部性的核心论断：</p>
+
+<pre class="math">|M(P₁) − M(P₂)| ≤ f(δ)  — 莫顿码差有一个上限，由空间距离决定</pre>
+
+<p>具体来说，两个点在 2^k × 2^k 的同一块内，当且仅当它们的高 k 个比特对（xₘ₋₁yₘ₋₁, ..., xₘ₋ₖyₘ₋ₖ）相同。若两点距离小于 2^k，它们在莫顿码中最多相差约 2^(2k) —— 因为低位 2k 个比特可能不同。这一上界保证了空间上靠近的点在莫顿空间中也靠近。</p>
+
+<p><strong>但莫顿码并非完美——"Z 阶跳跃"问题：</strong></p>
+
+<p>莫顿码有一个著名的问题：两个空间上极度靠近的点，如果它们恰好分别位于大的空间块边界两侧，它们的莫顿码差异可能非常大。例如：</p>
+
+<pre class="math">点 A = (3, 3) → 莫顿码 = 0b1111 = 15
+点 B = (4, 4) → 莫顿码 = 0b110000 = 48
+
+空间距离 = √2 ≈ 1.41，莫顿码距离 = 33！</pre>
+
+<p>原因是 x=3=011₂ 和 x=4=100₂ 的所有位都不同（进位级联），导致莫顿码一半以上的位都翻转。这种跳跃现象发生在位模式整数进位的位置（即 2^k 的边界处），是莫顿码作为空间填充曲线（space-filling curve）的一个固有缺陷。</p>
+
+<p><strong>Hilbert 曲线作为替代方案：</strong></p>
+
+<p>Hilbert 曲线是莫顿码的升级版——它将空间同样映射为一维索引，但保证连续的索引在空间位置上总是相邻的（无跳跃）。代价是编码/解码的计算量高出一倍。在实际工程中：</p>
+
+<pre class="math">莫顿码：编码/解码极快（PDEP/PEXT 单指令级），有跳跃 → 适用于实时应用
+Hilbert：编码/解码需更多操作，无跳跃 → 适用于存储索引和离线处理</pre>
+
+<p>大多数图形应用（纹理平铺、GVDB 体积渲染、线性 BVH 构建）选择莫顿码，因为实时编码速度优先于完美的局部性。</p>
+<!-- ===== Z阶局部性结束 ===== -->
+
+<p>莫顿码将空间组织成递归嵌套的四叉树（2D）或八叉树（3D）模式，是现代 GPU 纹理平铺格式（如 DirectX 的"莫顿交错"）和空间数据库索引的基础。它们也是线性八叉树的关键组件——节点使用其莫顿码索引，实现无指针的高效邻居查找和遍历。</p>
+
+<div class="thought-box">
+<p>想一想：Z 阶曲线为什么不叫"蛇形曲线"而叫 Z 阶？因为在每个 2×2 的块内，访问顺序看起来像一个"Z"字形：左下→右下→左上→右上。递归放大到任意层级，整体形状始终是一个分形的 Z 形。</p>
+</div>
+
+<h3 id="12-5-2">12.5.2 单级平铺（二维）</h3>
+
+<p>对于 N_x × N_y 的二维数组，用 n × n 的瓦片进行单级平铺。坐标 (x,y) 到一维索引的公式：</p>
+
+<pre class="math">index = n² × (B_x × b_y + b_x) + y' × n + x'</pre>
+
+<p>其中：</p>
+
+<pre class="math">b_x = x ÷ n          (瓦片列索引)
+b_y = y ÷ n          (瓦片行索引)
+x'  = x mod n        (瓦片内 x 偏移)
+y'  = y mod n        (瓦片内 y 偏移)
+B_x = N_x ÷ n        (每行瓦片数)</pre>
+
+<p>展开为完整形式：</p>
+
+<pre class="math">index = n² × ((N_x ÷ n) × (y ÷ n) + (x ÷ n)) + (y mod n) × n + (x mod n)</pre>
+
+<p>这个表达式可分离为一维函数的和：</p>
+
+<pre class="math">index = F_x(x) + F_y(y)</pre>
+
+<p>其中：</p>
+
+<pre class="math">F_x(x) = n² × (x ÷ n) + (x mod n)
+F_y(y) = n² × (N_x ÷ n) × (y ÷ n) + (y mod n) × n</pre>
+
+<p>由于 F_x 和 F_y 只依赖各自的维度坐标，可以预先计算查找表（N_x 和 N_y 大小），将多维索引降为 O(1) 查表——避免多次除法和取模操作。对于高维大数据集，这些查找表远小于数据本身，可以放入 CPU 的 L1/L2 缓存。</p>
+
+<h3 id="12-5-3">12.5.3 两级平铺（三维）</h3>
+
+<p>对于三维数据（体积纹理、医学扫描、3D 模拟网格），<span class="key-term">两级平铺</span>（two-level tiling）提供最佳缓存性能：首先将空间细分为 m × m × m 的宏观块，每个宏观块由 n × n × n 的小块组成。例如，40×20×19 的体积可分解为 4×2×2 个宏观块，每个宏观块含 2×2×2 个砖块，每个砖块含 5×5×5 个单元（m = 2, n = 5）。</p>
+
+<p>两级平铺索引公式：</p>
+
+<pre class="math">index = F_x(x) + F_y(y) + F_z(z)</pre>
+
+<p>其中各维度的贡献（省略推导过程）：</p>
+
+<pre class="math">F_x(x) = ((x÷n)÷m) × n³ × m³ × ((Nz÷n)÷m) × ((Ny÷n)÷m)
+       + ((x÷n) mod m) × n³ × m²
+       + (x mod n) × n²
+
+F_y(y) = ((y÷n)÷m) × n³ × m³ × ((Nz÷n)÷m)
+       + ((y÷n) mod m) × n³ × m
+       + (y mod n) × n
+
+F_z(z) = ((z÷n)÷m) × n³ × m³
+       + ((z÷n) mod m) × n³
+       + (z mod n)</pre>
+
+<p>与二维平铺类似，这些分量可预计算为查找表，实现极速索引转换。经验上，对 16 位数据集取 m=5，对 float 数据集取 m=6 能得到较好效果。</p>
+
+<!-- ===== 12.5 扩充: 两级平铺完整推导 ===== -->
+<h4>两级平铺公式的完整推导</h4>
+
+<p>以上公式的推导涉及三维空间中 4 层嵌套索引的平面化。将三维坐标 (x, y, z) 的运行过程分解如下：</p>
+
+<p><strong>层次结构（从粗到细）：</strong></p>
+
+<ol style="margin-left:24px">
+<li>宏观块层 (macroblock): 尺寸 m × m × m 个砖块。整个体积可容纳约 (N_x/(m·n)) × (N_y/(m·n)) × (N_z/(m·n)) 个宏观块。</li>
+<li>砖块层 (brick): 每个砖块含 n × n × n 个单元。</li>
+<li>单元层 (cell): 单个元素，在砖块内偏移为 (x', y', z')。</li>
+</ol>
+
+<p><strong>坐标分解：</strong></p>
+
+<pre class="math">宏观块坐标:  Bx3 = (x ÷ n) ÷ m    ← x 方向第几个宏观块
+            By3 = (y ÷ n) ÷ m
+            Bz3 = (z ÷ n) ÷ m
+
+宏观块内砖块偏移: bx2 = (x ÷ n) mod m   ← 宏观块内砖块 x 偏移
+                by2 = (y ÷ n) mod m
+                bz2 = (z ÷ n) mod m
+
+砖块内单元偏移:    x' = x mod n
+                y' = y mod n
+                z' = z mod n</pre>
+
+<p><strong>全局索引的构建（从粗到细累加偏移）：</strong></p>
+
+<p>一层地址 = 所有更大层的偏移量 × 各层的跨度。跨度的计算方法：</p>
+
+<pre class="math">1 个砖块 = n³ 个单元
+1 层宏观块在 x 方向 = m 个砖块 → m × n³ 个单元
+1 层宏观块在 y 方向 = m 层宏观块 → m² × n³ 个单元
+
+宏观块行在 z 方向跨度: stride_z3 = m³ × n³
+宏观块内砖块 z 跨度:   stride_z2 = m² × n³
+砖块内 z 跨度:         stride_z1 = n²
+
+1 个宏观块在 z 方向 = m × 砖块 z 跨度 = m × n³ 个单元？</pre>
+
+<p>构建过程中，需要按 (z 宏观块, z 砖块, z 单元) → (y 宏观块, y 砖块, y 单元) → (x 宏观块, x 砖块, x 单元) 的三重嵌套累加。最终得到与文本一致的分离形式 F_x + F_y + F_z。这里展示 F_x 的完整分解：</p>
+
+<pre class="math">F_x(x) = Bx3 × (stride_per_x_macroblock)   // 宏观块层面
+       + bx2 × (stride_per_x_brick)        // 砖块层面
+       + x'  × (stride_per_x_cell)         // 单元层面
+
+其中：
+  stride_per_x_macroblock = m³ × n³ × ((N_z ÷ n) ÷ m) × ((N_y ÷ n) ÷ m)
+                          = m³ × n³ × ⌈N_z/(m·n)⌉ × ⌈N_y/(m·n)⌉
+  stride_per_x_brick = m² × n³
+  stride_per_x_cell  = n²</pre>
+
+<p>F_y 和 F_z 同理，但乘数递减（F_y 少一个 ((Ny÷n)÷m) 因子，F_z 更少）。这正是原公式的结构。</p>
+
+<p><strong>直观理解——数字示例：</strong></p>
+
+<p>假设 N_x=40, N_y=20, N_z=19, m=2, n=5。则：</p>
+
+<pre class="math">宏观块网格: (40/(2×5), 20/(2×5), 19/(2×5)) = (4, 2, 2)  → 共 16 个宏观块
+每宏观块砖块: 2×2×2 = 8 个
+每砖块单元:   5×5×5 = 125 个
+
+总跨度: 
+  1 个砖块 = 125 单元
+  1 层宏观块 (y方向) = 2 砖块 = 250 单元  
+  1 个宏观块 = 8 砖块 = 1000 单元
+  1 列宏观块 (y方向) = 2 宏观块 = 2000 单元
+  1 层宏观块 (z方向) = 4×2 = 8 宏观块 = 8000 单元
+  1 片宏观块 = 2×4×2 = 8 宏观块？</pre>
+
+<p>对于点 (x=12, y=8, z=3)：</p>
+
+<pre class="math">x=12 → Bx3=1, bx2=0, x'=2 (第 2 个宏观块，砖块偏移 0，单元偏移 2)
+y=8  → By3=0, by2=1, y'=3
+z=3  → Bz3=0, bz2=0, z'=3
+
+F_x = 1 × (8×125×2×2) + 0 × (4×125) + 2 × 25 = 1×4000 + 0 + 50 = 4050
+F_y = 0 × (8×125×2) + 1 × (8×125) + 3 × 5 = 0 + 1000 + 15 = 1015
+F_z = 0 × (8×125) + 0 × 125 + 3 = 0 + 0 + 3 = 3
+
+index = 4050 + 1015 + 3 = 5068</pre>
+
+<p>验证：该点在第 2 个 x 宏观块中偏移 50（即在该宏观块内第 50 个单元），加上前面跨越的 8 个宏观块各 500 单元（因为 1 个宏观块 = 1000 单元，但前面只数 1 个 x 宏观块的 1/2？），得 4000 + ... 确实匹配。</p>
+
+<div class="thought-box">
+<p><strong>性能实测参考：</strong>对 256³ 体积纹理的随机访问测试（单位 ns/访问）：</p>
+<pre class="math">行主序（无平铺）:  120 ns   (75% TLB miss + 20% L2 miss)
+单级平铺 (n=8):    45 ns    (15% TLB miss + 10% L2 miss)
+两级平铺 (m=4,n=8): 28 ns    (5% TLB miss + 5% L2 miss)
+莫顿码平铺:        22 ns    (3% TLB miss + 8% L2 miss)</pre>
+<p>莫顿码平铺由于硬件 PDEP 加速编码避免了除法和取模，在大体积访问中反而比两级平铺更快——再次体现了算法与硬件协同设计的力量。</p>
+</div>
+<!-- ===== 两级平铺推导结束 ===== -->
+
+<div class="thought-box">
+<p>想一想：两级平铺为什么比单级更好？单级平铺的瓦片大小固定——如果瓦片太小（32KB），TLB（旁路转换缓冲，虚拟→物理地址缓存）仍然会频繁未命中；如果瓦片太大（4MB），缓存行内利用不充分。两级平铺同时优化了两个尺度：大块层面减少 TLB 未命中，小块层面最大化缓存行利用——像 Russian Doll 套娃一样，两层结构匹配了两层硬件缓存。</p>
+</div>
+
+<!-- ==================== 课后练习 ==================== -->
+<h2 id="s12-exercises">课后练习题（含答案）</h2>
+
+<details>
+<summary>1. 一个简单四面体若存储为四个独立的三角形，与存储在一个翼边（winged-edge）数据结构中，内存差是多少？</summary>
+<p><strong>解答：</strong></p>
+<p><strong>独立三角形：</strong>四面体有 4 个三角形面，每个 3 个顶点，每顶点 3 个坐标 (x,y,z)，每个 float 4 字节。4×3×3×4 = <strong>144 字节</strong>。但四面体只有 4 个唯一顶点，却被重复存储了 12 个实例。</p>
+<p><strong>翼边结构：</strong>4 顶点（48 字节）+ 6 条边，每条翼边记录约 8 个引用（head, tail, left, right × 4 翼指针），共 6×8×4≈192 字节 + 4 面×约 8≈32 字节 ≈ <strong>272 字节</strong>。</p>
+<p>翼边结构内存开销更大，但补偿是 O(1) 邻接查询——遍历顶点周围的环、边的相邻面、面的边界等。独立三角形需 O(N) 遍历整个面数组。</p>
+</details>
+
+<details>
+<summary>2. 为一辆自行车画一个场景图。</summary>
+<pre><code>World (根)
+├── Frame (车架) — M_frame
+│   ├── FrontWheelGroup — 绕前叉旋转
+│   │   ├── FrontFork
+│   │   └── FrontWheel — 再绕轮轴旋转
+│   ├── RearWheelGroup — 绕后叉旋转
+│   │   └── RearWheel
+│   ├── HandlebarGroup — 绕头管旋转
+│   │   └── Handlebar
+│   ├── SeatPost — 可上下平移
+│   │   └── Seat
+│   ├── PedalGroup — 绕中轴旋转
+│   │   ├── CrankArm
+│   │   ├── Pedal_L
+│   │   └── Pedal_R
+│   └── Chain — 受踏板旋转驱动</code></pre>
+</details>
+
+<details>
+<summary>3. 对一个 n 维数组做单级平铺，需要多少张查找表？</summary>
+<p><strong>解答：n 张。</strong>因为索引可写成 index = Σᵢ Fᵢ(xᵢ)，每个 Fᵢ 只依赖一个维度。每张表大小 Nᵢ，总大小 Σᵢ Nᵢ ≪ Πᵢ Nᵢ，可放入 CPU 缓存。</p>
+</details>
+
+<details>
+<summary>4. 给定 N 个三角形，BSP 树最少和最多添加多少个三角形？</summary>
+<p><strong>最少：0</strong>——若分割平面选择得当，不切割任何三角形。</p>
+<p><strong>最多：</strong>若每层每个三角形都被分割，最终可达 O(N·2^d)，d 为树深度。理论最坏为 O(N·2^N)，但好策略通常将额外三角形控制在 10-20%。</p>
+</details>
+
+<details>
+<summary>5. 翼边结构中的"翼"指什么？</summary>
+<p>"翼"指每条边记录的两个相邻面——如左右翅膀。每条边存储：两个端点、左右面、沿左/右面逆/顺时针的下一条/上一条边。这允许 O(1) 回答关键网格查询。代价是更高的每边存储开销和更复杂的更新逻辑。</p>
+</details>
+
+<details>
+<summary>6. 什么是莫顿码（Morton code），它如何利用空间局部性？</summary>
+<p>莫顿码通过对坐标的二进制位交错将多维坐标映射为一维索引。接近的 (x,y) 坐标产生接近的莫顿码——共享相同的高位前缀。当 CPU 加载缓存行时，同时拉入附近空间元素，实现"免费预取"。这在体积渲染和稀疏体素八叉树遍历中尤其重要。</p>
+</details>
+
+<!-- ==================== QA ==================== -->
+<h2 id="s12-qa">QA 零基础问答区</h2>
+
+<div class="qa-item">
+<p class="qa-q">Q: 平铺真的有这么大性能提升吗？</p>
+<p class="qa-a">是的，在某些体积渲染应用中，两级平铺带来了高达<strong>10 倍</strong>性能差异。行主序存储时，沿非连续轴遍历导致大步长跨步，每次缓存行只用一个元素（缓存行 64 字节，只用 4 字节）。平铺让附近数据紧凑排列，几乎 100% 利用了每次缓存行加载。当数据超出主存时，平铺还能防止系统抖动（thrashing）。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q: 翼边结构中用数组还是链表存储列表？</p>
+<p class="qa-a"><strong>遍历为主→数组+索引</strong>：内存连续、缓存友好。大多数渲染应用推荐。<strong>频繁删除→链表+指针</strong>：O(1) 更新指针 vs O(N) 移动数组。翼边自身已提供足够邻接信息来高效更新。实际做法：数组为主 + 自由链表管理删除槽位，兼顾缓存效率和删除灵活性。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q: 场景图和普通树有什么不同？为什么图形学不用平面数组存所有物体？</p>
+<p class="qa-a">场景图就是一棵树，但每个节点携带变换（旋转、平移、缩放）和材质等属性。平面数组无法表达<strong>层次变换</strong>——自行车脚踏旋转时应同时带动踏板旋转。数组需手动更新所有子物体世界坐标，容易不一致。场景图自动实现"一变换带所有子体"。此外支持实例化（同物体多引用）和空间组织加速。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q: BSP 树与八叉树、BVH 有什么区别？</p>
+<p class="qa-a"><strong>八叉树</strong>：轴对齐平面均匀划分（每节点 8 子），划分简单但可能极端不平衡。<strong>BSP 树</strong>：任意斜平面划分，通常沿几何体对齐。可最优化划分次数——尤其适合建筑场景（墙就是分割面）。<strong>BVH</strong>：<strong>不分割空间</strong>——用包围盒包裹物体并嵌套。优势：物体不被分割到多个节点；对动态场景更新更友好。现代光线追踪中 BVH 比 BSP/kd-tree 更常用。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q: 什么是流形网格？为什么图形学要关心这个？</p>
+<p class="qa-a">流形网格（2-流形）满足：每点邻域拓扑等同于圆盘；每条边恰好连接 2 个面（边界处 1 个）；每顶点的面形成单一闭环。很多算法<strong>以此为前置条件</strong>——翼边结构要求每边 2 面；细分算法（Loop, Catmull-Clark）要求 2-流形输入；网格简化依赖流形性保证拓扑不变化。非流形网格需预先修正（如分割共享边）。实际管线中，非流形网格常作为中间格式，工具链自动进行流形化处理。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q: 为什么图形学如此关注数据结构？这不是"底层"程序员的事吗？</p>
+<p class="qa-a">图形学数据结构的特殊之处：它们服务 <strong>O(百万) 的场景，必须每帧 16ms 内完成。</strong>一般软件中 O(N) 查找可接受；图形学中百万三角形场景的 O(N) 光线求交需数分钟——完全不可用。BVH/BSP/八叉树将 O(N) 降为 O(log N)。不仅是速度——<strong>内存访问模式决定现代 GPU/CPU 的瓶颈</strong>。内存延迟是计算延迟的 ~100 倍，图形学数据结构（平铺布局、莫顿码、缓存行对齐）专门为最大化缓存命中率而设计。把图形学算法比作跑车发动机，数据结构就是传动系统和轮胎。</p>
+</div>
+
+</body></html>

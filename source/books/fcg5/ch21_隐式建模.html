@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FCG Ch21: Implicit Modeling — 全文翻译 (Guizang插图版 · 充实的)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Noto Serif SC","Source Han Serif SC","SimSun",Georgia,serif;background:#faf9f5;color:#2c2c2c;line-height:1.9;font-size:15px;max-width:860px;margin:0 auto;padding:40px 24px}
+h1{font-size:28px;text-align:center;margin:40px 0 10px;color:#1a1a1a;border-bottom:2px solid #002FA7;padding-bottom:16px}
+h2{font-size:22px;margin:48px 0 20px;color:#1a1a1a;border-left:4px solid #002FA7;padding-left:14px}
+h3{font-size:17px;margin:32px 0 14px;color:#333}
+h4{font-size:15px;margin:20px 0 10px;color:#444}
+p{margin:12px 0;text-indent:2em}
+p.no-indent{text-indent:0}
+code{background:#eee;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:13px}
+figure{margin:28px 0;text-align:center}
+figure img{max-width:100%;border-radius:4px;box-shadow:0 2px 12px rgba(0,0,0,0.08)}
+figcaption{font-size:13px;color:#777;margin-top:8px}
+.fig-num{font-weight:700;color:#002FA7}
+.key-term{font-weight:600;color:#002FA7}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:13px}
+table th{background:#002FA7;color:#fff;padding:8px 12px;text-align:left}
+table td{border-bottom:1px solid #ddd;padding:8px 12px}
+table tr:nth-child(even){background:#f5f5f5}
+.thought-box{background:#f5f8fc;border:1px solid #c8d6e5;border-radius:6px;padding:10px 16px;margin:14px 0}
+.thought-box p{text-indent:0;margin:4px 0}
+.insight-box{background:#fdf8f0;border:1px solid #e8d5b0;border-radius:6px;padding:14px 20px;margin:24px 0}
+.insight-box h3{color:#b8860b;margin:0 0 10px 0;font-size:16px}
+.insight-box ol{margin:0;padding-left:20px}
+.insight-box li{margin:6px 0}
+.objectives-box{background:#f5f8fc;border:1px solid #002FA7;border-left:6px solid #002FA7;border-radius:6px;padding:14px 22px;margin:24px 0}
+.objectives-box h3{color:#002FA7;margin:0 0 10px 0;font-size:17px}
+.objectives-box ol{margin:0;padding-left:22px}
+.objectives-box li{margin:6px 0;line-height:1.7}
+.qa-item{margin:14px 0;padding:10px 16px;background:#fafafa;border-left:3px solid #002FA7}
+.qa-item .qa-q{font-weight:600;color:#002FA7;text-indent:0;margin:0 0 6px 0}
+.chapter-header{display:flex;align-items:center;gap:12px;padding:12px 0;margin:-40px -24px 24px;border-bottom:2px solid #002FA7;font-family:"Noto Sans SC",sans-serif;background:#faf9f5}
+.chapter-header #logo{font-weight:700;color:#002FA7;font-size:14px;letter-spacing:0.5px}
+.chapter-header #sep{color:#999;font-size:14px}
+.chapter-header #cur{color:#333;font-size:14px;flex:1}
+.chapter-header #btns{display:flex;gap:8px}
+.hdr-btn{background:#fff;border:1px solid #002FA7;color:#002FA7;padding:4px 12px;font-size:12px;border-radius:4px;text-decoration:none;display:inline-block}
+.hdr-btn:hover{background:#002FA7;color:#fff}
+.chapter-header button{background:#fff;border:1px solid #002FA7;color:#002FA7;padding:4px 12px;font-size:12px;cursor:pointer;border-radius:4px;font-family:inherit}
+.chapter-header button:hover{background:#002FA7;color:#fff}
+
+.lecture-note{background:#f5f8fc;border:1px solid #b8c8d8;border-left:5px solid #002FA7;border-radius:6px;padding:14px 22px;margin:24px 0 18px}
+.lecture-note strong{display:block;color:#002FA7;font-size:16px;margin-bottom:8px}
+.lecture-note p{margin:6px 0;text-indent:0;font-size:14px;line-height:1.75;color:#444}
+
+.qa-item .qa-a{text-indent:0;margin:0}
+.toc{background:#fff;border:1px solid #e0e0e0;border-radius:6px;padding:16px 24px;margin:20px 0;font-size:14px}
+.toc strong{display:block;margin-bottom:8px;font-size:16px}
+.toc ul{list-style:disc;padding-left:32px;border:none}
+.toc li{margin:4px 0}
+.toc a{color:#002FA7;text-decoration:none}
+.nav-bar{background:#fff;border-bottom:1px solid #e0e0e0;padding:10px 20px;margin:-40px -24px 30px;display:flex;gap:16px;font-size:13px;flex-wrap:wrap}
+.nav-bar a{color:#555;text-decoration:none}
+.nav-bar a:hover{color:#002FA7}
+.table-wrap{overflow-x:auto;margin:16px 0}
+.analogy-box{background:#fef9e7;border:1px solid #f9e79f;border-left:4px solid #f1c40f;border-radius:6px;padding:12px 18px;margin:16px 0}
+.analogy-box p{text-indent:0;margin:6px 0}
+.analogy-box strong{color:#b8860b}
+.eq{font-family:Georgia,serif;font-style:italic;font-size:16px;color:#1a5276}
+.formula-block{background:#f9f9fb;border:1px solid #d0d7e2;border-radius:6px;padding:14px 20px;margin:16px 0;text-align:center;overflow-x:auto}
+.formula-block p{text-indent:0;margin:6px 0;font-family:Georgia,serif;font-style:italic;font-size:16px;color:#1a5276}
+.formula-block p.fm-label{font-size:13px;color:#777;font-style:normal;margin-top:4px}
+.derivation-box{background:#f0fff0;border:1px solid #a0d0a0;border-radius:6px;padding:12px 18px;margin:16px 0}
+.derivation-box p{text-indent:0;margin:4px 0;font-size:14px}
+.derivation-box .dm-step{color:#2e7d32;font-family:Georgia,serif;font-style:italic;margin-left:16px}
+.pseudocode{background:#2c2c2c;color:#e0e0e0;border-radius:6px;padding:14px 20px;margin:14px 0;font-family:Consolas,monospace;font-size:13px;line-height:1.6;overflow-x:auto}
+.pseudocode .kw{color:#569cd6}
+.pseudocode .fn{color:#dcdcaa}
+.pseudocode .cm{color:#6a9955}
+.pseudocode .num{color:#b5cea8}
+.warning-box{background:#fef0f0;border:1px solid #f0c0c0;border-left:4px solid #c0392b;border-radius:6px;padding:12px 18px;margin:16px 0}
+.warning-box p{text-indent:0;margin:4px 0}
+.warning-box strong{color:#c0392b}
+pre.math{background:#1a1a2e;color:#e0e0e0;border-radius:8px;padding:16px 22px;margin:16px 0;font-family:Consolas,"Courier New",monospace;font-size:14px;line-height:1.8;overflow-x:auto;white-space:pre-wrap;word-break:break-all;border-left:4px solid #002FA7}
+pre.math em{color:#7ec8e3;font-style:normal}
+pre.math strong{color:#f0c040}
+pre.math .op{color:#c586c0}
+pre.math .num{color:#b5cea8}
+pre.math .cm{color:#6a9955;font-style:italic}
+pre.math .fn{color:#dcdcaa}
+</style>
+</head>
+<body>
+<div class="chapter-header">
+  <span id="logo">FCG 5E</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch21 隐式建模</span>
+  <span id="btns">
+    <a href="#目录" class="hdr-btn">[=] 目录</a>
+    <a href="#s21-1"><button>[+] 章节</button></a>
+  </span>
+</div>
+
+
+
+<div class="nav-bar">
+  <a href="#s21-1">21.1</a> <a href="#s21-2">21.2</a> <a href="#s21-3">21.3</a>
+  <a href="#s21-4">21.4</a> <a href="#s21-5">21.5</a> <a href="#s21-6">21.6</a>
+  <a href="#s21-7">21.7</a> <a href="#s21-8">21.8</a> <a href="#s21-9">21.9</a>
+  <a href="#insights">洞察</a> <a href="#exercises">习题</a> <a href="#qa">Q&A</a>
+</div>
+
+<h1>第21章：隐式建模</h1>
+<div class="lecture-note">
+<strong>说明</strong>
+<p>本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书》（Fundamentals of Computer Graphics）第5版第21章（p.613-639）隐式建模。</p>
+<p>以场函数描述几何——Blinn blob/Wyvill六次多项式/SDF距离场、Ricci混合/Marching Cubes 15 种配置、BlobTree 层次结构、光线步进求交。</p>
+<p>本版插画采用 Guizang 材质插画风格重新绘制。</p>
+</div>
+
+
+
+<div class="toc" id="目录"><strong>目录</strong>
+<ul>
+  <li><a href="#学习目标">学习目标</a></li>
+  <li><a href="#s21-1">21.1 隐式函数与骨架图元</a></li>
+  <li><a href="#s21-2">21.2 距离场与等值面</a></li>
+  <li><a href="#s21-3">21.3 空间划分</a></li>
+  <li><a href="#s21-4">21.4 更多混合方式</a></li>
+  <li><a href="#s21-5">21.5 精确多边形化</a></li>
+  <li><a href="#s21-6">21.6 变形</a></li>
+  <li><a href="#s21-7">21.7 参数化</a></li>
+  <li><a href="#s21-8">21.8 BlobTree</a></li>
+  <li><a href="#s21-9">21.9 交互式隐式建模</a></li>
+  <li><a href="#insights">本章核心洞察</a></li>
+  <li><a href="#exercises">课后练习题</a></li>
+  <li><a href="#qa">QA 零基础问答区</a></li>
+</ul></div>
+
+<div class="objectives-box" id="objectives">
+<h3>学习目标</h3>
+<ol>
+  <li>理解<span class="key-term">隐式曲面</span>（Implicit Surface）的基本定义：三维空间中满足 <span class="eq">f(x,y,z)=0</span> 的所有点的集合，掌握内部/外部区域的判定准则。</li>
+  <li>掌握<span class="key-term">骨架图元</span>（Skeletal Primitives）的概念——用 blob、椭球、圆柱等简单几何定义隐式场，理解 Blinn 高斯模型与 Wyvill 六次多项式的数学性质与差异。</li>
+  <li>理解<span class="key-term">距离场</span>（Distance Field）与<span class="key-term">等值面</span>（Isosurface）的关系，掌握有符号距离函数(SDF)的 Eikonal 方程 |∇f|=1 及其在光线步进中的应用。</li>
+  <li>掌握隐式曲面的<span class="key-term">混合</span>（Blending）——求和混合、Ricci 混合、R 函数、平滑 min/max——的完整数学公式与参数意义。</li>
+  <li>理解<span class="key-term">Marching Cubes</span> 算法的完整流程，包括15种基本配置的顶点模式与三角剖分、面歧义处理、自适应细分与 T-junction 修补。</li>
+  <li>掌握空间变形（Twist、Bend、Taper）的公式与逆变形求值原理，理解 BlobTree 的层次化数据结构与射线步进渲染算法。</li>
+</ol>
+</div>
+
+<figure>
+  <img src="images/ch21_full/fig21_overview.png" alt="Marching Cubes 15种三角剖分配置总览">
+  <figcaption><span class="fig-num">图21-0</span>：Marching Cubes 将隐式场离散化为三角形网格——15种基本三角剖分配置概览（Guizang 示意图）。</figcaption>
+</figure>
+
+<!-- ==================== 21.1 ==================== -->
+<h2 id="s21-1">21.1 隐式函数与骨架图元</h2>
+
+<h3 id="21-1-1">21.1.1 什么是隐式曲面</h3>
+
+<p>前述章节的几何表示主要是<span class="key-term">显式</span>的：参数曲面 <span class="eq">p(u,v)</span> 或三角形网格，直接给出曲面上的每个点。而<span class="key-term">隐式表示</span>（Implicit Representation）截然不同——它用一个标量函数 <span class="eq">f : &#8477;&sup3; &rarr; &#8477;</span> 的<span class="key-term">零等值面</span>来定义曲面。</p>
+
+<div class="formula-block">
+<p><strong>隐式曲面的精确定义：</strong></p>
+<p><span class="eq">S = { p &isin; &#8477;&sup3; | f(p) = 0 }</span></p>
+<p class="fm-label">曲面 S 是标量场 f 的零水平集 (Zero Level Set)</p>
+</div>
+
+<pre class="math">
+<span class="cm">══════════════════════════════════════════════</span>
+<span class="cm">  隐式曲面 (Implicit Surface) — 正式定义</span>
+<span class="cm">══════════════════════════════════════════════</span>
+
+<span class="cm">// 标量场 f : ℝ³ → ℝ 在全空间每点赋一个实数值</span>
+<span class="cm">// 零等值面（Zero Isosurface）即隐式曲面：</span>
+
+<span class="fn">S</span> = { <strong>p</strong> ∈ ℝ³ | <span class="fn">f</span>(<strong>p</strong>) = <span class="num">0</span> }
+
+<span class="cm">// 空间三区域划分：</span>
+<span class="fn">f</span>(<strong>p</strong>) &lt; <span class="num">0</span>  →  <strong>p</strong> 位于物体<em>内部</em> (Interior)
+<span class="fn">f</span>(<strong>p</strong>) = <span class="num">0</span>  →  <strong>p</strong> 位于物体<em>曲面</em>上 (Surface)
+<span class="fn">f</span>(<strong>p</strong>) &gt; <span class="num">0</span>  →  <strong>p</strong> 位于物体<em>外部</em> (Exterior)
+
+<span class="cm">// 梯度给出曲面法向量方向：</span>
+∇<span class="fn">f</span>(<strong>p</strong>) = ( ∂f/∂x , ∂f/∂y , ∂f/∂z )ᵀ
+
+<span class="cm">// 单位法向量 (假定 ||∇f|| ≠ 0)：</span>
+<strong>n̂</strong>(<strong>p</strong>) = ∇<span class="fn">f</span>(<strong>p</strong>) / ||∇<span class="fn">f</span>(<strong>p</strong>)||
+
+<span class="cm">// 隐式曲面的数学优势：</span>
+<span class="cm">//   • 内/外判定 O(1)：仅需计算 f(p) 的符号</span>
+<span class="cm">//   • CSG 布尔操作 O(1)：min/max 即得结果</span>
+<span class="cm">//   • 拓扑变化自然：场值连续变化 → 曲面自动融合/分裂</span>
+<span class="cm">//   • 碰撞检测极速：有 SDF 时 f(p) 即到曲面距离</span>
+</pre>
+
+<p>曲面将空间划分为三个区域：
+<br><span class="eq">f(p) &lt; 0</span> &mdash; 内部（物体内部）
+<br><span class="eq">f(p) = 0</span> &mdash; 曲面（零等值面）
+<br><span class="eq">f(p) &gt; 0</span> &mdash; 外部（物体外部）</p>
+
+<p>这一约定虽非强制，但在 CSG 操作中极为便利：<span class="key-term">并</span>取 min 等价于"内部区域的并集"，<span class="key-term">交</span>取 max 等价于"内部区域的交集"。</p>
+
+<p><span class="key-term">梯度</span>（Gradient）给出了曲面在每个点的朝向：</p>
+
+<div class="formula-block">
+<p><span class="eq">&nabla;f(p) = ( &part;f/&part;x , &part;f/&part;y , &part;f/&part;z )&#7489;</span></p>
+<p class="fm-label">梯度方向指向 f 增加最快的方向，即从内部指向外部</p>
+</div>
+
+<p>向量 &nabla;f(p) 在 f(p)=0 上垂直于曲面，提供了该点的<span class="key-term">法向量</span>（未归一化时）。与参数表示不同，隐式表示不需要显式存储法线——它在任何点都可通过偏导数计算得到。</p>
+
+<div class="analogy-box">
+<p><strong>类比·隐式 = 等高线地图</strong>：等高线地图上的每条闭合曲线满足"海拔 = 某常数"。隐式曲面就是三维空间中的一张"零海拔等高面"：<strong>f(x,y,z)=0</strong>。改变等值参数，就得到山体的不同"切片"。梯度则是每个位置上山的"最陡方向"。</p>
+</div>
+
+<h3 id="21-1-2">21.1.2 隐式表示 vs 显式表示：精度对比</h3>
+
+<div class="table-wrap">
+<table>
+<tr><th>特性</th><th>显式（参数/网格）</th><th>隐式 f(x,y,z)=0</th></tr>
+<tr><td>采样曲面点</td><td>容易——直接代入 u,v</td><td>困难——需要求根（光线步进/Marching Cubes）</td></tr>
+<tr><td>判断内外</td><td>困难——需要射线投射数奇偶</td><td>容易——直接计算 f(p) 的符号</td></tr>
+<tr><td>布尔操作</td><td>困难——需要精确求交+重网格化</td><td>容易——min/max 操作即得结果</td></tr>
+<tr><td>平滑混合</td><td>困难——需要桥接面+过渡几何</td><td>天然支持——场值连续叠加</td></tr>
+<tr><td>碰撞检测</td><td>O(n) 三角面遍历</td><td>O(1) 求值 f(p)（有 SDF 时）</td></tr>
+<tr><td>纹理映射</td><td>容易——u,v 域天然存在</td><td>困难——需要参数化转换</td></tr>
+<tr><td>存储</td><td>显式存储顶点和面（MB 级）</td><td>存储函数参数（KB 级）</td></tr>
+<tr><td>拓扑变化</td><td>困难——需要重构连通性</td><td>天然支持——场值连续变化自动融合</td></tr>
+</table>
+</div>
+
+<h3 id="21-1-3">21.1.3 骨架图元：Blob、椭球与圆柱</h3>
+
+<p>构造隐式曲面时，在空间中放置若干<span class="key-term">骨架图元</span>（Skeletal Primitives），每个贡献一个标量场。图元的场函数在骨架中心处取最大值，随距离单调衰减至零。</p>
+
+<h4>点骨架（Blob）—— Blinn 高斯模型</h4>
+
+<p>最基础的图元是<span class="key-term">点骨架</span>（Blob），由位置 <span class="eq">c</span> 定义。1982年，Blinn 受电子密度云启发，提出用高斯函数定义场：</p>
+
+<div class="formula-block">
+<p><strong>Blinn 高斯 blob：</strong></p>
+<p><span class="eq">f(p) = a &middot; exp( &minus;b &middot; ||p &minus; c||&sup2; )</span></p>
+<p class="fm-label">a 控制振幅（高度），b 控制衰减速度（宽度）</p>
+</div>
+
+<p>引入阈值 T 后定义等值面：</p>
+
+<div class="formula-block">
+<p><span class="eq">F(p) = a &middot; exp( &minus;b &middot; r&sup2; ) &minus; T</span></p>
+<p class="fm-label">r = ||p &minus; c|| 为到骨架中心的欧氏距离</p>
+</div>
+
+<p>令 <span class="eq">F(p) = 0</span> 解出等值面的有效半径：</p>
+
+<div class="derivation-box">
+<p><strong>推导·有效半径 R：</strong></p>
+<p>从 <span class="dm-step">a &middot; exp(&minus;b &middot; R&sup2;) = T</span> 解得：</p>
+<p><span class="dm-step">R = &radic;( ln(a/T) / b )</span></p>
+<p>超出此半径 f(p) 衰减极快但永不为零——高斯函数具有<span class="key-term">无限支撑</span>（Infinite Support），意味着每个 blob 理论上影响全空间。这对大规模场景的效率极为不利。</p>
+</div>
+
+<p>Blinn 模型的梯度：</p>
+
+<div class="formula-block">
+<p><span class="eq">&nabla;f(p) = &minus;2ab &middot; (p &minus; c) &middot; exp( &minus;b &middot; ||p &minus; c||&sup2; )</span></p>
+</div>
+
+<p>与参数 b 成正比——b 越大衰减越快，梯度越陡峭。这对数值稳定性有直接影响：b 过大时等值面附近场值急剧变化，使 Marching Cubes 的线性插值假设失效，需极小体素才能准确捕获。</p>
+
+<h4>Wyvill 六次多项式</h4>
+
+<p>Wyvill 兄弟（1986）提出用<span class="key-term">紧致支撑</span>（Compact Support）多项式替代高斯函数，彻底解决效率问题：</p>
+
+<div class="formula-block">
+<p><strong>Wyvill 六次多项式：</strong></p>
+<p><span class="eq">f(r) = ( 1 &minus; r&sup2; / R&sup2; )&#179;</span>&emsp;（r &le; R）</p>
+<p><span class="eq">f(r) = 0</span>&emsp;（r &gt; R）</p>
+<p class="fm-label">r = ||p &minus; c|| 为到骨架中心距离，R 为支撑半径</p>
+</div>
+
+<p><strong>Wyvill 多项式的展开形式</strong>（令 R=1）——多项式系数的精确值决定函数在支撑边界的各阶光滑性：</p>
+
+<pre class="math">
+<span class="cm">// Wyvill 六次多项式 — 紧致支撑 C² 场函数</span>
+<span class="cm">// 原始形式：f(r) = (1 - r²)³     (0 ≤ r ≤ 1)</span>
+<span class="cm">// 展开形式揭示各阶导数连续性：</span>
+
+<span class="fn">f(r)</span> = <span class="num">1</span> <span class="op">-</span> <span class="num">3</span>r² <span class="op">+</span> <span class="num">3</span>r⁴ <span class="op">-</span> r⁶
+
+<span class="cm">// 另一种常用归一化形式 (Wyvill et al. 1986)：</span>
+<span class="fn">f(r)</span> = <span class="num">1</span> <span class="op">-</span> (<span class="num">22</span>/<span class="num">9</span>)r² <span class="op">+</span> (<span class="num">17</span>/<span class="num">9</span>)r⁴ <span class="op">-</span> (<span class="num">4</span>/<span class="num">9</span>)r⁶
+
+<span class="cm">// 等价变形：f(r) = 4r⁶/9 - 17r⁴/9 + 22r²/9  (归一化形式，值域 [0,1])</span>
+
+<span class="cm">// 各阶导数在 r=0 处的值：</span>
+<span class="fn">f</span>(<span class="num">0</span>) = <span class="num">1</span>          <span class="cm">// 峰值</span>
+<span class="fn">f'</span>(<span class="num">0</span>) = <span class="num">0</span>          <span class="cm">// 平滑顶部 (一阶导为零)</span>
+<span class="fn">f''</span>(<span class="num">0</span>) = <span class="op">-</span><span class="num">6</span>/R²     <span class="cm">// 有限曲率</span>
+
+<span class="cm">// 各阶导数在 r=R 处的值 (紧致支撑的关键)：</span>
+<span class="fn">f</span>(R) = <span class="num">0</span>          <span class="cm">// 边界值为零</span>
+<span class="fn">f'</span>(R) = <span class="num">0</span>          <span class="cm">// 一阶导连续为零 → C¹</span>
+<span class="fn">f''</span>(R) = <span class="num">0</span>         <span class="cm">// 二阶导连续为零 → C² (视觉无折痕)</span>
+</pre>
+
+<p><strong>关键性质</strong>——在边界 r=R 处的连续性分析：</p>
+
+<div class="derivation-box">
+<p><strong>推导·Wyvill 函数在 r=R 处的 C&sup1; 连续性：</strong></p>
+<p>令 <span class="dm-step">u = r&sup2;/R&sup2;</span>，则 <span class="dm-step">f(u) = (1 &minus; u)&sup3;</span></p>
+<p>一阶导数：<span class="dm-step">df/dr = df/du &middot; du/dr = 3(1&minus;u)&sup2; &middot; (&minus;1) &middot; 2r/R&sup2; = &minus;(6r/R&sup2;)(1 &minus; r&sup2;/R&sup2;)&sup2;</span></p>
+<p>在 r=R 处：<span class="dm-step">f(R) = 0</span>，<span class="dm-step">f'(R) = &minus;(6R/R&sup2;)(0)&sup2; = 0</span></p>
+<p>二阶导数：<span class="dm-step">f''(r) = d/dr[&minus;(6r/R&sup2;)(1&minus;r&sup2;/R&sup2;)&sup2;] = &minus;(6/R&sup2;)(1&minus;5r&sup2;/R&sup2;)(1&minus;r&sup2;/R&sup2;)</span></p>
+<p>在 r=R 处：<span class="dm-step">f''(R) = &minus;(6/R&sup2;)(1&minus;5)(0) = 0</span></p>
+<p><strong>结论</strong>：f(R) = f'(R) = f''(R) = 0，函数在边界处具有 <strong>C&sup2; 连续性</strong>（二阶导数连续），保证与零场平滑衔接，无视觉伪影。</p>
+</div>
+
+<p>函数在中心 r=0 处：<span class="eq">f(0)=1</span>（峰值），<span class="eq">f'(0)=0</span>（平滑顶部），<span class="eq">f''(0)=&minus;6/R&sup2;</span>。</p>
+
+<h4>椭球体与圆柱体</h4>
+
+<p><strong>椭球体</strong>（Ellipsoid）通过变换矩阵将球拉伸为椭球。设变换 <span class="eq">M = S &middot; R</span>（缩放 S &times; 旋转 R），局部坐标距离：</p>
+
+<div class="formula-block">
+<p><span class="eq">r(p) = || M&minus;&sup1; &middot; (p &minus; c) ||</span></p>
+<p class="fm-label">将世界坐标 p 变换到椭球局部坐标系后再用 Wyvill 函数求值</p>
+</div>
+
+<p>若 <span class="eq">M = diag(1, 1, 1)</span>，退化为球体；若 <span class="eq">M = diag(a, b, c)</span> 则为轴对齐椭球，半轴长度分别为 a、b、c。</p>
+
+<p><strong>圆柱体</strong>（Cylinder）距离为点到中心线段的垂直距离。设线段端点 <span class="eq">a, b</span>：</p>
+
+<div class="formula-block">
+<p><span class="eq">t = clamp( (p&minus;a)&middot;(b&minus;a) / ||b&minus;a||&sup2; , 0, 1 )</span></p>
+<p><span class="eq">r(p) = || p &minus; [a + t(b&minus;a)] || / R</span></p>
+<p class="fm-label">clamp 限制投影参数 t&isin;[0,1]，确保距离在骨架线段上取最近点</p>
+</div>
+
+<p>沿轴线方向的场为常值（无限长圆柱），如需截断可在两端加半球帽（capsule 形状）。</p>
+
+<h4>骨架图元场函数速查表</h4>
+
+<div class="table-wrap">
+<table>
+<tr><th>图元类型</th><th>骨架几何</th><th>距离定义</th><th>场函数</th></tr>
+<tr><td>Blob(球)</td><td>点 c</td><td>r = ||p&minus;c||</td><td>f(r) = (1&minus;r&sup2;/R&sup2;)&sup3;</td></tr>
+<tr><td>椭球体</td><td>点 c + 变换 M</td><td>r = ||M&minus;&sup1;(p&minus;c)||</td><td>同上，用 M 变换的 r</td></tr>
+<tr><td>圆柱体</td><td>线段 (a,b)</td><td>r = dist_to_line(p,a,b)</td><td>同上，投影到线段求距离</td></tr>
+<tr><td>Capsule</td><td>线段 (a,b)</td><td>r = dist_to_segment(p,a,b)</td><td>同上 + 端点半球</td></tr>
+<tr><td>三角形</td><td>三角面 (v&sub1;,v&sub2;,v&sub3;)</td><td>r = dist_to_triangle(p,&hellip;)</td><td>同上，三角形区域最近点</td></tr>
+<tr><td>环(Torus)</td><td>圆环</td><td>r = || (||p<sub>xy</sub>||&minus;R, p<sub>z</sub>) ||</td><td>SDF: f(p)=r&minus;r<sub>minor</sub></td></tr>
+</table>
+</div>
+
+<h3 id="21-1-4">21.1.4 组合多个图元：求和混合</h3>
+
+<p>多个骨架图元的场可通过<span class="key-term">求和混合</span>组合为一个总场：</p>
+
+<div class="formula-block">
+<p><strong>求和混合（Sum Blending）：</strong></p>
+<p><span class="eq">F(p) = ( &Sigma;&#722;&#752;&#751; f&#752;(p) ) &minus; T</span></p>
+<p class="fm-label">f&#752; 是第 i 个图元的场函数，T 是全局阈值</p>
+</div>
+
+<p>这是隐式建模中最简单也最经典的组合方式。当两个 blob 相互靠近时，它们的场在空间叠加：重叠区域的场值升高（因为两正值相加），导致零等值面向外"鼓胀"，形成平滑的<span class="key-term">哑铃形状</span>（Surface Fusion）。</p>
+
+<p><strong>Blinn 原始公式</strong>（1982）直接使用了这种加权求和形式：</p>
+
+<div class="formula-block">
+<p><span class="eq">F(p) = &Sigma;&#722; a&#752; exp( &minus;b&#752; ||p &minus; c&#752;||&sup2; ) &minus; T</span></p>
+<p class="fm-label">每 blob 有独立的振幅 a&#752; 和衰减 b&#752;，T 控制整体融合程度</p>
+</div>
+
+<p>求和混合的直观理解：每个图元在其支撑域内贡献"物质密度"，空间中某点的总密度超过阈值 T 即视为物体内部。T 越大物体越小（等值面收缩），T 越小物体越大（等值面膨胀）。</p>
+
+<div class="thought-box">
+<p><strong>想一想 #1（有限支撑 vs 空间划分）</strong>：Wyvill 函数在 r &gt; R 时精确为零。这意味着对远处点的计算开销是 O(0) 吗？空间划分策略的价值在哪里？<em>（提示：你仍需找出哪些骨架对目标区域有贡献——这正是空间划分要解决的问题。）</em></p>
+</div>
+
+<!-- ==================== 21.2 ==================== -->
+<h2 id="s21-2">21.2 距离场与等值面</h2>
+
+<h3 id="21-2-1">21.2.1 有符号距离函数（SDF）的精确定义</h3>
+
+<p><span class="key-term">有符号距离函数</span>（Signed Distance Function，SDF）是隐式建模中一种特殊的标量场——它不仅给出到曲面的距离，还保留内/外符号信息。</p>
+
+<div class="formula-block">
+<p><strong>SDF 的数学定义：</strong></p>
+<p><span class="eq">f(p) = sign(p) &middot; min&#752;&#754;&#751;&#749;&#748;&#749; || p &minus; q ||</span></p>
+<p class="fm-label">sign(p) 为负当 p 在曲面内部，为正当 p 在外部</p>
+</div>
+
+<p>形式上，定义曲面 S 将空间分为内部 &Omega;&minus; 和外部 &Omega;&#8324;。最近点映射 <span class="eq">&pi;(p) = argmin&#752;&#754;&#751;&#749;&#748;&#749; ||p&minus;q||</span>，则：</p>
+
+<div class="formula-block">
+<p><span class="eq">f(p) = (p &minus; &pi;(p)) &middot; n&#770;(&pi;(p))</span></p>
+<p class="fm-label">n&#770;(q) 是 q &isin; S 处指向外部的单位法向量</p>
+</div>
+
+<h4>SDF 的核心性质：Eikonal 方程</h4>
+
+<p>距离函数的梯度为单位向量（除不可微的脊线外）：</p>
+
+<div class="formula-block">
+<p><strong>Eikonal 方程：</strong></p>
+<p><span class="eq">|| &nabla;f(p) || = 1</span>&emsp;（几乎处处成立）</p>
+<p class="fm-label">距离函数具有单位梯度模——这是"距离"的几何本质</p>
+</div>
+
+<pre class="math">
+<span class="cm">══════════════════════════════════════════════</span>
+<span class="cm">  有符号距离函数 (SDF) — Eikonal 方程与性质</span>
+<span class="cm">══════════════════════════════════════════════</span>
+
+<span class="cm">// SDF 定义：标量场 f(p) 给出点 p 到曲面 ∂Ω 的最短距离</span>
+<span class="cm">//   符号为正表示 p 在物体外部，符号为负表示在内部</span>
+
+<span class="fn">f</span>(<strong>p</strong>) = <span class="fn">sign</span>(<strong>p</strong>) · <span class="fn">min</span>_{<strong>q</strong> ∈ ∂Ω} ||<strong>p</strong> − <strong>q</strong>||
+
+<span class="cm">// Eikonal 方程 — SDF 的核心性质 (几乎处处成立)：</span>
+||∇<span class="fn">f</span>(<strong>p</strong>)|| = <span class="num">1</span>
+
+<span class="cm">// 推论 1：光线步进安全步长 → step = |f(p)| 不越过曲面</span>
+<span class="cm">// 推论 2：法线无需归一化 → n̂(p) = ∇f(p) (已为单位向量)</span>
+<span class="cm">// 推论 3：厚度偏移 → f(p)−d = 0 是原曲面沿法线外移 d 的等距面</span>
+
+<span class="cm">// ─── CSG 操作 (保持 SDF 性质，除操作交界处外) ───</span>
+<span class="cm">// 并 (Union)：两点取更近者 (更靠内部的 min)</span>
+<span class="fn">f_∪</span> = <span class="fn">min</span>( <span class="fn">f₁</span>, <span class="fn">f₂</span> )
+
+<span class="cm">// 交 (Intersection)：两点取更远者 (更靠外部的 max)</span>
+<span class="fn">f_∩</span> = <span class="fn">max</span>( <span class="fn">f₁</span>, <span class="fn">f₂</span> )
+
+<span class="cm">// 差 (Subtraction)：内部取反 → A 中挖去 B</span>
+<span class="fn">f_−</span> = <span class="fn">max</span>( <span class="fn">f₁</span>, <span class="op">−</span><span class="fn">f₂</span> )
+
+<span class="cm">// 注：SDF 在曲面"脊线"处不可微 (距离函数不光滑)</span>
+<span class="cm">//    脊线是空间中到曲面有 ≥2 个最近点的集合 (Medial Axis)</span>
+</pre>
+
+<p><strong>证明概要</strong>：在光滑区域，沿梯度方向移动 &epsilon; 使函数值变化 &epsilon;||&nabla;f||。但沿法线方向移动 &epsilon; 恰好使距离变化 &epsilon;（因为这是到曲面的直线方向）。因此 ||&nabla;f|| = 1。</p>
+
+<p>这一性质的三个重要推论：
+<br><strong>(1) 光线步进安全步长</strong>：沿光线方向，f(p) 的绝对值即为到曲面的最小距离——可以直接安全步进 ||f(p)|| 而不越过曲面。
+<br><strong>(2) 法线无需归一化</strong>：&nabla;f(p) 本身就是单位法向量（当然仅在微分存在处）。
+<br><strong>(3) 厚度偏移</strong>：f(p) &minus; d = 0 定义为原曲面沿法线偏移 d 的等距面。</p>
+
+<h3 id="21-2-2">21.2.2 基本 SDF 公式集</h3>
+
+<pre class="math">
+<span class="cm">══════════════════════════════════════════════</span>
+<span class="cm">  基本 SDF 图元 — 完整公式集</span>
+<span class="cm">══════════════════════════════════════════════</span>
+
+<span class="cm">// ─── 球体 (Sphere) ───</span>
+<span class="fn">f_sphere</span>(<strong>p</strong>, <strong>c</strong>, R) = ||<strong>p</strong> − <strong>c</strong>|| − R
+<span class="cm">// ∇f = (p−c)/||p−c|| → ||∇f|| = 1 ✓</span>
+
+<span class="cm">// ─── 长方体 (Box, 半边长 b=(b_x,b_y,b_z)) ───</span>
+<strong>q</strong> = |<strong>p</strong> − <strong>c</strong>| − <strong>b</strong>
+<span class="fn">f_box</span>(<strong>p</strong>) = ||<span class="fn">max</span>(<strong>q</strong>, <span class="num">0</span>)|| + <span class="fn">min</span>(<span class="fn">max</span>(q_x, q_y, q_z), <span class="num">0</span>)
+<span class="cm">// 第一项：外部点到最近边的距离；第二项：内部负距离</span>
+
+<span class="cm">// ─── 圆环面 (Torus, 大径 R, 小径 r) ───</span>
+<span class="fn">f_torus</span>(<strong>p</strong>) = || ( ||(p_x, p_z)|| − R ,  p_y ) || − r
+<span class="cm">// 先将 p 投影到 xz 平面求到圆心距离，再在 2D (ρ,y) 中求到圆环距离</span>
+
+<span class="cm">// ─── 胶囊体 (Capsule, 端点 a,b, 半径 R) ───</span>
+t = <span class="fn">clamp</span>( (<strong>p</strong>−<strong>a</strong>)·(<strong>b</strong>−<strong>a</strong>) / ||<strong>b</strong>−<strong>a</strong>||² , <span class="num">0</span>, <span class="num">1</span> )
+<span class="fn">f_capsule</span>(<strong>p</strong>) = || <strong>p</strong> − (<strong>a</strong> + t·(<strong>b</strong>−<strong>a</strong>)) || − R
+
+<span class="cm">// ─── 圆柱体 (无限长沿 y 轴, 半径 R) ───</span>
+<span class="fn">f_cylinder</span>(<strong>p</strong>) = √(p_x² + p_z²) − R
+</pre>
+
+<div class="table-wrap">
+<table>
+<tr><th>几何体</th><th>SDF 公式</th><th>内部条件</th></tr>
+<tr>
+  <td>球体（半径 R，中心 c）</td>
+  <td><span class="eq">f(p) = ||p &minus; c|| &minus; R</span></td>
+  <td>f &lt; 0 &hArr; 点在球内</td>
+</tr>
+<tr>
+  <td>长方体（半边长 b，中心 c）</td>
+  <td><span class="eq">f(p) = || max(|p&minus;c| &minus; b, 0) || + min( max(|p&minus;c|&minus;b), 0 )</span></td>
+  <td>外部最近点距离 + 内部负距离</td>
+</tr>
+<tr>
+  <td>无限长圆柱（轴 z，半径 R）</td>
+  <td><span class="eq">f(p) = &radic;(p&#8326;&sup2; + p&#8327;&sup2;) &minus; R</span></td>
+  <td>忽略 z 分量</td>
+</tr>
+<tr>
+  <td>圆环面（大径 R，小径 r）</td>
+  <td><span class="eq">f(p) = || ( ||(p&#8326;, p&#8327;)|| &minus; R , p&#8345; ) || &minus; r</span></td>
+  <td>二维圆到三维环面的距离</td>
+</tr>
+<tr>
+  <td>平面（法线 n&#770;，过点 o）</td>
+  <td><span class="eq">f(p) = (p &minus; o) &middot; n&#770;</span></td>
+  <td>f &lt; 0 在半空间内部</td>
+</tr>
+<tr>
+  <td>胶囊体（线段 ab，半径 R）</td>
+  <td><span class="eq">f(p) = || p &minus; clamp&#8345;&#8344;(p) || &minus; R</span></td>
+  <td>clamp 投影到线段最近点</td>
+</tr>
+</table>
+</div>
+
+<h3 id="21-2-3">21.2.3 SDF 上的 CSG 操作</h3>
+
+<p>SDF 支持精确的<span class="key-term">构造实体几何</span>（CSG）操作，通过简单的最值函数即可实现：</p>
+
+<div class="formula-block">
+<p><strong>CSG 并（Union）：</strong></p>
+<p><span class="eq">f&#7496;&#751;&#750;&#752;&#751;&#751; = min( f&#8321; , f&#8322; )</span></p>
+<p><strong>CSG 交（Intersection）：</strong></p>
+<p><span class="eq">f&#7498;&#751;&#756;&#754;&#7497; = max( f&#8321; , f&#8322; )</span></p>
+<p><strong>CSG 差（Subtraction）：</strong></p>
+<p><span class="eq">f&#7498;&#756;&#7495; = max( f&#8321; , &minus;f&#8322; )</span></p>
+<p class="fm-label">所有操作保持 ||&nabla;f|| &asymp; 1（除操作交界处外），正确继承距离场性质</p>
+</div>
+
+<div class="analogy-box">
+<p><strong>类比·Marching Cubes = 3D 连连看</strong>：每块体素的 8 个顶角有正/负号标签。Marching Cubes 在每个体素内部找"内外交界点"，用三角形连成完整曲面。每个体素内部只有<strong>15种基本连接图案</strong>（及其对称变体），像连连看只有少数几种标准线路。</p>
+</div>
+
+<h3 id="21-2-4">21.2.4 等值面与水平集</h3>
+
+<p><span class="key-term">等值面</span>（Isosurface）是标量场 f 中所有满足某个常数值的点的集合。零等值面 f(p)=0 是最常用的曲面定义，但任意等值面 f(p)=c 同样有意义。</p>
+
+<div class="formula-block">
+<p><strong>水平集（Level Set）：</strong></p>
+<p><span class="eq">L&#7525; = { p &isin; &#8477;&sup3; | f(p) = c }</span></p>
+<p class="fm-label">c 称为水平值（Level Value），零水平集 L&#8320; 即隐式曲面</p>
+</div>
+
+<p>改变水平值产生"嵌套"曲面族——在 SDF 中，<span class="eq">f(p)=&delta;</span> 是原曲面沿法线方向外偏移 &delta; 的等距面。这使得隐式表示特别适合厚度壳体建模：取两等值面 <span class="eq">f(p)=+&delta;</span> 和 <span class="eq">f(p)=&minus;&delta;</span> 之间的区域即为厚度 2&delta; 的壳体。</p>
+
+<p><span class="key-term">法线计算</span>：曲面上任一点 p（满足 f(p)=0）的单位法向量由梯度给出：</p>
+
+<pre class="math">
+<span class="cm">══════════════════════════════════════════════</span>
+<span class="cm">  SDF 几何变换与梯度计算</span>
+<span class="cm">══════════════════════════════════════════════</span>
+
+<span class="cm">// ─── 刚体变换 (保持距离场性质) ───</span>
+<span class="cm">// 平移：对输入点施加逆平移</span>
+<span class="fn">f_trans</span>(<strong>p</strong>) = <span class="fn">f</span>(<strong>p</strong> − <strong>t</strong>)              <em>t 是平移向量</em>
+
+<span class="cm">// 旋转：对输入点施加逆旋转 (R⁻¹ = Rᵀ 对正交矩阵)</span>
+<span class="fn">f_rot</span>(<strong>p</strong>) = <span class="fn">f</span>( R⁻¹ · <strong>p</strong> )            <em>R 是 3×3 旋转矩阵</em>
+
+<span class="cm">// 均匀缩放 (保持 ||∇f||=1 性质!)：</span>
+<span class="fn">f_scale</span>(<strong>p</strong>) = s · <span class="fn">f</span>(<strong>p</strong>/s)            <em>s&gt;0 是均匀缩放因子</em>
+
+<span class="cm">// 验证：|∇f_scale| = s·|∇f(p/s)|·(1/s) = |∇f(p/s)| = 1 ✓</span>
+
+<span class="cm">// ─── 梯度计算 (有限差分) ───</span>
+<span class="cm">// 解析法：对 Wyvill f(r) 链式求导</span>
+∇<span class="fn">f</span>(<strong>p</strong>) = <span class="fn">f'</span>(r) · (∇r)
+<span class="fn">f'</span>(r) = −<span class="num">6</span>r/R² · (<span class="num">1</span>−r²/R²)²       <em>Wyvill 一阶导解析式</em>
+
+<span class="cm">// 数值法：中心差分 (用于复杂混合场的梯度)</span>
+∂f/∂x ≈ ( <span class="fn">f</span>(p_x+h, p_y, p_z) − <span class="fn">f</span>(p_x−h, p_y, p_z) ) / (<span class="num">2</span>h)
+<span class="cm">// h = max(ε, ε·|p|) 自适应步长防止浮点下溢 (ε≈10⁻⁶)</span>
+</pre>
+
+<div class="formula-block">
+<p><span class="eq">n&#770;(p) = &nabla;f(p) / || &nabla;f(p) ||</span></p>
+<p class="fm-label">对于 SDF，分母 = 1，故 n&#770;(p) = &nabla;f(p)</p>
+</div>
+
+<p>在 Blob-tree 混合场中，梯度可通过解析求导或有限差分 (&plusmn;h 采样) 近似。解析求导更精确且效率更高，是现代实现的标准做法。</p>
+
+<!-- ==================== 21.3 ==================== -->
+<h2 id="s21-3">21.3 空间划分</h2>
+
+<h3 id="21-3-1">21.3.1 为什么需要空间划分</h3>
+
+<p>考虑一个含 N=100,000 个 Wyvill blob 的场景。对空间任一点 p，直接计算：</p>
+
+<div class="formula-block">
+<p><span class="eq">F(p) = ( &Sigma;&#752;&#7498;&#751;&#8304;&#8304;&#8304; f&#752;(p) ) &minus; T</span></p>
+<p class="fm-label">需要对每个 blob 计算 r = ||p &minus; c&#752;|| 和多项式求值 &rarr; O(N)</p>
+</div>
+
+<p>Marching Cubes 需对网格上 M 个体素（通常 M=10&sup6;~10&#8311;）各求值 8 个顶点。直接暴力求值总代价 <strong>O(N&middot;M) &asymp; 10&#8310;&minus;10&sup1;&sup1;</strong>，完全不可行。</p>
+
+<p><span class="key-term">空间划分</span>的核心思想：只访问对 p 有非零贡献的图元。利用 Wyvill 函数的紧致支撑特性，将图元按空间位置组织，查询时仅检索覆盖 p 的局部图元。</p>
+
+<h3 id="21-3-2">21.3.2 均匀网格（Uniform Grid）</h3>
+
+<p>将包围盒 <span class="eq">[x&#7522;&#7511;&#7511;, x&#7522;&#7516;&#7524;] &times; [y&#7522;&#7511;&#7511;, y&#7522;&#7516;&#7524;] &times; [z&#7522;&#7511;&#7511;, z&#7522;&#7516;&#7524;]</span> 均匀剖分为 <span class="eq">n&#8326; &times; n&#8327; &times; n&#8345;</span> 个立方体单元，边长 &Delta;。每个图元按其支撑域（以骨架中心 c 为球心、半径 R 的球）覆盖的单元集合注册到各单元。</p>
+
+<div class="pseudocode">
+<span class="cm">// 图元插入均匀网格</span>
+<span class="kw">for</span> <span class="kw">each</span> primitive <span class="kw">with</span> center c, radius R:
+  (i_min, j_min, k_min) = grid_index(c - R)
+  (i_max, j_max, k_max) = grid_index(c + R)
+  <span class="kw">for</span> i <span class="kw">in</span> [i_min .. i_max]:
+    <span class="kw">for</span> j <span class="kw">in</span> [j_min .. j_max]:
+      <span class="kw">for</span> k <span class="kw">in</span> [k_min .. k_max]:
+        cell[i][j][k].add(primitive)
+</div>
+
+<p>查询点 p 时，O(1) 定位到所在单元，仅求值该单元内存储的图元。设每个单元平均存储 K 个图元，则单点求值 <strong>O(K)</strong>。</p>
+
+<p><strong>优缺点</strong>：实现简单，查询快速。但若非均匀场景（局部 blob 密集、其他区域稀疏），网格边长难以统一选定：太大则密集单元 K 过大，太小则整体内存 O(n&sup3;) 爆炸。</p>
+
+<h3 id="21-3-3">21.3.3 八叉树（Octree）自适应空间划分</h3>
+
+<p><span class="key-term">八叉树</span>（Octree）自适应调整分辨率，在稀疏区用粗粒度、在密集区用细粒度。</p>
+
+<h4>构建算法</h4>
+
+<div class="pseudocode">
+<span class="fn">build_octree</span>(bbox, primitives, max_depth, max_per_node):
+  node = create_node(bbox)
+  node.primitives = [p for p in primitives if overlap(p, bbox)]
+  
+  <span class="kw">if</span> depth == max_depth <span class="kw">or</span> len(node.primitives) <= max_per_node:
+    <span class="kw">return</span> node  <span class="cm">// 叶子节点</span>
+  
+  <span class="cm">// 递归剖分为 8 个子节点</span>
+  <span class="kw">for</span> child_idx <span class="kw">in</span> 0..7:
+    child_bbox = bbox.octant(child_idx)
+    node.child[child_idx] = build_octree(child_bbox, node.primitives,
+                                          depth+1, max_depth, max_per_node)
+  <span class="kw">return</span> node
+</div>
+
+<h4>分裂准则</h4>
+
+<p>决定是否继续细分有两种主要策略：</p>
+
+<div class="formula-block">
+<p><strong>准则 1（按图元数）：</strong>若节点内图元数 &gt; N&#7522;&#7524;&#7519;&#7497;&#7517;&#7523;&#7518;&#7524;&#7514;（典型值 8~16），则分裂。</p>
+<p><strong>准则 2（按场变化率）：</strong>若节点内 <span class="eq">max f(p) &minus; min f(p) &gt; &epsilon;</span>，则分裂，确保零等值面附近（场值接近 0）高分辨率。</p>
+<p class="fm-label">准则 1 适用于均匀场，准则 2 在零等值面附近提供更精确的分辨率</p>
+</div>
+
+<p>查询点 p 时从根节点递归下降：在每层判断 p 位于哪个子节点，直到叶子节点，累计所有经过节点的图元（或仅求值叶子层图元，取决于实现）。查询复杂度 <strong>O(log N &middot; K)</strong>，其中 N 为节点数。</p>
+
+<h4>性能对比</h4>
+
+<div class="table-wrap">
+<table>
+<tr><th>场景类型</th><th>均匀网格</th><th>八叉树</th><th>胜出方</th></tr>
+<tr><td>blob 均匀分布</td><td>O(K)，约 10-20 次求值</td><td>O(log N)，约 8-16 次求值 + 遍历开销</td><td>均匀网格（常数因子小）</td></tr>
+<tr><td>blob 集中在 10% 区域</td><td>稀疏单元空查询浪费，密集单元 K &gt; 100</td><td>自适应粒度，密集处细、稀疏处粗</td><td>八叉树（显著优势）</td></tr>
+<tr><td>超大场景（&gt;10&sup6; blob）</td><td>内存爆炸（O(n&sup3;) 网格）</td><td>内存 O(N)，稀疏区域极省</td><td>八叉树（唯一可行）</td></tr>
+<tr><td>实时雕刻（频繁更新）</td><td>重建快（O(N) 插入）</td><td>重建较慢（O(N log N) 递归）</td><td>均匀网格（交互优势）</td></tr>
+</table>
+</div>
+
+<h3 id="21-3-4">21.3.4 自适应求值策略</h3>
+
+<p><span class="key-term">自适应求值</span>（Adaptive Evaluation）在零等值面附近（|f(p)| &lt; &epsilon;）用高分辨率，远处用粗粒度近似。这与自适应 Marching Cubes（见 <a href="#s21-5">21.5 节</a>）在概念上一致，但作用于求值而非多边形化阶段。</p>
+
+<p>实现要点：
+<br><strong>(1) 深度上限</strong>：限制八叉树最大深度（通常 8&ndash;12 层），防止单个体素过小导致浮点精度问题。
+<br><strong>(2) 惰性细化</strong>：初始构建至中等深度，查询时若某节点邻接零等值面则按需细化。
+<br><strong>(3) 缓存友好</strong>：将节点数据按 Morton 码（Z-order curve）排序存储，使空间上靠近的节点在内存中也靠近，提升缓存命中率。</p>
+
+<pre class="math">
+<span class="cm">══════════════════════════════════════════════</span>
+<span class="cm">  Morton 码 (Z-order) — 八叉树缓存优化</span>
+<span class="cm">══════════════════════════════════════════════</span>
+
+<span class="cm">// Morton 码：将 3D 坐标 (x,y,z) 的二进制位交错排列</span>
+<span class="cm">//   使空间邻近的点在内存中也邻近 → 缓存命中率 ↑</span>
+
+<span class="cm">// 编码 (interleave bits of x,y,z)：</span>
+<span class="fn">morton</span>(x,y,z) = Σ_{i=<span class="num">0</span>}^{<span class="num">31</span>} (bit_i(x)·<span class="num">4</span> + bit_i(y)·<span class="num">2</span> + bit_i(z)) · <span class="num">8</span>^i
+<span class="cm">// 示例：x=1(001), y=3(011), z=2(010) → Morton = 0_1_0_0_1_1_0_0_1 = 73</span>
+
+<span class="cm">// 高效实现 (位运算扩展每个坐标到三倍宽度再交错)：</span>
+<span class="fn">expand_bits</span>(v):  <span class="cm">// 将 10 位整数扩展为 30 位 (每 bit 后插 2 个零)</span>
+  v = (v | (v &lt;&lt; <span class="num">16</span>)) &amp; <span class="num">0x030000FF</span>
+  v = (v | (v &lt;&lt;  <span class="num">8</span>)) &amp; <span class="num">0x0300F00F</span>
+  v = (v | (v &lt;&lt;  <span class="num">4</span>)) &amp; <span class="num">0x030C30C3</span>
+  v = (v | (v &lt;&lt;  <span class="num">2</span>)) &amp; <span class="num">0x09249249</span>
+  <span class="kw">return</span> v
+
+<span class="fn">morton_encode</span>(x,y,z):
+  <span class="kw">return</span> expand_bits(x) | (expand_bits(y) &lt;&lt; <span class="num">1</span>) | (expand_bits(z) &lt;&lt; <span class="num">2</span>)
+</pre>
+
+<div class="thought-box">
+<p><strong>想一想 #2（均匀 vs 八叉树）</strong>：所有图元大小接近且均匀分布，八叉树一定优于均匀网格吗？<em>（提示：八叉树的递归下降有分支预测和指针跳转开销，而均匀网格仅需整数运算定位单元。均匀分布时，八叉树的常数因子大于均匀网格的 O(1)。）</em></p>
+</div>
+
+<!-- ==================== 21.4 ==================== -->
+<h2 id="s21-4">21.4 更多混合方式</h2>
+
+<pre class="math">
+<span class="cm">══════════════════════════════════════════════</span>
+<span class="cm">  混合算子完整公式汇编 (Blending Operators)</span>
+<span class="cm">══════════════════════════════════════════════</span>
+
+<span class="cm">// ─── ① 求和混合 (Sum Blend) ───</span>
+<span class="fn">F_sum</span> = (Σᵢ <span class="fn">fᵢ</span>(<strong>p</strong>)) − T
+<span class="cm">// 最简单但产生"涨大效应" (Bulging)</span>
+
+<span class="cm">// ─── ② Ricci 混合 (幂平均, n∈(0,∞)) ───</span>
+<span class="fn">F_Ricci</span> = ( <span class="fn">f₁</span><span class="op">^</span>n + <span class="fn">f₂</span><span class="op">^</span>n + ... + <span class="fn">fₖ</span><span class="op">^</span>n )^(<span class="num">1</span>/n)    <em>当所有 fᵢ &gt; 0</em>
+<span class="fn">F_Ricci</span> = <span class="fn">max</span>(<span class="fn">f₁</span>,<span class="fn">f₂</span>,...,<span class="fn">fₖ</span>)                <em>其他情况</em>
+<span class="cm">// n→∞ → CSG 并 (max)；n→0 → 几何平均；n=1 → 算术平均</span>
+
+<span class="cm">// ─── ③ 平滑最小 (Smooth Union / smin, 参数 k&gt;0) ───</span>
+<span class="fn">smin</span>(<span class="fn">f₁</span>,<span class="fn">f₂</span>, k) = <span class="fn">min</span>(<span class="fn">f₁</span>,<span class="fn">f₂</span>) − <span class="fn">max</span>(k − |<span class="fn">f₁</span>−<span class="fn">f₂</span>|, <span class="num">0</span>)² / (<span class="num">4</span>k)
+<span class="cm">// k 控制混合半径：|f₁−f₂|≥k 时退化为精确 min</span>
+
+<span class="cm">// ─── ④ 平滑最大 (Smooth Intersection / smax) ───</span>
+<span class="fn">smax</span>(<span class="fn">f₁</span>,<span class="fn">f₂</span>, k) = <span class="fn">max</span>(<span class="fn">f₁</span>,<span class="fn">f₂</span>) + <span class="fn">max</span>(k − |<span class="fn">f₁</span>−<span class="fn">f₂</span>|, <span class="num">0</span>)² / (<span class="num">4</span>k)
+
+<span class="cm">// ─── ⑤ R 函数 (α∈[−1,1], 保持精确布尔语义) ───</span>
+<span class="cm">// R-并 (R-disjunction)：</span>
+<span class="fn">f₁</span> ∨<sub>α</sub> <span class="fn">f₂</span> = <span class="fn">f₁</span> + <span class="fn">f₂</span> + √( <span class="fn">f₁</span>² + <span class="fn">f₂</span>² − <span class="num">2</span>α·<span class="fn">f₁</span>·<span class="fn">f₂</span> )
+<span class="cm">// R-交 (R-conjunction)：</span>
+<span class="fn">f₁</span> ∧<sub>α</sub> <span class="fn">f₂</span> = <span class="fn">f₁</span> + <span class="fn">f₂</span> − √( <span class="fn">f₁</span>² + <span class="fn">f₂</span>² − <span class="num">2</span>α·<span class="fn">f₁</span>·<span class="fn">f₂</span> )
+<span class="cm">// α=1 退化为 2·max 和 2·min (CSG)</span>
+
+<span class="cm">// ─── ⑥ Wyvill 可控混合 ───</span>
+<span class="fn">F_Wyvill</span> = <span class="fn">f₁</span> + <span class="fn">f₂</span> − √( <span class="fn">f₁</span>² + <span class="fn">f₂</span>² − k·<span class="fn">f₁</span>·<span class="fn">f₂</span> )     k ∈ [<span class="num">0</span>,<span class="num">2</span>]
+</pre>
+
+<h3 id="21-4-1">21.4.1 求和混合的涨大效应</h3>
+
+<p>求和混合 <span class="eq">F = &Sigma; f&#752; &minus; T</span> 虽简单，但有严重缺陷——<span class="key-term">涨大效应</span>（Bulging）。当两 blob 靠近时，重叠区场叠加使等值面向外膨胀，V形内角（如分枝处）尤甚。原因是线性叠加不能区分"两个物体各自独立"与"两个物体融合"的语义差异。</p>
+
+<p>需要<span class="key-term">可控混合算子</span>，在保持平滑连接的同时抑制非预期膨胀。</p>
+
+<h3 id="21-4-2">21.4.2 Ricci 混合</h3>
+
+<p><span class="key-term">Ricci 混合</span>（Ricci, 1973）通过幂平均参数化控制融合程度：</p>
+
+<div class="formula-block">
+<p><strong>Ricci 混合（并操作）：</strong></p>
+<p><span class="eq">F = { (f&#8321;&#7511; + f&#8322;&#7511; + ... + f&#7524;&#7511;)&sup1;&#710;&#7511;&emsp;当所有 f&#752; &gt; 0</span></p>
+<p><span class="eq">&emsp;&emsp;   { max(f&#8321;, f&#8322;, ..., f&#7524;)&emsp;&emsp;&emsp;其他情况</span></p>
+<p class="fm-label">n &isin; (0, &infin;) 控制融合程度：n &rarr; &infin; 等价于 max（CSG 并，零混合），n 越小混合越强</p>
+</div>
+
+<p><strong>参数 n 的行为分析</strong>：</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>n 值</th><th>行为</th><th>应用场景</th></tr>
+<tr><td>n &rarr; &infin;</td><td>&rarr; max(f&#8321;, f&#8322;)，纯 CSG 并，无混合</td><td>机械零件、建筑构件</td></tr>
+<tr><td>n = 4&ndash;8</td><td>轻微混合，仅非常靠近时融合</td><td>手指关节、树枝分枝</td></tr>
+<tr><td>n = 2</td><td>标准平滑混合（欧氏范数平均）</td><td>通用有机形状</td></tr>
+<tr><td>n = 1</td><td>算术平均：F = (f&#8321;+f&#8322;)/2，强混合</td><td>黏土融合、软体生物</td></tr>
+<tr><td>n &rarr; 0</td><td>&rarr; 几何平均 &radic;(f&#8321;&middot;f&#8322;)，极度融合</td><td>抽象艺术效果</td></tr>
+</table>
+</div>
+
+<p><strong>Ricci 混合的局限性</strong>：(1) 仅在 f&#752;&gt;0（内部）混合，在外部（f&#752;&lt;0）退化为 max，导致混合区域内外不对称；(2) 对三个及以上图元需限定全部为正的区域；(3) 不能指定混合区域的精确范围。</p>
+
+<h3 id="21-4-3">21.4.3 平滑 min 与平滑 max</h3>
+
+<p>直接从 CSG min/max 引入平滑过渡将产生更自然的混合：</p>
+
+<div class="formula-block">
+<p><strong>平滑并（Smooth Union / smin）：</strong></p>
+<p><span class="eq">smin( f&#8321;, f&#8322;, k ) = min( f&#8321;, f&#8322; ) &minus; max( k &minus; |f&#8321; &minus; f&#8322;| , 0 )&sup2; / 4k</span></p>
+<p><strong>平滑交（Smooth Intersection / smax）：</strong></p>
+<p><span class="eq">smax( f&#8321;, f&#8322;, k ) = max( f&#8321;, f&#8322; ) + max( k &minus; |f&#8321; &minus; f&#8322;| , 0 )&sup2; / 4k</span></p>
+<p class="fm-label">k &gt; 0 控制混合半径——当 |f&#8321;&minus;f&#8322;| &lt; k 时产生平滑过渡，|f&#8321;&minus;f&#8322;| &ge; k 时退化为精确 min/max</p>
+</div>
+
+<p>这是基于二次多项式的 C&sup1; 平滑逼近，由 Quilez（iq）在 Shadertoy 社区广泛推广。其核心优势是<span class="key-term">局部混合控制</span>——k 精确指定了被混合区域的宽度，超出此宽度完全退化为离散 CSG。</p>
+
+<div class="analogy-box">
+<p><strong>类比·smin vs Ricci</strong>：smin 像"局部焊枪"——仅在 f&#8321; 和 f&#8322; 彼此接近（差值 &lt; k）时加热融合；Ricci 像"加热整块材料"——所有正场区域都参与融合。smin 更可控，Ricci 更全局。</p>
+</div>
+
+<h3 id="21-4-4">21.4.4 R 函数（R-functions）</h3>
+
+<p><span class="key-term">R 函数</span>（R-functions, Rvachev, 1963）是布尔逻辑的连续函数对应。若实函数 F(f&#8321;, f&#8322;) 的符号仅依赖于 f&#8321;、f&#8322; 的符号（而非具体值），则 F 称为 R 函数。</p>
+
+<div class="formula-block">
+<p><strong>最常用的 R 函数族：</strong></p>
+<p><strong>R 并（R-disjunction）：</strong></p>
+<p><span class="eq">f&#8321; &or;&#7526; f&#8322; = f&#8321; + f&#8322; + &radic;( f&#8321;&sup2; + f&#8322;&sup2; &minus; 2&alpha; f&#8321; f&#8322; )</span></p>
+<p><strong>R 交（R-conjunction）：</strong></p>
+<p><span class="eq">f&#8321; &and;&#7526; f&#8322; = f&#8321; + f&#8322; &minus; &radic;( f&#8321;&sup2; + f&#8322;&sup2; &minus; 2&alpha; f&#8321; f&#8322; )</span></p>
+<p class="fm-label">&alpha; &isin; [&minus;1, 1] 控制平滑度：&alpha;=1 完全 C&sup1; 平滑，&alpha;=0 为标准 R 函数，&alpha;=&minus;1 带尖锐特征</p>
+</div>
+
+<p><strong>退化情况验证</strong>：取 &alpha;=1，平方根内变为 <span class="eq">(f&#8321;&minus;f&#8322;)&sup2;</span>：</p>
+
+<div class="derivation-box">
+<p><strong>推导·&alpha;=1 的特殊形式：</strong></p>
+<p><span class="dm-step">f&#8321; &or;&#8321; f&#8322; = f&#8321; + f&#8322; + &radic;(f&#8321;&sup2; + f&#8322;&sup2; &minus; 2f&#8321;f&#8322;) = f&#8321; + f&#8322; + |f&#8321; &minus; f&#8322;| = 2&middot;max(f&#8321;, f&#8322;)</span></p>
+<p><span class="dm-step">f&#8321; &and;&#8321; f&#8322; = f&#8321; + f&#8322; &minus; |f&#8321; &minus; f&#8322;| = 2&middot;min(f&#8321;, f&#8322;)</span></p>
+<p>常数因子 2 不影响零等值面位置（因为 f=0 时 2f=0），故 &alpha;=1 退化为标准 CSG 并/交。</p>
+</div>
+
+<p>R 函数保证：<span class="eq">sign(F(f&#8321;,f&#8322;))</span> 完全由 <span class="eq">sign(f&#8321;)</span> 和 <span class="eq">sign(f&#8322;)</span> 的布尔逻辑决定。这是其区别于一般平滑算子的本质特征——<span class="key-term">保持精确的布尔语义</span>，同时提供 C&sup1; 连续的几何过渡。</p>
+
+<h3 id="21-4-5">21.4.5 Wyvill 混合公式族</h3>
+
+<p>Wyvill 等人（1999）在 BlobTree 框架中开发了专用混合公式族：</p>
+
+<div class="formula-block">
+<p><strong>Wyvill 叠加混合（Superelliptic Blend）：</strong></p>
+<p><span class="eq">F = ( f&#8321;&#7511; + f&#8322;&#7511; )&sup1;&#710;&#7511;</span></p>
+<p class="fm-label">n &ge; 1 整数，n 越大混合区域越紧致</p>
+<p><strong>Wyvill 可控混合：</strong></p>
+<p><span class="eq">F = f&#8321; + f&#8322; &minus; &radic;( f&#8321;&sup2; + f&#8322;&sup2; &minus; k &middot; f&#8321;&middot;f&#8322; )</span></p>
+<p class="fm-label">k &isin; [0,2] 控制混合范围：k=0 等价于 min，k=2 最大混合</p>
+</div>
+
+<h3 id="21-4-6">21.4.6 混合算子速查对比表</h3>
+
+<div class="table-wrap">
+<table>
+<tr><th>算子</th><th>公式</th><th>参数</th><th>C&sup1;?</th><th>符号保持?</th></tr>
+<tr><td>求和</td><td>F = f&#8321; + f&#8322;</td><td>无</td><td>是</td><td>否（膨胀）</td></tr>
+<tr><td>CSG 并</td><td>F = min(f&#8321;, f&#8322;)</td><td>无</td><td>否（尖锐）</td><td>是</td></tr>
+<tr><td>Ricci 混合</td><td>F = (f&#8321;&#7511;+f&#8322;&#7511;)&sup1;&#710;&#7511;</td><td>n</td><td>是</td><td>仅正则域</td></tr>
+<tr><td>Smooth Union</td><td>min &minus; (max(k&minus;|&Delta;f|,0))&sup2;/4k</td><td>k</td><td>是</td><td>局部</td></tr>
+<tr><td>R 函数</td><td>f&#8321;+f&#8322;&plusmn;&radic;(f&#8321;&sup2;+f&#8322;&sup2;&minus;2&alpha;f&#8321;f&#8322;)</td><td>&alpha;</td><td>&alpha;&lt;1 时</td><td>是</td></tr>
+<tr><td>Wyvill 混合</td><td>f&#8321;+f&#8322;&minus;&radic;(f&#8321;&sup2;+f&#8322;&sup2;&minus;k&middot;f&#8321;f&#8322;)</td><td>k</td><td>是</td><td>近似</td></tr>
+</table>
+</div>
+
+<div class="thought-box">
+<p><strong>想一想 #3（混合的本质）</strong>：为什么隐式建模天然支持平滑混合，而多边形网格的布尔运算产生难看接缝？两种表示对于"混合"意味着什么不同的东西？<em>（提示：隐式混合发生在连续标量值上，信息无损；多边形布尔发生在离散顶点和边上，需要重新计算精确交线——任何数值误差都会产生可见裂缝。）</em></p>
+</div>
+
+<!-- ==================== 21.5 ==================== -->
+<h2 id="s21-5">21.5 精确多边形化</h2>
+
+<h3 id="21-5-1">21.5.1 Marching Cubes 算法流程</h3>
+
+<p>渲染管线需要三角形。<span class="key-term">Marching Cubes</span>（Lorensen &amp; Cline, 1987）是最经典的隐式曲面多边形化算法，分四步：</p>
+
+<div class="pseudocode">
+<span class="cm">// Marching Cubes 算法（简化伪代码）</span>
+<span class="kw">for</span> <span class="kw">each</span> voxel (i, j, k) in grid:
+  <span class="cm">// 步骤 1：采样 8 个顶点</span>
+  <span class="kw">for</span> each corner v in {0..7}:
+    f[v] = F(voxel.vertex_world_pos(v))
+  
+  <span class="cm">// 步骤 2：构建 8 位索引</span>
+  cube_index = 0
+  <span class="kw">for</span> each corner v:
+    <span class="kw">if</span> f[v] < 0: cube_index |= (1 << v)
+  
+  <span class="cm">// 步骤 3：查表获取边列表</span>
+  edges = edge_table[cube_index]
+  <span class="kw">if</span> edges == 0: <span class="kw">continue</span>  <span class="cm">// 全内或全外，跳过</span>
+  
+  <span class="cm">// 步骤 4：在每条相交边上线性插值求顶点位置</span>
+  <span class="kw">for</span> each edge e in edges:
+    v0, v1 = edge_endpoints(e)
+    t = f[v0] / (f[v0] - f[v1])  <span class="cm">// 线性插值参数</span>
+    vert_pos = lerp(voxel.pos[v0], voxel.pos[v1], t)
+  
+  <span class="cm">// 步骤 5：按三角表生成三角形</span>
+  tri_indices = tri_table[cube_index]
+  <span class="kw">for</span> each triple (a, b, c) in tri_indices:
+    emit_triangle(verts[a], verts[b], verts[c])
+</div>
+
+<p>体素顶点编号约定（局部坐标系，单位立方体 (0,0,0)-(1,1,1)）：</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>顶点 v</th><th>坐标 (x,y,z)</th><th>位掩码 (1&lt;&lt;v)</th></tr>
+<tr><td>0</td><td>(0,0,0)</td><td>0x01</td></tr>
+<tr><td>1</td><td>(1,0,0)</td><td>0x02</td></tr>
+<tr><td>2</td><td>(1,1,0)</td><td>0x04</td></tr>
+<tr><td>3</td><td>(0,1,0)</td><td>0x08</td></tr>
+<tr><td>4</td><td>(0,0,1)</td><td>0x10</td></tr>
+<tr><td>5</td><td>(1,0,1)</td><td>0x20</td></tr>
+<tr><td>6</td><td>(1,1,1)</td><td>0x40</td></tr>
+<tr><td>7</td><td>(0,1,1)</td><td>0x80</td></tr>
+</table>
+</div>
+
+<p>12 条边的端点定义（边 e 连接 topoEdge[e][0] 和 topoEdge[e][1]）：</p>
+
+<pre class="math">
+<span class="cm">══════════════════════════════════════════════</span>
+<span class="cm">  Marching Cubes — 配置编码与边表结构</span>
+<span class="cm">══════════════════════════════════════════════</span>
+
+<span class="cm">// 8 顶点场值符号编码为 8 位无符号整数 (cube_index ∈ [0,255])</span>
+<span class="cm">// 位序：bit(v) = f(v)&lt;0 ? 1 : 0，v=0..7 按 Morton 序</span>
+
+cube_index = Σ_{v=<span class="num">0</span>}^{<span class="num">7</span>} ( <span class="fn">f</span>(vertex_v) &lt; <span class="num">0</span> ? <span class="num">1</span> : <span class="num">0</span> ) · <span class="num">2</span>^v
+
+<span class="cm">// 边表 edgeTable[256] 每项为 12 位位掩码：</span>
+<span class="cm">//   bit(e) = 1 表示等值面与边 e 相交</span>
+<span class="cm">//   格式：edgeTable[idx] = Σ_{e=0}^{11} (与边e相交 ? 1 : 0)·2^e</span>
+
+<span class="cm">// 三角表 triTable[256] 每项为不定长边三元组列表：</span>
+<span class="cm">//   triTable[idx] = {e_a, e_b, e_c,  e_d, e_e, e_f,  ... , -1}</span>
+<span class="cm">//   每三个连续边索引定义一个三角形，-1 为终止哨兵</span>
+
+<span class="cm">// 对称性简化：通过旋转 (4-fold)×反射 (2-fold) 共 8 种对称</span>
+<span class="cm">//   将 256 种配置归约为 15 种基本拓扑 (Case 0-14)</span>
+<span class="cm">//   实际实现可用 256 项全表 (无运行时对称变换，查表直出结果)</span>
+
+<span class="cm">// 顶点法线计算 — 中心差分 (Central Difference)：</span>
+<span class="cm">// ∇f(p) ≈ ( f(p+h·e_x)−f(p−h·e_x) ,</span>
+<span class="cm">//            f(p+h·e_y)−f(p−h·e_y) ,</span>
+<span class="cm">//            f(p+h·e_z)−f(p−h·e_z) ) / (2h)</span>
+<span class="cm">// h = 体素边长 (或更小的偏移) 用于有限差分求梯度</span>
+</pre>
+
+<div class="table-wrap">
+<table>
+<tr><th>边 e</th><th>端点 0</th><th>端点 1</th><th>方向</th></tr>
+<tr><td>0</td><td>v0 (0,0,0)</td><td>v1 (1,0,0)</td><td>沿 x，z=0 面底边</td></tr>
+<tr><td>1</td><td>v1 (1,0,0)</td><td>v2 (1,1,0)</td><td>沿 y，x=1 面底边</td></tr>
+<tr><td>2</td><td>v3 (0,1,0)</td><td>v2 (1,1,0)</td><td>沿 x，z=0 面顶边</td></tr>
+<tr><td>3</td><td>v0 (0,0,0)</td><td>v3 (0,1,0)</td><td>沿 y，x=0 面底边</td></tr>
+<tr><td>4</td><td>v4 (0,0,1)</td><td>v5 (1,0,1)</td><td>沿 x，z=1 面底边</td></tr>
+<tr><td>5</td><td>v5 (1,0,1)</td><td>v6 (1,1,1)</td><td>沿 y，x=1 面顶边</td></tr>
+<tr><td>6</td><td>v7 (0,1,1)</td><td>v6 (1,1,1)</td><td>沿 x，z=1 面顶边</td></tr>
+<tr><td>7</td><td>v4 (0,0,1)</td><td>v7 (0,1,1)</td><td>沿 y，x=0 面顶边</td></tr>
+<tr><td>8</td><td>v0 (0,0,0)</td><td>v4 (0,0,1)</td><td>沿 z，x=0,y=0 竖边</td></tr>
+<tr><td>9</td><td>v1 (1,0,0)</td><td>v5 (1,0,1)</td><td>沿 z，x=1,y=0 竖边</td></tr>
+<tr><td>10</td><td>v2 (1,1,0)</td><td>v6 (1,1,1)</td><td>沿 z，x=1,y=1 竖边</td></tr>
+<tr><td>11</td><td>v3 (0,1,0)</td><td>v7 (0,1,1)</td><td>沿 z，x=0,y=1 竖边</td></tr>
+</table>
+</div>
+
+<h3 id="21-5-2">21.5.2 15 种基本三角剖分配置（完整表）</h3>
+
+<p>8 个顶点的符号模式有 2&#8312; = 256 种，通过旋转和反射对称性归约为 <strong>15 种基本配置</strong>。每种配置包含正顶点数、三角形数、涉及的边及三角形连接方式。</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>Case</th><th>正顶点数</th><th>正顶点位掩码</th><th>&Delta;数</th><th>涉及的边</th><th>三角剖分（边三元组）</th><th>形态描述</th></tr>
+<tr>
+  <td><strong>Case 0</strong></td>
+  <td>0 (或 8)</td>
+  <td>0x00 (或 0xFF)</td>
+  <td>0</td>
+  <td>—</td>
+  <td>—</td>
+  <td>全空体素（所有顶点同号，无曲面穿过）</td>
+</tr>
+<tr>
+  <td><strong>Case 1</strong></td>
+  <td>1</td>
+  <td>0x01</td>
+  <td>1</td>
+  <td>e0, e3, e8</td>
+  <td>(e0, e8, e3)</td>
+  <td>单三角形切掉一角（最简配置，切角与三边相交）</td>
+</tr>
+<tr>
+  <td><strong>Case 2</strong></td>
+  <td>2（共棱）</td>
+  <td>0x03</td>
+  <td>2</td>
+  <td>e1, e2, e3, e8, e9, e10</td>
+  <td>(e3,e8,e1) (e8,e9,e1); 或 (e8,e3,e2) (e8,e2,e10)</td>
+  <td>两三角共边形成矩形面片（棱邻接顶点同号）</td>
+</tr>
+<tr>
+  <td><strong>Case 3</strong></td>
+  <td>2（对角）</td>
+  <td>0x05</td>
+  <td>2</td>
+  <td>各涉及 6 条边</td>
+  <td>两分离三角形，无公共边</td>
+  <td>对角两顶点同号，两片各自独立</td>
+</tr>
+<tr>
+  <td><strong>Case 4</strong></td>
+  <td>3（共面）</td>
+  <td>0x07</td>
+  <td>3</td>
+  <td>多个边</td>
+  <td>三三角形构成三角带（斜切体素一角）</td>
+  <td>底面三顶点同号（L 形），带中依次连接</td>
+</tr>
+<tr>
+  <td><strong>Case 5</strong></td>
+  <td>3（非共面）</td>
+  <td>0x0B</td>
+  <td>3</td>
+  <td>多个边</td>
+  <td>三三角形从一角扇出（三角扇）</td>
+  <td>三顶点非共面，三角扇汇于一点</td>
+</tr>
+<tr>
+  <td><strong>Case 6</strong></td>
+  <td>4（共面）</td>
+  <td>0x0F</td>
+  <td>2</td>
+  <td>e4, e5, e6, e7(顶部)；e0,e1,e2,e3(底部别)</td>
+  <td>贯通矩形隧道（二四边形面片）</td>
+  <td>底面全正、顶面全负，隧道贯穿 z 方向</td>
+</tr>
+<tr>
+  <td><strong>Case 7</strong></td>
+  <td>4（鞍点）</td>
+  <td>0x0A 等</td>
+  <td>4 (或 6)</td>
+  <td>全部 12 条边可能涉及</td>
+  <td>鞍形六边形剖分——中心凹陷，六边环</td>
+  <td>对角顶点正负交替，在场中间形成鞍形面</td>
+</tr>
+<tr>
+  <td><strong>Case 8</strong></td>
+  <td>4（其他）</td>
+  <td>0x33 等</td>
+  <td>2</td>
+  <td>约 6-8 条边</td>
+  <td>两分离片在对角位置</td>
+  <td>四正顶点分布在对立棱角</td>
+</tr>
+<tr>
+  <td><strong>Case 9</strong></td>
+  <td>5</td>
+  <td>0x1F 等</td>
+  <td>5</td>
+  <td>约 9 条边</td>
+  <td>五边形缺口——三角带+双三角</td>
+  <td>仅一角为负，其余五顶点为正</td>
+</tr>
+<tr>
+  <td><strong>Case 10</strong></td>
+  <td>5（其他拓扑）</td>
+  <td>0x2F 等</td>
+  <td>3</td>
+  <td>约 7 条边</td>
+  <td>三角带在棱角间蜿蜒</td>
+  <td>五正顶点另一分布形态，三片切面</td>
+</tr>
+<tr>
+  <td><strong>Case 11</strong></td>
+  <td>6（对棱负）</td>
+  <td>0x3F 等</td>
+  <td>4</td>
+  <td>约 10 条边</td>
+  <td>锯齿形隧道（Z 形连通）</td>
+  <td>仅对棱两点为负，曲面形成锯齿槽</td>
+</tr>
+<tr>
+  <td><strong>Case 12</strong></td>
+  <td>6（其他）</td>
+  <td>0x6F 等</td>
+  <td>4</td>
+  <td>约 10 条边</td>
+  <td>反向管道剖面</td>
+  <td>另一六顶点分布，二对棱角为负</td>
+</tr>
+<tr>
+  <td><strong>Case 13</strong></td>
+  <td>6（U 形内凹）</td>
+  <td>0x7C 等</td>
+  <td>4</td>
+  <td>约 10 条边</td>
+  <td>U 形凹陷，从一侧贯通至对侧</td>
+  <td>两顶点为负形成 U 形缺口</td>
+</tr>
+<tr>
+  <td><strong>Case 14</strong></td>
+  <td>7</td>
+  <td>0x7F 等</td>
+  <td>5</td>
+  <td>约 9 条边</td>
+  <td>大缺角——五个三角围成碗状</td>
+  <td>仅一角为负，反转 Case 1（7=补 1）</td>
+</tr>
+</table>
+</div>
+
+<p><strong>对称关系</strong>：Case 1 和 Case 14 互为补（正负反转），Case 2 和 Case 13（部分），Case 4 和 Case 11（部分）等。通过旋转 90&deg;/180&deg; 可生成每种配置的 4~24 种定向变体，对应全部 256 个 cube_index。</p>
+
+<h3 id="21-5-3">21.5.3 边上的线性插值</h3>
+
+<pre class="math">
+<span class="cm">══════════════════════════════════════════════</span>
+<span class="cm">  Marching Cubes — 边零点插值 (Edge Interpolation)</span>
+<span class="cm">══════════════════════════════════════════════</span>
+
+<span class="cm">// 问题：边 e 两端点 v₀,v₁ 的场值为 f₀=f(v₀) &lt; 0, f₁=f(v₁) &gt; 0</span>
+<span class="cm">// 目标：找到边上 f(p)=0 的精确位置 (零点)</span>
+<span class="cm">// 假定：标量场 f 在边上线性变化 (当体素足够小时这是良好近似)</span>
+
+<span class="cm">// 线性插值：f(t) = (1−t)·f₀ + t·f₁</span>
+<span class="cm">// 令 f(t)=0 求解 t：</span>
+
+           <span class="fn">f₀</span>
+<span class="fn">t</span> = ───────────
+       <span class="fn">f₀</span> − <span class="fn">f₁</span>
+
+<span class="cm">// 交点位置 (世界坐标)：</span>
+<strong>p</strong> = (<span class="num">1</span> − <span class="fn">t</span>) · <strong>v₀</strong> + <span class="fn">t</span> · <strong>v₁</strong>
+
+<span class="cm">// 推导验证：</span>
+<span class="cm">//   f₀&lt;0 → 分子为负 → t&gt;0 ✓ (交点在 v₀ 右侧)</span>
+<span class="cm">//   f₁&gt;0 → 分母 f₀−f₁&lt;0 → t&lt;1 ✓ (交点在 v₁ 左侧)</span>
+
+<span class="cm">//   t=0 时 p=v₀ (f₀=0 的退化情况，交点在端点)</span>
+<span class="cm">//   t=1 时 p=v₁ (f₁=0 的退化情况，交点在端点)</span>
+
+<span class="cm">// 数值稳定性：当 |f₀−f₁| &lt; ε 时，边平行于等值面 → 跳过该边</span>
+</pre>
+
+<p>设边 e 的两端点 v&#8320;、v&#8321; 的场值为 f&#8320;=f(v&#8320;)、f&#8321;=f(v&#8321;)，其中 f&#8320; &lt; 0、f&#8321; &gt; 0（或反之），则零点位置插值：</p>
+
+<div class="formula-block">
+<p><strong>线性插值交点：</strong></p>
+<p><span class="eq">t = f&#8320; / ( f&#8320; &minus; f&#8321; )</span></p>
+<p><span class="eq">p = ( 1 &minus; t ) &middot; v&#8320; + t &middot; v&#8321;</span></p>
+<p class="fm-label">t 是零点到 v&#8320; 的相对距离：f&#8320;&lt;0 使 t&gt;0，f&#8321;&gt;0 使 t&lt;1</p>
+</div>
+
+<p><strong>推导</strong>：线性插值 <span class="eq">f(t) = (1&minus;t)f&#8320; + t&middot;f&#8321;</span>，令 f(t)=0 解得 t=-f&#8320;/(f&#8321;&minus;f&#8320;) = f&#8320;/(f&#8320;&minus;f&#8321;)。</p>
+
+<h3 id="21-5-4">21.5.4 面歧义与内部体歧义</h3>
+
+<p><span class="key-term">面歧义</span>（Face Ambiguity）是 Marching Cubes 的核心难题。当体素某面的四个顶点中两个对角为正、两个对角为负时，该面上等值线有两种合法连接方式：</p>
+
+<figure>
+  <img src="images/ch21_full/fig21_ambiguity.png" alt="Marching Cubes 面歧义示意">
+  <figcaption><span class="fig-num">图21-1</span>：面歧义——对角顶点同号的双曲线。左：分离式连接（两段弧线不连通）；右：连通式（弧线连通形成单连通分量）。两种连接都会使相邻体素产生不同拓扑，若不一致则产生孔洞。</figcaption>
+</figure>
+
+<div class="warning-box">
+<p><strong>关键问题</strong>：若相邻体素对共享面的等值线连接方式不一致——一个用"分离式"另一个用"连通式"——相邻体素的三角剖分将无法对齐，在网格中产生<span class="key-term">孔洞</span>（Hole），破坏水密性。</p>
+</div>
+
+<p><strong>渐近判定器</strong>（Asymptotic Decider, Nielson &amp; Hamann, 1991）通过检查面中心点的场值确定正确拓扑：</p>
+
+<div class="formula-block">
+<p><strong>渐近判定准则：</strong></p>
+<p>对歧义面四个顶点 <span class="eq">v&#8320;, v&#8321;, v&#8322;, v&#8323;</span>，设面中心 <span class="eq">c = (v&#8320;+v&#8321;+v&#8322;+v&#8323;)/4</span>：</p>
+<p>若 <span class="eq">f(c) &middot; f(v&#8320;) &gt; 0</span>（面中心与角点同号）&rarr; 分离式（顶点孤立）</p>
+<p>若 <span class="eq">f(c) &middot; f(v&#8320;) &lt; 0</span>（面中心与角点异号）&rarr; 连通式（顶点连通）</p>
+</div>
+
+<p>面中心点处的场值通过对角线双线性插值计算：</p>
+
+<div class="formula-block">
+<p><span class="eq">f(c) = ( f(v&#8320;) + f(v&#8321;) + f(v&#8322;) + f(v&#8323;) ) / 4</span></p>
+<p class="fm-label">简单平均在大多数情况下足够；精确解法需解双线性函数的鞍点</p>
+</div>
+
+<p><strong>内部体歧义</strong>（Internal Ambiguity）出现在 Case 4/7/8/10/12/13 等配置中：即使面歧义已解决，体素内部仍可能有两种合法三角剖分（连通 vs 不连通的子分量）。需要额外采样体素中心点并比较场值符号来判定。</p>
+
+<h3 id="21-5-5">21.5.5 自适应 Marching Cubes</h3>
+
+<p>均匀分辨率有两难：平坦区浪费三角形，高曲率区分辨率不足。</p>
+
+<pre class="math">
+<span class="cm">══════════════════════════════════════════════</span>
+<span class="cm">  自适应 Marching Cubes — 细化准则与判定</span>
+<span class="cm">══════════════════════════════════════════════</span>
+
+<span class="cm">// 细化判定准则 1：拓扑变化 (体素跨越零等值面)</span>
+<span class="cm">//   若体素 8 顶点场值不全同号 → 等值面穿过 → 需要细化</span>
+<em>判定</em>: <span class="fn">min</span>(f₀..f₇) · <span class="fn">max</span>(f₀..f₇) &lt; <span class="num">0</span>
+
+<span class="cm">// 细化判定准则 2：曲率自适应 (高曲率处提高分辨率)</span>
+<span class="cm">//   计算体素中心点的平均曲率估计：</span>
+κ ≈ ||∇²<span class="fn">f</span>|| / ||∇<span class="fn">f</span>||
+<span class="cm">//   若 κ &gt; κ_max / voxel_size → 继续细化 (高曲率需更细体素)</span>
+
+<span class="cm">// 细化判定准则 3：特征大小 (防子体素细节丢失)</span>
+<span class="cm">//   在体素内部随机采样 N 点，检查是否 f 穿过零：</span>
+<em>判定</em>: <span class="fn">f</span>(<strong>pₛ</strong>) 的符号在采样点间不一致 → 可能丢失细节 → 细化
+
+<span class="cm">// ─── T-junction 修补：限制八叉树 (Restricted Octree) ───</span>
+<span class="cm">// 约束：相邻叶节点层级差 ≤ 1 (2:1 平衡条件)</span>
+<span class="cm">// 此时 T-junction 退化为有限情况，可用三角剖分补丁处理</span>
+
+<span class="cm">// ─── 自适应 vs 均匀网格 — 三角形数对比 ───</span>
+<span class="cm">//   均匀 128³ 网格 → ~2.1M 体素 → ~500K 三角形 (含大量平坦区浪费)</span>
+<span class="cm">//   自适应至 8 层 (最小 1/256) → ~50K 体素 → ~120K 三角形 (省 75%)</span>
+</pre>
+
+<p><span class="key-term">自适应 Marching Cubes</span>（Adaptive Marching Cubes, AMC）基于八叉树：在零等值面曲率大处细分体素、平坦处保持粗粒度。关键挑战：不同分辨率邻居间的 <strong>T-junction</strong> 裂缝。</p>
+
+<h4>T-junction 的产生与修补</h4>
+
+<p>当一个体素边被细分而相邻体素的同一边未细分时，两三角形间产生 T 形接缝——若不加处理，该接缝处顶点只属于一侧三角形而不属于另一侧，导致可视化裂缝。</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>修补方法</th><th>原理</th><th>优缺点</th></tr>
+<tr><td>约束三角剖分</td><td>在粗体素面上，将 T 形交点强制加入为三角形顶点，重新三角剖分</td><td>精确但需修改 Marching Cubes 查表</td></tr>
+<tr><td>裂缝填充三角</td><td>在 T-junction 处插入额外小三角形弥合裂缝</td><td>简单但产生退化三角形（面积近零）</td></tr>
+<tr><td>限制树（Restricted Quadtree/Octree）</td><td>强制相邻节点层级差 &le; 1，使 T-junction 退化到有限情况</td><td>算法约束简单，但可能过度细分</td></tr>
+<tr><td>投影对齐</td><td>将 T 形交点投影到粗体素三角边上</td><td>近似法，对尖锐边可能失效</td></tr>
+</table>
+</div>
+
+<div class="thought-box">
+<p><strong>想一想 #4（子体素细节丢失）</strong>：隐式函数在某立方体内有细节宽度小于网格分辨率（如细管），Marching Cubes 会发生什么？如何检测和修复？<em>（提示：八顶点全部同号 &rarr; 判定为空体素 &rarr; 细节消失。检测方法：在体素内部随机采样或检查梯度变化；修复方法：自适应细分到细节可被解析。）</em></p>
+</div>
+
+<h3 id="21-5-6">21.5.6 其他等值面提取方法</h3>
+
+<p>Marching Cubes 并非唯一选择。几种演进算法针对其弱点做了改进：</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>方法</th><th>原理</th><th>vs Marching Cubes</th><th>适用场景</th></tr>
+<tr><td><strong>Marching Tetrahedra</strong></td><td>每体素剖分为 5-6 个四面体，每个四面体内做三角剖分</td><td>消除面歧义（四面体无歧义），但三角形数多 2-3×</td><td>需要拓扑保证的医学影像</td></tr>
+<tr><td><strong>Dual Contouring</strong><br>(Ju et al., 2002)</td><td>在每跨零边上放置四边形顶点（取Hermite数据），连接成多边形面片</td><td>保留尖锐特征（边/角不被抹平），自适应网格质量更优</td><td>CAD 重建、带尖角特征</td></tr>
+<tr><td><strong>Dual Marching Cubes</strong></td><td>对偶视角：在体素中心放顶点，跨越零边的体素对生成四边形</td><td>自适应八叉树无 T-junction（天然对偶性），面片更均匀</td><td>高曲面质量需求</td></tr>
+<tr><td><strong>Surface Nets</strong></td><td>简化 Dual：取跨零边中点平均为顶点位置</td><td>实现极简（~50 行），但损失尖锐特征</td><td>快速原型、体素游戏</td></tr>
+<tr><td><strong>Flying Edges</strong></td><td>流式单遍算法，沿 x 方向顺序处理体素，边缓存重用</td><td>比传统 MC 快 4-10×（缓存友好+并行化更好）</td><td>大规模数据集的 GPU 提取</td></tr>
+</table>
+</div>
+
+<p>在 BlobTree 框架下，Marching Cubes 仍是默认选择——实现成熟、查表完备、与三角形渲染管线直接对接。Dual Contouring 在需要保留由 CSG 操作产生的尖锐边角时表现更好。</p>
+
+<!-- ==================== 21.6 ==================== -->
+<h2 id="s21-6">21.6 变形</h2>
+
+<h3 id="21-6-1">21.6.1 空间变形的概念</h3>
+
+<p>隐式建模一大优势：对<span class="key-term">空间本身</span>施加变形，而非逐个顶点计算。设变形映射 <span class="eq">D : &#8477;&sup3; &rarr; &#8477;&sup3;</span>：</p>
+
+<div class="formula-block">
+<p><strong>空间变形（Space Deformation）：</strong></p>
+<p><span class="eq">F'(p) = F( D(p) )</span></p>
+<p class="fm-label">求新场在 p 处的值 = 求原场在 D(p) 处的值，等价于原物体被 D&minus;&sup1; 拉入新空间</p>
+</div>
+
+<p><strong>重要</strong>：这里 D 是"逆映射"——对 p 先做 D(p) 得到原空间坐标，再用原隐式函数求值。等价于原物体被逆映射 D&minus;&sup1; = {q | D(q)=p} 变形到新位置。</p>
+
+<p>变形的核心优势——<span class="key-term">与几何复杂度解耦</span>：无论物体有多少细节，变形操作仅在对点 p 求值时额外计算一次 D(p) 及其导数，代价 O(1)。这是隐式建模对有机形状建模最有力的武器。</p>
+
+<h3 id="21-6-2">21.6.2 常见全局变形公式</h3>
+
+<h4>Twist（扭转）</h4>
+
+<p>绕 z 轴按高度比例扭转——离原点越远扭转角度越大：</p>
+
+<div class="formula-block">
+<p><strong>Twist 变形：</strong></p>
+<p><span class="eq">&theta;(z) = &alpha; &middot; z</span></p>
+<p><span class="eq">D(p) = ( x&middot;cos&theta; + y&middot;sin&theta; , &minus;x&middot;sin&theta; + y&middot;cos&theta; , z )</span></p>
+<p class="fm-label">&alpha; 控制扭转率（弧度/单位长度），z=0 处无扭转</p>
+</div>
+
+<p>雅可比矩阵（用于法线修正）：</p>
+
+<div class="formula-block">
+<p><span class="eq">J_D(p) = &part;D/&part;p = </span></p>
+<p><span class="eq">&lfloor; cos&theta;&emsp;sin&theta;&emsp;&minus;&alpha;(x&middot;sin&theta; &minus; y&middot;cos&theta;)</span></p>
+<p><span class="eq">&lfloor; &minus;sin&theta;&emsp;cos&theta;&emsp;&minus;&alpha;(x&middot;cos&theta; + y&middot;sin&theta;)</span></p>
+<p><span class="eq">&lfloor; 0&emsp;&emsp;&emsp;&emsp;0&emsp;&emsp;&emsp;&emsp;1</span></p>
+</div>
+
+<h4>Bend（弯曲）</h4>
+
+<p>沿 x 轴将空间弯曲成弧形（绕 y 轴弯曲）：</p>
+
+<div class="formula-block">
+<p><strong>Bend 变形（沿 x 轴弯曲，弯曲半径 R）：</strong></p>
+<p><span class="eq">D(p) = ( R &middot; sin(x/R) , y , R &minus; R &middot; cos(x/R) + z )</span></p>
+<p class="fm-label">x 处的弧长映射到圆弧上，y 保持不变，z 加上弧高变化。R &rarr; &infin; 退化为恒等</p>
+</div>
+
+<p>检查一致性：在 x=0 处，sin(0)=0，cos(0)=1，故 D(0,y,z) = (0, y, z+0) = (0,y,z)——不变。小 &delta; 偏移 x 对应弧长 &delta;——线性近似成立。</p>
+
+<p>雅可比矩阵：</p>
+
+<div class="formula-block">
+<p><span class="eq">J_D(p) = </span></p>
+<p><span class="eq">&lfloor; cos(x/R)&emsp;0&emsp;0</span></p>
+<p><span class="eq">&lfloor; 0&emsp;&emsp;&emsp;&emsp;&emsp;1&emsp;0</span></p>
+<p><span class="eq">&lfloor; sin(x/R)&emsp;0&emsp;1</span></p>
+</div>
+
+<p>det(J_D) = cos(x/R) &gt; 0 当 |x| &lt; &pi;R/2——变形在有效弯曲角度内保持定向。</p>
+
+<h4>Taper（锥化）</h4>
+
+<p>沿 z 轴线性缩放 xy 分量，使物体一端粗一端细：</p>
+
+<div class="formula-block">
+<p><strong>Taper 变形（沿 z 轴锥化）：</strong></p>
+<p><span class="eq">s(z) = 1 &minus; k &middot; z</span></p>
+<p><span class="eq">D(p) = ( x / s(z) , y / s(z) , z )</span></p>
+<p class="fm-label">k 控制锥度：k&gt;0 使顶部（z 大）缩小，k&lt;0 使顶部放大</p>
+</div>
+
+<h4>Shear（剪切）</h4>
+
+<p>沿某个方向按另一方向的坐标偏移：</p>
+
+<div class="formula-block">
+<p><strong>Shear 变形（xz 面沿 y 方向剪切）：</strong></p>
+<p><span class="eq">D(p) = ( x + k &middot; y , y , z )</span></p>
+<p class="fm-label">水平面沿 y 方向被推移 k&middot;y 的量</p>
+</div>
+
+<h4>组合变形</h4>
+
+<p>多个变形可通过函数复合实现复杂效果：</p>
+
+<div class="formula-block">
+<p><span class="eq">F'(p) = F( D&#8321; &compfn; D&#8322; &compfn; ... &compfn; D&#7524;(p) )</span></p>
+<p class="fm-label">注意复合顺序：先 Twisted 再 Bent &ne; 先 Bent 再 Twisted</p>
+</div>
+
+<h3 id="21-6-3">21.6.3 全局变形 vs 局部变形</h3>
+
+<div class="table-wrap">
+<table>
+<tr><th>类型</th><th>定义</th><th>示例</th><th>适用场景</th></tr>
+<tr><td>全局变形</td><td>D(p) 作用于所有 p，无空间限制</td><td>Twist, Bend, Taper, Shear</td><td>整体姿势调整、角色姿态变换</td></tr>
+<tr><td>局部变形</td><td>D(p) 仅在有限空间区域有非平凡效果</td><td>FFD(自由变形)、骨骼蒙皮、局部雕刻</td><td>面部表情、肌肉凸起、局部修正</td></tr>
+</table>
+</div>
+
+<p>局部变形需额外的<span class="key-term">衰减函数</span>（Falloff Function）调节变形强度。设影响区域 &Omega;：</p>
+
+<div class="formula-block">
+<p><span class="eq">D(p) = p + w(p) &middot; &Delta;(p)</span></p>
+<p class="fm-label">w(p) &isin; [0,1] 是权重函数——在 &Omega; 中心为 1，边界平滑衰减至 0</p>
+</div>
+
+<p>常用衰减函数：</p>
+
+<div class="formula-block">
+<p><strong>高斯衰减：</strong><span class="eq">w(p) = exp( &minus;d(p)&sup2; / &sigma;&sup2; )</span></p>
+<p><strong>Wyvill 衰减：</strong><span class="eq">w(p) = ( 1 &minus; d(p)&sup2; / R&sup2; )&sup3;</span>&emsp;（d &le; R）</p>
+<p class="fm-label">d(p) 是 p 到变形影响区域中心的距离，R 为影响半径</p>
+</div>
+
+<h3 id="21-6-4">21.6.4 变形后的法线修正</h3>
+
+<pre class="math">
+<span class="cm">══════════════════════════════════════════════</span>
+<span class="cm">  空间变形 — 雅可比矩阵与法线修正</span>
+<span class="cm">══════════════════════════════════════════════</span>
+
+<span class="cm">// 变形映射 D : ℝ³ → ℝ³ 定义逆变形求值：</span>
+<span class="fn">F'</span>(<strong>p</strong>) = <span class="fn">F</span>( <span class="fn">D</span>(<strong>p</strong>) )
+
+<span class="cm">// ─── Twist (绕 z 轴扭转，θ=α·z) ───</span>
+<span class="cm">// D(p) = ( x·cosθ + y·sinθ , −x·sinθ + y·cosθ , z )</span>
+<span class="cm">// 雅可比 J_D = ∂D/∂p：</span>
+       ┌                                      ┐
+       │  cosθ        sinθ       −α(x·sinθ−y·cosθ) │
+<span class="fn">J_D</span> = │ −sinθ       cosθ       −α(x·cosθ+y·sinθ) │
+       │   0           0               1           │
+       └                                      ┘
+<span class="cm">// det(J_D) = cos²θ + sin²θ = 1 → 体积保持 (等容变形)</span>
+
+<span class="cm">// ─── Bend (沿 x 轴弯曲，弯曲半径 R) ───</span>
+<span class="cm">// D(p) = ( R·sin(x/R) , y , R−R·cos(x/R)+z )</span>
+       ┌                       ┐
+       │  cos(x/R)   0   0     │
+<span class="fn">J_D</span> = │    0        1   0     │
+       │  sin(x/R)   0   1     │
+       └                       ┘
+<span class="cm">// det(J_D) = cos(x/R) &gt; 0 当 |x|&lt;πR/2 (保持定向)</span>
+
+<span class="cm">// ─── Taper (沿 z 轴锥化，s(z)=1−k·z) ───</span>
+<span class="cm">// D(p) = ( x/s(z) , y/s(z) , z )</span>
+       ┌                                    ┐
+       │  1/s(z)    0      k·x/s(z)²       │
+<span class="fn">J_D</span> = │    0     1/s(z)   k·y/s(z)²       │
+       │    0       0         1            │
+       └                                    ┘
+
+<span class="cm">// ─── 变形后法线修正 (Normal Correction) ───</span>
+<span class="cm">// 核心公式：法线按逆雅可比的转置变换</span>
+
+<strong>n'</strong>(<strong>p</strong>) = ( <span class="fn">J_D</span>⁻¹(<strong>p</strong>) )<span class="op">ᵀ</span> · ∇<span class="fn">F</span>( <span class="fn">D</span>(<strong>p</strong>) )
+
+<span class="cm">// 推导：由链式法则</span>
+<span class="cm">//   ∇F'(p) = J_D(p)ᵀ · ∇F(D(p))  →  n'(p) = (J_D⁻¹)ᵀ · n(D(p))</span>
+<span class="cm">// 原因：法线是余向量 (covector)，按逆转置变换以保持垂直于切平面</span>
+
+<span class="cm">// ─── 组合变形 (复合顺序重要) ───</span>
+<span class="fn">F'</span>(<strong>p</strong>) = <span class="fn">F</span>( <span class="fn">D₁</span>( <span class="fn">D₂</span>( ... <span class="fn">Dₖ</span>(<strong>p</strong>) ... ) ) )
+<span class="cm">// 对应雅可比：J = J_D₁ · J_D₂ · ... · J_Dₖ (矩阵乘法，不可交换)</span>
+<span class="cm">// 先 Twist 再 Bend ≠ 先 Bend 再 Twist</span>
+</pre>
+
+<p>变形 D 不仅移动空间位置，还扭曲局部几何框架。原物体的法向量 n 需按 D 的逆雅可比转置修正：</p>
+
+<div class="formula-block">
+<p><strong>变形后法线公式：</strong></p>
+<p><span class="eq">n'(p) = ( J_D&minus;&sup1;(p) )&#7489; &middot; &nabla;F( D(p) )</span></p>
+<p class="fm-label">J_D 为 D 在 p 处的雅可比矩阵（3&times;3），(J_D&minus;&sup1;)&#7489; 是逆矩阵的转置</p>
+</div>
+
+<p><strong>推导原理</strong>：由链式法则，<span class="eq">&nabla;F'(p) = J_D&minus;&sup1;(p)&#7489; &middot; &nabla;F(D(p))</span>。在物体曲面保持局部体积时，法线变换需用逆转置保持垂直于切平面。</p>
+
+<div class="thought-box">
+<p><strong>想一想 #5（变形 vs 编辑）</strong>：隐式 Twist 变形于 BlobTree 模型，与在多边形网格上逐顶点计算扭转位置，哪一种更"无损"？隐式变形总是可逆的吗？<em>（提示：隐式变形不做离散化——信息无损；而网格变形有舍入误差和三角退化。但隐式变形仅在 D 可逆时精确——Twist/Bend 可逆，大幅扭转可产生自交。）</em></p>
+</div>
+
+<!-- ==================== 21.7 ==================== -->
+<h2 id="s21-7">21.7 参数化</h2>
+
+<pre class="math">
+<span class="cm">══════════════════════════════════════════════</span>
+<span class="cm">  隐式曲面参数化 — 公式与方法汇编</span>
+<span class="cm">══════════════════════════════════════════════</span>
+
+<span class="cm">// 问题：给定隐式曲面 S = {p | f(p)=0}，求映射 φ: S → Ω ⊂ ℝ²</span>
+<span class="cm">// 困难：隐式表示无内建参数坐标 (与 p(u,v) 参数曲面不同)</span>
+
+<span class="cm">// ─── 方案 1：投影参数化 ───</span>
+<span class="cm">// 平面投影 (基向量 e₁, e₂)：</span>
+   (u, v) = ( <strong>p</strong>·<strong>e₁</strong> , <strong>p</strong>·<strong>e₂</strong> )
+<span class="cm">// 柱面投影 (沿 y 轴)：</span>
+   (u, v) = ( <span class="fn">atan2</span>(p_z, p_x) , p_y )
+<span class="cm">// 球面投影：</span>
+   (u, v) = ( <span class="fn">atan2</span>(p_z, p_x)/<span class="num">2π</span> , <span class="fn">acos</span>(p_y/||<strong>p</strong>||)/π )
+
+<span class="cm">// ─── 方案 2：LSCM (最小二乘保角映射, Lévy et al. 2002) ───</span>
+<span class="cm">// 在已生成的三角网格上求解保角参数化</span>
+<span class="cm">// 目标函数：每个三角形 T 上的梯度应满足 Cauchy-Riemann 关系</span>
+
+   <span class="fn">min</span>_{u,v}  Σ_{T} || ∇<span class="fn">u</span>(T) − <strong>i</strong> · ∇<span class="fn">v</span>(T) ||² · A(T)
+
+<span class="cm">// 展开为离散形式 (三角形 T 顶点 1,2,3)：</span>
+<span class="cm">//   ∂u/∂x ≈ (u₂−u₁)(y₃−y₁)−(u₃−u₁)(y₂−y₁) / 2A(T)</span>
+<span class="cm">//   ∂u/∂y ≈ (u₃−u₁)(x₂−x₁)−(u₂−u₁)(x₃−x₁) / 2A(T)</span>
+<span class="cm">// 形成稀疏线性系统 Au = 0 (需固定至少 2 个顶点消歧义)</span>
+
+<span class="cm">// ─── 方案 3：骨架属性传递 (BlobTree 原生方案) ───</span>
+<span class="cm">// 每叶子图元储存其局部 (u,v) 映射，混合节点按场值加权：</span>
+
+   <span class="fn">attr</span>(<strong>p</strong>) = Σᵢ <span class="fn">wᵢ</span>(<strong>p</strong>) · <span class="fn">attrᵢ</span>(<strong>p</strong>) / Σᵢ <span class="fn">wᵢ</span>(<strong>p</strong>)
+   <span class="fn">wᵢ</span>(<strong>p</strong>) = <span class="fn">max</span>( <span class="fn">fᵢ</span>(<strong>p</strong>) , <span class="num">0</span> )
+
+<span class="cm">// ─── 方案 4：活动标架法 (Moving Frame) ───</span>
+<span class="cm">// 基于梯度场构建局部切向量基，积分得到 (u,v)</span>
+   <strong>n̂</strong> = ∇<span class="fn">f</span>/||∇<span class="fn">f</span>||                     <em>法向量</em>
+   <strong>û</strong> = (<strong>n̂</strong> × <strong>e_z</strong>)/||...||              <em>第一切向量 (取与 z 轴叉积)</em>
+   <strong>v̂</strong> = <strong>n̂</strong> × <strong>û</strong>                       <em>第二切向量 (右手法则)</em>
+<span class="cm">// 受毛球定理制约：封闭曲面至少 2 个奇点 → 需割缝</span>
+</pre>
+
+<h3 id="21-7-1">21.7.1 隐式到参数化：根本挑战</h3>
+
+<p>纹理映射、UV 展开、烘焙等需要参数域 (u,v) 的二维坐标。从隐式曲面（定义为由 f(p)=0 的隐式点集）到参数化映射的过渡面临本质困难——隐式表示不提供内在的参数坐标。</p>
+
+<p>形式上，需要找到映射 <span class="eq">&phi; : S &rarr; &Omega; &sub; &#8477;&sup2;</span>，其中 S = {p | f(p)=0}。与参数曲面不同（参数域天然由 u,v 定义域给出），隐式曲面需额外构造该映射——这就是<span class="key-term">隐式→参数化反问题</span>（Inverse Problem）。</p>
+
+<div class="warning-box">
+<p><strong>根本困难</strong>：隐式曲面定义为方程 f(x,y,z)=0 的隐式解集。没有显式的采样映射 p(u,v)，也没有自然的方向场定义。任何参数化方案都意味着额外的计算和数据结构。</p>
+</div>
+
+<h3 id="21-7-2">21.7.2 实用方案</h3>
+
+<h4>方案 1：投影参数化</h4>
+
+<p>将曲面投影到简单形状上生成 (u,v)：</p>
+
+<div class="formula-block">
+<p><strong>平面投影：</strong><span class="eq">(u,v) = (p&middot;e&#8326;, p&middot;e&#8327;)</span>（e&#8326;,e&#8327; 为投影平面基向量）</p>
+<p><strong>柱面投影：</strong><span class="eq">(u,v) = ( atan2(p&#8327;, p&#8326;), p&#8345; )</span></p>
+<p><strong>球面投影：</strong><span class="eq">(u,v) = ( atan2(p&#8327;, p&#8326;), acos(p&#8345;/||p||) / &pi; )</span></p>
+</div>
+
+<p>投影法快速但不保角也不保面积——在曲面法线与投影方向接近垂直处产生奇点（纹理拉伸/挤压）。</p>
+
+<h4>方案 2：离散参数化</h4>
+
+<p>先 Marching Cubes 获得三角形网格 M &asymp; S，再应用标准网格参数化算法：</p>
+
+<div class="formula-block">
+<p><strong>LSCM（最小二乘保角映射）：</strong></p>
+<p><span class="eq">min&#752;&#756;&#754;&#7520;&#750;&#751; &Sigma;&#7491;&#7497;&#7511;&#7512;&#7497;&#7517; || &nabla;u(T) &minus; i &middot; &nabla;v(T) ||&sup2; &middot; A(T)</span></p>
+<p class="fm-label">每个三角形 T 上优化梯度的共轭关系，使映射局部保角</p>
+</div>
+
+<p>优缺点：网格质量依赖分辨率，但可获得高质量 UV；额外的网格生成开销。</p>
+
+<h4>方案 3：骨架属性传递</h4>
+
+<p>在 BlobTree 框架下，参数附着在骨架图元上。每个图元储存其局部 (u,v) 映射（对球体用经纬坐标，圆柱体用轴向+周向坐标等）。混合节点定义组合规则——按场值权重混合 (u,v)：</p>
+
+<div class="formula-block">
+<p><strong>加权属性混合：</strong></p>
+<p><span class="eq">attr(p) = &Sigma;&#752; w&#752;(p) &middot; attr&#752;(p) / &Sigma;&#752; w&#752;(p)</span></p>
+<p><span class="eq">w&#752;(p) = max( f&#752;(p) , 0 )</span></p>
+<p class="fm-label">仅正场图元（曲面内部贡献者）参与加权</p>
+</div>
+
+<p>这种方法的优势是参数化<span class="key-term">与场求值并行</span>——无需后处理步骤，且自然地处理了混合区域的参数过渡。</p>
+
+<h3 id="21-7-3">21.7.3 梯度方向场与活动标架</h3>
+
+<p>隐式场梯度 &nabla;F(p) 给出曲面法向量和局部方向信息。可由此构建曲面上的活动标架（Moving Frame）以定义局部 (u,v)：</p>
+
+<div class="formula-block">
+<p><strong>活动标架构造：</strong></p>
+<p><span class="eq">n&#770; = &nabla;F / ||&nabla;F||</span>（法向）</p>
+<p><span class="eq">u&#770; = ( &nabla;F &times; e&#8345; ) / ||...||</span>（第一个切向，与 z 轴叉积得水平方向）</p>
+<p><span class="eq">v&#770; = n&#770; &times; u&#770;</span>（第二个切向，右手法则）</p>
+<p class="fm-label">当 &nabla;F 平行于 e&#8345; 时（北极点），需改用 e&#8326; 替代 e&#8345;</p>
+</div>
+
+<p>但这一局部标架受<span class="key-term">毛球定理</span>（Hairy Ball Theorem）制约——曲面上不可能存在处处非零的连续切向量场。对亏格为 0 的封闭曲面（拓扑球面），任何切向量场至少有两个零点。这意味着基于梯度的全局参数化必然有奇点，需通过割缝（Seam）或图集（Atlas）来解决。</p>
+
+<div class="thought-box">
+<p><strong>想一想 #6（隐式参数化的困境）</strong>：隐式建模的光滑混合关节处贴跨区连续纹理面临什么根本困难？BlobTree 的属性传递如何帮忙？<em>（提示：混合区域是两个独立参数域的过渡带，直接拼接会产生不连续纹理。BlobTree 的加权平均实现平滑过渡，但可能产生非平凡变形——如一个 blob 的经纬纹理混合到另一个 blob 时产生"拉伸"效果。）</em></p>
+</div>
+
+<!-- ==================== 21.8 ==================== -->
+<h2 id="s21-8">21.8 BlobTree</h2>
+
+<h3 id="21-8-1">21.8.1 层次化隐式场景结构</h3>
+
+<p><span class="key-term">BlobTree</span>（Wyvill et al., 1999）将隐式建模的所有操作统一到树形数据结构中。叶子节点是骨架图元（生成基础标量场），内部节点是操作（混合、CSG、变形），根节点输出最终标量场 F(p)。</p>
+
+<div class="analogy-box">
+<p><strong>类比·BlobTree = 家族树</strong>：叶子是"家族成员"（blob/椭球/圆柱，各有独特"基因"即场函数）；中间节点是"婚配关系"（混合/CSG/变形，组合子女特征）；根是"集体照片"（最终隐式曲面）。从叶子往上遍历到根，就能看清全貌。</p>
+</div>
+
+<div class="formula-block">
+<p><strong>BlobTree 的形式化定义：</strong></p>
+<p><span class="eq">F(p) = op( child&#8321;(p) , child&#8322;(p) , ... , child&#7524;(p) )</span></p>
+<p>其中 op 是混合/CSG/变形算子，child&#752; 要么是图元 f&#752;(p) 要么是子树 F&#752;&#756;&#7495;(p)。</p>
+<p class="fm-label">递归求值从根到叶：根 = 全场的零点集 = 最终曲面</p>
+</div>
+
+<h3 id="21-8-2">21.8.2 完整节点类型</h3>
+
+<div class="table-wrap">
+<table>
+<tr><th>节点</th><th>子节点数</th><th>功能</th><th>求值公式</th></tr>
+<tr><td><strong>Primitive</strong></td><td>0</td><td>生成基础场</td><td><span class="eq">f(p)=Wyvill(r)</span>, r=||p&minus;c||/R</td></tr>
+<tr><td><strong>Union</strong></td><td>2+</td><td>CSG 并</td><td><span class="eq">max(f&#8321;, f&#8322;, &hellip;)</span></td></tr>
+<tr><td><strong>Intersection</strong></td><td>2+</td><td>CSG 交</td><td><span class="eq">min(f&#8321;, f&#8322;, &hellip;)</span></td></tr>
+<tr><td><strong>Difference</strong></td><td>2</td><td>CSG 差 (A&minus;B)</td><td><span class="eq">min(f_A, &minus;f_B)</span></td></tr>
+<tr><td><strong>Blend (Sum)</strong></td><td>2+</td><td>求和混合</td><td><span class="eq">&Sigma; f&#752; &minus; T</span></td></tr>
+<tr><td><strong>Blend (Ricci)</strong></td><td>2+</td><td>幂平均混合</td><td><span class="eq">(&Sigma; f&#752;&#7511;)&sup1;&#710;&#7511;</span></td></tr>
+<tr><td><strong>Blend (Smooth)</strong></td><td>2+</td><td>平滑最小混合</td><td>smin/smax 公式（见 21.4.3）</td></tr>
+<tr><td><strong>Deform</strong></td><td>1</td><td>空间变形</td><td><span class="eq">f'(p) = child( D(p) )</span></td></tr>
+<tr><td><strong>Warp</strong></td><td>1</td><td>非线性扭曲</td><td><span class="eq">f'(p) = child( p + noise(p) )</span></td></tr>
+<tr><td><strong>Scale</strong></td><td>1</td><td>缩放图元场</td><td><span class="eq">f'(p) = s &middot; child(p)</span></td></tr>
+<tr><td><strong>Offset</strong></td><td>1</td><td>偏移等值面</td><td><span class="eq">f'(p) = child(p) &minus; &delta;</span></td></tr>
+</table>
+</div>
+
+<h3 id="21-8-3">21.8.3 递归求值遍历</h3>
+
+<p>BlobTree 的求值是<span class="key-term">自底向上的递归遍历</span>：</p>
+
+<div class="pseudocode">
+<span class="fn">evaluate</span>(node, p):
+  <span class="kw">if</span> node is Primitive:
+    <span class="kw">return</span> node.field_function(p)
+  
+  <span class="kw">if</span> node is Deform:
+    p' = node.deform.inverse(p)   <span class="cm">// 对 p 施加逆变形</span>
+    <span class="kw">return</span> evaluate(node.child, p')
+  
+  <span class="kw">if</span> node is Blend:
+    values = [evaluate(child, p) <span class="kw">for</span> child <span class="kw">in</span> node.children]
+    <span class="kw">return</span> node.blend_op(values)
+  
+  <span class="kw">if</span> node is CSG:
+    values = [evaluate(child, p) <span class="kw">for</span> child <span class="kw">in</span> node.children]
+    <span class="kw">return</span> node.csg_op(values)  <span class="cm">// min/max</span>
+</div>
+
+<p><strong>加速策略</strong>：空间划分结构（21.3 节）在求值前剪枝——仅对支撑域覆盖 p 的叶子图元求值。对混合节点，若某子节点返回 0 或负值可提前终止（对 min 操作）。</p>
+
+<pre class="math">
+<span class="cm">══════════════════════════════════════════════</span>
+<span class="cm">  BlobTree — 节点求值数学定义</span>
+<span class="cm">══════════════════════════════════════════════</span>
+
+<span class="cm">// 每种节点类型的精确求值公式：</span>
+
+<span class="cm">// Primitive (叶子节点)：直接计算 Wyvill 场</span>
+<span class="fn">f_prim</span>(<strong>p</strong>) = (<span class="num">1</span> − ||<strong>p</strong>−<strong>c</strong>||²/R²)³     <em>当 ||p−c|| ≤ R，否则 0</em>
+
+<span class="cm">// Union (CSG 并)：场值取最大 (内部区域取并)</span>
+<span class="fn">f_∪</span>(<strong>p</strong>) = <span class="fn">max</span>{ <span class="fn">fᵢ</span>(<strong>p</strong>) }                     <em>子节点 2..k 个</em>
+
+<span class="cm">// Intersection (CSG 交)：场值取最小 (内部区域取交)</span>
+<span class="fn">f_∩</span>(<strong>p</strong>) = <span class="fn">min</span>{ <span class="fn">fᵢ</span>(<strong>p</strong>) }                     <em>子节点 2..k 个</em>
+
+<span class="cm">// Difference (CSG 差 A−B)：A 中挖去 B 的内部区域</span>
+<span class="fn">f_−</span>(<strong>p</strong>) = <span class="fn">min</span>( <span class="fn">f_A</span>(<strong>p</strong>), <span class="op">−</span><span class="fn">f_B</span>(<strong>p</strong>) )
+
+<span class="cm">// Deform (空间变形)：对查询点 p 先施加逆变形再求子节点场</span>
+<span class="fn">f_deform</span>(<strong>p</strong>) = <span class="fn">child</span>( <span class="fn">D</span>(<strong>p</strong>) )              <em>D 是逆变形映射</em>
+
+<span class="cm">// Blend (混合节点, 根据类型选择公式)：</span>
+<span class="cm">//   Sum:    F = Σ fᵢ − T</span>
+<span class="cm">//   Ricci:  F = (Σ fᵢ^n)^(1/n)  (当 fᵢ&gt;0，否则 max)</span>
+<span class="cm">//   Smooth: F = smin/smax(f₁,f₂,k)</span>
+<span class="cm">//   Wyvill: F = f₁+f₂−√(f₁²+f₂²−k·f₁·f₂)</span>
+
+<span class="cm">// 树求值复杂度 (含空间加速)：</span>
+<span class="cm">//   无加速：O(L) 每点求值 (L=叶节点数)</span>
+<span class="cm">//   八叉树：O(K·log N) 每点求值 (K=每单元平均图元数)</span>
+</pre>
+
+<h3 id="21-8-4">21.8.4 射线追踪渲染隐式曲面：光线步进算法</h3>
+
+<p>BlobTree 可通过<span class="key-term">光线步进</span>（Ray Marching）直接渲染，无需先生成三角形网格。这是隐式建模最"原生"的渲染方式。</p>
+
+<div class="pseudocode">
+<span class="fn">ray_march</span>(ray_origin, ray_dir, max_dist, max_steps):
+  t = <span class="num">0.0</span>
+  <span class="kw">for</span> step <span class="kw">in</span> <span class="num">0</span> .. max_steps:
+    p = ray_origin + t * ray_dir
+    f_val = evaluate(blob_tree_root, p)
+    
+    <span class="kw">if</span> f_val < <span class="num">0.0</span>:  <span class="cm">// 进入物体内部（已越过零等值面）</span>
+      <span class="kw">return</span> bisect(ray_origin, ray_dir, t - step_size, t)
+    
+    <span class="kw">if</span> t > max_dist:
+      <span class="kw">return</span> NO_HIT
+    
+    <span class="cm">// 对于 SDF：安全步长 = max(|f_val|, min_step)</span>
+    step_size = max(abs(f_val), <span class="num">0.001</span>)  <span class="cm">// 非 SDF 时用固定步长</span>
+    t += step_size
+  
+  <span class="kw">return</span> NO_HIT
+
+<span class="fn">bisect</span>(ray_origin, ray_dir, t_near, t_far, precision=<span class="num">0.0001</span>):
+  <span class="kw">for</span> i <span class="kw">in</span> <span class="num">0</span> .. <span class="num">10</span>:  <span class="cm">// 二分法精确求交点</span>
+    t_mid = (t_near + t_far) / <span class="num">2.0</span>
+    p = ray_origin + t_mid * ray_dir
+    f_mid = evaluate(blob_tree_root, p)
+    <span class="kw">if</span> abs(f_mid) < precision:
+      <span class="kw">return</span> t_mid
+    <span class="kw">if</span> f_mid < <span class="num">0</span>: t_far = t_mid
+    <span class="kw">else</span>: t_near = t_mid
+  <span class="kw">return</span> (t_near + t_far) / <span class="num">2.0</span>
+</div>
+
+<p><strong>SDF 安全步长原理</strong>：当使用 SDF 时，|f(p)| 即为 p 到曲面的最短距离。因此可以安全地沿光线方向前进 |f(p)| 而不会越过曲面（<span class="key-term">球追踪</span> Sphere Tracing, Hart 1996）。非 SDF 场（如 Wyvill 求和场）不具备单位梯度性质，只能使用<span class="key-term">固定步长</span>或自适应步长，效率较低。</p>
+
+<pre class="math">
+<span class="cm">══════════════════════════════════════════════</span>
+<span class="cm">  球追踪 (Sphere Tracing) — 数学原理与步长分析</span>
+<span class="cm">══════════════════════════════════════════════</span>
+
+<span class="cm">// 球追踪的核心：对 SDF，|f(p)| = dist(p, ∂Ω)</span>
+<span class="cm">// 沿光线方向前进 |f(p)| 保证不越过曲面</span>
+
+<span class="cm">// 证明：设 q 为 ∂Ω 上距 p 最近的点</span>
+<span class="cm">//   则球 B(p, |f(p)|) 内部无曲面点</span>
+<span class="cm">//   光线在该球内任意前进 ≤ |f(p)| 都不会穿过 ∂Ω</span>
+<span class="cm">//   在 p + step·dir 处，f 的符号尚未改变 → 仍在同侧</span>
+
+<span class="cm">// 步长策略对比：</span>
+<span class="cm">//   SDF 球追踪：  t += |f(p)|              → 每步自适应</span>
+<span class="cm">//   固定步长：    t += Δt                  → Δt=0.001~0.01</span>
+<span class="cm">//   Lipschitz：   t += |f(p)|/L            → L=sup ||∇f||</span>
+<span class="cm">//   过松弛球追踪：t += ω·|f(p)|  (ω∈[1,2]) → 加速但有越过风险</span>
+
+<span class="cm">// ─── 光线步进总步数分析 (从 d₀=10 到球面 d=1) ───</span>
+<span class="cm">//   SDF 球追踪：每步至少前进 |f(p)|，步数 ≈ log(d₀/ε) ≈ 10-15</span>
+<span class="cm">//   固定步长 0.01：步数 = 9/0.01 = 900</span>
+<span class="cm">//   Lipschitz (Wyvill L≈3/R)：步数 ≈ 3·log(d₀/ε) ≈ 30-45</span>
+<span class="cm">//   → SDF 球追踪比固定步长快 60-90×！</span>
+
+<span class="cm">// ─── 二分法求精 (Bisection Refinement) ───</span>
+<span class="cm">// 光线步进发现 f(p_prev)&gt;0 and f(p_curr)&lt;0 后：</span>
+   <span class="fn">binary_search</span>(p_prev, p_curr, ε):
+     <span class="kw">for</span> i = <span class="num">0</span>..<span class="num">10</span>:
+       t_mid = (t_prev + t_curr) / <span class="num">2</span>
+       <span class="kw">if</span> |<span class="fn">f</span>(p_mid)| &lt; ε: <span class="kw">return</span> t_mid
+       <span class="kw">if</span> <span class="fn">f</span>(p_mid) &lt; <span class="num">0</span>: t_curr = t_mid
+       <span class="kw">else</span>: t_prev = t_mid
+     <span class="kw">return</span> (t_prev + t_curr) / <span class="num">2</span>
+<span class="cm">// 10 次二分将误差从体素边长缩至 体素边长/1024 ≈ 0.001</span>
+</pre>
+
+<h4>Lipschitz 界与自适应步长</h4>
+
+<p>对于非 SDF 场 f，可估计其<span class="key-term">Lipschitz 常数</span> L（梯度的模上界）：</p>
+
+<div class="formula-block">
+<p><span class="eq">|f(p) &minus; f(q)| &le; L &middot; ||p &minus; q||</span>&emsp;对所有 p, q</p>
+<p class="fm-label">L = sup&#752;&#751;&#7498;&#751;&#7513; || &nabla;f || 为梯度模的全局上界</p>
+</div>
+
+<p>保守步长可取 <span class="eq">|f(p)| / L</span>，比固定步长更安全但可能过于保守（因 L 是全局上界，局部 |&nabla;f| 可能远小于 L）。</p>
+
+<h3 id="21-8-5">21.8.5 属性传递：颜色、材质与更多</h3>
+
+<p>BlobTree 可传递除标量场外的任意属性——颜色、法线、材质参数等。每个叶子图元带有其局部属性（球体天然经纬色、圆柱轴向色等），内部节点定义组合规则。</p>
+
+<div class="formula-block">
+<p><strong>属性加权混合（按场值权重）：</strong></p>
+<p><span class="eq">C(p) = &Sigma;&#752; max( f&#752;(p) , 0 ) &middot; C&#752;(p) / &Sigma;&#752; max( f&#752;(p) , 0 )</span></p>
+<p class="fm-label">仅正场图元贡献颜色——物体内部的图元场值支配颜色过渡</p>
+</div>
+
+<p>对 CSG 节点，被裁剪区域（非正场子节点）不贡献属性，这自然符合布尔操作的语义。</p>
+
+<div class="thought-box">
+<p><strong>想一想 #7（BlobTree vs 多边形）</strong>：用 BlobTree 建模有机形状，与传统多边形建模相比，哪些步骤更方便？哪些更困难？为什么 BlobTree 未完全取代多边形？<em>（提示：方便的方面——自动平滑连接、变形与几何复杂度无关。困难方面——缺乏逐点精确控制、纹理映射需额外方案、渲染管线的三角形优先假设。BlobTree 是"工具库中的专门工具"而非万能替代。）</em></p>
+</div>
+
+<!-- ==================== 21.9 ==================== -->
+<h2 id="s21-9">21.9 交互式隐式建模</h2>
+
+<pre class="math">
+<span class="cm">══════════════════════════════════════════════</span>
+<span class="cm">  交互式隐式建模 — 性能模型与加速公式</span>
+<span class="cm">══════════════════════════════════════════════</span>
+
+<span class="cm">// ─── 实时预览性能模型 ───</span>
+<span class="cm">// 交互延迟 = 场求值延迟 + 曲面提取延迟 + 渲染延迟</span>
+<span class="cm">// 场求值延迟 (N=场景总图元数, K=活跃单元平均图元数)：</span>
+   T_eval = O(K) · cost(<span class="fn">Wyvill</span>)        <em>含八叉树加速</em>
+<span class="cm">// 曲面提取延迟 (M=体素总数, G=跨零体素数)：</span>
+   T_extract = M · O(<span class="num">1</span>) + G · O(<span class="num">1</span>)    <em>每体素 8 次求值 + 跨零体素查表</em>
+
+<span class="cm">// ─── Wyvill 查表加速 (LUT) ───</span>
+<span class="cm">// 预计算 (1−t²)³ 在 t∈[0,1] 上 256 等分采样：</span>
+   table[k] = (<span class="num">1</span> − (k/<span class="num">255</span>)²)³      k = <span class="num">0</span>,<span class="num">1</span>,...,<span class="num">255</span>
+<span class="cm">// 运行时：t = r/R → idx = floor(t·255) → 查表 + 线性插值</span>
+<span class="cm">//   多项式求值 (~12 FLOP) → 查表+LERP (~3 FLOP) → ~4× 加速</span>
+
+<span class="cm">// ─── GPU 并行 Marching Cubes ───</span>
+<span class="cm">// Compute Shader 中每线程处理一个体素：</span>
+<span class="cm">//   f[0..7] ← Wyvill(vertex_0)..Wyvill(vertex_7)   // 8 次求值</span>
+<span class="cm">//   cube_idx ← pack_signs(f[0..7])                   // 压缩为 8 位</span>
+<span class="cm">//   edges ← edgeTable[cube_idx]                      // 查表</span>
+<span class="cm">//   for each tri in triTable[cube_idx]: emit_tri()   // 写三角形</span>
+<span class="cm">//   三角形写入 AppendStructuredBuffer (原子计数分配)</span>
+
+<span class="cm">// ─── Lipschitz 自适应步长 ───</span>
+<span class="cm">// 对非 SDF 隐式场，估计最大梯度上界 L：</span>
+   L = <span class="fn">sup</span>_{<strong>p</strong>∈Ω} ||∇<span class="fn">f</span>(<strong>p</strong>)||
+<span class="cm">// 保守步长：step ≤ |f(p)| / L</span>
+<span class="cm">// 对 Wyvill 函数：L ≈ 3/R (在 r=R/√3 处梯度最大)</span>
+</pre>
+
+<h3 id="21-9-1">21.9.1 实时预览策略</h3>
+
+<p>隐式建模的交互瓶颈在于：每次参数修改需要重新求值全场（或受影响子区域）并重建曲面（Marching Cubes 或光线步进）。策略：</p>
+
+<h4>增量刷新区</h4>
+
+<p>仅重算受影响的局部区域（<span class="key-term">脏矩形</span> Dirty Region）：</p>
+
+<div class="pseudocode">
+<span class="cm">// 增量更新流程</span>
+<span class="fn">on_primitive_moved</span>(prim_id, new_pos):
+  dirty_bbox = expanded_bbox(old_pos, new_pos, prim_radius)
+  <span class="kw">for</span> voxel <span class="kw">in</span> dirty_bbox:
+    re-evaluate F at voxel corners
+    re-run Marching Cubes (or update cached result)
+  upload_dirty_triangles_to_GPU()
+</div>
+
+<h4>渐进式细化</h4>
+
+<p>先低分辨率预览，后台逐步提高分辨率。用户拖动图元时用 32&sup3; 体素网格粗预览，释放鼠标后逐步细化至 128&sup3; 甚至 256&sup3;。多数现代隐式建模工具都采用此策略。</p>
+
+<h4>GPU 加速</h4>
+
+<p><strong>GPU Marching Cubes</strong>：在计算着色器中批量求值体素顶点并生成三角形。
+<br><strong>GPU 光线步进</strong>：片段着色器中直接求值 BlobTree，像素级精度渲染——无需任何三角形化。
+<br><strong>混合方案</strong>：GPU 计算着色器做 Marching Cubes + 光栅化渲染最终三角形。</p>
+
+<h3 id="21-9-2">21.9.2 雕刻系统隐式工具</h3>
+
+<p>交互式隐式建模中的<span class="key-term">雕刻工具</span>（Sculpting Tools）使艺术家像处理黏土一样工作：</p>
+
+<h4>工具 1：添加 blob（Add）</h4>
+
+<p>点击/拖拽在空间中添加新的骨架图元，自动与现有场混合：</p>
+
+<div class="formula-block">
+<p><span class="eq">F' = Blend( F_existing , f_new_blob )</span></p>
+<p class="fm-label">新 blob 的半径和场强度由笔刷大小和压力决定</p>
+</div>
+
+<h4>工具 2：减去 blob（Subtract）</h4>
+
+<p>添加负场 blob 实现"挖洞"效果：</p>
+
+<div class="formula-block">
+<p><span class="eq">F' = max( F_existing , &minus;f_new_blob )</span></p>
+<p class="fm-label">等价于 CSG 差操作——负 blob 在正场中"掏空"材料</p>
+</div>
+
+<h4>工具 3：平滑（Smooth）</h4>
+
+<p>对局部区域降低场梯度，平滑曲面：</p>
+
+<div class="formula-block">
+<p><span class="eq">F' = F &minus; &epsilon; &middot; &Delta;F</span></p>
+<p class="fm-label">&Delta;F = &nabla;&sup2;F 是拉普拉斯算子，&epsilon; 控制平滑强度——扩散场值使等值面变平滑</p>
+</div>
+
+<h4>工具 4：局部变形笔刷（Deform Brush）</h4>
+
+<p>在影响区域内拉动/推压曲面点：</p>
+
+<div class="formula-block">
+<p><span class="eq">F'(p) = F( p &minus; w(p) &middot; &Delta;d )</span></p>
+<p class="fm-label">w(p) 是笔刷衰减函数，&Delta;d 是位移向量</p>
+</div>
+
+<h4>工具 5：CSG 剪辑器</h4>
+
+<p>用隐式几何（如球、长方体、圆柱）进行布尔并/交/差裁剪——结果即时可见。因 CSG 操作在 O(1) 内完成（单次求值中的 min/max），这是隐式建模在概念建模阶段超越多边形布尔的最大优势。</p>
+
+<h3 id="21-9-3">21.9.3 用户界面范式</h3>
+
+<div class="table-wrap">
+<table>
+<tr><th>交互范式</th><th>描述</th><th>适合任务</th></tr>
+<tr><td>图元拖放</td><td>从调色板拖入场景，调节参数</td><td>概念建模、快速原型</td></tr>
+<tr><td>画笔式涂画</td><td>空间中涂画轨迹，自动生成 blob 链</td><td>有机形状、血管、树枝</td></tr>
+<tr><td>CSG 操作器</td><td>布尔操作的视觉隐喻</td><td>机械零件、建筑构件</td></tr>
+<tr><td>变形手柄</td><td>拖动实时预览 Twist/Bend/Taper</td><td>姿势调整、风格化变形</td></tr>
+<tr><td>雕刻刷</td><td>压力感应笔刷增删材料</td><td>精细造型、角色雕刻</td></tr>
+<tr><td>VR 空间雕刻</td><td>3D 空间直接抓取和塑造</td><td>沉浸式概念设计</td></tr>
+</table>
+</div>
+
+<h3 id="21-9-4">21.9.4 性能优化要点</h3>
+
+<div class="table-wrap">
+<table>
+<tr><th>优化技术</th><th>原理</th><th>加速效果</th></tr>
+<tr><td>Wyvill 查表</td><td>预计算 (1&minus;t&sup2;)&sup3; 在 [0,1] 上的 256 等分采样值</td><td>多项式求值 &rarr; 一次查表 + 线性插值，~10&times; 加速</td></tr>
+<tr><td>SIMD 并行求值</td><td>SSE/AVX 指令一次处理 4/8 个图元</td><td>4&minus;8&times; 吞吐量提升</td></tr>
+<tr><td>增量八叉树</td><td>添加/移动图元时仅更新受影响的八叉树节点</td><td>交互编辑延迟从 O(N) 降至 O(&Delta;N)</td></tr>
+<tr><td>GPU 并行 Marching Cubes</td><td>计算着色器中 N 个体素并行求值</td><td>CPU 顺序 &rarr; GPU 大规模并行，100&minus;1000&times;</td></tr>
+<tr><td>距离剪枝</td><td>求值时用 SDF 安全距离跳过远处图元</td><td>光线步进步数减少 5&minus;20&times;</td></tr>
+<tr><td>惰性求值</td><td>对远离零等值面区域用粗粒度场近似</td><td>求值密度自适应，平均 3&minus;5&times; 减少</td></tr>
+</table>
+</div>
+
+<div class="thought-box">
+<p><strong>想一想 #8（烘焙 vs 可编辑性）</strong>：系统将 BlobTree 烘焙为多边形网格加速渲染后，后续变形编辑如何实现？烘焙是否丧失隐式建模核心优势？<em>（提示：烘焙是"快照"——失去实时编辑能力。可以保留 BlobTree 源数据和增量更新映射实现"双向同步"，但复杂度高。实践中烘焙用于最终输出，BlobTree 用于设计阶段。）</em></p>
+</div>
+
+<hr>
+
+<!-- ==================== 本章核心洞察 ==================== -->
+<div class="insight-box" id="insights">
+<h3>本章核心洞察（8 条）</h3>
+<ol>
+  <li><strong>隐式 = 场的零等值面</strong>：标量场 f(x,y,z) 编码几何——零等值面给出曲面，正/负分内外。这种表示使内外判断、碰撞检测从 O(n) 降至 O(1)。</li>
+  <li><strong>Wyvill 多项式是效率基石</strong>：f(r)=(1&minus;r&sup2;)&sup3; 的紧致支撑使空间划分剪枝有效，C&sup2; 连续性保证混合区域视觉平滑，查表加速使实时交互成为可能。</li>
+  <li><strong>混合是无缝的——也是最难的</strong>：布尔操作和混合发生在连续标量值上，无离散接缝。但精确控制混合范围（Ricci 的 n、smin 的 k、R 函数的 &alpha;）需要理论基础和实践经验。</li>
+  <li><strong>Marching Cubes 是桥梁</strong>：连接隐式世界（场函数）和显式世界（三角形），15 种配置表是 GPU isosurface 提取的经典方案。面歧义是 1987 年至今仍在研究的问题。</li>
+  <li><strong>SDF 的单位梯度是关键优化器</strong>：||&nabla;f||=1 使光线步进使用安全步长，将求交从 O(N·steps) 降至 O(steps)，是实时隐式渲染的基础。</li>
+  <li><strong>空间变形是与几何复杂度解耦的武器</strong>：变形作用在空间而非顶点上——Twist/Bend/Taper 仅需 O(1) 的 D(p) 计算，与物体复杂度完全无关。</li>
+  <li><strong>BlobTree 赋予表述力</strong>：隐式操作形式化为树形结构，建模从"场函数组合"升维为"程序化几何生成"——类似函数式编程的组合子。</li>
+  <li><strong>隐式参数化仍然是开放问题</strong>：从 f(x,y,z)=0 到 (u,v) 映射没有自然解。骨架属性传递是实用方案，但通用高质量参数化仍需先多边形化再展开。</li>
+</ol>
+</div>
+
+<hr>
+
+<!-- ==================== 课后练习题 ==================== -->
+<h2 id="exercises">课后练习题（7 题）</h2>
+
+<ol>
+  <li><strong>Wyvill 导数与连续性</strong>：证明 f(r)=(1&minus;r&sup2;)&sup3; 在 r=1 处 C&sup2; 连续（f、f'、f'' 均连续且为零）。求 r=0.5 处的场值和梯度大小。若半径 R=2，计算 r=1.5 处的场值。</li>
+  
+  <li><strong>Blinn vs Wyvill</strong>：对于 Blinn blob f(p)=exp(&minus;2&middot;r&sup2;)&minus;0.1，有效半径 R 为多少？在 r=R 处梯度模 ||&nabla;f|| 为多少？与 Wyvill 函数比较，两种模型在求值效率和混合行为上有何差异？</li>
+
+  <li><strong>Matching Cubes 歧义排查</strong>：取体素顶点 (0,0,0) 处场值为 +1，(0,1,1) 处为 +1，(1,0,1) 为 &minus;1，(1,1,0) 为 &minus;1（四个正、四个负，呈四面体排列）。判断此配置对应基本配置表哪个 case。相邻体素不同剖分的后果是什么？</li>
+
+  <li><strong>Ricci 混合极限分析</strong>：两相等球场 f&#8321;=f&#8322;=1&minus;r&sup2;，中心间距 d=&radic;2。令 Ricci 混合 F=(f&#8321;&#7511;+f&#8322;&#7511;)&sup1;&#710;&#7511;，画 n=1,2,5,50 时两中心连心线上的 F 值剖面图，分析膨胀程度随 n 的变化。当 n&rarr;&infin; 时零等值面何去何从？</li>
+
+  <li><strong>R 函数验证</strong>：验证 R 交 &and;&#7526; 在 &alpha;=1 时退化为 2&middot;min(f&#8321;, f&#8322;)，证明零等值面对应于 f&#8321;&le;0 且 f&#8322;&le;0 区域的边界——正确实现了布尔交的语义。</li>
+
+  <li><strong>BlobTree 复杂度分析</strong>：深度 h、叶节点 L 的 BlobTree。每变形节点 O(1)（矩阵乘法），混合节点 m 子节点。无空间加速时推导单点求值最坏时间复杂度。加入八叉树后复杂度如何变化？</li>
+
+  <li><strong>光线步进步长策略对比</strong>：对 SDF 球体 f(p)=||p||&minus;1，从 (0,0,&minus;10) 沿 (0,0,1) 方向：计算球追踪（安全步长）和固定步长（&Delta;t=0.1）所需的步数。扩展到一般隐式场（非 SDF）讨论自适应步长的 Lipschitz 界。</li>
+</ol>
+
+<hr>
+
+<!-- ==================== QA 零基础问答区 ==================== -->
+<h2 id="qa">QA 零基础问答区（8 问）</h2>
+
+<div class="qa-item">
+<p class="qa-q">Q1: 隐式建模和 Bézier/B-spline 参数曲面的本质区别？</p>
+<p class="qa-a"><strong>A:</strong> 参数表示用 p(u,v) 直接给曲面上的点，便于采样和渲染。隐式表示给出满足 <span class="key-term">f(x,y,z)=0</span> 的所有点，便于判断内外、布尔操作、混合。类比：参数表示像"指地图告诉你每个坐标"；隐式表示像"告诉你海拔为零的所有地方"。二者是互补的：隐式建模产生 BlobTree，然后通过 Marching Cubes 转为参数网格进行渲染。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q2: SDF 的 ||&nabla;f||=1 在曲面的脊线处为什么不成立？</p>
+<p class="qa-a"><strong>A:</strong> 脊线（Medial Axis）是空间中到曲面有多个最近点的位置——例如长方形内部的对角线。在这些线上，距离函数的梯度不唯一（左侧导数和右侧导数不同），严格来说在这些不可微点处 ||&nabla;f|| 没有定义。但在除脊线外的所有点（几乎处处）||&nabla;f||=1 成立。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q3: Marching Cubes 需要记住全部 15 种配置吗？</p>
+<p class="qa-a"><strong>A:</strong> 不需要。实际实现使用<span class="key-term">查找表</span>（Lookup Table）：8 顶点的 ± 符号编码为 8 位整数（0~255），表项预存对应的边索引列表和三角形连接方式。核心工作是<span class="key-term">填表</span>（一次性），而非对每个体素判断拓扑。开源实现（如 VTK、CGAL、libigl）的表可直接使用。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q4: 为什么 Wyvill 函数用六次 (1&minus;r&sup2;)&sup3; 而非二次 (1&minus;r&sup2;) 或四次？</p>
+<p class="qa-a"><strong>A:</strong> 二次函数 (1&minus;r&sup2;) 在 r=1 处 C&sup0;（值连续但导数不连续 &rarr; 可见棱线）。四次函数 (1&minus;r&sup2;)&sup2; 在 r=1 处 C&sup1;（一阶导连续但二阶导不连续 &rarr; 混合区有视觉瑕疵）。六次函数 (1&minus;r&sup2;)&sup3; 在 r=1 处 C&sup2;（一阶和二阶导数均连续为零 &rarr; 与零场平滑衔接）。这就是"六次"的由来——恰好在保证视觉平滑与计算简单之间取得最佳平衡。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q5: BlobTree 变形器 vs Maya/Blender 变形器？</p>
+<p class="qa-a"><strong>A:</strong> 思想相同——都通过对空间施加变换间接变形几何。但 Maya/Blender 变形器<span class="key-term">作用于顶点</span>：newVertPos = D(vertex)。BlobTree 变形<span class="key-term">作用于求值过程</span>：对 p 先变形回去，再用旧隐式函数判断。隐式方式"更数学干净"——不需离散化，无网格退化风险，且 O(1) 代价与几何复杂度无关。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q6: Wyvill 函数在 R 外为零，那远距离 blob 对求和有影响吗？</p>
+<p class="qa-a"><strong>A:</strong> 没有影响——这正是<span class="key-term">紧致支撑</span>（Compact Support）的价值。在空间划分结构中，blob 仅存储在其支撑区覆盖的单元内。支撑区外不查询。这也是 Wyvill 远快于 Blinn 的 exp blob 的原因：只用查几个邻居单元，而非对全空间所有点计算 exp。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q7: 隐式建模数学优雅，为什么行业还主要用多边形？</p>
+<p class="qa-a"><strong>A:</strong> 实用性问题：<br>(1) GPU 天生擅长三角形——从纹理采样到光栅化整条管线围绕多边形设计。<br>(2) 隐式曲面缺乏参数域，高质量 UV 展开需额外步骤。<br>(3) 多边形建模提供逐点精确控制（顶点/边/面直接编辑），符合艺术家直觉。<br>(4) 拓扑自由是双刃剑——自动混合快但缺乏精细拓扑控制，而这正是高端建模的核心需求。<br>(5) 渲染效率：光线步进比光栅化慢 10&minus;100&times;，Marching Cubes 增加了预处理开销。但隐式建模在概念设计、程序化生成、有机形状领域无可替代。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q8: 如何选择混合方式？有何实战建议？</p>
+<p class="qa-a"><strong>A:</strong> 实战选择指南：<br><strong>求和混合</strong>：最简原型、测试场景。<br><strong>Ricci n=2~4</strong>：通用有机形状（角色、生物）。<br><strong>smin k=0.1~0.3</strong>：精确控制融合范围（机械过渡）。<br><strong>R 函数 &alpha;=0.5</strong>：需要保持精确布尔语义的场景。<br><strong>Wyvill 叠加 n=2~3</strong>：BlobTree 框架下最稳定。<br>核心原则：先选最简单的能工作的算子；需要时再引入参数控制。能用 Wyvill 求和解决的，不引入 Ricci。</p>
+</div>
+
+<hr style="margin:60px 0 30px;border:1px solid #ddd">
+
+<p style="text-align:center;color:#999;font-size:13px"><em>— FCG 第5版 · 第21章：隐式建模 · 全文翻译（充实的级别） —</em></p>
+<p style="text-align:center;color:#aaa;font-size:12px">Guizang 插图：Marching Cubes 配置表 · Wyvill BlobTree · 变形公式 &copy; 相关版权归原作者所有 · 讲义仅供学习使用</p>
+
+</body>
+</html>

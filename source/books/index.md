@@ -39,6 +39,39 @@ description: 游戏开发经典教材
 
 ---
 
+# 📚 虎书5 · 全文翻译版
+
+> **Fundamentals of Computer Graphics, 5th Edition — 逐段全文翻译**  
+> Guizang 插图版，中英对照，逐段精译
+
+| # | 章节 | 
+|---|------|
+| 01 | [引言](fcg5/ch01_引言.html) |
+| 02 | [杂项数学](fcg5/ch02_杂项数学.html) |
+| 03 | [光栅图像](fcg5/ch03_光栅图像.html) |
+| 04 | [光线追踪](fcg5/ch04_光线追踪.html) |
+| 05 | [表面着色](fcg5/ch05_表面着色.html) |
+| 06 | [线性代数](fcg5/ch06_线性代数.html) |
+| 07 | [变换矩阵](fcg5/ch07_变换矩阵.html) |
+| 08 | [视图](fcg5/ch08_视图.html) |
+| 09 | [图形管线](fcg5/ch09_图形管线.html) |
+| 10 | [信号处理](fcg5/ch10_信号处理.html) |
+| 11 | [纹理映射](fcg5/ch11_纹理映射.html) |
+| 12 | [数据结构](fcg5/ch12_数据结构.html) |
+| 13 | [蒙特卡洛积分](fcg5/ch13_蒙特卡洛积分.html) |
+| 14 | [基于物理的渲染](fcg5/ch14_基于物理的渲染.html) |
+| 15 | [曲线](fcg5/ch15_曲线.html) |
+| 16 | [计算机动画](fcg5/ch16_计算机动画.html) |
+| 17 | [图形硬件编程](fcg5/ch17_图形硬件编程.html) |
+| 18 | [颜色](fcg5/ch18_颜色.html) |
+| 19 | [视觉感知](fcg5/ch19_视觉感知.html) |
+| 20 | [色调再现](fcg5/ch20_色调再现.html) |
+| 21 | [隐式建模](fcg5/ch21_隐式建模.html) |
+| 22 | [游戏中的计算机图形学](fcg5/ch22_游戏中的计算机图形学.html) |
+| 23 | [可视化](fcg5/ch23_可视化.html) |
+
+---
+
 # 📚 游戏引擎架构 (GEA) 零基础讲义
 
 > **Game Engine Architecture** — Guizang 材质插画版  

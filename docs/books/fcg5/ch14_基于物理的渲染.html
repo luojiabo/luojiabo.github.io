@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FCG Ch14: Physics-Based Rendering — 全文翻译 (Guizang插图版)</title>
+<style>
+/* === GEA 全文翻译样式表 === */
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Noto Serif SC","Source Han Serif SC","SimSun",Georgia,serif;background:#faf9f5;color:#2c2c2c;line-height:1.9;font-size:15px;max-width:860px;margin:0 auto;padding:40px 24px}
+h1{font-size:28px;text-align:center;margin:40px 0 10px;color:#1a1a1a;border-bottom:2px solid #002FA7;padding-bottom:16px}
+h2{font-size:22px;margin:48px 0 20px;color:#1a1a1a;border-left:4px solid #002FA7;padding-left:14px}
+h3{font-size:17px;margin:32px 0 14px;color:#333}
+p{margin:12px 0;text-indent:2em}
+p.no-indent{text-indent:0}
+blockquote{background:#f0f0ed;border-left:3px solid #002FA7;margin:16px 0;padding:10px 18px;color:#555;font-style:italic}
+blockquote p{text-indent:0}
+code{background:#eee;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:13px}
+pre{background:#1e1e1e;color:#d4d4d4;padding:16px 20px;border-radius:6px;overflow-x:auto;font-size:13px;line-height:1.5;margin:14px 0}
+pre code{background:transparent;padding:0;color:inherit}
+figure{margin:28px 0;text-align:center}
+figure img{max-width:100%;border-radius:4px;box-shadow:0 2px 12px rgba(0,0,0,0.08)}
+figcaption{font-size:13px;color:#777;margin-top:8px}
+.fig-num{font-weight:700;color:#002FA7}
+.key-term{font-weight:600;color:#002FA7}
+.sidenote{font-size:12px;color:#999;margin-left:8px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:14px}
+table th{background:#002FA7;color:#fff;padding:8px 12px;text-align:left}
+table td{border-bottom:1px solid #ddd;padding:8px 12px}
+table tr:nth-child(even){background:#f5f5f5}
+.thought-box{background:#f5f8fc;border:1px solid #c8d6e5;border-radius:6px;padding:12px 18px;margin:16px 0}
+.thought-box p{text-indent:0;margin:4px 0}
+.insight-box{background:#fdf8f0;border:1px solid #e8d5b0;border-radius:6px;padding:14px 20px;margin:24px 0}
+.insight-box h3{color:#b8860b;margin:0 0 10px 0;font-size:16px}
+.insight-box ul{margin:0;padding-left:20px}
+.insight-box li{margin:6px 0}
+.objectives-box{background:#f5f8fc;border:1px solid #002FA7;border-left:6px solid #002FA7;border-radius:6px;padding:14px 22px;margin:24px 0}
+.objectives-box h3{color:#002FA7;margin:0 0 10px 0;font-size:17px}
+.objectives-box ol{margin:0;padding-left:22px}
+.objectives-box li{margin:6px 0;line-height:1.7}
+.qa-item{margin:16px 0;padding:10px 16px;background:#fafafa;border-left:3px solid #002FA7}
+.qa-item .qa-q{font-weight:600;color:#002FA7;text-indent:0;margin:0 0 6px 0}
+.chapter-header{display:flex;align-items:center;gap:12px;padding:12px 0;margin:-40px -24px 24px;border-bottom:2px solid #002FA7;font-family:"Noto Sans SC",sans-serif;background:#faf9f5}
+.chapter-header #logo{font-weight:700;color:#002FA7;font-size:14px;letter-spacing:0.5px}
+.chapter-header #sep{color:#999;font-size:14px}
+.chapter-header #cur{color:#333;font-size:14px;flex:1}
+.chapter-header #btns{display:flex;gap:8px}
+.hdr-btn{background:#fff;border:1px solid #002FA7;color:#002FA7;padding:4px 12px;font-size:12px;border-radius:4px;text-decoration:none;display:inline-block}
+.hdr-btn:hover{background:#002FA7;color:#fff}
+.chapter-header button{background:#fff;border:1px solid #002FA7;color:#002FA7;padding:4px 12px;font-size:12px;cursor:pointer;border-radius:4px;font-family:inherit}
+.chapter-header button:hover{background:#002FA7;color:#fff}
+
+.lecture-note{background:#f5f8fc;border:1px solid #b8c8d8;border-left:5px solid #002FA7;border-radius:6px;padding:14px 22px;margin:24px 0 18px}
+.lecture-note strong{display:block;color:#002FA7;font-size:16px;margin-bottom:8px}
+.lecture-note p{margin:6px 0;text-indent:0;font-size:14px;line-height:1.75;color:#444}
+
+.qa-item .qa-a{text-indent:0;margin:0}
+details{margin:12px 0;padding:8px 16px;background:#f9f9f9;border:1px solid #e0e0e0;border-radius:4px}
+details summary{font-weight:600;cursor:pointer;color:#002FA7}
+details p,details ol,details ul{margin:8px 0;text-indent:0}
+.toc{background:#fff;border:1px solid #e0e0e0;border-radius:6px;padding:16px 24px;margin:20px 0;font-size:14px}
+.toc strong{display:block;margin-bottom:8px;font-size:16px}
+.toc ul{list-style:none;padding-left:8px}
+.toc li{margin:4px 0}
+.toc a{color:#002FA7;text-decoration:none}
+.toc a:hover{text-decoration:underline}
+.nav-bar{background:#fff;border-bottom:1px solid #e0e0e0;padding:10px 20px;margin:-40px -24px 30px;display:flex;gap:16px;font-size:13px;flex-wrap:wrap}
+.nav-bar a{color:#555;text-decoration:none}
+.nav-bar a:hover{color:#002FA7}
+.nav-bar .active{color:#002FA7;font-weight:700}
+.formula-box{background:#f9fafb;border:1px solid #d0d7de;border-radius:6px;padding:14px 18px;margin:16px 0}
+.formula-box p{text-indent:0;margin:4px 0;font-style:italic;color:#555}
+.formula-box pre{margin:8px 0}
+.comparison-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+.comparison-grid .col{border:1px solid #e0e0e0;border-radius:6px;padding:12px 16px;background:#fafafa}
+.comparison-grid h4{margin:0 0 8px 0;color:#002FA7;font-size:15px}
+</style></head><body>
+<div class="chapter-header">
+  <span id="logo">FCG 5E</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch14 基于物理的渲染</span>
+  <span id="btns">
+    <a href="#目录" class="hdr-btn">[=] 目录</a>
+    <a href="#s14-1"><button>[+] 章节</button></a>
+  </span>
+</div>
+
+
+
+<div class="nav-bar">
+  <a href="#s14-1">14.1</a> <a href="#s14-2">14.2</a> <a href="#s14-3">14.3</a> <a href="#s14-4">14.4</a> <a href="#s14-5">14.5</a>
+  <a href="#s14-6">14.6</a> <a href="#s14-7">14.7</a> <a href="#s14-8">14.8</a> <a href="#s14-9">14.9</a> <a href="#s14-10">14.10</a> <a href="#s14-11">14.11</a>
+</div>
+
+<h1>第14章：基于物理的渲染</h1>
+<div class="lecture-note">
+<strong>说明</strong>
+<p>本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书》（Fundamentals of Computer Graphics）第5版第14章（p.374-400）基于物理的渲染。</p>
+<p>PBR 完整数学体系——菲涅尔/斯涅尔定律、Schlick近似、BRDF 互易性与能量守恒、辐射度量学、输运方程、暴力光子追踪、路径追踪。</p>
+<p>本版插画采用 Guizang 材质插画风格重新绘制。</p>
+</div>
+
+
+
+<div class="toc" id="目录"><strong>目录</strong>
+<ul>
+<li><a href="#学习目标">学习目标</a></li>
+<li><a href="#s14-1">14.1 引言：光子与BRDF</a></li>
+<li><a href="#s14-2">14.2 输运方程</a></li>
+<li><a href="#s14-3">14.3 光滑电介质（菲涅尔/斯涅尔/Schlick近似）</a></li>
+<li><a href="#s14-4">14.4 理想镜面反射（镜面BRDF δ函数）</a></li>
+<li><a href="#s14-5">14.5 暴力光子追踪</a></li>
+<li><a href="#s14-6">14.6 辐射度量学（辐射通量/辐照度/辐射强度/辐射亮度L）</a></li>
+<li><a href="#s14-7">14.7 散射的辐射度量学（BSDF/相位函数/散射方程）</a></li>
+<li><a href="#s14-8">14.8 BRDF理论（互易性/能量守恒/各向同性vs各向异性）</a></li>
+<li><a href="#s14-9">14.9 重要性采样BRDF</a></li>
+<li><a href="#s14-10">14.10 蒙特卡洛光线追踪（路径追踪/俄罗斯轮盘赌/多重重要性采样MIS）</a></li>
+<li><a href="#s14-11">14.11 光子映射</a></li>
+<li><a href="#insights">本章核心洞察</a></li>
+<li><a href="#exercises">课后练习题</a></li>
+<li><a href="#qa">QA 零基础问答区</a></li>
+</ul></div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+
+  <li>理解"物理渲染"与"现象学渲染"的本质区别，掌握光子模型在图形学中的意义</li>
+  <li>掌握输运方程（Rendering Equation）的积分形式及其在渲染管线中的核心地位</li>
+  <li>理解菲涅尔效应、斯涅耳折射定律和Schlick近似的物理内涵与工程应用</li>
+  <li>掌握辐射度量学四大核心量（功率Φ、辐照度H、辐射强度I、辐射亮度L）及其测度关系</li>
+  <li>理解BRDF的定义、属性和蒙特卡洛采样方法，并能够解释路径追踪的基本原理</li>
+</ol>
+<hr>
+
+<p class="no-indent">虽然所有渲染在某种程度上都算是"基于物理的"，但<span class="key-term">基于物理的渲染</span>（Physics-Based Rendering）在实践中意味着严格遵循物理模型，而非使用"现象学"（phenomenological）方法——后者通过启发式经验公式（例如在高光位置放一个"看起来对"的亮斑）来捕捉主观感知特征。本章将在较高层面覆盖基于物理的渲染，定义该领域所用的单位和术语，并给出一种暴力"路径追踪"算法，该算法可以非常慢地产生非常精确的图像。我们不会深入探讨市面上众多渲染算法的细节，但几乎所有这些算法都可以看作是对暴力算法的改进。值得注意的是，效率的改进正是我们在电影和游戏中获得逼真图形的原因——这种改进绝非无足轻重；我们之所以不覆盖这些细节，是因为它们是快速变化的前沿目标，且已有良好的生态覆盖——最著名的是Pharr等人（2016）的PBRT著作和代码库。</p>
+
+<figure>
+  <img src="images/ch14_full/fig14_overview.png" alt="路径追踪光线弹跳概览图">
+  <figcaption><span class="fig-num">图 14.1</span> — 路径追踪中从相机（眼睛）出发的多条光线在场景中弹跳，每次命中表面时根据BRDF采样新方向，最终到达光源或被吸收。这是第14章核心理念的可视化总览。（Guizang 插画）</figcaption>
+</figure>
+
+<!-- ==================== 14.1 ==================== -->
+<h2 id="s14-1">14.1 引言：光子与BRDF</h2>
+
+<p>为了辅助直观理解，我们将用大量光子的集合来描述辐射度量学，本节首先确立在此语境中"光子"的含义。需要注意的是，在图形学中，"光子"并不一定意味着物理学家所指的严格定义——许多物理学家在读到图形学人写的"光子追踪"讨论时会感到困惑。对我们来说，光子通常只是一个<span class="key-term">能量包</span>（energy packet），其行为遵循几何光学（光线沿直线传播，不展现波动特性）。</p>
+
+<blockquote><p><strong>生活类比：</strong>把光子想象成雨滴。追踪单个雨滴在复杂地形中的弹跳路径，可以帮助你理解哪些区域会积水——这就像追踪光子来确定场景的照明分布一样。如果有一片倾斜的屋顶（类比光滑金属），雨滴会直接弹走；如果是一片草地（类比粗糙表面），雨滴会溅到各个方向。</p></blockquote>
+
+<p>更精确地说，对我们而言，光子是一束具有<span class="key-term">位置</span>（position）、<span class="key-term">传播方向</span>（direction of propagation）和<span class="key-term">波长λ</span>（wavelength）的光包。有点奇怪的是，SI单位中波长使用<span class="key-term">纳米</span>（nanometer, nm）作为单位——这主要是历史原因，1nm = 10⁻⁹m。另一个单位<span class="key-term">埃</span>（angstrom）有时也被使用，1纳米=10埃。光子在介质中的速度c仅取决于介质的<span class="key-term">折射率n</span>（refractive index）。有时也使用<span class="key-term">频率</span>（frequency）f = c/λ 来描述光，这很方便——因为与λ和c不同，f在光子折射进入新折射率的介质时不会改变。</p>
+
+<p>另一个不变量是光子携带的能量q，由以下关系给出：</p>
+
+<pre class="math">q = hf = hc / λ    (14.1)</pre>
+
+<p>其中 <code>h = 6.63×10⁻³⁴ Js</code> 是<span class="key-term">普朗克常数</span>（Plank's Constant）。虽然这些量可以在任何单位系统中测量，我们尽可能使用SI单位。</p>
+
+<div class="thought-box"><p><strong>想一想：</strong>如果光子进入水中（折射率n≈1.33），它的速度c会变小，波长λ也会变化，但频率f不变。这是为什么？这个事实对渲染计算有什么影响？</p></div>
+
+<p>回到渲染的核心：<span class="key-term">BRDF</span>（双向反射分布函数, Bidirectional Reflectance Distribution Function）描述了一个表面如何从每个入射方向反射光到每个出射方向。它是整个基于物理的渲染的理论基石。BRDF是一个4D函数 <code>ρ(k<sub>i</sub>, k<sub>o</sub>)</code>，其中k<sub>i</sub>是入射方向，k<sub>o</sub>是出射方向。在实际渲染中，BRDF被封装到所谓的<span class="key-term">材质</span>（material）中，不同的材质类型对应不同的BRDF模型。</p>
+
+<h3>14.1.1 BRDF的形式化定义</h3>
+
+<p>在图形学文献中，BRDF通常记作 <code>f<sub>r</sub>(ω<sub>i</sub>, ω<sub>o</sub>)</code>，其中ω<sub>i</sub>和ω<sub>o</sub>分别是入射和出射方向的单位向量（注意此处用ω替代了k，两者等价）。形式化地，BRDF是出射辐射亮度（reflected radiance）的微分与入射辐照度（incident irradiance）的微分之比：</p>
+
+<pre class="math">f<sub>r</sub>(ω<sub>i</sub>, ω<sub>o</sub>) = dL<sub>o</sub>(ω<sub>o</sub>) / dE<sub>i</sub>(ω<sub>i</sub>) = dL<sub>o</sub>(ω<sub>o</sub>) / (L<sub>i</sub>(ω<sub>i</sub>) cosθ<sub>i</sub> dω<sub>i</sub>)</pre>
+
+<p>这个定义揭示了一个关键点：BRDF的单位是 sr⁻¹（球面度⁻¹）。它描述的并非绝对反射量，而是"单位入射辐照度下产生的出射辐射亮度"——这是一个<span class="key-term">密度函数</span>（density function）。</p>
+
+<p>BRDF的4D本质：因为入射方向和出射方向各需2个角度参数（θ, φ），所以BRDF天然是一个4D函数。然而在实践中，大多数材质被假设为各向同性（isotropic），这意味着绕表面法线旋转不会改变反射行为——此时BRDF从4D降为3D，仅依赖于三个角度：入射俯角θ<sub>i</sub>、出射俯角θ<sub>o</sub>、以及两个方向之间的方位角差|φ<sub>i</sub> − φ<sub>o</sub>|。</p>
+
+<h3>14.1.2 光子与BRDF的关系</h3>
+
+<p>光子视角和BRDF视角是对同一物理过程的两种等价描述：</p>
+
+<ul>
+<li><span class="key-term">光子视角</span>（微观模拟）：追踪每个光子与表面的交互，根据表面的微观几何决定光子是反射还是折射、朝哪个方向出射。这种方法直接但计算量巨大。</li>
+<li><span class="key-term">BRDF视角</span>（宏观统计）：不追踪每个光子，而是用一个4D分布函数来描述"从任意入射方向来的光，有多少比例散射到任意出射方向"。BRDF本质上是对大量光子-表面交互的统计性总结。</li>
+</ul>
+
+<p>这两种视角的对应关系是理解整个PBR框架的关键：BRDF中的概率密度对应于光子层级的散射概率分布。当我们从BRDF中采样一个出射方向时，本质上是在模拟"如果有一个光子从ω<sub>i</sub>方向射来，它最可能朝哪个方向反射"。</p>
+
+<div class="thought-box"><p><strong>形式化提示：</strong>在后续章节中，我们会看到BRDF需要满足两个核心约束——互易性（Helmholtz reciprocity）和能量守恒——这两者都直接源于光子层级的时间反演对称性和能量守恒原理。任何违反这些约束的BRDF都会导致"物理上不可能"的渲染结果。</p></div>
+
+<!-- ==================== 14.2 ==================== -->
+<h2 id="s14-2">14.2 输运方程</h2>
+
+<p>有了BRDF的定义，我们可以用一个积分方程来描述表面上某一点的辐射亮度——用来自所有方向的入射辐射亮度来表达。这正是计算机图形学中最重要的方程之一：<span class="key-term">输运方程</span>（Transport Equation），也常被称为<span class="key-term">渲染方程</span>（Rendering Equation）：</p>
+
+<pre class="math">L<sub>s</sub>(x, k<sub>o</sub>) = L<sub>e</sub>(x, k<sub>o</sub>) + ∫ ρ(k<sub>i</sub>, k<sub>o</sub>) L<sub>f</sub>(x, k<sub>i</sub>) cosθ<sub>i</sub> dσ<sub>i</sub></pre>
+
+<p>其中 <code>L<sub>s</sub>(x, k<sub>o</sub>)</code> 是表面点x在方向k<sub>o</sub>上的出射辐射亮度（surface radiance），<code>L<sub>e</sub></code> 是该点自身发射的辐射亮度，<code>L<sub>f</sub></code> 是从方向k<sub>i</sub>到达该点的场辐射亮度（field radiance），<code>θ<sub>i</sub></code> 是k<sub>i</sub>与表面法线的夹角，<code>dσ<sub>i</sub></code> 是入射方向的微分立体角。积分在所有入射方向上（通常仅上半球面）进行。</p>
+
+<blockquote><p><strong>生活类比：</strong>输运方程就像一个追踪资金流动的会计等式——你的账户余额（出射光）= 初始存款（自发光）+ 所有转账收入减去手续费（BRDF×入射光×cos衰减）之和。每个"转账方"是一个入射光方向。</p></blockquote>
+
+<h3>14.2.1 渲染方程的完整展开与符号体系</h3>
+
+<p>在图形学文献中，渲染方程通常用更标准的符号体系写出。使用 <code>f<sub>r</sub></code> 表示BRDF，<code>ω</code> 替代 <code>k</code>，以及用上标表示"入射/出射"的方向约定，渲染方程的经典形式（Kajiya, 1986）为：</p>
+
+<pre class="math">L<sub>o</sub>(x, ω<sub>o</sub>) = L<sub>e</sub>(x, ω<sub>o</sub>) + ∫_{Ω⁺} f<sub>r</sub>(x, ω<sub>i</sub>, ω<sub>o</sub>) L<sub>i</sub>(x, ω<sub>i</sub>) |cosθ<sub>i</sub>| dω<sub>i</sub></pre>
+
+<p>各项的含义如下：</p>
+
+<table>
+<tr><th>符号</th><th>含义</th><th>单位</th></tr>
+<tr><td><code>L<sub>o</sub>(x, ω<sub>o</sub>)</code></td><td>位置x处方向ω<sub>o</sub>的出射辐射亮度</td><td>W·m⁻²·sr⁻¹</td></tr>
+<tr><td><code>L<sub>e</sub>(x, ω<sub>o</sub>)</code></td><td>位置x在方向ω<sub>o</sub>的自发光辐射亮度</td><td>W·m⁻²·sr⁻¹</td></tr>
+<tr><td><code>f<sub>r</sub>(x, ω<sub>i</sub>, ω<sub>o</sub>)</code></td><td>位置x处的BRDF</td><td>sr⁻¹</td></tr>
+<tr><td><code>L<sub>i</sub>(x, ω<sub>i</sub>)</code></td><td>从方向ω<sub>i</sub>入射到x的辐射亮度</td><td>W·m⁻²·sr⁻¹</td></tr>
+<tr><td><code>cosθ<sub>i</sub></code></td><td>入射角余弦（投影面积因子）</td><td>无量纲</td></tr>
+<tr><td><code>Ω⁺</code></td><td>表面法线上方的上半球面</td><td>—</td></tr>
+</table>
+
+<p>关于符号约定：在球坐标中，ω<sub>i</sub>的方向由其极角θ<sub>i</sub>（与法线夹角）和方位角φ<sub>i</sub>确定，微分立体角 dω<sub>i</sub> = sinθ<sub>i</sub> dθ<sub>i</sub> dφ<sub>i</sub>。cosθ<sub>i</sub> 因子（也称Lambert余弦项）表示了"到达表面的光通量密度随入射角增大而降低"这一几何事实——如同一束光越斜着照在表面上，单位面积上的光就越少。</p>
+
+<h3>14.2.2 BRDF的两条核心约束：互易性与能量守恒</h3>
+
+<p>并非所有4D函数都可以被称为物理上合法的BRDF。一个有效的BRDF必须满足两条基本约束，这两条约束直接源自物理定律：</p>
+
+<h4>约束一：互易性（Helmholtz Reciprocity）</h4>
+
+<pre class="math">f<sub>r</sub>(ω<sub>i</sub> → ω<sub>o</sub>) = f<sub>r</sub>(ω<sub>o</sub> → ω<sub>i</sub>)</pre>
+
+<p>互易性描述了光路可逆原理：交换入射和出射方向后，BRDF的值不变。这意味着"从A方向照光、从B方向观察"的亮度等于"从B方向照光、从A方向观察"的亮度。互易性源自电磁场的时间反演对称性——麦克斯韦方程组在时间反演下不变。</p>
+
+<p>在渲染实践中，互易性的影响比直觉上更加深远：</p>
+<ul>
+<li><span class="key-term">路径追踪有效性</span>：正是因为互易性，从相机追踪光线（反向）与从光源追踪光子（正向）在统计上等价——两者都服从同样的BRDF分布。如果没有互易性，路径追踪将不是光子追踪的有效替代方案。</li>
+<li><span class="key-term">BRDF测量</span>：在实验室中测量BRDF时，互易性意味着只需要测量一半的参数空间，另一半由对称性给出。</li>
+<li><span class="key-term">Phong模型为何违法</span>：经典的Phong光照模型（~1975）不满足互易性——它包含不对称的 (R·V)<sup>n</sup> 项，其中反射方向R仅取决于入射方向和法线，而观察方向V是分开处理的。交换入射和出射后，该值不相等。这就是现代PBR管线必须使用互易性合规模型（如GGX/Cook-Torrance）的核心原因。</li>
+</ul>
+
+<h4>约束二：能量守恒（Energy Conservation）</h4>
+
+<pre class="math">∫_{Ω⁺} f<sub>r</sub>(ω<sub>i</sub>, ω<sub>o</sub>) · cosθ<sub>o</sub> · dω<sub>o</sub> ≤ 1    (对所有 ω<sub>i</sub> 成立)</pre>
+
+<p>能量守恒约束的含义是：对于任意固定的入射方向ω<sub>i</sub>，在所有可能的出射方向ω<sub>o</sub>上对BRDF进行加权积分，所得的比例（即方向半球反射率）不能超过1。换句话说，表面反射的光能量不能超过入射的光能量。</p>
+
+<p>不等式中的cosθ<sub>o</sub>因子是"投影面积"修正——出射光分布到各个方向的"有效面积"不同。积分的结果在0到1之间：0表示完全吸收（理想黑体），1表示完全反射（理想白体/完美镜面）。</p>
+
+<div class="formula-box">
+<p><strong>形式化验证：</strong>对朗伯表面 f<sub>r</sub> = ρ/π，能量守恒约束给出：</p>
+<pre>∫_{Ω⁺} (ρ/π) · cosθ<sub>o</sub> · dω<sub>o</sub> = (ρ/π) · π = ρ ≤ 1</pre>
+<p>这意味着朗伯表面的反射率ρ必须在[0,1]范围内，且BRDF必须包含归一化因子1/π以确保∫cosθ·dω = π。</p>
+</div>
+
+<p>传统Phong模型违反能量守恒的根源在于：其镜面项缺乏适当的归一化——随着镜面指数n增大，BRDF的积分会显著超过1，导致渲染结果在多次弹跳后越来越亮（"能量爆炸"）。现代PBR模型通过显式归一化因子（如GGX分布函数的严格归一化）来保证能量守恒。</p>
+
+<h3>14.2.3 面积测度形式与可见性函数</h3>
+
+<p>如果我们考虑空间中不同点之间的可见性，可以将积分域改写为对所有表面点的积分——这是在实际渲染器中最常用的形式。引入<span class="key-term">可见性函数</span>（visibility function）v(x, x')之后：</p>
+
+<pre class="math">L<sub>s</sub>(x, k<sub>o</sub>) = ∫ ρ(k<sub>i</sub>, k<sub>o</sub>) L<sub>s</sub>(x', x−x') v(x, x') cosθ<sub>i</sub> cosθ' / ‖x−x'‖² dA'</pre>
+
+<p>其中可见性函数定义为：</p>
+
+<pre class="math">v(x, x') = { 1, 若x与x'互相可见; 0, 否则 }</pre>
+
+<p>从立体角测度到面积测度的变换依赖于以下几何关系（参见图14.x）：从点x看去，点x'处的微分面积dA'对应的立体角为：</p>
+
+<pre class="math">dω<sub>i</sub> = (dA' · cosθ') / ‖x − x'‖²    (14.2a)</pre>
+
+<p>其中cosθ'是点x'处表面法线与方向x−x'之间夹角的余弦。分母‖x−x'‖²反映了平方反比定律——远处的表面对应更小的立体角。将这个变换代入立体角形式的渲染方程即得面积形式。这种变换在实现中至关重要——它允许我们在光源表面上采样（面积测度），而不是在方向球面上采样（立体角测度），这对直接光照的高效计算至关重要。</p>
+
+<h3>14.2.4 路径积分形式（Neumann级数展开）</h3>
+
+<p>渲染方程的递归性质——出射辐射亮度依赖于其他点的辐射亮度，而其他点的辐射亮度又依赖于更多点的辐射亮度——意味着不可能用封闭形式求解，必须使用蒙特卡洛等数值方法近似计算。</p>
+
+<p>将渲染方程中的L<sub>s</sub>递归地代入自身，我们得到一个无穷级数——即所谓的<span class="key-term">Neumann级数</span>（Neumann series）或<span class="key-term">路径积分形式</span>（path integral formulation）：</p>
+
+<pre class="math">L<sub>o</sub> = L<sub>e</sub> + T·L<sub>e</sub> + T²·L<sub>e</sub> + T³·L<sub>e</sub> + …</pre>
+
+<p>其中 <code>T</code> 是传输算子（transport operator），定义为：</p>
+
+<pre class="math">(T·F)(x, ω<sub>o</sub>) = ∫_{Ω⁺} f<sub>r</sub>(x, ω<sub>i</sub>, ω<sub>o</sub>) · F(x, ω<sub>i</sub>) · cosθ<sub>i</sub> · dω<sub>i</sub></pre>
+
+<p>Neumann级数中的每一项对应一种特定弹跳次数的光路贡献：</p>
+
+<table>
+<tr><th>项</th><th>物理含义</th><th>在渲染中的名称</th></tr>
+<tr><td><code>L<sub>e</sub></code></td><td>零次弹跳：直接从光源发出的光到达相机</td><td>直接可见光源</td></tr>
+<tr><td><code>T·L<sub>e</sub></code></td><td>一次弹跳：光从光源发射→击中表面→反射到相机</td><td>直接光照（Direct Illumination）</td></tr>
+<tr><td><code>T²·L<sub>e</sub></code></td><td>两次弹跳：光经过两次表面反射后到达相机</td><td>一次间接光照</td></tr>
+<tr><td><code>T³·L<sub>e</sub></code>及更高</td><td>三次及以上弹跳</td><td>多次间接光照（Indirect Illumination）</td></tr>
+</table>
+
+<p>展开后，路径积分形式可以写为对所有可能光路长度的多重积分求和：</p>
+
+<pre class="math">L<sub>o</sub>(x, ω<sub>o</sub>) = Σ_{k=0}^{∞} ∫ … ∫ L<sub>e</sub>(x<sub>k</sub>) · {∏_{i=0}^{k-1} f<sub>r</sub>(x<sub>i</sub>) · G(x<sub>i</sub>↔x<sub>i+1</sub>)} · dA<sub>1</sub> … dA<sub>k</sub></pre>
+
+<p>其中 <code>G(x↔x') = v(x, x') · cosθ·cosθ' / ‖x−x'‖²</code> 是几何耦合项（geometry term），它将两个表面点之间的辐射亮度传输统一描述。G项同时编码了三件事：两点是否相互可见（v）、斜射投影修正（cosθ和cosθ'）、以及距离平方衰减（1/‖x−x'‖²）。</p>
+
+<div class="thought-box"><p><strong>洞察：</strong>Neumann级数揭示了渲染本质上是一个<span class="key-term">无穷维积分</span>问题。路径追踪的递归版（14.10节）实际上就是对这个无穷级数进行随机截断的蒙特卡洛估计。每一项T<sup>k</sup>L<sub>e</sub>对应k次弹跳的光贡献，而路径长度决定了弹跳次数——这是为什么俄罗斯轮盘赌（14.10.2节）能够无偏地截断无穷级数。</p></div>
+
+<h3>14.2.5 应用边界条件</h3>
+
+<p>渲染方程本身是开放的——它没有说明场景中光的初始来源。在实际求解中，我们施加边界条件：某些表面被指定为"光源"，其上 L<sub>e</sub> > 0。对于不发光表面，L<sub>e</sub> = 0，方程退化为纯散射。环境光（如天空）通常被建模为包围场景的"远距离发光半球"，作为边界条件的一部分。</p>
+
+<div class="thought-box"><p><strong>想一想：</strong>为什么输运方程中的积分只在"上半球面"进行？如果光线从表面下方射来——比如透过玻璃的光——这个简化还成立吗？</p></div>
+
+<!-- ==================== 14.3 ==================== -->
+<h2 id="s14-3">14.3 光滑电介质（菲涅尔/斯涅尔/Schlick近似）</h2>
+
+<h3 id="14-3-1">14.3.1 光滑金属与菲涅尔方程</h3>
+
+<p>对于光滑金属，光要么发生镜面反射（如第4.5.4节所述），要么折射进入表面后迅速被吸收（涂在玻璃上的极薄金属涂层允许一些光穿透，表明金属并非完全不透明）。反射光的数量由<span class="key-term">菲涅尔方程</span>（Fresnel equations）决定。这些方程虽直截了当但计算繁琐。此外，它们的值随光的偏振而变化——这一特性在图形学中通常被忽略。菲涅尔方程的主要视觉效果是：<span class="key-term">反射率随入射角增大而增大</span>，尤其是在<span class="key-term">掠射角</span>（grazing angles）附近趋近于100%。</p>
+
+<blockquote><p><strong>生活类比：</strong>站在湖边低头看脚下——你可以穿透过水面看到湖底（近垂直入射，反射率低）。但如果眺望远处的湖面，你看到的全是天空的倒影（掠射角入射，反射率接近100%）。这就是菲涅尔效应的日常体现。另一个例子是透过水族箱玻璃——正对着看非常透明，斜着看则像镜子一样反射。</p></blockquote>
+
+<h3>14.3.1a 完整的菲涅尔方程（F<sub>s</sub> 与 F<sub>p</sub>）</h3>
+
+<p>在深入讨论Schlick近似之前，必须了解完整的菲涅尔方程形式。菲涅尔方程给出了反射率随入射角、偏振态和两种介质折射率的变化关系。光分为两种偏振态：</p>
+
+<ul>
+<li><span class="key-term">S偏振</span>（senkrecht，垂直偏振）：电场垂直于入射面（由入射光线和法线定义的平面）</li>
+<li><span class="key-term">P偏振</span>（parallel，平行偏振）：电场平行于入射面</li>
+</ul>
+
+<p>两种偏振态的菲涅尔反射系数分别为：</p>
+
+<div class="formula-box">
+<p><strong>完整的菲涅尔方程（以入射角θ<sub>i</sub>和透射角θ<sub>t</sub>表示）：</strong></p>
+<pre>
+F<sub>s</sub>(θ<sub>i</sub>, θ<sub>t</sub>) = | (n<sub>i</sub> cosθ<sub>i</sub> − n<sub>t</sub> cosθ<sub>t</sub>) / (n<sub>i</sub> cosθ<sub>i</sub> + n<sub>t</sub> cosθ<sub>t</sub>) |²
+
+F<sub>p</sub>(θ<sub>i</sub>, θ<sub>t</sub>) = | (n<sub>t</sub> cosθ<sub>i</sub> − n<sub>i</sub> cosθ<sub>t</sub>) / (n<sub>t</sub> cosθ<sub>i</sub> + n<sub>i</sub> cosθ<sub>t</sub>) |²
+</pre>
+<p>其中θ<sub>t</sub>由斯涅尔定律确定：n<sub>i</sub> sinθ<sub>i</sub> = n<sub>t</sub> sinθ<sub>t</sub>。</p>
+</div>
+
+<p>对非偏振光（自然光——这是大多数日常光源的特性），总反射率取两种偏振的平均值：</p>
+
+<pre class="math">F(θ<sub>i</sub>) = (F<sub>s</sub>(θ<sub>i</sub>) + F<sub>p</sub>(θ<sub>i</sub>)) / 2</pre>
+
+<p>F<sub>s</sub>和F<sub>p</sub>的行为有明显的差异：</p>
+<ul>
+<li><span class="key-term">F<sub>s</sub></span> 从法向入射的一个非零值开始，单调递增到掠射角的100%。</li>
+<li><span class="key-term">F<sub>p</sub></span> 从法向入射时等于F<sub>s</sub>的值开始，先下降到某个最小值——在<span class="key-term">Brewster角</span> θ<sub>B</sub> = arctan(n<sub>t</sub>/n<sub>i</sub>) 处F<sub>p</sub> = 0，然后再上升到100%。这意味着在Brewster角，P偏振光完全不反射——这是偏振太阳镜的核心原理。</li>
+</ul>
+
+<h3>14.3.1b 金属的复折射率</h3>
+
+<p>对金属而言，折射率不是实数而是复数：<code>ñ(λ) = n(λ) + iκ(λ)</code>。其中实部n控制折射角度，虚部κ（extinction coefficient，消光系数）控制介质内部的光吸收。对于金属，κ很大——这就是为什么光在进入金属后迅速被吸收。由于ñ为复数，菲涅尔方程的形式变得更为复杂，但Schlick近似同样适用：只需将法向反射率R₀指定为：</p>
+
+<pre class="math">R₀(λ) = ((n(λ)−1)² + κ(λ)²) / ((n(λ)+1)² + κ(λ)²)</pre>
+
+<p>典型金属的R₀值非常高（金约0.8–0.9，银约0.95+），这解释了金属的高反射性。</p>
+
+<h3>14.3.1c Schlick近似的推导动机</h3>
+
+<p>几乎所有图形程序都使用<span class="key-term">Schlick近似</span>（Schlick, 1994）来替代完整的菲涅尔方程。对于金属，我们通常指定<span class="key-term">法向入射反射率</span>（reflectance at normal incidence）R₀(λ)。反射率应根据菲涅尔方程变化，Schlick提供了一个很好的近似：</p>
+
+<pre class="math">R(θ, λ) = R₀(λ) + (1 − R₀(λ))(1 − cosθ)⁵    (14.2)</pre>
+
+<p>其中θ是光传播方向与表面法线之间的夹角。这个近似允许我们简单地通过数据或肉眼来设定金属的法向反射率。</p>
+
+<p><strong>为什么是五次幂？</strong> Schlick近似的动机并非纯粹的曲线拟合：(1−cosθ)⁵ 这一形式恰好捕捉了菲涅尔曲线在接近掠射角时陡峭上升的形状。五次幂在θ=0（法向）时给出(1−1)⁵=0，使得R(0)=R₀；在θ=90°（掠射角）时给出(1−0)⁵=1，使得R(90°)=R₀+(1−R₀)=1——反射率达到100%。过渡区间的五次曲线恰好与完整菲涅尔方程几乎重合，误差通常小于1%，在视觉上完全不可察觉。</p>
+
+<p>Schlick近似的另一个关键优点：它完全避免了折射角θ<sub>t</sub>的计算（θ<sub>t</sub>需要通过斯涅尔定律反三角函数求解），这对金属和电介质都适用，极大简化了着色器代码。</p>
+
+<h3 id="14-3-2">14.3.2 光滑电介质与折射</h3>
+
+<p><span class="key-term">电介质</span>（dielectrics）是折射光的透明材料，一个不错的启发式是：如果不是金属，那就是电介质。因此皮肤、牛奶、头发、布料以及几乎所有日常材料都是电介质——尽管这并不明显，因为它们通常不透明——原因是它们由不同折射率的混合物和吸光杂质组成。但光滑均匀的电介质是透明的，例子包括玻璃、水和眼球晶状体。</p>
+
+<p>对于光滑电介质，只有三个重要性质：</p>
+<ol>
+<li>在每个入射角和波长下反射多少光</li>
+<li>光在材料中传播给定距离后被吸收的比例</li>
+<li>反射光和折射光的方向</li>
+</ol>
+
+<h3 id="14-3-3">14.3.3 电介质的反射率</h3>
+
+<p>光的几何弯曲方式及反射/透射的比例取决于材料的<span class="key-term">折射率</span>（refractive index）n(λ)。对电介质，同样的Schlick方程（式14.2）适用于反射率的计算，就像对金属那样。然而，当一侧介质为空气（n≈1）时，我们可以用n(λ)来表示R₀(λ)：</p>
+
+<pre class="math">R₀(λ) = ((n(λ) − 1) / (n(λ) + 1))²</pre>
+
+<p>更一般地，当两个介质的折射率都不为1.0时：</p>
+
+<pre class="math">R₀(λ) = ((n<sub>t</sub>(λ) − n<sub>i</sub>(λ)) / (n<sub>t</sub>(λ) + n<sub>i</sub>(λ)))²</pre>
+
+<p>通常情况下n不随波长变化，但对于<span class="key-term">色散</span>（dispersion——不同波长的光分散开，产生彩虹效果）很重要的应用场景，n可以变化。有用的折射率参考值包括：水（n=1.33）、玻璃（n=1.4到n=1.7）、钻石（n=2.4）。透射光的数量就是未反射的部分（能量守恒的结果），因此不需要显式计算透射比例。</p>
+
+<h3 id="14-3-4">14.3.4 斯涅尔定律与全内反射</h3>
+
+<p>光在介质界面的折射方向由<span class="key-term">斯涅尔定律</span>（Snell's Law）决定：折射角φ满足 <code>n<sub>i</sub> sinθ = n<sub>t</sub> sinφ</code>。当光从较高折射率介质射向较低折射率介质时，如果入射角超过<span class="key-term">临界角</span>（critical angle），就会出现<span class="key-term">全内反射</span>（total internal reflection）——光线完全反射回原介质，没有折射光线。此时折射方向公式中的平方根内为负数。全内反射是造成玻璃物体丰富外观的重要原因。</p>
+
+<h4>临界角的精确推导</h4>
+
+<p>全内反射的临界角可以通过斯涅尔定律在 sinφ = 1（即φ = 90°，折射光线贴界面传播）的条件下解出：</p>
+
+<pre class="math">θ<sub>c</sub> = arcsin(n<sub>t</sub> / n<sub>i</sub>)    （需要 n<sub>i</sub> > n<sub>t</sub>）</pre>
+
+<p>例如，光从水（n<sub>i</sub>=1.33）射入空气（n<sub>t</sub>=1.0），临界角 θ<sub>c</sub> = arcsin(1.0/1.33) ≈ 48.6°。如果在水下以大于48.6°的角度向上看，水面看起来就像一面完美的镜子——这正是Snell's Window现象（水下观察者看到的水面圆形"天窗"）的原因。</p>
+
+<table>
+<tr><th>材料对</th><th>n<sub>i</sub></th><th>n<sub>t</sub></th><th>临界角 θ<sub>c</sub></th></tr>
+<tr><td>水→空气</td><td>1.33</td><td>1.00</td><td>≈48.6°</td></tr>
+<tr><td>玻璃(n=1.5)→空气</td><td>1.50</td><td>1.00</td><td>≈41.8°</td></tr>
+<tr><td>钻石(n=2.4)→空气</td><td>2.40</td><td>1.00</td><td>≈24.6°</td></tr>
+<tr><td>空气→水</td><td>1.00</td><td>1.33</td><td>无全内反射（n<sub>i</sub> < n<sub>t</sub>）</td></tr>
+</table>
+
+<p>折射方向的向量公式为：</p>
+
+<pre class="math">t = (n(d − n(d·n))) / n<sub>t</sub> − n cosφ
+  = (n(d − n(d·n))) / n<sub>t</sub> − n √(1 − n²(1−(d·n)²)/n<sub>t</sub>²)</pre>
+
+<p>其中d是入射方向向量，n是法向量。该公式无论n<sub>i</sub>和n<sub>t</sub>哪个更大都适用。当全内反射发生时（即平方根内为负数），折射光线不存在——渲染代码中需用特殊分支处理这种情况。</p>
+
+<h3 id="14-3-5">14.3.5 比尔定律</h3>
+
+<p>对于含有均匀杂质的材质（如典型的彩色玻璃），携带光的射线的强度将按<span class="key-term">比尔定律</span>（Beer's Law）衰减。光在介质中传播时，强度的衰减满足 <code>dI = −C I dx</code>，即 <code>dI/dx = −C I</code>。解此微分方程得到指数衰减：<code>I = k exp(−Cx)</code>。衰减程度由RGB<span class="key-term">衰减常数</span>（attenuation constant）a描述——即经过单位距离后的衰减量。代入边界条件 <code>I(0) = I₀</code> 和 <code>I(1) = a I₀</code>，得到：</p>
+
+<pre class="math">I(s) = I₀ · a<sup>s</sup></pre>
+
+<p>或等价地：</p>
+
+<pre class="math">I(s) = I₀ · e<sup>ln(a)·s</sup></pre>
+
+<p>其中 <code>I(s)</code> 是距离界面s处的光束强度。实际上我们通过肉眼来反推a的值，因为这类数据很难直接查到。比尔定律的效果可以在图14.3中看到——玻璃呈现绿色色调。这个效应对透射光同样适用。注意光线会被反复反射和折射（图14.5），通常只有一到两个反射像清晰可见。</p>
+
+<div class="thought-box"><p><strong>想一想：</strong>如果你有一块2cm厚的绿色玻璃，它的衰减常数a=0.8/cm。经过2cm后光强还剩多少？如果玻璃厚度翻倍，衰减是否也翻倍？为什么是指数衰减而不是线性衰减？</p></div>
+
+<!-- ==================== 14.4 ==================== -->
+<h2 id="s14-4">14.4 理想镜面反射（镜面BRDF δ函数）</h2>
+
+<p>对于完美光滑的表面（如理想的镜子），反射行为是确定性的：每个入射方向只对应一个出射方向。在BRDF的数学框架中，这对应一个<span class="key-term">狄拉克δ函数</span>（Dirac delta function）——BRDF在"正确"的反射方向上取无穷大值，在其他方向上为零。</p>
+
+<blockquote><p><strong>生活类比：</strong>想象你在打台球。当你将白球直直地击向桌边时，它会以相同的角度弹回——这是镜面反射。但如果桌边凹凸不平（类比粗糙表面），白球会朝各种不可预测的方向反弹——这就是漫反射。镜子就是完美的"台球桌边"。</p></blockquote>
+
+<h3>14.4.1 δ函数形式的严格推导</h3>
+
+<p>数学上，对于理想镜面反射，BRDF可以写为：</p>
+
+<pre class="math">ρ(k<sub>i</sub>, k<sub>o</sub>) = (R(θ<sub>i</sub>) / cosθ<sub>i</sub>) · δ(k<sub>o</sub> − r(k<sub>i</sub>))</pre>
+
+<p>其中 <code>r(k<sub>i</sub>)</code> 是入射方向k<sub>i</sub>关于表面法线的镜面反射方向，<code>R(θ<sub>i</sub>)</code> 是菲涅尔反射率，δ函数确保只有反射方向有贡献。从能量守恒和互易性的角度看，镜面反射是所有可能BRDF中"最集中"的一种——所有出射能量集中在一个无限窄的锥体中。</p>
+
+<p>δ函数BRDF的完整形式涉及两个角度（θ和φ），δ(k<sub>o</sub> − r(k<sub>i</sub>))实际上是两个δ函数的乘积：<code>δ(cosθ<sub>o</sub> − cosθ<sub>i</sub>) · δ(φ<sub>o</sub> − φ<sub>i</sub> − π)</code>。归一化因子1/cosθ<sub>i</sub>来自立体角坐标变换的Jacobian——它确保当将此BRDF代入渲染方程时，积分正确地简化为<code>L<sub>o</sub> = R(θ<sub>i</sub>) · L<sub>i</sub>(r(k<sub>i</sub>))</code>。</p>
+
+<h3>14.4.2 验证：镜面BRDF代入渲染方程</h3>
+
+<p>将镜面BRDF代入渲染方程的散射项：</p>
+
+<pre class="math">L<sub>s</sub>(ω<sub>o</sub>) = ∫_{Ω⁺} (R(θ<sub>i</sub>)/cosθ<sub>i</sub>) · δ(ω<sub>o</sub> − r(ω<sub>i</sub>)) · L<sub>i</sub>(ω<sub>i</sub>) · cosθ<sub>i</sub> · dω<sub>i</sub>
+                = R(θ<sub>r</sub>) · L<sub>i</sub>(r<sup>−1</sup>(ω<sub>o</sub>))</pre>
+
+<p>其中r<sup>−1</sup>(ω<sub>o</sub>)是满足ω<sub>o</sub>=r(ω<sub>i</sub>)的入射方向（即镜面反射的逆方向——由于反射的对称性，这恰好也是r(ω<sub>o</sub>)）。cosθ<sub>i</sub>因子被分母中的1/cosθ<sub>i</sub>完美抵消，积分退化为简单的取值——这正是δ函数的筛选性质。</p>
+
+<p>在实际渲染代码中，处理镜面反射通常不使用BRDF采样，而是直接用一条"if"分支——如第4章所述，生成反射光线：</p>
+
+<pre class="math">r = d − 2(d·n)n</pre>
+
+<p>其中d是入射方向，n是表面法线。这种方法避免了在数值精度有限的浮点运算中处理δ函数的困难。</p>
+
+<div class="thought-box"><p><strong>想一想：</strong>δ函数BRDF在积分时会给出有限值，但在采样时会遇到困难。为什么不能用蒙特卡洛均匀采样来处理镜面反射？如果随机抽样方向，命中"正确"反射方向的概率是多少？</p></div>
+
+<h3>14.4.3 镜面+漫反射的混合BRDF</h3>
+
+<p>当表面既有镜面分量又有漫反射分量时，BRDF是两个部分的加权组合。这就是<span class="key-term">混合BRDF模型</span>（hybrid BRDF model）的基本思想——例如Phong模型和后续的Cook-Torrance模型，后者用微面元理论（microfacet theory）将镜面和漫反射分量统一在一个物理一致的框架中。</p>
+
+<p>一般的混合BRDF形式为：</p>
+
+<pre class="math">f<sub>r</sub>(ω<sub>i</sub>, ω<sub>o</sub>) = k<sub>d</sub> · f<sub>diffuse</sub> + k<sub>s</sub> · f<sub>specular</sub>(ω<sub>i</sub>, ω<sub>o</sub>)</pre>
+
+<p>其中 k<sub>d</sub> + k<sub>s</sub> ≤ 1 满足能量守恒要求。在微面元模型中，镜面分量进一步分解为：</p>
+
+<pre class="math">f<sub>specular</sub>(ω<sub>i</sub>, ω<sub>o</sub>) = D(h) · F(ω<sub>i</sub>, h) · G(ω<sub>i</sub>, ω<sub>o</sub>, h) / (4 |ω<sub>i</sub>·n| |ω<sub>o</sub>·n|)</pre>
+
+<p>其中D（法线分布函数）描述微面元法线的分布，F（菲涅尔项）描述反射率随角度变化，G（几何遮蔽项）描述微面元之间的遮挡，h是半程向量（half-vector）<code>h = (ω<sub>i</sub>+ω<sub>o</sub>)/|ω<sub>i</sub>+ω<sub>o</sub>|</code>。这三个项的乘积在分母中有4|ω<sub>i</sub>·n||ω<sub>o</sub>·n|的归一化因子——这是从微面元几何变换中自然导出的，确保镜面BRDF在能量上是守恒的。</p>
+
+<!-- ==================== 14.5 ==================== -->
+<h2 id="s14-5">14.5 暴力光子追踪</h2>
+
+<p>假设我们用带有微结构的电介质和一个发光物体来建模场景，最简单的渲染方法是什么？本节讨论如何通过暴力模拟光子来渲染，以及如何反过来从传感器发送伴随光子（adjoint photons）。这种方法实际上可以产生图形学中最好的图像，代码量极少——但速度极慢。</p>
+
+<h3 id="14-5-1">14.5.1 传感器</h3>
+
+<p>为了产生图像，我们需要一个图像捕获设备的概念。一个简单的设备是传感器阵列（如CCD）加上一个带有小孔的盒子——它就像一台<span class="key-term">针孔相机</span>（pinhole camera）。阵列中的每个传感器本质上是一个光子计数器（某些波长比其他波长产生更强的响应）。用光子轰击后，传感器阵列上将积累数值，可以输出为图像：接收到少量光子的传感器记为黑色，接收到大量光子的记为白色，中间为各种灰度。</p>
+
+<p>要产生彩色图像，我们可以在传感器前放置红、绿、蓝三色滤光片。最简单的滤光片是<span class="key-term">带通滤光片</span>（bandpass filter）：蓝色滤光片仅对λ∈[400,500nm]有响应；绿色对[500,600nm]；红色对[600,700nm]。如果将所有传感器初始化为零，那么"完全响应"就意味着当光子击中时增加传感器中存储的数值。</p>
+
+<h3 id="14-5-2">14.5.2 光子追踪算法</h3>
+
+<p>追踪光子的过程：在光源上随机选取一个点，随机选取一个方向和一个波长（在400-700nm之间，其他波长不影响传感器阵列所以不需要计算）。然后按第4章的方法追踪射线。当射线击中表面时，计算反射率并决定是反射还是折射。用Schlick近似评估该波长和入射角的反射率，记为R。生成均匀随机数ξ ∈ [0,1)：</p>
+
+<pre class="math">if (ξ &lt; R)
+    生成反射光子（射线）并追踪它
+else
+    生成折射光子（射线）并追踪它</pre>
+
+<p>如果表面是金属，唯一的区别是在折射情况下光子被吸收，我们从光源处开始新光子。如果光子进入电介质且比尔定律系数不为1（意味着材料吸收光，如绿色玻璃），光子可能会以概率方式被吸收（从而"死亡"）：</p>
+
+<pre class="math">if (ξ &lt; 吸收概率)
+    吸收并开始新光子
+else
+    允许该光子在下次命中时离开介质</pre>
+
+<p>以上就是生成出色图像所需的全部过程！只是非常慢。</p>
+
+<h3>14.5.2a 为什么暴力光子追踪如此慢？效率分析</h3>
+
+<p>暴力光子追踪的低效性源于一个简单的几何事实：从光源随机发射的光子中，绝大多数永远不会命中相机的透镜。以一个典型的室内场景为例：</p>
+<ul>
+<li>光源向所有4π球面度方向发射光子</li>
+<li>相机透镜的立体角通常仅约为 10⁻⁴ 到 10⁻⁶ 球面度（取决于距离和透镜尺寸）</li>
+<li>每个光子经过多次弹跳后能量衰减（每次反射通常损失30%~70%的能量）</li>
+<li>大多数光子在到达相机前已经在场景中"迷失"（被吸收或反射到不包含相机的方向）</li>
+</ul>
+
+<p>因此，正向光子追踪中"有用的"光子（最终击中传感器）占总发射光子的比例极低——通常低于10⁻⁶。这就是时间反转策略（14.5.4节）如此重要的原因：它通过从相机发射"伴随光子"，将命中概率从10⁻⁶提升到接近100%。</p>
+
+<h3 id="14-5-3">14.5.3 运动模糊与离焦模糊</h3>
+
+<p>上述针孔相机会产生非常锐利的图像——就像真实的针孔相机一样。但它需要长时间曝光，因为极少有光子能幸运地穿过针孔而不被吸收。我们可以通过<span class="key-term">添加镜头</span>来解决：把针孔放大并放置镜头。可以采用真实复合玻璃镜头模型，也可以采用<span class="key-term">理想薄透镜</span>（ideal thin lens）。</p>
+
+<p>薄透镜是一个理想化透镜——无限薄（在光线追踪程序中表现为一个圆盘），仅由半径（透镜物理尺寸）和<span class="key-term">焦距</span>（focal length）f 指定。薄透镜实现只需满足三个性质：</p>
+<ol>
+<li>从3D点p出发通过透镜中心的光线不会偏折（称该线为p的<span class="key-term">中心线</span>）</li>
+<li>从p出发击中透镜的所有光线将在中心线上的点q处汇聚</li>
+<li>点p的透镜光轴距离a与点q的透镜光轴距离b满足<span class="key-term">薄透镜公式</span>：<code>1/a + 1/b = 1/f</code></li>
+</ol>
+
+<p>拥有真实或理想透镜会自动产生真实照片中的模糊效果——通常称为<span class="key-term">离焦模糊</span>（defocus blur）或<span class="key-term">景深</span>（depth of field）。</p>
+
+<p>对于<span class="key-term">运动模糊</span>（motion blur），如果支持两个功能，该效果会自动出现：</p>
+<ul>
+<li>光子从光源发射时带有相机记录时间间隔内的随机时间</li>
+<li>光线追踪器有移动物体的概念，射线求交代码接受时间作为参数</li>
+</ul>
+
+<p>一个简单的移动物体示例是球心随时间沿直线移动的球体：<code>c(time) = g + time·(h − g)</code>。</p>
+
+<h3 id="14-5-4">14.5.4 时间反转</h3>
+
+<p>上述光子追踪器能够工作且效果良好，但会非常慢——因为即使加装透镜后，大部分光子永远也不会击中透镜（如果以太阳为光源进行模拟，任何光子能到达相机都算走运）。</p>
+
+<blockquote><p><strong>生活类比：</strong>正向光子追踪就像从山顶向四面八方随机扔出无数个小球，希望其中几个能滚进山脚小镇的一户特定人家。时间反转（伴随光子）则更像从那户人家出发往回找——你沿着下坡路一定能回到山顶。后者效率高出天文数字倍。</p></blockquote>
+
+<p>图形学中通常的做法是<span class="key-term">反转时间</span>，从相机发出一条射线，在射线击中光源时记录。在我们设计的光子追踪器中，这实现起来非常简单：从每个像素发出光子（技术上称为<span class="key-term">伴随光子</span>，adjoint photons），看它们击中何处光源。这些光子的波长由滤色片作为光发射曲线确定，当击中光源时，我们以发射光的权重在像素传感器阵列上记录光子。</p>
+
+<h4>伴随方法的数学基础：光路可逆性</h4>
+
+<p>时间反转发策略之所以在数学上等价于正向追踪，源于光在几何光学中的<span class="key-term">Helmholtz互易性原理</span>（与BRDF互易性同根同源）：在稳态光场中，任何一条从光源到传感器的光路，其反向（从传感器到光源）具有完全相同的辐射度量学传输特性。形式上，如果正向追踪中一条光路贡献了L的辐射亮度到传感器，那么反向追踪同一条光路也会记录恰好L的辐射亮度——唯一需要调整的是功率的归一化因子（因为反向追踪中相机的"接收面积"和光源的"发射面积"对调）。</p>
+
+<div class="thought-box"><p><strong>想一想：</strong>为什么"时间反转"策略与正向光子追踪在数学上是等价的？这背后的物理原理是光路可逆性。如果我们将正向追踪中每条命中相机的光子路径反向，会得到什么？</p></div>
+
+<h3>14.5.4a 伴随光子追踪的实际实现</h3>
+
+<p>在代码层面，时间反转的实现极其简洁——几乎和正向追踪是同一段代码，只需修改初始条件：</p>
+
+<pre class="math">// 正向光子追踪（效率极低）
+for each photon from light source:
+    trace photon through scene
+    if photon hits sensor: record
+
+// 伴随光子追踪（路径追踪的基础）
+for each pixel:
+    generate ray from camera through pixel
+    trace ray through scene
+    if ray hits light source: record radiance</pre>
+
+<p>事实上，这个"伴随光子追踪"就是路径追踪（14.10节）的简化雏形——差异仅在于伴随追踪中每个交点只采样一个方向（非BRDF重要性采样），而路径追踪会使用更智能的采样策略。</p>
+
+<!-- ==================== 14.6 ==================== -->
+<h2 id="s14-6">14.6 辐射度量学（辐射通量/辐照度/辐射强度/辐射亮度L）</h2>
+
+<p>在实践中，上一节的暴力渲染器在应用中并不可行。所以我们不再对微几何（microgeometry）建模，而是对<span class="key-term">宏观行为</span>（bulk behavior）建模。这需要使用测量光的实用工具——统称为<span class="key-term">辐射度量学</span>（radiometry）。辐射度量学中出现的术语乍看可能奇怪，术语和符号也不容易记住。本节最重要的量是<span class="key-term">辐射亮度</span>（radiance），但大多数图形学人一旦学会了辐射亮度的定义，就会将其映射为亮度/颜色/强度的直观概念——在实践中99%的情况都是对的。但有时需要精确定义，我们在此提供。光本质上是能量的传播形式，因此SI能量单位——<span class="key-term">焦耳</span>（joule, J）——是有用的起点。</p>
+
+<h3>14.6.0 辐射度量学量纲体系总览</h3>
+
+<p>在深入各个量的详细定义之前，理解它们之间的层级关系至关重要。辐射度量学量可以按"积累的维度数"组织成一个级联体系：</p>
+
+<table>
+<tr><th>量</th><th>符号</th><th>定义</th><th>单位</th><th>光谱对应量</th></tr>
+<tr><td>辐射能量（Radiant Energy）</td><td>Q</td><td>光的总能量</td><td>J（焦耳）</td><td>Q<sub>λ</sub> [J·nm⁻¹]</td></tr>
+<tr><td>辐射通量/功率（Radiant Flux）</td><td>Φ</td><td>dQ/dt</td><td>W = J·s⁻¹</td><td>Φ<sub>λ</sub> [W·nm⁻¹]</td></tr>
+<tr><td>辐照度/辐射出射度</td><td>E / M</td><td>dΦ/dA</td><td>W·m⁻²</td><td>E<sub>λ</sub> [W·m⁻²·nm⁻¹]</td></tr>
+<tr><td>辐射强度（Radiant Intensity）</td><td>I</td><td>dΦ/dω</td><td>W·sr⁻¹</td><td>I<sub>λ</sub> [W·sr⁻¹·nm⁻¹]</td></tr>
+<tr><td><strong>辐射亮度（Radiance）</strong></td><td><strong>L</strong></td><td><strong>d²Φ/(dA<sub>⊥</sub> dω)</strong></td><td><strong>W·m⁻²·sr⁻¹</strong></td><td><strong>L<sub>λ</sub> [W·m⁻²·sr⁻¹·nm⁻¹]</strong></td></tr>
+</table>
+
+<p>这个表格揭示了辐射度量学的核心结构：每个量都是前一个量对某个几何维度的密度导数。辐射通量Φ是能量在时间上的密度；辐照度E是Φ在面积上的密度；辐射强度I是Φ在立体角上的密度；辐射亮度L是Φ同时在面积和立体角上的密度——这是唯一一个"双密度"量，也是它的特殊地位之所在。</p>
+
+<h3 id="14-6-1">14.6.1 光谱能量</h3>
+
+<p>如果有一大群光子，其总能量Q可以通过求和每个光子的能量q<sub>i</sub>来计算。一个合理的问题是："能量如何随波长分布？"简单的方法是将光子分桶——本质上就是直方图。例如，将所有波长在λ=500nm到600nm之间的光子能量加起来，得到10.2J，记为 <code>q[500,600] = 10.2</code>。更常用的做法是将能量除以区间大小，得到<span class="key-term">光谱能量</span>（spectral energy）：</p>
+
+<pre class="math">Q<sub>λ</sub>[500,600] = 10.2 / 100 = 0.12 J(nm)⁻¹</pre>
+
+<p>这种方法的优点是区间大小对数值量级的影响更小。一个直觉是将区间大小Δλ推到零——但这样做会很奇怪，因为对于足够小的Δλ，Q<sub>λ</sub>要么是零（区间内没有光子）要么是巨大值（区间内有一个光子）。对此有两种思想流派：一种是假设Δλ虽然很小，但还没小到让光的量子性质显现的程度；另一种是假设光是连续体而非单个光子，因此真正的导数dQ/dλ是合适的。两种思考方式都是正确的，导向相同的计算机制。</p>
+
+<p>光谱能量是一个<span class="key-term">强度量</span>（intensive quantity），与能量、长度或质量等<span class="key-term">广延量</span>（extensive quantity）相对。强度量可视为密度函数——告诉我们一个广延量在无穷小点处的密度。例如，特定波长的能量Q可能为零，但光谱能量Q<sub>λ</sub>是一个有意义的量。图形学中的惯例是几乎总是使用光谱能量，而很少使用能量本身。为方便起见，我们去掉下标，用Q表示光谱能量。</p>
+
+<p>关于光谱能量的直觉可能得益于想象一个带有传感器的测量设备。如果你在传感器前放置一个只允许波长在 [λ−Δλ/2, λ+Δλ/2] 内光通过的滤光片，那么在λ处的光谱能量就是 <code>Q = Δq/Δλ</code>。</p>
+
+<h3 id="14-6-2">14.6.2 功率（辐射通量）</h3>
+
+<p>估计光源产生能量的速率是有用的。这个速率称为<span class="key-term">功率</span>（power），或<span class="key-term">辐射通量</span>（radiant flux），以<span class="key-term">瓦特</span>（Watt, W）为单位——即焦耳每秒。功率是一个强度量（时间上的密度），即使能量产生随时间变化，它的定义也是明确的。例如一个100瓦灯泡，每秒消耗约100J能量。由于热量损失等因素，实际光能的功率会低于100W。</p>
+
+<p><strong>完整定义：</strong></p>
+
+<pre class="math">Φ = dQ / dt    [单位：瓦特 W = J·s⁻¹]</pre>
+
+<p>辐射通量Φ描述了"光能以多快的速率流动"。它是渲染管线的"货币"——所有辐射度量学量最终都可以通过Φ来表达。</p>
+
+<p>一个有趣的推导：一个100W灯泡每秒产生多少光子？假设产生的平均光子波长λ=500nm。该光子的频率为：</p>
+
+<pre class="math">f = c / λ = 3×10⁸ ms⁻¹ / (500×10⁻⁹ m) = 6×10¹⁴ s⁻¹</pre>
+
+<p>该光子的能量 <code>hf ≈ 4×10⁻¹⁹ J</code>。这意味着即使灯泡效率不高，每秒也会产生惊人的<span class="key-term">10²⁰个光子</span>——这解释了为什么用直接模拟光子的方法来产生图像是一个低效的选择。</p>
+
+<p>与能量类似，我们真正关心的是<span class="key-term">光谱功率</span>（spectral power），单位为 <code>W(nm)⁻¹</code>。正式符号是Φ<sub>λ</sub>，但我们用不带下标的Φ以方便并与图形学文献一致。注意，光源的光谱功率通常比总功率小很多。例如，如果一个光源以100W总功率均匀分布在400–800nm波长范围内，那么光谱功率将是 <code>100W / 400nm = 0.25 W(nm)⁻¹</code>。</p>
+
+<h3 id="14-6-3">14.6.3 辐照度</h3>
+
+<p><span class="key-term">辐照度</span>（Irradiance）——如果你问"多少光到达这个点？"时自然出现的量。当然答案是"零"，所以我们必须使用密度函数。如果点在表面上，用面积来定义密度函数是自然的。如果我们修改上一节的测量设备，使其具有有限面积ΔA的传感器，则光谱辐照度H就是单位面积上的功率：</p>
+
+<pre class="math">H = Δq / (ΔA · Δt · Δλ)    (14.3)</pre>
+
+<p><strong>完整定义：</strong></p>
+
+<pre class="math">E = dΦ / dA    [单位：W·m⁻²]</pre>
+
+<p>因此，辐照度的完整单位是 <code>J·m⁻²·s⁻¹·(nm)⁻¹</code>。注意辐照度的SI单位中同时使用了逆平方米（面积）和逆纳米（波长）——这种看似的不一致性源于面积和可见光波长的自然单位。</p>
+
+<p>需要区分两个密切相关但方向相反的量：</p>
+<ul>
+<li><span class="key-term">辐照度E</span>（Irradiance）：到达表面的功率密度（光子"进来"）</li>
+<li><span class="key-term">辐射出射度M</span>（Radiant Exitance）：离开表面的功率密度（光子"出去"），有时也用B或J表示</li>
+</ul>
+
+<p>两者单位相同（W·m⁻²），但物理含义不同。对不发光的反射表面，辐射出射度由入射辐照度和BRDF共同决定：</p>
+
+<pre class="math">M(x) = ∫_{Ω⁺} ∫_{Ω⁺} f<sub>r</sub>(x, ω<sub>i</sub>, ω<sub>o</sub>) L<sub>i</sub>(x, ω<sub>i</sub>) cosθ<sub>i</sub> cosθ<sub>o</sub> dω<sub>i</sub> dω<sub>o</sub></pre>
+
+<p>即对入射球形方向积分得到辐照度，再通过BRDF分布到各个出射方向。</p>
+
+<h3 id="14-6-4">14.6.4 辐射强度</h3>
+
+<p>如果你问"一个点光源在不同方向上的亮度分布是什么？"，自然会引出<span class="key-term">辐射强度</span>（Radiant Intensity）I——它是光源在某个方向上单位立体角内的功率。虽然这个概念在图形学中常被避免直接使用（因为点光源会导致实现问题），但理解它对构建完整辐射度量学体系是必要的。辐射强度I与功率的关系为 <code>dΦ = I dσ</code>。</p>
+
+<p><strong>完整定义：</strong></p>
+
+<pre class="math">I = dΦ / dω    [单位：W·sr⁻¹]</pre>
+
+<p>辐射强度I描述了光源的"方向性发射特性"——一个各向同性点光源在所有方向上I相同（I = Φ/4π），而聚光灯在某些方向上I更大。辐射强度在点光源建模中有用，但在面光源和全局光照中很少使用——因为大多数真实光源不是点而是面，而辐射亮度L是更通用的描述量。</p>
+
+<h3 id="14-6-5">14.6.5 辐射亮度</h3>
+
+<p><span class="key-term">辐射亮度</span>（Radiance）L是辐射度量学中最重要的量。它描述的是"从某个方向到达（或离开）表面上某一点的光有多少"。形式上，辐射亮度定义为：</p>
+
+<pre class="math">L = d²Φ / (dA<sub>⊥</sub> dσ)</pre>
+
+<p>其中 <code>dA<sub>⊥</sub> = dA · cosθ</code> 是投影面积（projected area），dσ是立体角。</p>
+
+<p><strong>完整定义展开：</strong></p>
+
+<pre class="math">L(x, ω) = d²Φ / (dA·cosθ · dω)    [单位：W·m⁻²·sr⁻¹]</pre>
+
+<p>辐射亮度的关键特性是在真空中沿射线传播时保持不变——这使它成为光线追踪中理想的传输量。</p>
+
+<p><strong>辐射亮度的层次化理解：</strong></p>
+<table>
+<tr><th>层面</th><th>理解</th></tr>
+<tr><td>数学定义</td><td>单位投影面积、单位立体角内的功率 —— d²Φ/(dA<sub>⊥</sub>·dω)</td></tr>
+<tr><td>几何直观</td><td>穿过空间中一点、朝特定方向流动的光束密度</td></tr>
+<tr><td>感官对应</td><td>人眼感知的"亮度"（brightness）——L越大看起来越亮</td></tr>
+<tr><td>传输特性</td><td>在真空中沿射线传播时L不变（无介质吸收/散射时）</td></tr>
+<tr><td>渲染地位</td><td>所有光线追踪算法中传递和积分的核心量</td></tr>
+</table>
+
+<blockquote><p><strong>生活类比：</strong>辐射亮度L就像"光线公路上的车流量密度"。辐照度H是到达某个地块（表面）的车总数；功率Φ是整条公路上的车总数；辐射强度I是从某个出口驶出的车流密度；而辐射亮度L是特定车道（方向）上通过特定横截面的车流密度。L是唯一在自由空间传播中保持不变的量。</p></blockquote>
+
+<p>作为示例，我们计算一个在所有方向上具有恒定场辐射亮度L<sub>f</sub>的表面上某点的辐照度H：</p>
+
+<pre class="math">H = ∫₀²π ∫₀<sup>π/2</sup> L<sub>f</sub> cosθ sinθ dθ dφ
+  = π L<sub>f</sub></pre>
+
+<p>这个关系展示了辐射度量学中令人意外的常数π的首次出现。这些π因子频繁出现于辐射度量学中，是我们选择用球面度（steradian）来度量立体角的人为产物——单位球的面积是4π而非1的倍数。</p>
+
+<h4>辐射亮度不变性的重要性</h4>
+
+<p>辐射亮度L在真空中的不变性是光线追踪算法成立的物理基础。为什么其他辐射度量学量（如辐照度E、辐射强度I）会随传播变化而L不变？原因在于L同时包含了面积和立体角的归一化：</p>
+<ul>
+<li>辐照度E随距离衰减1/r²（因为同一束光在更远处会散布到更大的面积上）</li>
+<li>辐射强度I对于理想点光源不变，但不是所有方向上的统一描述</li>
+<li>辐射亮度L同时归一化了面积和立体角：随着光传播，光束的面积增大（dA↑），同时该面积在接收者眼中的立体角减小（dω↓），两个效应恰好相互抵消，使得L保持不变。</li>
+</ul>
+
+<p>这个性质意味着：在光线追踪中，"沿光线查询L"不需要任何距离相关的衰减计算——这是渲染方程在立体角形式下不需要1/r²因子的根本原因。</p>
+
+<div class="thought-box"><p><strong>想一想：</strong>为什么众多辐射度量学公式中频繁出现π？如果我们将立体角的度量改成"占单位球的比例"而非球面度，π会消失——这种做法是否有优点？</p></div>
+
+<h4>辐照度-辐射亮度的换算（Lambert定律）</h4>
+
+<p>对于Lambert表面（出射L在所有方向恒定），辐射出射度M和辐射亮度L之间的关系是一个关键公式：</p>
+
+<pre class="math">M = ∫_{Ω⁺} L cosθ dω = L · ∫₀²π ∫₀^{π/2} cosθ sinθ dθ dφ = πL</pre>
+
+<p>因此，<code>M = πL</code> 或 <code>L = M/π</code>。这意味着如果4W/m²的光均匀地从表面辐射出去，辐射亮度L = 4/π ≈ 1.27 W/(m²·sr)。</p>
+
+<!-- ==================== 14.7 ==================== -->
+<h2 id="s14-7">14.7 散射的辐射度量学（BSDF/相位函数/散射方程）</h2>
+
+<p>第14.5节的光子追踪假设所有表面在射线交互的尺度上是光滑的，我们假设可能有非常精细的几何细节。在实践中，区域的宏观属性被平均化，使一个面积表现得像细几何，但不需要存储细几何。本节最重要的概念是：对于粗糙表面（如拉丝钢），我们不用实际几何来表示所有微小划痕，而是<span class="key-term">统计性地描述</span>这些划痕，使光滑表面仿佛有不可见的微小细节一样在多个方向随机反射光线。这个函数称为<span class="key-term">双向反射分布函数</span>（BRDF, Bidirectional Reflectance Distribution Function）。</p>
+
+<blockquote><p><strong>生活类比：</strong>BRDF就像台球桌上的反弹统计。如果你在球桌上击打一千万个球，记录每个球的入射角和反弹角，最终你会得到一个4D分布函数——对于光滑桌面，所有球都会按"入射角=反射角"规则弹回（δ函数分布）；对于破旧的毛毡桌面，球会散布在更宽的角度范围内（漫反射+镜面混合分布）。</p></blockquote>
+
+<p>第二个重要概念是关于光在<span class="key-term">体积</span>中如何散射的类似方法——例如冰块中的气泡或云中的水滴。对于体积散射，我们不追踪每个粒子，而是用一个<span class="key-term">相位函数</span>（phase function）来描述散射方向分布。</p>
+
+<h3 id="14-7-1">14.7.1 BSDF与散射方程</h3>
+
+<p>更一般地，<span class="key-term">BSDF</span>（Bidirectional Scattering Distribution Function，双向散射分布函数）是BRDF的泛化——它不仅包含反射（reflection），也包含透射（transmission），统称为散射。BRDF只在上半球面有定义，而BSDF覆盖整个球面。这使得BSDF适用于描述半透明材质（如皮肤、大理石、牛奶）的光传播。</p>
+
+<p>BSDF可以分解为两个分量：</p>
+
+<pre class="math">BSDF(ω<sub>i</sub>, ω<sub>o</sub>) = BRDF(ω<sub>i</sub>, ω<sub>o</sub>) + BTDF(ω<sub>i</sub>, ω<sub>o</sub>)</pre>
+
+<p>其中BTDF（Bidirectional Transmission Distribution Function）处理透射的ω<sub>o</sub>在下半球面（ω<sub>o</sub>·n < 0），BRDF处理反射的ω<sub>o</sub>在上半球面（ω<sub>o</sub>·n > 0）。</p>
+
+<p>体积散射的<span class="key-term">散射方程</span>（scattering equation）与表面散射的输运方程形式类似：</p>
+
+<pre class="math">L(x, ω) = L<sub>e</sub>(x, ω) + ∫ f<sub>s</sub>(x, ω', ω) L(x, ω') dω'</pre>
+
+<p>其中 <code>f<sub>s</sub></code> 是散射函数（BSDF的核），积分在全部方向上进行（而非仅半球面）。</p>
+
+<h4>散射方程与渲染方程的关系</h4>
+
+<p>散射方程和渲染方程在形式上几乎相同，但有两个关键区别：</p>
+
+<ol>
+<li><span class="key-term">积分域</span>：渲染方程在半球面Ω⁺上积分（<strong>反射</strong>仅在上方），散射方程在全球面S²上积分（<strong>散射</strong>可以朝任意方向）</li>
+<li><span class="key-term">余弦因子</span>：渲染方程显式包含cosθ<sub>i</sub>因子（投影面积），而散射方程中cosθ因子通常被纳入散射函数f<sub>s</sub>的定义中，或者对于体积散射不适用（粒子没有"表面法线"的概念）</li>
+</ol>
+
+<p>实际上，表面渲染方程是体积散射方程在介质边界处的特例——在介质边界处，散射的"方向性"由表面法线约束（只能在表面一侧散射），因此引入了cosθ投影因子。</p>
+
+<h3 id="14-7-2">14.7.2 相位函数</h3>
+
+<p><span class="key-term">相位函数</span>（phase function）p(ω, ω') 描述单个散射事件中光从一个方向偏转到另一个方向的概率分布。最常用的相位函数模型是<span class="key-term">Henyey-Greenstein函数</span>，它只有一个参数g（取值范围[-1,1]）来控制散射的各向异性程度：g>0表示前向散射占优，g<0表示后向散射占优，g=0表示各向同性散射。</p>
+
+<h4>Henyey-Greenstein相位函数的完整公式</h4>
+
+<p>Henyey-Greenstein（HG）相位函数以其简洁性和对真实散射数据良好的拟合能力被广泛使用：</p>
+
+<pre class="math">p(θ) = (1 − g²) / (4π · (1 + g² − 2g·cosθ)<sup>3/2</sup>)</pre>
+
+<p>其中θ是散射偏转角（入射方向与散射方向之间的夹角），g是各向异性参数。HG相位函数的性质：</p>
+
+<table>
+<tr><th>g值</th><th>散射类型</th><th>典型材料</th></tr>
+<tr><td>g = 0</td><td>各向同性散射（所有方向等概率）</td><td>浓雾中的小水滴</td></tr>
+<tr><td>g > 0 (0.7~0.9)</td><td>强烈前向散射</td><td>Mie散射（云、烟、气溶胶）</td></tr>
+<tr><td>g < 0</td><td>后向散射占优</td><td>某些特殊颗粒介质</td></tr>
+<tr><td>g ≈ 1</td><td>几乎完全前向散射</td><td>非常稀疏的介质</td></tr>
+</table>
+
+<p>相位函数的归一化条件：<code>∫_{S²} p(ω, ω') dω' = 1</code>（所有方向上的散射概率之和为1）。HG函数自动满足此条件——分母中的4π·(…)³′²确保了归一化。</p>
+
+<p>在体积渲染中，相位函数与散射反照率（albedo）α组合决定散射体对光的影响。完整的体积散射方程为：</p>
+
+<pre class="math">(ω·∇)L(x, ω) = −σ<sub>t</sub>(x)L(x, ω) + σ<sub>s</sub>(x)∫_{S²} p(x, ω', ω)L(x, ω') dω' + L<sub>e</sub>(x, ω)</pre>
+
+<p>其中σ<sub>t</sub>是消光系数（吸收+散射的总和），σ<sub>s</sub>是散射系数。这个方程被称为<span class="key-term">辐射传输方程</span>（Radiative Transfer Equation, RTE），它是渲染方程在参与介质中的推广。</p>
+
+<div class="thought-box"><p><strong>想一想：</strong>云朵看起来是白色的，而晴空是蓝色的——这两种现象都与散射有关。为什么云是白的而天空是蓝的？这背后的散射物理与我们在渲染中使用的相位函数有什么对应关系？</p></div>
+
+<h3 id="14-7-3">14.7.3 方向半球反射率</h3>
+
+<p>给定一个BRDF，自然的问题是："入射光中有多少比例被反射？"答案并不简单——反射比例取决于入射光的方向分布。因此我们通常只针对一个固定的入射方向k<sub>i</sub>来定义反射比例。这称为<span class="key-term">方向半球反射率</span>（directional hemispherical reflectance）R(k<sub>i</sub>)：</p>
+
+<pre class="math">R(k<sub>i</sub>) = ∫ ρ(k<sub>i</sub>, k<sub>o</sub>) cosθ<sub>o</sub> dσ<sub>o</sub></pre>
+
+<p>其中积分在所有出射方向k<sub>o</sub>上进行。这个量因能量守恒必须在零和一之间。</p>
+
+<p>方向半球反射率是BRDF"能量总帐"的检验——如果某个BRDF在任何入射方向上的R(k<sub>i</sub>)超过1，则该BRDF违反能量守恒，渲染中会出现能量爆炸。在实践中，渲染器可以在每个弹跳点计算R(k<sub>i</sub>)作为俄罗斯轮盘赌（14.10.2节）的存活概率。</p>
+
+<h3 id="14-7-4">14.7.4 理想漫反射BRDF</h3>
+
+<p>一个理想化的漫反射表面称为<span class="key-term">朗伯表面</span>（Lambertian）。这种表面在自然界中因热力学原因并不存在，但在数学上确实保持能量守恒。朗伯BRDF的ρ对所有角度恒为常数——这意味着从所有观察角度看表面亮度相同，且亮度与辐照度成正比。</p>
+
+<p>对朗伯表面进行方向半球反射率计算（ρ=C）：</p>
+
+<pre class="math">R(k<sub>i</sub>) = ∫₀²π ∫₀<sup>π/2</sup> C cosθ<sub>o</sub> sinθ<sub>o</sub> dθ<sub>o</sub> dφ<sub>o</sub>
+         = πC</pre>
+
+<p>因此，对于完美反射朗伯表面（R=1），有 <code>ρ = 1/π</code>。对于反射率为r的朗伯表面：</p>
+
+<pre class="math">ρ(k<sub>i</sub>, k<sub>o</sub>) = r / π</pre>
+
+<p>这是使用球面度作为立体角单位导致归一化常数中引入π因子的又一个例子。</p>
+
+<p>朗伯BRDF虽然是最简单的模型，但它精准捕捉了"粗糙表面从各方向看亮度相同"这一关键视觉特征——粉笔、未上光纸张、粗糙塑料等都近似朗伯表面。但需要注意：真正的朗伯表面违反热力学第二定律（因为完美吸收且恒温的表面需要完美各向异性发射来平衡，但这样的表面不能同时满足反射和发射的对称性），所以它是数学上的理想化抽象。</p>
+
+<!-- ==================== 14.8 ==================== -->
+<h2 id="s14-8">14.8 BRDF理论（互易性/能量守恒/各向同性vs各向异性）</h2>
+
+<h3 id="14-8-1">14.8.1 互易性（Reciprocity）</h3>
+
+<p><span class="key-term">互易性</span>是物理BRDF需要满足的基本性质之一。它意味着交换入射和出射方向不会改变BRDF的值：</p>
+
+<pre class="math">ρ(k<sub>i</sub>, k<sub>o</sub>) = ρ(k<sub>o</sub>, k<sub>i</sub>)</pre>
+
+<p>互易性来自光的<span class="key-term">时间反演对称性</span>（Helmholtz reciprocity）——光路可逆原理。如果一个BRDF不满足互易性，就会产生物理上不可能的行为：例如你从A方向用灯照表面从B方向观察到的亮度，不同于从B方向照灯从A方向观察到的亮度。</p>
+
+<p>用更严格的符号体系表达互易性约束：</p>
+
+<pre class="math">f<sub>r</sub>(x, ω<sub>i</sub> → ω<sub>o</sub>) = f<sub>r</sub>(x, ω<sub>o</sub> → ω<sub>i</sub>)    （对所有入射/出射方向对）</pre>
+
+<p>注意箭头符号"→"在14.2节中被引入，用于强调BRDF的方向依赖性。互易性在方向采样中有一个令人惊讶的实用后果：当我们从BRDF中采样出射方向作为概率密度函数的来源时，交换入射/出射不影响采样权重——这使得路径追踪中前向和后向追踪的估计在统计上一致。</p>
+
+<h3 id="14-8-2">14.8.2 能量守恒（Energy Conservation）</h3>
+
+<p><span class="key-term">能量守恒</span>是另一个必须满足的约束：在所有出射方向上对BRDF的加权积分不能超过1（反射的能量不能超过入射的能量）：</p>
+
+<pre class="math">∫ ρ(k<sub>i</sub>, k<sub>o</sub>) cosθ<sub>o</sub> dσ<sub>o</sub> ≤ 1,  ∀k<sub>i</sub></pre>
+
+<p>违反能量守恒的BRDF会导致渲染器"发散"——每次弹跳能量反而增加，图像逐渐变亮而非变暗。经典的Phong光照模型就不满足互易性和能量守恒——这也是它为何被PBR（Physically Based Rendering）模型所取代的核心原因。</p>
+
+<p><strong>能量守恒的形式化分析：</strong>如果我们定义方向半球反射率函数：</p>
+
+<pre class="math">R(ω<sub>i</sub>) = ∫_{Ω⁺} f<sub>r</sub>(ω<sub>i</sub>, ω<sub>o</sub>) · cosθ<sub>o</sub> · dω<sub>o</sub></pre>
+
+<p>则能量守恒要求 <code>R(ω<sub>i</sub>) ≤ 1</code> 对所有ω<sub>i</sub>成立。对于镜面反射：R = F(θ<sub>i</sub>) — 菲涅尔反射率自动≤1。对于朗伯反射：R = π·(ρ/π) = ρ ≤ 1。对于Cook-Torrance微面元模型：</p>
+
+<pre class="math">R(ω<sub>i</sub>) = ∫_{Ω⁺} [D(h)F(ω<sub>i</sub>,h)G(ω<sub>i</sub>,ω<sub>o</sub>,h) / (4|ω<sub>i</sub>·n||ω<sub>o</sub>·n|)] · cosθ<sub>o</sub> · dω<sub>o</sub></pre>
+
+<p>这个积分在一般情况下不能保证≤1——除非D、G和F各自满足适当的归一化条件。GGX分布函数之所以成功，部分原因正是因为它在能量上几乎守恒，不需要额外的经验校正因子。</p>
+
+<div class="thought-box"><p><strong>想一想：</strong>为什么Phong模型不满足互易性和能量守恒？写出Phong模型的BRDF表达式，检查交换k<sub>i</sub>和k<sub>o</sub>后是否相同，以及对出射方向的积分是否受归一化约束。</p></div>
+
+<h3 id="14-8-3">14.8.3 各向同性vs各向异性的形式化区别</h3>
+
+<p>如果绕表面法线旋转表面不会改变BRDF的值，则BRDF是<span class="key-term">各向同性</span>（isotropic）的。数学上，这意味着BRDF只依赖于两个方向之间的相对方位角差，而非各自的绝对方位角：</p>
+
+<pre class="math">ρ<sub>iso</sub>(θ<sub>i</sub>, θ<sub>o</sub>, |φ<sub>i</sub> − φ<sub>o</sub>|)</pre>
+
+<p>各向同性BRDF是4D→3D的降维。对于大多数常见材质（塑料、金属、纸张等），各向同性是一个合理的假设。</p>
+
+<p><strong>形式化表达：</strong> 各向同性BRDF满足旋转不变性：对任意绕法线n的旋转矩阵R，有</p>
+
+<pre class="math">f<sub>r</sub>(R·ω<sub>i</sub>, R·ω<sub>o</sub>) = f<sub>r</sub>(ω<sub>i</sub>, ω<sub>o</sub>)</pre>
+
+<p>这意味着在球坐标表示中，f<sub>r</sub>(θ<sub>i</sub>, φ<sub>i</sub>, θ<sub>o</sub>, φ<sub>o</sub>) 实际上只依赖于 φ<sub>i</sub>−φ<sub>o</sub>，而不是φ<sub>i</sub>和φ<sub>o</sub>各自的值。</p>
+
+<p><span class="key-term">各向异性</span>（anisotropic）BRDF则保留全部4个维度，用于描述有明显方向性微观结构的表面——如拉丝金属（brushed metal）、CD光盘、头发等。这些材质的镜面高光不是圆形而是拉长的椭圆形。</p>
+
+<blockquote><p><strong>生活类比：</strong>观察一个拉丝金属锅盖——当你转动锅盖时，反射的高光形状会随之旋转。这说明它的反射行为依赖于表面的"纹理方向"，这就是各向异性。而一个光滑的镜面锅盖，无论你怎么转，反射看起来都一样——这是各向同性。</p></blockquote>
+
+<p>在微面元框架中，各向异性通常通过在法线分布函数D中引入方位角相关的参数来实现。例如，各向异性GGX分布：</p>
+
+<pre class="math">D(h) = 1 / (π·α<sub>x</sub>·α<sub>y</sub> · (cos²φ<sub>h</sub>/α<sub>x</sub>² + sin²φ<sub>h</sub>/α<sub>y</sub>² + tan²θ<sub>h</sub>)²)</pre>
+
+<p>其中α<sub>x</sub>和α<sub>y</sub>分别是沿切线方向和副法线方向的粗糙度参数。当α<sub>x</sub>=α<sub>y</sub>时，退化为各向同性GGX。</p>
+
+<h3>14.8.3a 三类BRDF的反射瓣形状对比</h3>
+
+<p>理解不同类型BRDF的"反射瓣"（reflection lobe）——即出射辐射亮度在方向球面上的分布——是可视化BRDF行为的最有效方式。考虑一个固定的入射方向（从上方45°照射表面），比较三类BRDF：</p>
+
+<table>
+<tr><th>BRDF类型</th><th>反射瓣形状</th><th>4D→简化的维度</th><th>方向半球反射率</th></tr>
+<tr><td><span class="key-term">Lambert（漫反射）</span></td><td>均匀半球分布——在所有出射方向上辐射亮度恒定（与出射角无关）</td><td>4D→0D（ρ = 常数）</td><td>R = ρ（通常<1）</td></tr>
+<tr><td><span class="key-term">Mirror（镜面反射）</span></td><td>单点δ函数——仅在一个特定方向上非零（反射方向r）</td><td>4D→0D（方向由n和ω<sub>i</sub>唯一确定）</td><td>R = F(θ<sub>i</sub>)（菲涅尔）</td></tr>
+<tr><td><span class="key-term">Glossy（光泽反射）</span></td><td>围绕反射方向r的有限宽度锥形（Gaussian或GGX分布）</td><td>4D→3D（通常各向同性）</td><td>R：在F和ρ之间</td></tr>
+</table>
+
+<p><strong>反射瓣的可视化对比：</strong></p>
+<ul>
+<li>Lambert：想象一个均匀发光的半球——无论从哪个方向看，表面亮度相同。反射瓣是"平坦"的。</li>
+<li>Mirror：反射瓣是一个无限窄的尖峰——δ函数。只有精确保存在反射方向的光线有贡献。</li>
+<li>Glossy：反射瓣是在反射方向周围的一个模糊锥体——粗糙度越高，锥体越宽。GGX分布产生的是"长尾"形状（相比Gaussian分布，GGX在高角度处有更多散射）。</li>
+</ul>
+
+<p>在真实世界中，大多数材质位于"完全镜面"和"完全漫反射"之间。微观尺度的粗糙度决定了反射瓣的宽度——粗糙度0对应镜面（δ函数），粗糙度1对应接近Lambert的宽分布。GGX模型因其能精确捕捉真实材质从粗糙到光滑的全范围过渡而成为工业标准。</p>
+
+<h3>14.8.3b 工业实践中的BRDF模型</h3>
+
+<p>在工业实践中，材质通常被分类为几个类别，每类有各自的BRDF模型（参见图14.13）。这些模型通过常数或由菲涅尔（Schlick）变化决定的简单权重来组合。一个关键问题是应该使用哪些项。越来越多的实践已经收敛到<span class="key-term">Burley/Disney模型</span>的变体——该模型最初为计算机生成动画开发（Burley, 2012），但现在已被游戏和产品设计广泛采纳。对于光泽项（glossy term），占绝对主导地位的模型是<span class="key-term">GGX模型</span>，该模型在PBRT书和Eric Heitz合著的诸多论文中得到了广泛覆盖，尤以（Heitz & d'Eon, 2014）为著。</p>
+
+<p>Disney"原则性BRDF"（Principled BRDF）的设计哲学是以艺术直觉而非物理测量为出发点——它定义了一组参数（如roughness、metallic、specular、sheen等），每个参数在[0,1]范围内并具有直观的视觉效果。尽管它是经验性的，但通过精心设计的归一化因子仍然近似满足能量守恒和互易性。它对Monte Carlo重要性采样友好，每个参数同时影响反射瓣的形状和采样分布，使得艺术家可以用少数几个参数表达丰富的材质外观。</p>
+
+<div class="thought-box"><p><strong>想一想：</strong>为什么Disney模型被如此广泛地采用？它的设计哲学是"艺术家友好"——每个参数都有直观的视觉效果（如roughness、metallic等）。这如何影响渲染管线中材质参数的设计？</p></div>
+
+<!-- ==================== 14.9 ==================== -->
+<h2 id="s14-9">14.9 重要性采样BRDF</h2>
+
+<p>在蒙特卡洛渲染中，BRDF不仅是描述光分布的函数，更是指导采样方向的<span class="key-term">概率密度函数</span>（PDF）来源。普通的均匀方向采样会导致极高的方差——绝大多数采样方向贡献几乎为零，只有极少数"重要"方向的贡献显著。</p>
+
+<blockquote><p><strong>生活类比：</strong>如果你要估计一个靶子的命中分布，你不会朝四面八方随机射箭然后看哪些命中靶心——你会尽量瞄准靶心射击。BRDF的重要性采样就是这种"瞄准"的数学形式——把采样集中在对最终结果贡献大的方向上。</p></blockquote>
+
+<h3>14.9.1 蒙特卡洛积分与重要性采样的理论基础</h3>
+
+<p><span class="key-term">重要性采样</span>（Importance Sampling）的核心思想是从一个与被积函数f(x)形状相似的分布p(x)中采样，使得每个样本的贡献方差变小。蒙特卡洛估计的通用形式为：</p>
+
+<pre class="math">∫ f(x) dμ(x) ≈ average[ f(x<sub>random</sub>) / p(x<sub>random</sub>) ]</pre>
+
+<p>其中p是一个在积分域S上的概率密度函数——这意味着它在积分域上非负且积分为1：∫<sub>S</sub> p(x) dμ(x) = 1。将此应用于输运方程（式14.4），对单个随机采样方向q：</p>
+
+<pre class="math">L<sub>s</sub>(k<sub>o</sub>) ≈ ρ(q, k<sub>o</sub>) · L<sub>f</sub>(q) · cosθ<sub>i</sub> / p(q)</pre>
+
+<p>为获得噪声更少的图像，我们对多个噪声样本取平均。</p>
+
+<h4>重要性采样为何降低方差</h4>
+
+<p>蒙特卡洛估计的方差由 <code>Var[F] = ∫ (f(x)/p(x) − I)² p(x) dx</code> 控制。当p(x) ∝ f(x)时（即采样密度与被积函数形状完美匹配），f(x)/p(x)变为常数，方差理论上可以降至0。在渲染中，被积函数是 <code>f<sub>r</sub>·L<sub>i</sub>·cosθ</code>，我们无法让p(x)完美匹配它（因为L<sub>i</sub>是未知的——这正是我们想求的东西），但可以让p(x) ∝ f<sub>r</sub>·cosθ（即按BRDF和余弦因子的乘积采样），这已经消除了大部分方差。</p>
+
+<h3>14.9.2 常用采样策略详解</h3>
+
+<p>常用的采样策略包括：</p>
+
+<ul>
+<li><span class="key-term">余弦加权采样</span>（Cosine-weighted sampling）：p(θ) ∝ cosθ，适用于漫反射为主的BRDF</li>
+<li><span class="key-term">BRDF重要性采样</span>：p(q) ∝ ρ(q, k<sub>o</sub>)cosθ，采样分布直接匹配BRDF形状</li>
+<li><span class="key-term">均匀半球采样</span>：p=1/(2π)，最简单但方差最高的方法</li>
+</ul>
+
+<h4>余弦加权采样的完整推导</h4>
+
+<p>余弦加权采样是重要性采样的基础案例。我们希望p(ω) ∝ cosθ，且有归一化约束 ∫ p(ω) dω = 1：</p>
+
+<pre class="math">p(θ, φ) = cosθ / π    （其中θ∈[0,π/2], φ∈[0,2π]）</pre>
+
+<p>验证归一化：<code>∫₀²π ∫₀^{π/2} (cosθ/π) · sinθ dθ dφ = 2π·(1/π)·(1/2) = 1</code>。将p(θ,φ)代入蒙特卡洛估计：</p>
+
+<pre class="math">L<sub>o</sub> ≈ (f<sub>r</sub> · L<sub>i</sub> · cosθ) / (cosθ/π) = π · f<sub>r</sub> · L<sub>i</sub></pre>
+
+<p>注意cosθ因子在分子和分母中抵消——这意味着余弦加权采样对朗伯表面（f<sub>r</sub>=ρ/π常数）产生的估计是 <code>L<sub>o</sub> ≈ ρ·L<sub>i</sub></code>，完全消除了方差（因为被积函数与采样分布形状完全匹配）。</p>
+
+<h4>GGX重要性采样</h4>
+
+<p>对于GGX等复杂BRDF，有专门的重要性采样策略能够将样本集中在镜面波瓣（specular lobe）的峰值方向附近，极大降低了光泽反射场景中的噪声。GGX重要性采样的核心是：首先根据GGX法线分布函数采样半程向量h（其PDF为 D(h)·(h·n)），然后通过 <code>ω<sub>i</sub> = reflect(−ω<sub>o</sub>, h)</code> 计算入射方向。采样h的公式：</p>
+
+<pre class="math">θ<sub>h</sub> = arctan(α · √ξ<sub>1</sub> / √(1−ξ<sub>1</sub>))
+φ<sub>h</sub> = 2π · ξ<sub>2</sub></pre>
+
+<p>其中ξ<sub>1</sub>、ξ<sub>2</sub>是均匀随机数，α是粗糙度参数。这个采样策略确保大多数样本集中在镜面反射方向附近的狭窄锥体中——对于粗糙度α=0.01（高度镜面），超过90%的样本落在镜面方向周围约2°的锥体内。</p>
+
+<h3>14.9.3 多重重要性采样（MIS）的扩展讨论</h3>
+
+<p>在实际场景中，单一采样策略几乎总是不足的。考虑两个极端案例：</p>
+<ul>
+<li>纯镜面表面+大面积光源：BRDF采样（≈100%命中镜面方向）效果很好，但光源采样可能产生0贡献（因为镜面方向几乎不可能随机命中光源）。</li>
+<li>纯漫反射表面+小面积光源：光源采样（直接对准光源采样）效果很好，但BRDF采样可能很少命中小光源。</li>
+</ul>
+
+<p>这就是为什么MIS（14.10.3节详细讨论）至关重要——它自动根据场景条件为每个策略分配适当的权重。</p>
+
+<div class="thought-box"><p><strong>想一想：</strong>如果使用均匀采样（p=1/(2π)）来计算一个镜面反射主导的BRDF积分，为什么噪声会特别大？尝试代入p=1/(2π)到蒙特卡洛估计中，观察当ρ集中在某个极窄方向时分母p很小是什么含义。</p></div>
+
+<!-- ==================== 14.10 ==================== -->
+<h2 id="s14-10">14.10 蒙特卡洛光线追踪（路径追踪/俄罗斯轮盘赌/多重重要性采样MIS）</h2>
+
+<h3 id="14-10-1">14.10.1 路径追踪</h3>
+
+<p><span class="key-term">路径追踪</span>（Path Tracing）是对输运方程最直接的蒙特卡洛求解方法。它将递归的蒙特卡洛积分应用于每个交点——这并非显然成立，但可以利用随机变量的期望值求和性质（即使求和项之间不独立）来证明。基本算法如下：</p>
+
+<pre class="math">function rgb radiance(o, d)
+  if ray o+td hits something then
+    p = hit point
+    q = random direction
+    return emitted(p) + (ρ(q, −d) cosθ<sub>i</sub> / p(q)) * radiance(p, q)
+  else
+    return background(o, d)</pre>
+
+<p>注意如果环境是封闭的，这个函数永远不会终止，因此需要添加终止条件。background函数可以返回常数或查表环境贴图。最终，即使没有显式光源，仅靠环境光也能产生不错的图像。</p>
+
+<blockquote><p><strong>生活类比：</strong>路径追踪就像在迷宫中回溯探索。你从出口（相机）出发，在迷宫中随机走动（随机采样方向），每次遇到岔路口就用一个概率模型（BRDF采样）决定转向哪个方向。当你走到入口（光源）或走不动了（被吸收），就记录下你走过的路径。反复这样做几百次取平均，就能还原出迷宫（场景）中每条路的光照分布。</p></blockquote>
+
+<h3>14.10.1a 路径追踪的完整算法伪代码（含直接光照和MIS）</h3>
+
+<p>以下是在实际渲染器中使用的完整路径追踪算法伪代码，包含直接光照分离、俄罗斯轮盘赌终止和MIS权重：</p>
+
+<pre class="math">function radiance(x, ω<sub>o</sub>):
+  // 初始化累积辐射亮度
+  L = 0
+  β = 1  // 路径吞吐量（throughput）
+  
+  for bounce = 0 to max_bounces:
+    // 直接光照（NEE: Next Event Estimation）
+    L += β · direct_lighting(x, ω<sub>o</sub>)  // 见下文
+    
+    // 采样BSDF以获取下一个方向
+    ω<sub>i</sub>, f<sub>r</sub>, pdf = sample_bsdf(x, ω<sub>o</sub>)
+    if pdf == 0: break
+    
+    // 更新吞吐量（除pdf外，还包括cosθ因子）
+    β *= f<sub>r</sub> · |cosθ<sub>i</sub>| / pdf
+    
+    // 俄罗斯轮盘赌（RR）——无偏终止
+    if bounce >= 3:  // 前3次弹跳强制追踪
+      q = max(0.1, β_max)  // 存活概率（通常取吞吐量最大值）
+      if random() > q: break
+      β /= q  // 除以存活概率保持无偏
+    
+    // 追踪光线到下一个交点
+    hit, x', ω<sub>o</sub>' = trace_ray(x, ω<sub>i</sub>)
+    if not hit:
+      L += β · background(ω<sub>i</sub>)
+      break
+    x = x'
+    ω<sub>o</sub> = ω<sub>o</sub>'
+  
+  return L
+
+
+function direct_lighting(x, ω<sub>o</sub>):
+  result = 0
+  for each light:
+    // 从表面上x采样光源
+    y, pdf_light = sample_light(x)
+    
+    // 即使从光源采样，BRDF也在计算中（用于MIS加权）
+    ω<sub>i</sub> = normalize(y - x)
+    f<sub>r</sub> = evaluate_bsdf(x, ω<sub>i</sub>, ω<sub>o</sub>)
+    pdf_bsdf = bsdf_pdf(x, ω<sub>i</sub>, ω<sub>o</sub>)
+    
+    if not shadowed(x, y):
+      // MIS平衡启发式权重
+      w_light = pdf_light / (pdf_light + pdf_bsdf)
+      result += f<sub>r</sub> · L<sub>e</sub>(y) · |cosθ<sub>i</sub>| / pdf_light · w_light
+  
+  return result</pre>
+
+<p>这个伪代码展示了一个生产中使用的路径追踪器的核心结构。关键点：</p>
+<ol>
+<li><strong>NEE（Next Event Estimation）</strong>：直接光照在每次弹跳单独计算，通过直接在光源上采样来提高效率。这是14.5.4节"时间反转"对应的方法论。</li>
+<li><strong>俄罗斯轮盘赌</strong>：在3次弹跳之后启用，以无偏方式截断无穷路径。</li>
+<li><strong>MIS权重</strong>：在直接光照中使用平衡启发式，结合光源采样和BSDF采样的PDF。</li>
+<li><strong>吞吐量β</strong>：沿路径累积的权重乘积，包括了BSDF、cosθ和PDF除法的累积。</li>
+</ol>
+
+<h3>14.10.1b 路径追踪的无偏性讨论</h3>
+
+<p>路径追踪是一种<span class="key-term">无偏</span>（unbiased）算法——其期望值精确等于渲染方程的真解。这一点可以通过Neumann级数的视角来理解：路径追踪的每次弹跳对应Neumann级数的一项T<sup>k</sup>L<sub>e</sub>，而递归的蒙特卡洛估计正是对该项的随机逼近。由于每个弹跳的估计都是无偏的（在俄罗斯轮盘赌校正的前提下），总估计也无偏。</p>
+
+<p>但在实践中，路径追踪通常对某些效应处理不佳——特别是小光源（采样困难）和焦散（需要特定光路才能到达）。这催生了双向路径追踪（BDPT）和光子映射等替代方案。</p>
+
+<h3 id="14-10-2">14.10.2 俄罗斯轮盘赌</h3>
+
+<p>路径追踪的递归深度理论上可以无限深，但在实践中每条路径最终都会贡献越来越少的光（因为BRDF和材料吸收导致能量衰减）。<span class="key-term">俄罗斯轮盘赌</span>（Russian Roulette）是一种无偏的终止策略：</p>
+
+<pre class="math">在每个弹跳点，以概率 p<sub>rr</sub> 继续追踪（将贡献除以 p<sub>rr</sub> 保持无偏）
+以概率 1−p<sub>rr</sub> 终止路径</pre>
+
+<p>典型实现中，<code>p<sub>rr</sub></code> 设为当前BRDF的最大反射率或表面颜色亮度。这种方法保证路径最终一定会终止，同时在期望意义上保持估计无偏。</p>
+
+<h4>俄罗斯轮盘赌的无偏性证明</h4>
+
+<p>设随机变量F表示完整路径的贡献。俄罗斯轮盘赌定义了一个新的随机变量F<sub>rr</sub>：</p>
+
+<pre class="math">F<sub>rr</sub> = { F / p<sub>rr</sub>  以概率 p<sub>rr</sub>（继续追踪）
+        { 0         以概率 1−p<sub>rr</sub>（终止）</pre>
+
+<p>其期望值为：</p>
+
+<pre class="math">E[F<sub>rr</sub>] = p<sub>rr</sub> · E[F / p<sub>rr</sub>] + (1−p<sub>rr</sub>) · 0 = E[F]</pre>
+
+<p>这证明了F<sub>rr</sub>是F的无偏估计！但需要注意——虽然期望值无偏，但方差增加了：</p>
+
+<pre class="math">Var[F<sub>rr</sub>] = Var[F] + (1/p<sub>rr</sub> − 1) · E[F²]</pre>
+
+<p>当p<sub>rr</sub>很小时，方差会显著增大（因为少数幸存路径的权重1/p<sub>rr</sub>非常大）。因此在实际实现中，RR通常在路径已经贡献较小时才启用（如第一次弹跳后），且p<sub>rr</sub>被限制在合理范围（如[0.1, 1.0]）以防止个别的巨大贡献产生"萤火虫"噪点。</p>
+
+<h3 id="14-10-3">14.10.3 多重重要性采样（MIS）</h3>
+
+<p>渲染中经常面临一个经典困境：应该从BRDF采样还是从光源采样？两者各有利弊：</p>
+<ul>
+<li><span class="key-term">BRDF采样</span>：在小光源场景中噪声大（很少命中光源），但能很好地捕捉BRDF细节</li>
+<li><span class="key-term">光源采样</span>：对镜面反射表面表现差（很少采样到正确的反射方向），但对漫反射场景好</li>
+</ul>
+
+<p><span class="key-term">多重重要性采样</span>（Multiple Importance Sampling, MIS）由Veach和Guibas（1995）提出，通过为每个采样策略分配适当的权重来组合它们，在多个采样分布之间"调和"。MIS权重公式为：</p>
+
+<pre class="math">w<sub>i</sub>(x) = n<sub>i</sub> p<sub>i</sub>(x) / Σ<sub>j</sub> n<sub>j</sub> p<sub>j</sub>(x)</pre>
+
+<p>其中n<sub>i</sub>是第i个策略的采样数量，p<sub>i</sub>(x)是该策略下采样出x的概率密度。最常用的权重启发式是<span class="key-term">平衡启发式</span>（balance heuristic），它在各种场景中表现稳健，能显著降低方差。</p>
+
+<h4>MIS平衡启发式的完整推导</h4>
+
+<p>假设我们有K个采样策略，每个策略i产生n<sub>i</sub>个样本，采样密度为p<sub>i</sub>(x)。MIS的全体本估计为：</p>
+
+<pre class="math">I<sub>MIS</sub> = Σ<sub>i=1</sub><sup>K</sup> (1/n<sub>i</sub>) · Σ<sub>j=1</sub><sup>n<sub>i</sub></sup> w<sub>i</sub>(x<sub>ij</sub>) · f(x<sub>ij</sub>) / p<sub>i</sub>(x<sub>ij</sub>)</pre>
+
+<p>平衡启发式选择：</p>
+
+<pre class="math">w<sub>i</sub>(x) = n<sub>i</sub> p<sub>i</sub>(x) / Σ<sub>k=1</sub><sup>K</sup> n<sub>k</sub> p<sub>k</sub>(x)</pre>
+
+<p>平衡启发式在理论上是最优的——它在所有满足Σ<sub>i</sub> w<sub>i</sub>(x)=1（归一化条件）的权重函数族中，最小化了最坏情况方差的上界。直觉上，它给予"对当前样本x有最高概率密度"的策略最大权重——如果某个策略认为x发生的概率很高，那么x很可能对该策略是"重要"的，应该给予更多权重。MIS的无偏性由w<sub>i</sub>的归一化条件自然保证：</p>
+
+<pre class="math">E[I<sub>MIS</sub>] = ∫ f(x) · (Σ w<sub>i</sub>(x)) · dx = ∫ f(x) dx = I</pre>
+
+<p>在渲染中，最常用的两种策略是BSDF采样（p<sub>1</sub> ∝ f<sub>r</sub>·cosθ）和光源采样（p<sub>2</sub> ∝ L<sub>e</sub> / ‖x−y‖²）。MIS自动在这两种策略之间切换——对于镜面表面，BSDF策略的p<sub>1</sub>在镜面方向极大，w<sub>1</sub>接近1；对于漫反射表面+小光源，光源策略的p<sub>2</sub>更大，w<sub>2</sub>占优。</p>
+
+<div class="thought-box"><p><strong>想一想：</strong>为什么平衡启发式（balance heuristic）在实践中表现那么好？尝试比较单独的BRDF采样、单独的光源采样和MIS组合在"光滑表面+小光源"场景中的噪声表现。</p></div>
+
+<h3>14.10.3a 双向路径追踪（BDPT）简介</h3>
+
+<p>路径追踪的一个极端扩展是<span class="key-term">双向路径追踪</span>（Bidirectional Path Tracing, BDPT）：它同时从相机和光源两个方向追踪路径，然后将两条半路径连接起来，形成完整的光路。BDPT对焦散和间接光照的处理优于单向路径追踪，但实现复杂度显著增加。BDPT中需要处理路径连接点的几何耦合项G，并且连接点处不存在可见性检查（两个方向之间的可见性需要通过阴影光线验证）。</p>
+
+<!-- ==================== 14.11 ==================== -->
+<h2 id="s14-11">14.11 光子映射</h2>
+
+<p><span class="key-term">光子映射</span>（Photon Mapping）是另一种基于物理的全局光照算法，由Henrik Wann Jensen于1996年提出。与路径追踪不同，光子映射是一个<span class="key-term">两阶段</span>（two-pass）算法：</p>
+
+<ol>
+<li><span class="key-term">光子追踪阶段</span>（Photon Tracing Pass）：从光源发射大量光子，追踪它们在场景中的弹跳路径，每次光子击中非镜面表面时，将其位置、方向和能量记录在一个称为<span class="key-term">光子图</span>（photon map）的空间数据结构（通常是k-d树）中。</li>
+<li><span class="key-term">渲染阶段</span>（Rendering Pass）：从相机出发的光线追踪中，在每次命中表面时，使用光子图中的邻近光子来估计该点的入射辐射亮度（称为<span class="key-term">辐射亮度估计</span>，radiance estimate）。</li>
+</ol>
+
+<p>光子映射的核心优势在于它天然适合处理某些路径追踪难以高效处理的效应：</p>
+<ul>
+<li><span class="key-term">焦散</span>（Caustics）：如游泳池底部的光纹图案——路径追踪几乎不可能从相机方向找到穿过水面的焦散路径，而光子映射可以自然捕获。</li>
+<li><span class="key-term">间接光照</span>（Indirect Illumination）：多次弹跳的漫反射光照在光子图中被高效积累。</li>
+<li><span class="key-term">体积散射</span>（Volumetric Scattering）：扩展到参与介质（如烟雾、云层）非常自然。</li>
+</ul>
+
+<h3>14.11.1 光子追踪阶段详解</h3>
+
+<p>光子追踪阶段是"从光源向外"的过程，类似于14.5节的暴力光子追踪，但有几个关键差异：</p>
+
+<ol>
+<li><strong>只记录非镜面命中</strong>：光子仅在击中漫反射或光泽表面时被存储。击中镜面表面时，光子按确定性的镜面反射/折射方向继续传播——这避免了在光子图中产生δ分布式的稀疏数据。</li>
+<li><strong>俄罗斯轮盘赌控制光子传播</strong>：与路径追踪类似，光子追踪也使用俄罗斯轮盘赌来决定光子是否在弹跳后继续存在。存活概率通常取表面反射率的最大分量。</li>
+<li><strong>光子存储格式</strong>：每个光子存储为(position, incident_direction, power)。入射方向记录的是光子到达表面的方向（而非光源发射方向），这对于后续的BRDF辐射亮度估计至关重要。</li>
+<li><strong>空间数据结构</strong>：光子被存储在k-d树中，用于快速K近邻查询。k-d树将空间递归地沿坐标轴切分，使得查询半径为r范围内的K个最近光子的时间复杂度为O(log N)，而非O(N)。</li>
+</ol>
+
+<h3>14.11.2 辐射亮度估计（KNN密度估计）</h3>
+
+<p>给定光子图中某个点x周围的N个最近光子，其辐射亮度估计为：</p>
+
+<pre class="math">L<sub>r</sub>(x, k<sub>o</sub>) ≈ (1 / Nπr²) Σ<sub>p=1</sub><sup>N</sup> ρ(k<sub>p</sub>, k<sub>o</sub>) ΔΦ<sub>p</sub></pre>
+
+<p>其中ΔΦ<sub>p</sub>是第p个光子的功率（能量），r是到最远邻近光子的距离，k<sub>p</sub>是光子的入射方向。</p>
+
+<p><strong>公式解释：</strong></p>
+<ul>
+<li><code>N</code>：用于估计的近邻光子数。典型值500–2000。</li>
+<li><code>πr²</code>：搜索区域（假定为半径为r的圆盘）的面积——这是密度估计中的归一化因子。此处将3D的半球面投影到2D的切平面，面积因子从2πr²变为πr²。</li>
+<li><code>ρ(k<sub>p</sub>, k<sub>o</sub>)</code>：BRDF评估——将光子的入射功率"散射"到观察方向k<sub>o</sub>。</li>
+<li><code>ΔΦ<sub>p</sub></code>：单个光子的功率。注意这里是功率（Φ）而非辐射亮度（L），因为光子存储的是绝对光能量，在KNN估计中被转换为辐射亮度。</li>
+<li><code>1/(Nπr²)</code>：密度估计——将N个光子的总BRDF加权功率除以搜索区域面积，得到"单位面积的辐射亮度"。除以N（而非简单求和）使得估计对光子数量不敏感——无论搜索到5个还是50个光子，估计值近似相同（前提是光子密度均匀）。</li>
+</ul>
+
+<p>这个估计是<span class="key-term">有偏</span>（biased）的——光子数越多、半径越小，偏差越小——但在一致（consistent）的意义下，随着光子数和每像素采样数趋于无穷，结果收敛到正确解。</p>
+
+<h3>14.11.3 偏差-方差权衡</h3>
+
+<p>辐射亮度估计的偏差来源于两个假设：</p>
+<ol>
+<li>在半径为r的圆盘内，入射辐射亮度L<sub>i</sub>近似恒定（实际不是——这导致偏差）</li>
+<li>圆盘内所有光子可以被平均（实际可能包含不同法线方向的光子——这也引入偏差）</li>
+</ol>
+
+<p>当N固定时，随着光子总数M→∞，局部光子密度增加，r→0——偏差趋于0，但方差增大（因为少数光子携带巨大权重）。当M固定时，N→∞会导致r增大——方差降低但偏差增大（边界模糊）。</p>
+
+<p>一致性的正式定义：当光子总数 M→∞ 且KNN搜索的近邻数 N(M)→∞ 且 N(M)/M→0（即N增长但增长速度远低于M），则辐射亮度估计在所有点x上依概率收敛到真值。</p>
+
+<h3>14.11.4 渐进光子映射（PPM）和随机渐进光子映射（SPPM）</h3>
+
+<p>光子映射在1990年代末到2000年代初曾是全局光照领域的重要突破，为电影级渲染（如《怪物公司》《海底总动员》等皮克斯影片）提供了实用的光照解决方案。现代实用渲染器通常结合路径追踪和光子映射，或使用更先进的变体如<span class="key-term">渐进式光子映射</span>（Progressive Photon Mapping, PPM）和<span class="key-term">随机渐进式光子映射</span>（Stochastic Progressive Photon Mapping, SPPM）。</p>
+
+<h4>PPM vs SPPM 详细对比</h4>
+
+<table>
+<tr><th>特性</th><th>经典光子映射 (PM)</th><th>渐进光子映射 (PPM)</th><th>随机渐进光子映射 (SPPM)</th></tr>
+<tr><td><strong>光子存储</strong></td><td>一次存储所有光子到光子图</td><td>多次迭代，每轮独立发射光子（无需存储全部光子图）</td><td>同PPM，多次迭代</td></tr>
+<tr><td><strong>存储需求</strong></td><td>高（需存储所有光子到k-d树）</td><td>中等（每轮光子用完即丢弃，但需存储每像素的累积统计）</td><td>中等（同PPM）</td></tr>
+<tr><td><strong>收敛性质</strong></td><td>有偏但一致（M→∞）</td><td>有偏但一致（渐进收敛）</td><td>一致——正确解</td></tr>
+<tr><td><strong>搜索半径</strong></td><td>固定N个近邻，半径变化</td><td>固定N个近邻，半径随迭代减小</td><td>固定N个近邻，半径随迭代减小</td></tr>
+<tr><td><strong>分布式光线追踪效果</strong></td><td>有限支持</td><td>不支持（每个像素只有一个命中点）</td><td>完全支持（每像素多个命中点，通过SPPM的"命中点缓冲区"）</td></tr>
+<tr><td><strong>焦散</strong></td><td>优秀（天然处理）</td><td>优秀</td><td>优秀</td></tr>
+<tr><td><strong>复杂镜面传输</strong></td><td>有限（光子需通过镜面路径追踪）</td><td>有限</td><td>有限</td></tr>
+<tr><td><strong>实现复杂度</strong></td><td>中等</td><td>中等</td><td>较高（需要命中点缓冲区+每像素统计）</td></tr>
+</table>
+
+<h4>PPM的核心思想</h4>
+
+<p>PPM将光子映射改为多轮渐进过程。每轮：</p>
+<ol>
+<li>从相机发射光线，记录每个像素的"命中点"（仅记录第一个非镜面交点）</li>
+<li>发射一批光子（通常与像素数成正比），追踪每个光子在场景中弹跳</li>
+<li>对每个命中点，在半径为R<sub>i</sub>的球体内搜索光子——注意半径R<sub>i</sub>在每轮中按 R<sub>i+1</sub> = R<sub>i</sub>·√((i+α)/(i+1)) 减小（其中α∈(0,1)是参数）</li>
+<li>用本轮光子更新该命中点的累积辐射亮度估计</li>
+<li>重复直到收敛（通常50–200轮）</li>
+</ol>
+
+<p>关键洞察：每轮使用新鲜光子（不存储历史光子），但保持命中点的累积统计。半径的递减策略确保随着迭代进行，偏差持续减小——最终收敛到一致解。</p>
+
+<h4>SPPM的核心改进</h4>
+
+<p>SPPM的突破在于解决了PPM对分布式光线追踪效果（如景深、运动模糊、抗锯齿）的支持问题。在经典PPM中，每个像素只有一个命中点，因此无法处理从同一像素发射多条光线的情况。</p>
+
+<p>SPPM的解决方案：每个像素维护一个"命中点缓冲区"（而非单个命中点），缓冲区中的每个条目独立累积辐射亮度估计。这意味着：</p>
+<ul>
+<li>对同一像素发射多条光线时，每条光线产生一个独立的命中点</li>
+<li>每个命中点独立地与光子交互——累积辐射亮度和半径统计</li>
+<li>最终像素值 = 所有命中点的平均值</li>
+</ul>
+
+<p>SPPM因此自然地支持了景深（通过透镜采样多条光线）、运动模糊（通过时间采样）和抗锯齿（通过像素内的子像素采样）。</p>
+
+<h4>光子映射与现代渲染管线</h4>
+
+<p>虽然光子映射已不再是最前沿的生产渲染方案，但它仍然是理解和教授全局光照的重要框架。现代生产渲染器（如Disney的Hyperion、Pixar的RenderMan、Weta的Manuka）通常使用"统一路径追踪"（Unidirectional Path Tracing）+ 各种重要性采样技术的组合，而非经典的光子映射。然而，光子映射的思想——通过空间缓存密度估计来加速间接光照——仍然以各种形式存在，特别是对焦散等难以通过路径追踪高效处理的效应。</p>
+
+<div class="thought-box"><p><strong>想一想：</strong>光子映射的辐射亮度估计依赖于"在点x周围找到N个邻近光子"。这个N值的选择如何影响渲染质量？N太小会导致什么？N太大又会导致什么？</p></div>
+
+<!-- ========== 本章核心洞察 ========== -->
+<div class="insight-box" id="insights">
+<h3>本章核心洞察</h3>
+<ul>
+<li><strong>物理渲染的本质是积分：</strong>输运方程将渲染简化为一个高维积分问题。几乎所有渲染算法的差异都可以归结为用不同方法近似求解这个积分。Neumann级数展开揭示了渲染是无穷维积分——每一项对应一条特定长度的光路。</li>
+<li><strong>BRDF是材质交换语言：</strong>双向反射分布函数ρ(k<sub>i</sub>,k<sub>o</sub>)将复杂的光-物质相互作用封装为4D函数，是材质建模和光线追踪之间的桥梁。互易性和能量守恒是其物理有效性的两条"宪法"。</li>
+<li><strong>辐射亮度L是不变量：</strong>在真空中沿射线传播时L保持不变——这是光线追踪算法能工作的理论基础，也是辐射度量学中最优雅的性质。L的双密度性质（d²Φ/(dA⊥·dω)）使距离衰减和立体角扩散相互抵消。</li>
+<li><strong>蒙特卡洛是普适工具：</strong>从BRDF采样到路径追踪到光子映射，蒙特卡洛方法为高维积分问题提供了统一框架——"一切皆是估计"。重要性采样、俄罗斯轮盘赌和MIS是控制方差的三大法宝。</li>
+<li><strong>效率决定了可行性：</strong>暴力光子追踪理论上是正确的，但实际渲染必须依赖重要性采样、MIS、直接光照分离、光子映射等策略——物理正确是必要的，但效率同样不可或缺。现代渲染是计算方法论的集大成者。</li>
+</ul>
+</div>
+
+<!-- ========== 课后练习题 ========== -->
+<h2 id="exercises">课后练习题（含答案）</h2>
+
+<details><summary>习题 1：能量守恒约束</summary>
+<p><strong>解答：</strong>设BRDF ρ(k<sub>i</sub>,k<sub>o</sub>) = C cos<sup>a</sup> θ<sub>i</sub>。能量守恒要求对所有k<sub>i</sub>：
+∫ ρ(k<sub>i</sub>,k<sub>o</sub>) cosθ<sub>o</sub> dσ<sub>o</sub> ≤ 1。
+∫ C cos<sup>a</sup> θ<sub>i</sub> cosθ<sub>o</sub> dσ<sub>o</sub> = C cos<sup>a</sup> θ<sub>i</sub> ∫₀²π ∫₀^{π/2} cosθ<sub>o</sub> sinθ<sub>o</sub> dθ<sub>o</sub> dφ<sub>o</sub> = C cos<sup>a</sup> θ<sub>i</sub> · π。
+令其≤1对所有θ<sub>i</sub>成立。当θ<sub>i</sub>=0时cosθ<sub>i</sub>=1取最大值，故需要 C·π ≤ 1，即 C ≤ 1/π。</p>
+</details>
+
+<details><summary>习题 2：互易性修正</summary>
+<p><strong>解答：</strong>原BRDF ρ=C cos<sup>a</sup> θ<sub>i</sub> 不满足ρ(k<sub>i</sub>,k<sub>o</sub>)=ρ(k<sub>o</sub>,k<sub>i</sub>)，因为交换后变为C cos<sup>a</sup> θ<sub>o</sub>。对称化的自然方法是令 ρ(k<sub>i</sub>,k<sub>o</sub>) = C cos<sup>a</sup> θ<sub>i</sub> · cos<sup>a</sup> θ<sub>o</sub>。此时需要检查归一化：∫ C cos<sup>a</sup>θ<sub>i</sub> cos<sup>a</sup>θ<sub>o</sub> cosθ<sub>o</sub> dσ<sub>o</sub> = C cos<sup>a</sup>θ<sub>i</sub> ∫₀²π ∫₀^{π/2} cos<sup>a+1</sup>θ<sub>o</sub> sinθ<sub>o</sub> dθ<sub>o</sub> dφ<sub>o</sub> = C cos<sup>a</sup>θ<sub>i</sub> · 2π/(a+2)。需要C ≤ (a+2)/(2π)。</p>
+</details>
+
+<details><summary>习题 3：逆向反射模型</summary>
+<p><strong>解答：</strong>高速路标是逆向反射器（retroreflector）——当k<sub>i</sub>和k<sub>o</sub>接近时BRDF很大。受Phong模型启发，我们可以定义一个满足互易性和能量守恒的逆向反射BRDF：
+ρ(k<sub>i</sub>,k<sub>o</sub>) = C · (k<sub>i</sub>·k<sub>o</sub>)<sup>n</sup> （当k<sub>i</sub>·k<sub>o</sub> > 0，否则ρ=0）
+注意k<sub>i</sub>和k<sub>o</sub>都在上半球面，点积越大意味着它们越接近——这正是逆向反射的性质。该公式满足互易性（点积对称），归一化常数C可通过数值积分确定以确保能量守恒。</p>
+</details>
+
+<details><summary>习题 4：漫反射表面的辐射出射度</summary>
+<p><strong>解答：</strong>对于具有出射辐射亮度L的漫反射表面，辐射出射度（radiant exitance）E是L在所有出射方向上的积分：
+E = ∫ L cosθ<sub>o</sub> dσ<sub>o</sub> = L ∫₀²π ∫₀^{π/2} cosθ<sub>o</sub> sinθ<sub>o</sub> dθ<sub>o</sub> dφ<sub>o</sub> = L · π
+因此 E = πL。</p>
+</details>
+
+<details><summary>习题 5：总出射功率</summary>
+<p><strong>解答：</strong>总功率Φ是辐射出射度E在面积上的积分：
+Φ = ∫ E dA = E · A = πL · 4 = 4πL 瓦特。
+对于漫反射表面，辐射亮度L在所有出射方向均匀分布，因此总出射功率 = 辐射出射度 × 面积 = πL × 4m²。</p>
+</details>
+
+<details><summary>习题 6：荧光灯vs白炽灯</summary>
+<p><strong>解答：</strong>虽然两者消耗相同的电功率（20W），但荧光灯（fluorescent light）通常比白炽灯（incandescent light）更受欢迎的原因是：
+1. <strong>发光效率不同：</strong>白炽灯将大部分电能转化为红外线（热辐射）而非可见光——可见光转化率仅约2%-3%。荧光灯通过气体放电和荧光粉转换，可见光转化率可达20%-30%。
+2. <strong>辐射度量学解释：</strong>在可见光波段（400-700nm）内的光谱功率Φ<sub>λ</sub>，荧光灯远高于白炽灯。白炽灯的光谱功率大部分集中在红外区域（λ>700nm），这些波长在渲染中不产生可见贡献。
+3. <strong>寿命和散热：</strong>白炽灯的高发热导致灯丝寿命较短（~1000小时），而荧光灯可达~8000小时。</p>
+</details>
+
+<details><summary>习题 7：菲涅尔反射率的极端情况</summary>
+<p><strong>题目：</strong>一个电介质的折射率n=1.5。计算：(a) 法向入射的反射率R₀；(b) 在θ=60°时使用Schlick近似的反射率；(c) 该材料与空气界面的临界角（如果有的话）。</p>
+<p><strong>解答：</strong>
+(a) n<sub>i</sub>=1.0（空气），n<sub>t</sub>=1.5（电介质）。R₀ = ((1.5−1)/(1.5+1))² = (0.5/2.5)² = 0.2² = 0.04 = 4%。这意味着从正面看玻璃，只有4%的光被反射。
+(b) Schlick: R(60°) = 0.04 + (1−0.04)(1−cos60°)⁵ = 0.04 + 0.96(1−0.5)⁵ = 0.04 + 0.96·0.5⁵ = 0.04 + 0.96·0.03125 = 0.04 + 0.03 = 0.07 = 7%。
+(c) 光从玻璃(n=1.5)射入空气(n=1.0)：θ<sub>c</sub> = arcsin(1.0/1.5) = arcsin(0.667) ≈ 41.8°。因此从玻璃内部以大于41.8°的角度看界面时发生全内反射。</p>
+</details>
+
+<details><summary>习题 8：俄罗斯轮盘赌的方差</summary>
+<p><strong>题目：</strong>证明俄罗斯轮盘赌的无偏性，并推导使用RR与不使用RR的方差关系。</p>
+<p><strong>解答：</strong>设F是路径贡献随机变量，p是存活概率。RR估计量F<sub>rr</sub>定义为：以概率p取F/p，以概率1−p取0。
+期望：E[F<sub>rr</sub>] = p·E[F]/p + (1−p)·0 = E[F]。无偏性得证。
+方差：Var[F<sub>rr</sub>] = E[F<sub>rr</sub>²] − E[F<sub>rr</sub>]² = p·E[F²]/p² − E[F]² = E[F²]/p − E[F]² = (E[F²] − E[F]²)/p + E[F]²(1/p − 1) = Var[F]/p + E[F]²(1−p)/p。
+当p→0时方差→∞，因此RR只在p近1时才不显著增加方差。</p>
+</details>
+
+<!-- ========== QA 零基础问答区 ========== -->
+<h2 id="qa">QA 零基础问答区</h2>
+
+<div class="qa-item"><p class="qa-q">Q: "基于物理的渲染"和"传统渲染"的本质区别是什么？</p>
+<p class="qa-a">A: 传统渲染（如Phong模型）使用经验公式——调整几个参数直到画面"看起来不错"，但这些参数没有物理意义。PBR则严格遵循物理定律（能量守恒、互易性、菲涅尔效应），参数有明确的物理含义（如roughness粗糙度、metallic金属度）。结果是在任何光照条件下材质都表现一致且可信。</p></div>
+
+<div class="qa-item"><p class="qa-q">Q: 为什么辐射亮度L是辐射度量学中最重要的量？</p>
+<p class="qa-a">A: 因为L在真空中沿射线传播时保持恒定——这是其他辐射度量学量都没有的性质。这个不变量使L成为光线追踪中理想的传输量。其他量（如辐照度H）会随距离衰减，但L不会。具体原因：L= d²Φ/(dA·cosθ·dω)，当光线传播时，dA增大（距离平方反比）但cosθ·dω减小（同样的平方反比），两者相互抵消。</p></div>
+
+<div class="qa-item"><p class="qa-q">Q: Schlick近似与完整菲涅尔方程相比有什么优缺点？</p>
+<p class="qa-a">A: Schlick近似R(θ)=R₀+(1−R₀)(1−cosθ)⁵的优点：计算极快（只需几次乘法）、不需要考虑偏振、参数直观。缺点：对某些角度的精度损失（尤其在~5%-10%反射率范围）、忽略了光的偏振效应、对某些特殊材质（如某些涂层）拟合不佳。但在渲染实践中，精度损失几乎不可见。</p></div>
+
+<div class="qa-item"><p class="qa-q">Q: 路径追踪和光线追踪（如Ch.4中的）有什么区别？</p>
+<p class="qa-a">A: Ch.4的光线追踪是确定性的——从相机发出一条光线，在遇到反射/折射表面时递归生成精确的反射/折射光线。路径追踪则是概率性的——在每个交点随机采样一个方向（根据BRDF），每条光线只生成一条子光线，用大量随机路径的平均来近似光照积分。路径追踪能自然地处理全局光照（间接光、软阴影、焦散等），而基本光线追踪只能处理直接光照和镜面传输。</p></div>
+
+<div class="qa-item"><p class="qa-q">Q: 什么是"intensity"（强度）？它和radiance（辐射亮度）有什么不同？</p>
+<p class="qa-a">A: "Intensity"这个词在不同上下文中有不同含义——在不同的时代和学科中用法各异。在实践中，"intensity"已经不再是一个有意义的特定辐射度量学量，但它仍用于直观讨论。大多数论文中使用"intensity"时，实际上指的正是radiance（辐射亮度）。在正式的辐射度量学中，intensity特指辐射强度I（单位立体角的功率）。</p></div>
+
+<div class="qa-item"><p class="qa-q">Q: BRDF和相位函数看起来很相似，为什么它们被区别对待？</p>
+<p class="qa-a">A: BRDF实际上可以视为相位函数与散射反照率的组合，但由于历史和实用测量方法的原因，两者通常被分开处理。BRDF针对表面定义（只在上半球面有定义），相位函数针对体积中的粒子定义（在全球面有定义）。在代码中给它们统一表示是可以的，但需要对习惯BRDF用于表面的人做适当解释。</p></div>
+
+<div class="qa-item"><p class="qa-q">Q: 全内反射的临界角是如何推导出来的？</p>
+<p class="qa-a">A: 从斯涅尔定律出发：n<sub>i</sub> sinθ<sub>i</sub> = n<sub>t</sub> sinθ<sub>t</sub>。当折射角θ<sub>t</sub>=90°时（折射光线恰好贴界面传播），sinθ<sub>t</sub>=1，此时sinθ<sub>i</sub> = n<sub>t</sub>/n<sub>i</sub>。如果n<sub>i</sub> > n<sub>t</sub>（光从密介质进入疏介质），则n<sub>t</sub>/n<sub>i</sub> < 1，θ<sub>i</sub> = arcsin(n<sub>t</sub>/n<sub>i</sub>)是有定义的。超过此角的入射将导致sinθ<sub>t</sub> > 1（无实数解），说明折射光线不存在——全部光被反射。这就是临界角的推导。</p></div>
+
+<div class="qa-item"><p class="qa-q">Q: 为什么微面元BRDF模型中分母有4|ω<sub>i</sub>·n||ω<sub>o</sub>·n|？</p>
+<p class="qa-a">A: 这个归一化因子来自微面元几何框架中的坐标变换。当从宏观表面BRDF推导微观面元贡献时，需要将微面元的投影面积（dA<sub>micro</sub> = dA·|h·n|/|ω<sub>i</sub>·n|）和立体角变换的Jacobian组合起来。4这个因子来自半程向量h与入射/出射方向之间的变换关系——具体地，dω<sub>h</sub> = dω<sub>o</sub>/(4|ω<sub>o</sub>·h|)，而这又涉及h到ω<sub>o</sub>的Jacobian。最终归一化形式为 1/(4|ω<sub>i</sub>·n||ω<sub>o</sub>·n|)，确保了微面元BRDF在镜面极限下退化为菲涅尔反射。</p></div>
+
+<div class="qa-item"><p class="qa-q">Q: 光子映射为什么是有偏的？PPM如何解决这个问题？</p>
+<p class="qa-a">A: 光子映射的KNN辐射亮度估计假设"在半径为r的圆盘内入射辐射亮度恒定"，这在实际中不成立——因此估计总是有偏的。偏差的大小正比于辐射亮度的局部变化率和r²。PPM不消除偏差，而是通过渐进缩小搜索半径(r→0)使偏差趋于零——每次迭代使用新鲜光子并在更小的半径内搜索，使得最终的极限解一致。因此PPM是"渐进一致的"而非"无偏的"。</p></div>
+
+</body></html>

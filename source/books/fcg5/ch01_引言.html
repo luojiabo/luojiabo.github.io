@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FCG Ch01: Introduction — 全文翻译 (Guizang插图版)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Noto Serif SC","Source Han Serif SC","SimSun",Georgia,serif;background:#faf9f5;color:#2c2c2c;line-height:1.9;font-size:15px;max-width:860px;margin:0 auto;padding:40px 24px}
+h1{font-size:28px;text-align:center;margin:40px 0 10px;color:#1a1a1a;border-bottom:2px solid #002FA7;padding-bottom:16px}
+h2{font-size:22px;margin:48px 0 20px;color:#1a1a1a;border-left:4px solid #002FA7;padding-left:14px}
+h3{font-size:17px;margin:32px 0 14px;color:#333}
+p{margin:12px 0;text-indent:2em}
+p.no-indent{text-indent:0}
+blockquote{background:#f0f0ed;border-left:3px solid #002FA7;margin:16px 0;padding:10px 18px;color:#555;font-style:italic}
+blockquote p{text-indent:0}
+code{background:#eee;padding:1px 5px;border-radius:3px;font-family:Consolas,monospace;font-size:13px}
+pre{background:#1e1e1e;color:#d4d4d4;padding:16px 20px;border-radius:6px;overflow-x:auto;font-size:13px;line-height:1.5;margin:14px 0}
+pre code{background:transparent;padding:0;color:inherit}
+figure{margin:28px 0;text-align:center}
+figure img{max-width:100%;border-radius:4px;box-shadow:0 2px 12px rgba(0,0,0,0.08)}
+figcaption{font-size:13px;color:#777;margin-top:8px}
+.fig-num{font-weight:700;color:#002FA7}
+.key-term{font-weight:600;color:#002FA7}
+.thought-box{background:#f5f8fc;border:1px solid #c8d6e5;border-radius:6px;padding:12px 18px;margin:16px 0}
+.thought-box p{text-indent:0;margin:4px 0}
+.insight-box{background:#fdf8f0;border:1px solid #e8d5b0;border-radius:6px;padding:14px 20px;margin:24px 0}
+.insight-box h3{color:#b8860b;margin:0 0 10px 0;font-size:16px}
+.insight-box ul{margin:0;padding-left:20px}
+.insight-box li{margin:6px 0}
+.objectives-box{background:#f5f8fc;border:1px solid #002FA7;border-left:6px solid #002FA7;border-radius:6px;padding:14px 22px;margin:24px 0}
+.objectives-box h3{color:#002FA7;margin:0 0 10px 0;font-size:17px}
+.objectives-box ol{margin:0;padding-left:22px}
+.objectives-box li{margin:6px 0;line-height:1.7}
+.qa-item{margin:16px 0;padding:10px 16px;background:#fafafa;border-left:3px solid #002FA7}
+.qa-item .qa-q{font-weight:600;color:#002FA7;text-indent:0;margin:0 0 6px 0}
+.chapter-header{display:flex;align-items:center;gap:12px;padding:12px 0;margin:-40px -24px 24px;border-bottom:2px solid #002FA7;font-family:"Noto Sans SC",sans-serif;background:#faf9f5}
+.chapter-header #logo{font-weight:700;color:#002FA7;font-size:14px;letter-spacing:0.5px}
+.chapter-header #sep{color:#999;font-size:14px}
+.chapter-header #cur{color:#333;font-size:14px;flex:1}
+.chapter-header #btns{display:flex;gap:8px}
+.hdr-btn{background:#fff;border:1px solid #002FA7;color:#002FA7;padding:4px 12px;font-size:12px;border-radius:4px;text-decoration:none;display:inline-block}
+.hdr-btn:hover{background:#002FA7;color:#fff}
+.chapter-header button{background:#fff;border:1px solid #002FA7;color:#002FA7;padding:4px 12px;font-size:12px;cursor:pointer;border-radius:4px;font-family:inherit}
+.chapter-header button:hover{background:#002FA7;color:#fff}
+
+.lecture-note{background:#f5f8fc;border:1px solid #b8c8d8;border-left:5px solid #002FA7;border-radius:6px;padding:14px 22px;margin:24px 0 18px}
+.lecture-note strong{display:block;color:#002FA7;font-size:16px;margin-bottom:8px}
+.lecture-note p{margin:6px 0;text-indent:0;font-size:14px;line-height:1.75;color:#444}
+
+.qa-item .qa-a{text-indent:0;margin:0}
+details{margin:12px 0;padding:8px 16px;background:#f9f9f9;border:1px solid #e0e0e0;border-radius:4px}
+details summary{font-weight:600;cursor:pointer;color:#002FA7}
+details p,details ol,details ul{margin:8px 0;text-indent:0}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:14px}
+table th{background:#002FA7;color:#fff;padding:8px 12px;text-align:left}
+table td{border-bottom:1px solid #ddd;padding:8px 12px}
+table tr:nth-child(even){background:#f5f5f5}
+.toc{background:#fff;border:1px solid #e0e0e0;border-radius:6px;padding:16px 24px;margin:20px 0;font-size:14px}
+.toc strong{display:block;margin-bottom:8px;font-size:16px}
+.toc ul{list-style:none;padding-left:8px}
+.toc li{margin:4px 0}
+.toc a{color:#002FA7;text-decoration:none}
+.toc a:hover{text-decoration:underline}
+.nav-bar{background:#fff;border-bottom:1px solid #e0e0e0;padding:10px 20px;margin:-40px -24px 30px;display:flex;gap:16px;font-size:13px;flex-wrap:wrap}
+.nav-bar a{color:#555;text-decoration:none}
+.nav-bar a:hover{color:#002FA7}
+.nav-bar .active{color:#002FA7;font-weight:700}
+</style></head><body>
+<div class="chapter-header">
+  <span id="logo">FCG 5E</span>
+  <span id="sep">/</span>
+  <span id="cur">Ch1 引言</span>
+  <span id="btns">
+    <a href="#目录" class="hdr-btn">[=] 目录</a>
+    <a href="#s1-1"><button>[+] 章节</button></a>
+  </span>
+</div>
+
+
+
+<div class="nav-bar">
+<a href="#s1-1">1.1</a> <a href="#s1-2">1.2</a> <a href="#s1-3">1.3</a> <a href="#s1-4">1.4</a> <a href="#s1-5">1.5</a> <a href="#s1-6">1.6</a> <a href="#s1-7">1.7</a>
+</div>
+
+<h1>第1章：引言</h1>
+<div class="lecture-note">
+<strong>说明</strong>
+<p>本讲义基于 Steve Marschner &amp; Peter Shirley 所著《虎书》（Fundamentals of Computer Graphics）第5版第1章（p.22-29）引言。</p>
+<p>计算机图形学的概念边界——四大学科方向（建模/渲染/动画/交互）、图形管线概述、数字精度、编码实践。本章为全书定调。</p>
+<p>本版插画采用 Guizang 材质插画风格重新绘制。</p>
+</div>
+
+
+
+<div class="toc" id="目录">
+<strong>目录</strong>
+<ul>
+<li><a href="#学习目标">学习目标</a></li>
+<li><a href="#s1-1">1.1 什么是计算机图形学</a></li>
+<li><a href="#s1-2">1.2 计算机图形学的应用</a></li>
+<li><a href="#s1-3">1.3 图形管线简述</a></li>
+<li><a href="#s1-4">1.4 数字问题</a></li>
+<li><a href="#s1-5">1.5 效率</a></li>
+<li><a href="#s1-6">1.6 图形程序的设计与编码</a></li>
+<li><a href="#s1-7">1.7 本书结构</a></li>
+<li><a href="#insights">本章核心洞察</a></li>
+<li><a href="#exercises">课后练习题</a></li>
+<li><a href="#qa">QA 零基础问答区</a></li>
+</ul>
+</div>
+
+<h2 id="学习目标">学习目标</h2>
+<ol>
+
+  <li>理解计算机图形学的四大子领域（建模、渲染、动画、交互）及其相互关系</li>
+  <li>掌握图形管线的六个核心阶段（顶点处理→光栅化→片元处理→输出合并）</li>
+  <li>熟悉浮点数（IEEE float/double）精度、epsilon 选择和稳定性等数字陷阱</li>
+  <li>理解效率设计的三大原则（一致性、近似、硬件契合）</li>
+  <li>了解 AoS vs SoA 类设计、float vs double 选型、四大调试技术</li>
+</ol>
+<hr>
+
+<figure>
+<img src="images/ch01_full/fig01_overview.png" alt="计算机图形学概览">
+<figcaption><span class="fig-num">图 1.1</span> — 计算机图形学领域全景：从三维建模、渲染到交互式游戏引擎，涵盖光栅化、光线追踪、信号处理和着色等核心技术。（Guizang 插画）</figcaption>
+</figure>
+
+<p class="no-indent"><span class="key-term">计算机图形学</span>（computer graphics）是利用计算机生成和操作图像的研究领域。这个领域涵盖了从数学基础到硬件实现、从渲染算法到交互技术的广泛主题。本书旨在提供基础知识，使读者能够理解和编写现代图形程序。计算机图形学是一个快速发展的领域：新的算法、新的硬件和新的应用不断涌现。然而，一些基本的原理和技术构成了该领域的核心，并且在过去的几十年中一直保持稳定——这些正是本书所涵盖的内容。</p>
+
+<p>计算机图形学本质上是在计算机中表示视觉信息的过程。这涉及到两个基本方向：<span class="key-term">合成</span>（synthesis）——从描述中生成图像——和<span class="key-term">分析</span>（analysis）——从图像中提取描述。本书主要关注合成，但也涉及一些对于理解图像如何被捕获和处理所必需的分析主题。</p>
+
+<blockquote><p><strong>生活类比：</strong>计算机图形学就像是虚拟世界的摄影。你要搭建场景（建模），安排灯光和镜头（渲染），最终按快门得到一张二维图片。区别在于，这一切都是在数学空间中发生的——没有物理相机，只有变换矩阵和光线方程。</p></blockquote>
+
+<!-- ==================== 1.1 ==================== -->
+<h2 id="s1-1">1.1 什么是计算机图形学</h2>
+
+<p>计算机图形学是一个涉及计算机生成和操作视觉内容的广阔领域。它包括从照片级真实感渲染到交互式用户界面的所有内容。该领域大致可以分为四个相互关联的子领域：</p>
+
+<figure>
+<img src="images/ch01_full/fig_cg_cv_ip_triangle.png" alt="CG/CV/IP三角关系">
+<figcaption><span class="fig-num">图 1.1b</span> — 计算机图形学（合成）、计算机视觉（分析）与图像处理（变换）的三角关系。三者共享光照模型、投影几何、滤波理论等数学基础，但数据流向截然相反。</figcaption>
+</figure>
+
+<p>在深入四个子领域之前，有必要厘清计算机图形学与两个近邻领域——<span class="key-term">计算机视觉</span>（Computer Vision）和<span class="key-term">图像处理</span>（Image Processing）——之间的区别与联系。这三者构成了视觉计算的"三角关系"：</p>
+
+<ul>
+<li><span class="key-term">计算机图形学</span>——从模型到图像（合成）：输入是三维场景描述（几何体、材质、光照），输出是二维图像。核心问题："这个场景看起来是什么样子？"</li>
+<li><span class="key-term">计算机视觉</span>——从图像到模型（分析）：输入是二维图像，输出是场景描述（物体识别、深度估计、三维重建）。核心问题："这幅图像里有什么？"方向恰与图形学相反。</li>
+<li><span class="key-term">图像处理</span>——从图像到图像（变换）：输入和输出都是二维图像（滤波、增强、压缩、风格迁移）。核心问题："如何改善或转换这幅图像？"</li>
+</ul>
+
+<p>这三者在数学工具上有大量重叠——投影几何、傅里叶分析、滤波理论、优化方法——但在数据流向上截然不同。图形学是"前向"问题（模型→图像），视觉是"逆向"问题（图像→模型），图像处理是"自映射"问题（图像→图像）。近年来，三者的边界日益模糊：基于图像的渲染（IBR）用照片重建场景后重新渲染；神经渲染（NeRF、3D Gaussian Splatting）用视觉中的优化技术解决图形学问题；实时图形系统越来越多地集成视觉模块（手势追踪、SLAM）来驱动交互。理解这种三角关系有助于更清晰地定位本书的主题——本书以合成（图形学）为主线，但也会涉及必要的分析和变换技术。</p>
+
+<ul>
+<li><span class="key-term">建模</span>（Modeling）：创建和表示三维形状——从简单的几何图元到复杂的有机表面。建模涉及数学表示（隐式方程、参数化曲面、三角形网格），以及如何创建和编辑这些表示的工具。</li>
+</ul>
+
+<p>建模的核心挑战在于在<span class="key-term">表现力</span>（expressiveness）与<span class="key-term">处理效率</span>（processing efficiency）之间取得平衡。不同的应用场景需要不同的建模范式：CAD 软件青睐精确的参数化曲面（如 NURBS），因为它们能无歧义地定义工业零件；电影特效则广泛使用多边形网格和细分曲面，因为它们可以灵活塑造任意复杂度的有机形态；体素和隐式曲面（如符号距离场 SDF）在流体模拟和医学可视化中有独特优势。每种表示方法都在表达精度、存储开销、编辑便捷性和渲染效率之间做了不同的取舍，没有一种范式在所有场景下都是最优的。</p>
+
+<p>现代建模工作流还涉及<span class="key-term">过程化生成</span>（procedural generation）——通过算法而非手工来创建几何体。地形可以用分形噪声自动生成，城市建筑可以用 L-system 规则递归构造，植被可以通过自相似的分枝算法产生。这种方法在开放世界游戏中尤为重要（例如《Minecraft》的无限世界或《无人深空》的宇宙规模生成），因为手工建模每棵树每栋建筑在人力上不可行。另一重要方向是<span class="key-term">三维扫描与重建</span>（3D scanning and reconstruction）——利用激光雷达（LiDAR）、结构光和摄影测量从真实世界捕获几何体——正在模糊建模与计算机视觉的边界，使真实世界可以"数字化克隆"到虚拟空间中。</p>
+
+<ul>
+<li><span class="key-term">渲染</span>（Rendering）：将三维场景描述转换为二维图像。这包括模拟光与表面相互作用的光照模型、生成图像投影的相机模型，以及高效生成像素的算法（光栅化或光线追踪）。渲染是本书的主要焦点。</li>
+</ul>
+
+<p>渲染可以划分为两大范式：<span class="key-term">光栅化</span>（rasterization）和<span class="key-term">光线追踪</span>（ray tracing）。光栅化从物体出发——将每一个三角形投影到屏幕上，确定它覆盖哪些像素，然后计算这些像素的颜色。这种方法与 GPU 硬件架构天然契合，是实现实时渲染（60+ FPS）的主力技术。光线追踪则从眼睛出发——从每个像素发射一条光线进入场景，追踪它与物体相交、反射、折射的路径，最终累积成该像素的颜色。光线追踪能自然处理全局光照效果（反射、折射、焦散、柔和阴影），但计算成本远高于光栅化。</p>
+
+<p>近年来，这两大范式的融合是渲染领域最重要的趋势。硬件光线追踪核心（NVIDIA RT Core、AMD Ray Accelerator）使得实时混合渲染成为可能——用光栅化处理主可见性，用光线追踪处理反射和阴影。渲染方程（The Rendering Equation, Kajiya 1986）为所有渲染算法提供了统一的数学框架：出射光 = 自发光 + 对入射光在所有方向上的反射进行积分。从最简单的 Phong 模型到最复杂的路径追踪，都是对这个积分方程的不同近似策略。而近年兴起的<span class="key-term">神经渲染</span>（neural rendering）——利用神经网络隐式地表示场景并合成新视角——正在从根本上挑战传统渲染的范式。</p>
+
+<ul>
+<li><span class="key-term">动画</span>（Animation）：随时间改变场景内容——物体移动、变形、出现和消失。动画涉及描述运动、插值关键帧、模拟物理和控制系统行为的技术。</li>
+</ul>
+
+<p>动画技术可以从控制层面上分为三个层级。<span class="key-term">关键帧动画</span>（keyframe animation）是艺术驱动的最底层方法：动画师在关键时间点手动设定角色的姿势，计算机自动插值中间帧。这种方法赋予艺术家完全的创作控制权，但劳动强度大。<span class="key-term">物理模拟</span>（physics simulation）则在更高层次上运作——只需定义物理规律（牛顿力学、流体动力学、弹性力学），计算机自动计算物体的运动轨迹。这种方法在自动生成逼真效果方面极为强大（如布料飘动、流体飞溅、刚体碰撞），但艺术家对细节的控制力减弱。最顶层是<span class="key-term">行为动画</span>（behavioral animation）和<span class="key-term">AI 驱动</span>技术——角色具有自主决策能力，如游戏 NPC 的寻路算法、Reynolds 鸟群算法的集群行为，或基于强化学习的运动生成（让虚拟角色自己"学会"走路和跑酷）。</p>
+
+<p>运动捕捉（motion capture）是连接真实世界与虚拟世界的重要桥梁：真人演员的动作被多台红外摄像机或惯性传感器记录下来，映射到数字角色上。这种方法在电影和游戏中被广泛应用——从《阿凡达》的纳美人到 FIFA 系列的足球运动员动作，再到《最后生还者》中角色的微妙表情。近年来，AI 辅助的动作生成（如扩散模型驱动的文本转动作）正在开辟全新可能：输入"一个老人蹒跚地爬楼梯"，模型自动生成相应的骨骼动画序列，大大降低了动画制作的门槛。</p>
+
+<ul>
+<li><span class="key-term">交互</span>（Interaction）：处理来自用户的输入（鼠标、键盘、触摸、运动传感器），并实时反馈视觉响应。交互依赖于高效的渲染和数据结构来处理每帧 1/60 秒时间预算内的场景变化。</li>
+</ul>
+
+<p>交互的核心约束是<span class="key-term">延迟</span>（latency）——从用户输入到屏幕更新的总时间。人类对视觉延迟极为敏感：超过 20ms 的延迟就开始削弱沉浸感，超过 50ms 会导致明显的操作不适。这意味着从输入设备→应用程序逻辑→场景更新→渲染管线→显示输出这整个闭环必须在数毫秒内完成。为达成此目标，图形系统采用了分层策略：低延迟的预测性渲染（如异步时间扭曲 ATW——在最后一刻根据头部旋转微调已渲染的画面），中间层的可中断渲染（如果新输入到来则放弃当前帧的计算），以及高层的场景简化（距离越远的物体用越低的细节级别 LOD 渲染）。</p>
+
+<p>交互技术本身也在持续演化。从最早的命令行和图形菜单，到 WIMP（窗口、图标、菜单、指针）范式，再到今天的多点触控手势和自然语言指令，再到明天的眼动追踪、脑机接口和手势识别——每一次交互革命都重新定义了人与计算机之间的视觉语言。虚拟现实和增强现实将交互推向了新的极端：用户的整个身体成为输入设备，图形系统必须在两只眼睛上各渲染 4K+ 90Hz 的画面，同时将运动到光子的延迟控制在 20ms 以内。</p>
+
+<p>这四个子领域不是隔离的——它们在一个图形系统中协同工作。一个典型的视频游戏帧涉及：从磁盘加载模型（建模），将角色动画化为当前姿势（动画），应用着色器和光照来确定每个像素的颜色（渲染），并实时响应玩家输入（交互）。</p>
+
+<div class="thought-box"><p><strong>想一想：</strong>在你最喜欢的视频游戏中，哪些视觉元素来自建模（如山体形状），哪些来自渲染（如光照和阴影），哪些来自动画（如角色运动）？这三者如何协同创造栩栩如生的体验？</p></div>
+
+<!-- ==================== 1.2 ==================== -->
+<h2 id="s1-2">1.2 计算机图形学的应用</h2>
+
+<p>计算机图形学已经渗透到现代生活的几乎各个方面。一些最重要的应用领域包括：</p>
+
+<ul>
+<li><span class="key-term">视频游戏</span>（Video games）：推动实时图形发展的最大市场。游戏引擎将建模、渲染、动画和交互性集成到一个针对每帧 30 或 60 次迭代优化的紧密循环中。AAA 游戏的预算可以与大片电影相媲美，而独立游戏则展示了图形学在艺术表达上的广度。</li>
+</ul>
+
+<p>现代 AAA 游戏的渲染管线是一种工程奇迹，每一帧涉及数百万个三角形和数千次绘制调用（draw call）。实时渲染的核心挑战在于在严格的时间预算内最大化视觉质量，游戏图形程序员利用一系列技术来实现这一目标：<span class="key-term">延迟渲染</span>（deferred rendering）将几何体处理与光照计算分离，以便高效处理大量动态光源；<span class="key-term">遮挡剔除</span>（occlusion culling）跳过不可见物体的渲染；<span class="key-term">LOD（细节级别）</span>系统根据物体距离动态切换模型复杂度；<span class="key-term">屏幕空间技术</span>（SSAO、SSR）在二维屏幕空间近似昂贵的全局效果。除了视觉渲染，<span class="key-term">物理引擎</span>（NVIDIA PhysX、Havok）负责模拟重力、碰撞、布料和流体，<span class="key-term">AI 系统</span>驱动 NPC 的行为决策和寻路，所有这些子系统必须在同一帧循环内高效协作。</p>
+
+<ul>
+<li><span class="key-term">电影与视觉特效</span>（Film and visual effects）：计算机生成的图像（CGI）在电影中无处不在——从隐形效果（去除威亚、替换背景）到完全渲染的数字角色和环境。虽然电影渲染通常以离线方式进行（每帧耗时数小时而非数毫秒），但所使用的渲染算法往往与实时图形共享相同的基础。</li>
+</ul>
+
+<p>电影视觉效果（VFX）的生产管线是一项复杂的系统工程，涉及多个高度专业化的阶段。<span class="key-term">运动捕捉</span>（motion capture）记录演员的身体和面部动作，将其映射到数字角色上——这项技术催生了 Gollum、凯撒（《猩球崛起》）和灭霸等令人难忘的 CG 角色。<span class="key-term">路径追踪</span>（path tracing）是电影渲染的主力算法，它模拟数十亿条光线的物理路径以产生照片级真实感的全局光照、焦散和柔和阴影，单帧可能需要数小时、跨越数百台机器的渲染农场。<span class="key-term">后期合成</span>（compositing）将多个渲染层（角色、背景、特效元素）无缝融合，调色师再对最终画面进行色彩分级（color grading），赋予影片其独特的视觉风格。近年来，LED 虚拟制片（如《曼达洛人》使用的 Stagecraft 技术）用实时游戏引擎（Unreal Engine）驱动的巨型 LED 墙替代绿幕，实现了"所见即所得"的拍摄体验，彻底模糊了制作与后期制作的边界。</p>
+
+<ul>
+<li><span class="key-term">科学可视化</span>（Scientific visualization）：将抽象数据转化为可理解的视觉形式——流体模拟、分子结构、天文数据、医学扫描。清晰度优先于真实感；目标是传达尽可能多的信息而不失真。</li>
+</ul>
+
+<p>科学可视化处理的数据类型极为广泛。对于三维标量场（如 CT 扫描中的密度值），<span class="key-term">体渲染</span>（volume rendering）是核心技术——它不提取等值面，而是直接对体素数据的光线吸收和发射进行积分，生成类似 X 光的半透明图像，让医生能够同时看到骨骼和软组织。对于矢量场（如空气动力学模拟中的流速数据），<span class="key-term">流线</span>（streamlines）、<span class="key-term">脉线</span>（pathlines）和<span class="key-term">纹线</span>（streaklines）用于可视化流动模式，而<span class="key-term">线积分卷积</span>（LIC）则将噪声纹理沿流线方向涂抹以产生密集的矢量方向视觉。对于高维数据集（如基因表达数据或金融时间序列），<span class="key-term">平行坐标图</span>和<span class="key-term">散点图矩阵</span>等降维可视化技术在二维屏幕上揭示高维空间中的聚类和趋势。<span class="key-term">热图</span>（heatmap）和<span class="key-term">伪彩色映射</span>（false-color mapping）则将标量值映射到精心设计的色阶上，使得人眼能够敏锐地辨别细微的数据差异——这些色阶通常避开彩虹色阶（因其感知不均匀），转而使用更科学的 viridis/magma/inferno 色阶。</p>
+
+<ul>
+<li><span class="key-term">计算机辅助设计</span>（CAD）：工程师和建筑师使用精确的几何体来设计从微芯片到摩天大楼的一切。CAD 图形必须准确且无歧义，通常使用与娱乐图形不同的渲染技术（线框、剖面、标注）。</li>
+</ul>
+
+<p>CAD 软件（如 AutoCAD、SolidWorks、CATIA、Revit）的核心需求是<span class="key-term">几何精度</span>而非视觉真实感。CAD 模型通常使用<span class="key-term">边界表示</span>（B-rep）——一种精确的拓扑数据结构，存储面、边、顶点之间的邻接关系——而非用三角形近似。曲面由<span class="key-term">NURBS</span>（非均匀有理 B 样条）表示，这是一种能以数学精度描述自由曲面的参数化形式，不会像三角网格那样产生离散化误差。<span class="key-term">参数化建模</span>（parametric modeling）是 CAD 的标志性方法论：设计由尺寸约束和几何关系驱动，修改一个参数（如孔径）会自动触发所有相关特征的重算——这一能力直接支持了迭代设计优化。<span class="key-term">约束求解器</span>（constraint solver）在幕后工作，将持续几何约束（平行、垂直、相切、同心）转化为可求解的方程系统。CAD 渲染通常使用<span class="key-term">非真实感渲染</span>（NPR）技术——线框视图用于精确编辑，带边面着色（shaded-with-edges）用于审阅，剖面视图用于展示内部结构——这些渲染模式的"清晰性"远超"真实感"。</p>
+
+<ul>
+<li><span class="key-term">用户界面</span>（User interfaces）：每个现代操作系统的桌面、窗口和图标在渲染时都使用图形技术。移动设备和可穿戴设备引入了新的约束（小屏幕、触摸交互、电池供电的 GPU），推动了对 UI 渲染方法的持续创新。</li>
+</ul>
+
+<p>用户界面图形学面临独特的挑战：清晰性和可读性是首要目标，性能影响必须最小化（UI 不能消耗过多电池），而可用性必须保持合理。现代 UI 渲染大量依赖<span class="key-term">矢量图形</span>（vector graphics）——字体、图标和界面元素被存储为解析曲线描述（贝塞尔曲线），在运行时按任意分辨率渲染。这使得 UI 能够在不同的屏幕密度下从 100 dpi 到 600+ dpi 保持清晰。<span class="key-term">字体抗锯齿</span>是 UI 渲染中最精微的图形问题之一：简单的灰度抗锯齿会模糊字体特征，所以现代系统采用<span class="key-term">子像素渲染</span>（如 Microsoft ClearType、Apple Core Text）——利用 LCD 面板每个像素由独立的红绿蓝子像素组成这一事实，在子像素级别进行采样，将水平分辨率提升 3 倍。移动端 UI 渲染另有电池约束：合成器（compositor）必须避免不必要的重绘，仅当内容实际变化时才提交 GPU 工作。</p>
+
+<ul>
+<li><span class="key-term">虚拟现实与增强现实</span>（VR and AR）：沉浸式显示器需要每个眼睛每帧渲染宽视场角图像，且延迟最小——这推动了图形硬件和渲染技术的极限。VR 需要低持久性显示器和高刷新率（90-120 Hz）来避免晕动症。</li>
+</ul>
+
+<p>VR 渲染必须在两只眼睛上独立渲染略有视差的图像以产生深度感（<span class="key-term">立体渲染</span>），这使像素吞吐量需求翻倍。在 90 Hz 刷新率下，每帧只有约 11 ms 进行整个渲染过程——任何超时都会触发重投影（reprojection）或导致丢帧。为此，VR 系统广泛采用<span class="key-term">注视点渲染</span>（foveated rendering）：利用人眼仅对凝视中心（约 2° 视角）具有高分辨率的特性，以全分辨率仅渲染用户正在观看的区域，而将外围区域逐渐降低分辨率——潜在的像素节省量可达 50-80%。<span class="key-term">异步时间扭曲</span>（Asynchronous Time Warp, ATW）是另一项关键 VR 技术：在渲染帧之后但在显示之前，根据最新的头部追踪数据对图像进行微小的透视变换，从而将感知延迟从数十毫秒降低到数毫秒。AR 系统（如 HoloLens 或 Apple Vision Pro）在此基础上添加了将虚拟物体与真实世界无缝融合的额外复杂性——环境理解（空间映射、光照估计、遮挡检测）必须在渲染循环中与图形操作协同进行。</p>
+
+<div class="thought-box"><p><strong>想一想：</strong>科学可视化中的"清晰性"和电影特效中的"真实感"有何不同？为什么 CAD 软件宁愿选择线框渲染而非照片级真实感？VR/AR 中注视点渲染为什么能"欺骗"人眼而不被察觉——我们视觉系统中的哪些特性使其成为可能？</p></div>
+
+<!-- ==================== 1.3 ==================== -->
+<h2 id="s1-3">1.3 图形管线简述</h2>
+
+<p>现代图形系统围绕<span class="key-term">图形管线</span>（graphics pipeline）进行组织——这是一个将三维几何体转换为屏幕像素的高效硬件架构。虽然整本书都在介绍这条管线的各个组件（并在第 9 章中集中讨论），但在这里给出一个简要概述是有帮助的。</p>
+
+<figure>
+<img src="images/ch01_full/fig_pipeline_overview.png" alt="图形管线六阶段概览">
+<figcaption><span class="fig-num">图 1.2</span> — 现代图形管线的六大阶段：从应用程序输入的顶点数据流经顶点着色器、曲面细分、几何着色器、光栅化、片元着色器，最终到达输出合并阶段生成屏幕像素。其中曲面细分和几何着色器为可选阶段。</figcaption>
+</figure>
+
+<p>现代图形管线（以 Direct3D 11+ / OpenGL 4+ / Vulkan 为代表）包含以下六个主要阶段，前三个阶段是可编程的（由开发者编写的着色器控制），光栅化是固定功能的（由 GPU 硬件实现），片元着色器是可编程的，输出合并是固定功能与可配的混合：</p>
+
+<table>
+<thead><tr><th>阶段</th><th>输入</th><th>输出</th><th>可编程?</th></tr></thead>
+<tbody>
+<tr><td><strong>1. 顶点着色器</strong></td><td>顶点缓冲（位置、法线、UV、颜色等每顶点属性）</td><td>变换后的顶点（裁剪空间坐标 + 插值属性）</td><td>✅ 是</td></tr>
+<tr><td><strong>2. 曲面细分</strong></td><td>面片（Patch）：控制点 + 细分因子</td><td>细化的三角形网格（更多顶点）</td><td>✅ 可选</td></tr>
+<tr><td><strong>3. 几何着色器</strong></td><td>完整图元（三角形/线段/点）+ 邻接信息</td><td>零个或多个新图元（可增删）</td><td>✅ 可选</td></tr>
+<tr><td><strong>4. 光栅化</strong></td><td>屏幕空间三角形 + 顶点属性</td><td>片元（fragments）：像素候选 + 插值属性</td><td>❌ 固定</td></tr>
+<tr><td><strong>5. 片元着色器</strong></td><td>片元（插值后的 UV、法线、世界位置等）</td><td>颜色值（RGBA） + 深度值</td><td>✅ 是</td></tr>
+<tr><td><strong>6. 输出合并</strong></td><td>片元颜色/深度 + 帧缓冲当前内容</td><td>最终帧缓冲像素值（显示到屏幕）</td><td>❌ 可配</td></tr>
+</tbody>
+</table>
+
+<h3>阶段 1：顶点着色器（Vertex Shader）</h3>
+<p>顶点着色器是管线中第一个可编程阶段，也是唯一必须由开发者提供的着色器。它对每个输入顶点独立执行（利用 GPU 的大规模并行性），从不访问相邻顶点的数据。顶点的核心任务是坐标变换——通过乘以<span class="key-term">模型-视图-投影</span>（MVP）矩阵，将顶点从物体局部空间依次变换到世界空间、相机空间、裁剪空间，最终到达归一化设备坐标（NDC，Normalized Device Coordinates，x,y,z 均在 [-1,1] 范围内）。除了位置变换，顶点着色器还可以执行法线变换（使用逆转置矩阵保持垂直性）、纹理坐标传递（通常直接透传到后续阶段，也可在着色器内部生成如投影纹理坐标）、以及顶点级别的简单光照计算（在 Gouraud 着色中使用，不过现代管线更倾向于在片元着色器中做光照）。输入来自顶点缓冲对象（VBO），多个顶点属性（位置、法线、UV、颜色、骨骼权重）通过顶点数组对象（VAO）描述布局，输出是裁剪空间坐标和一组用于光栅化阶段插值的属性。</p>
+
+<h3>阶段 2：曲面细分（Tessellation）——可选</h3>
+<p>曲面细分是 Direct3D 11 / OpenGL 4.0 引入的可选管线阶段，允许 GPU 在运行时动态生成额外的几何体——本质上是将一块粗粒度的"面片"（patch）细分为更密的三角形网格。此阶段本身包含三个子阶段：<span class="key-term">外壳着色器</span>（Hull Shader / Tessellation Control Shader）接收面片的控制点并设置细分因子（每个边缘的细分数和内部的细分数）；<span class="key-term">固定功能细分器</span>（Tessellator）根据细分因子在实际硬件中以极高效率生成新的顶点和拓扑结构；<span class="key-term">域着色器</span>（Domain Shader / Tessellation Evaluation Shader）使用重心坐标对控制点进行求值（例如通过贝塞尔或 B 样条基函数），将每个新顶点置于正确的表面位置并变换到裁剪空间。曲面细分的主要应用场景包括：自适应细节级别（让近处的表面拥有更多三角形）、位移映射（在平滑的粗网格上通过高度图添加几何细节）、以及光滑表面的高效表示（如角色面部和车身曲面）。</p>
+
+<h3>阶段 3：几何着色器（Geometry Shader）——可选</h3>
+<p>几何着色器处理的是<span class="key-term">完整图元</span>（整个三角形、线段或点），而非单个顶点。这赋予它独特的能力：它可以直接从顶点着色器输出获取一个三角形，并生成零个、一个或多个新图元作为输出。这个能力支持多种有趣的图形技术：<span class="key-term">几何体生成</span>——例如从点数据生成面向相机的四边形（billboard）粒子，或在每帧动态生成草的叶片；<span class="key-term">阴影体挤出</span>——通过将三角形边缘沿光照方向拉伸来生成阴影体积几何体；<span class="key-term">立方体贴图的一遍渲染</span>——将一个三角形复制到立方体贴图的六个面上（虽然现代做法更倾向于使用多重渲染目标或实例化）。需要注意的是，几何着色器的性能在某些 GPU 架构上可能成为瓶颈（因为其输出数据量不可预测），因此现代引擎通常尽可能避免使用它，转而用计算着色器（compute shader）或网格着色器（mesh shader，D3D12/Vulkan 中的更新替代方案）来处理此类任务。</p>
+
+<h3>阶段 4：光栅化（Rasterization）</h3>
+<p>光栅化是管线中最重要的固定功能阶段——它将连续的三角形几何体转换为离散的像素（<span class="key-term">片元</span>）。对于每个三角形，光栅化器确定该三角形覆盖屏幕上的哪些像素（通过边的测试：判断像素中心点是否在三角形三条边的"内侧"），并为每个被覆盖的像素生成一个片元。在这个阶段，插值也在硬件中自动进行：屏幕空间顶点属性（颜色、纹理坐标、法线、世界空间位置等）通过<span class="key-term">透视校正插值</span>（perspective-correct interpolation）在三角形的片上精确计算。光栅化器的输出是片元的流——每个片元携带其在三角形内的插值属性以及屏幕空间位置。光栅化还负责<span class="key-term">裁剪</span>（clipping）：完全在视锥体外的三角形被直接丢弃，跨越视锥体边界的三角形被分割，仅保留可视部分。此外，<span class="key-term">背面剔除</span>（back-face culling）在此阶段之前执行——根据三角形的缠绕顺序（顺时针或逆时针），背对相机的面被丢弃，通常能节省约 50% 的片元处理量。</p>
+
+<h3>阶段 5：片元着色器（Fragment Shader / Pixel Shader）</h3>
+<p>片元着色器是管线中计算密度最高的阶段——它对每个片元独立执行（或至少以小的 2x2 四元组为单位），计算该片元最终的 RGBA 颜色和深度值。片元着色器的输入是所有光栅化器插值的顶点属性：纹理坐标用于从纹理中采样颜色（使用硬件纹理单元和 MIP 映射）；世界空间法线和位置用于光照计算（Phong、Blinn-Phong、基于物理的 BRDF）；阴影贴图采样用于确定片元是否处于阴影中。片元着色器的输出包括颜色值（写入帧缓冲）和可选的深度值（覆盖光栅化器计算的默认深度）。片元着色器对性能至关重要——一个有 1920×1080 分辨率且深度复杂度为 2（每个像素平均被两个三角形覆盖）的场景，需要约 400 万次片元着色器调用。因此，现代 GPU 提供了<span class="key-term">提前深度测试</span>（early-Z）优化：在执行片元着色器之前先检查深度缓冲，如果片元被已有几何体遮挡就跳过昂贵的着色计算。这意味着在可能的情况下，应在渲染不透明物体之后才渲染透明物体，以最大限度利用 early-Z 的优势。</p>
+
+<h3>阶段 6：输出合并（Output Merger / Blend State）</h3>
+<p>输出合并是管线的最后阶段，负责将片元着色器的输出与帧缓冲中已有的内容结合。此阶段执行一系列固定功能的测试和操作：<span class="key-term">裁剪测试</span>（scissor test）丢弃落在指定矩形区域之外的片元；<span class="key-term">Alpha 测试</span>（在现代管线中通常在片元着色器内通过 <code>discard</code> 或 <code>clip</code> 指令实现）基于片元 alpha 值丢弃片元；<span class="key-term">模板测试</span>（stencil test）使用模板缓冲实现逐像素的遮罩——例如在平面反射、镜面和阴影体积渲染中，用模板缓冲标记哪些像素应接收反射图像；<span class="key-term">深度测试</span>（Z-test）是深度缓冲的核心——新片元的深度值与存储的深度比较，仅在更近（或更远，取决于比较函数）时才通过。通过所有测试的片元进入<span class="key-term">混合</span>（blending）阶段：新片元颜色与帧缓冲中已有的颜色按公式 <code>finalColor = srcColor × srcFactor + dstColor × dstFactor</code> 混合，这对于渲染透明物体、粒子效果和 UI 元素至关重要。混合操作后，最终像素值写入帧缓冲，准备用于屏幕显示（或作为后续渲染通道的输入纹理）。</p>
+
+<p>这种分解——受到 GPU 生产的数十亿规模的高度并行化的推动——使图形管线能够以极高的效率处理大量几何体。理解每个阶段的功能和数据格式使程序员能够编写利用硬件优势同时规避其局限性的着色器。值得注意的是，顶点和片元着色器是必选阶段，而曲面细分和几何着色器则仅在需要时启用——不声明这些着色器意味着 GPU 硬件中的相应固定功能单元可以直接传递数据，零开销。</p>
+
+<div class="thought-box"><p><strong>想一想：</strong>图形管线中哪些阶段适合大规模并行（每个元素独立处理），哪些阶段必须维持严格的顺序？试着逐阶段判断——顶点着色器处理一个顶点时能否访问另一个顶点的数据？光栅化器处理一个三角形时是否与其他三角形冲突？输出合并阶段遇到两个片元写入同一个像素时怎么办？</p></div>
+
+<!-- ==================== 1.4 ==================== -->
+<h2 id="s1-4">1.4 数字问题</h2>
+
+<p>图形程序在离散的数字表示上运行，而这些数字表示仅是真实数学值的近似。任何一个编写过重要图形代码的人都知道，<span class="key-term">浮点精度</span>（floating-point precision）问题可能极其棘手。IEEE 754 标准定义了大多数现代硬件使用的浮点格式。一个 32 位 IEEE float 具有 23 位尾数（约 7 位十进制数字的精度）和 8 位指数（范围约 10⁻³⁸ 到 10³⁸）。在图形学中，这带来了一些具体挑战。</p>
+
+<h3>1.4.1 IEEE 754 浮点数的结构</h3>
+<p>IEEE 754 单精度（32-bit float）的位布局为：<code>[符号位:1] [指数:8] [尾数:23]</code>。数值计算公式为：<code>value = (−1)^s × (1.m) × 2^(e−127)</code>，其中 <code>s</code> 是符号位，<code>m</code> 是 23 位尾数（隐含前导 1），<code>e</code> 是 8 位指数的实际值。例如，十进制 6.5 的二进制表示为 110.1 = 1.101 × 2²，存储的指数 = 127 + 2 = 129 (10000001)，尾数 = 101000...（省略前导 1），符号位 = 0。双精度（64-bit double）的布局类似但更宽：1 位符号 + 11 位指数（偏移 1023）+ 52 位尾数，提供约 15-16 位十进制精度。</p>
+
+<p>除了正常数值，IEEE 754 还定义了三种<span class="key-term">特殊值</span>，这些值在图形计算中会自然出现且必须正确处理：</p>
+
+<table>
+<thead><tr><th>特殊值</th><th>位模式（符号/指数/尾数）</th><th>含义</th><th>产生方式</th></tr></thead>
+<tbody>
+<tr><td><strong>+∞（正无穷）</strong></td><td>0 / 全1 / 全0</td><td>超过最大可表示范围</td><td>1.0 / 0.0 或极大数溢出</td></tr>
+<tr><td><strong>−∞（负无穷）</strong></td><td>1 / 全1 / 全0</td><td>负方向超过最大范围</td><td>−1.0 / 0.0 或极大负数溢出</td></tr>
+<tr><td><strong>NaN（非数值）</strong></td><td>任意 / 全1 / 非全0</td><td>无定义的数学结果</td><td>0/0、√(−1)、∞−∞、∞×0</td></tr>
+<tr><td><strong>+0 / −0</strong></td><td>0或1 / 全0 / 全0</td><td>有符号的零</td><td>下溢或 −0.0 直接指定</td></tr>
+</tbody>
+</table>
+
+<p>这些特殊值参与运算的规则非常重要，因为在图形代码中——尤其在着色器中——溢出和除零并不罕见：</p>
+
+<table>
+<thead><tr><th>运算</th><th>结果</th><th>运算</th><th>结果</th></tr></thead>
+<tbody>
+<tr><td>∞ + any</td><td>∞</td><td>NaN + any</td><td>NaN</td></tr>
+<tr><td>∞ × any (≠0)</td><td>∞（符号正确）</td><td>NaN × any</td><td>NaN</td></tr>
+<tr><td>∞ × 0</td><td>NaN</td><td>any / NaN</td><td>NaN</td></tr>
+<tr><td>any / ∞</td><td>0（符号正确）</td><td>any < NaN</td><td>false（永远为假）</td></tr>
+<tr><td>any / 0</td><td>±∞（符号取决于 any）</td><td>NaN == NaN</td><td>false（NaN 不等于任何值，包括自己）</td></tr>
+<tr><td>∞ − ∞</td><td>NaN</td><td><code>isfinite(NaN)</code></td><td>false</td></tr>
+</tbody>
+</table>
+
+<p>在图形编程中，NaN 尤其危险——它是"传染性的"：一旦某个中间计算结果变成 NaN，所有后续依赖该值的运算都会产生 NaN。例如，着色器中单位法线向量的归一化运算 <code>normalize(v)</code> 如果遇到零向量，<code>length(v) = 0</code> 导致除法 <code>v / 0</code>，从而产生 NaN 颜色值，最终像素显示为异常的霓虹紫或纯黑色（取决于 GPU 如何处理 NaN）。排查着色器中的 NaN 通常需要使用类似 <code>isnan()</code> 的调试着色器或用判断条件捕获。</p>
+
+<h3>1.4.2 Epsilon 容差：何时相等才算是相等</h3>
+<p>在数学中，如果两个数之差等于零，则它们相等。在浮点数中，直接比较 <code>a == b</code> 几乎永远是错误的——因为舍入误差意味着即使数学上相等的两个量也可能在存储为 float 时产生微小的差异。因此，图形代码中几乎总是使用<span class="key-term">epsilon 容差</span>进行比较：</p>
+
+<pre><code>// 错误做法——几乎永远不会可靠
+if (a == b) { ... }
+
+// 正确做法——检查是否"足够接近"
+if (fabs(a - b) < epsilon) { ... }</code></pre>
+
+<p>选择正确的 epsilon 值至关重要。以下是实用指南：</p>
+
+<table>
+<thead><tr><th>场景</th><th>float epsilon</th><th>double epsilon</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>一般几何比较</td><td>1e-5 到 1e-6</td><td>1e-12 到 1e-14</td><td>大多数向量和点的容差</td></tr>
+<tr><td>法线 / 单位向量</td><td>1e-4 到 1e-6</td><td>1e-12</td><td>方向比较允许略宽松</td></tr>
+<tr><td>UV 坐标边界</td><td>1e-6 到 1e-7</td><td>1e-14</td><td>纹理采样对精度敏感</td></tr>
+<tr><td>"接近零"测试</td><td>1e-7</td><td>1e-15</td><td>检查浮点是否"足够小"</td></tr>
+<tr><td>严格精度要求</td><td>1e-7</td><td>1e-15</td><td>接近机器精度极限</td></tr>
+</tbody>
+</table>
+
+<p>要理解这些数值的来源，需要知道 float 的<span class="key-term">机器精度</span>（machine epsilon）——它是 1.0 与下一个可表示的 float 之间的差距——大约是 <code>1.19e-7</code>。所以 <code>1e-7</code> 是 float 能代表的最紧密容差。double 的机器精度约为 <code>2.22e-16</code>，因此 <code>1e-15</code> 是其极紧凑的容差。然而，在图形学中，容差通常需要比机器精度宽松几个数量级——因为数值在流经多个运算（矩阵乘法、归一化、三角函数）时累积误差，使得最终误差远大于单个操作的舍入误差。</p>
+
+<h3>1.4.3 浮点结合律陷阱：(a + b) + c ≠ a + (b + c)</h3>
+<p>实数加法满足结合律：<code>(a + b) + c</code> 永远等于 <code>a + (b + c)</code>。但浮点加法不满足——这一事实是图形编程中最令人困惑的错误来源之一。考虑以下具体示例（使用 float 精度）：</p>
+
+<pre><code>// 假设三个 float 值，量级差异很大
+float a = 1.0e8f;       // 100,000,000
+float b = -1.0e8f;      // -100,000,000
+float c = 1.0f;         // 1
+
+// 计算 (a + b) + c
+float left = (a + b) + c;   // (0.0) + 1.0 = 1.0  ✓
+
+// 计算 a + (b + c)，数值完全相同，但顺序不同
+float right = a + (b + c);  // 1.0e8 + (-1.0e8 + 1.0)
+                            // = 1.0e8 + (-99999992.0)  ← 1.0 被吃掉！
+                            // = 8.0  ✗ 应该等于 1.0！</code></pre>
+
+<p>在 <code>b + c</code> 中，当 <code>b</code>（量级 10⁸）加到 <code>c</code>（量级 10⁰）上时，<code>c</code> 的值在 float 的 7 位精度范围内完全被"吸收"——<code>c</code> 的贡献被舍入误差丢失了。这种现象称为<span class="key-term">吸收</span>（absorption）或<span class="key-term">灾难性取消</span>（catastrophic cancellation）。在图形代码中，这种陷阱出现的典型场景包括：</p>
+<ul>
+<li>将大量小的贡献（如每个光源对像素的贡献）累加到一个大的累积器时——累积器增长后，小的新贡献丢失</li>
+<li>在世界空间中远离原点处计算相邻顶点之间的向量差——大坐标相减导致精度骤降</li>
+<li>在蒙皮动画中叠加多根骨骼的加权变换——如果部分骨骼权重极小，它们的贡献可能被舍入取消</li>
+</ul>
+
+<p>两条平行线的交点可能由于舍入误差而产生轻微偏移。一个三角形可能会在它本应完全可见的时候被部分裁剪。当距离非常近的表面具有几乎相同的 z 缓冲值时，z-fighting（深度缓冲闪烁）会发生，而微小的浮点误差会导致它们交替地互相遮挡。在处理非常大或非常小的数字时——例如行星尺度的场景或亚像素的特征——float 的精度可能不够。</p>
+
+<p>一些实用的缓解策略包括：使用 <code>double</code>（64 位，约 15 位十进制数字的精度）来进行特别敏感的累积计算；在比较中引入 <span class="key-term">epsilon 容差</span>（epsilon tolerance）以允许细微的误差；尽可能将坐标保持在原点附近——远离原点的大坐标会浪费尾数比特来表示量级而非精度；对于需要稳定求和的场景，使用<span class="key-term">Kahan 求和算法</span>（Kahan summation algorithm）来跟踪和补偿累积误差；以及在对关键操作进行排序时，将量级相似的数值放在一起计算，避免大数吃小数。</p>
+
+<blockquote><p><strong>生活类比：</strong>用 float 做计算就像用只有 7 位数字的卷尺测量距离。量一段 1.2345678 米的距离时，只能记录 1.234568 米——丢失了最后一位。如果在测量房间的各个角落时反复舍入，累积误差可能导致"这个门框和那个墙角碰不上"的尴尬。</p></blockquote>
+
+<!-- ==================== 1.5 ==================== -->
+<h2 id="s1-5">1.5 效率</h2>
+
+<p>在图形学中，效率不仅仅是一个理想的属性——通常它是必需品。实时图形系统必须在每秒 16 或 33 毫秒（对于 60 或 30 Hz 的刷新率）内渲染整幅图像。即使离线渲染系统也必须在合理的时间范围内产生结果——不会为了一帧画面等待一年。追求效率驱动着图形学中的许多设计决策。</p>
+
+<h3>1.5.1 优化策略的五步层级</h3>
+<p>在面对需要优化的图形程序时，有经验的开发者会遵循一个层级化的方法——从产生最大回报的最简单修改开始，只有当真正必要时才向下深入。以下是推荐的优化策略层级：</p>
+
+<ol>
+<li><p><strong>第一步：写出直接且正确的代码（Write straightforward code）</strong>——在优化之前，确保程序产生正确的结果。一个运行很快但渲染结果错误的程序毫无价值。直接、清晰的代码也更容易被剖析（profiling）工具准确测量，更容易在看到准确的热点数据后进行针对性优化。过早优化（premature optimization）是图形编程中的著名反模式——对一段最终仅占 1% 运行时间的代码进行大量优化是徒劳的。</p></li>
+
+<li><p><strong>第二步：以优化模式编译（Compile with optimizations enabled）</strong>——令人惊讶的是，许多性能问题仅仅是因为在调试模式下运行而根本不存在。现代 C/C++ 编译器（GCC、Clang、MSVC）的优化模式（<code>-O2</code>、<code>-O3</code>、<code>/O2</code>）会执行大量优化：函数内联、循环展开、公共子表达式消除、死代码消除、向量化（SIMD 自动使用）。从 Debug 到 Release 的速度提升通常是 3×–10×，有时甚至更多。在测量性能之前，务必确认正运行的是优化后的构建。</p></li>
+
+<li><p><strong>第三步：性能剖析（Profile）</strong>——永远不要猜测瓶颈在哪里。使用专门的剖析工具来识别：哪些函数消耗了最多的 CPU 时间（热点），内存分配发生在哪里，哪些地方的缓存未命中率异常高，以及 GPU 端哪些着色器或绘制调用造成了瓶颈。<span class="key-term">CPU 端剖析器</span>包括 perf、VTune、Instruments 和 VerySleepy，而<span class="key-term">GPU 端剖析器</span>（RenderDoc、NVIDIA Nsight、PIX、Apple Metal Debugger）可以显示绘制调用时间、着色器使用情况和带宽消耗。剖析数据将优化工作引导到程序 10% 的那部分——这部分通常消耗 90% 的运行时间（90-10 法则）。</p></li>
+
+<li><p><strong>第四步：优化数据结构和算法（Optimize data structures and algorithms）</strong>——现在到了真正产生最大影响的环节。对于 CPU 端瓶颈，考虑使用层次数据结构（BVH、八叉树、KD 树）将对数时间替代线性搜索、将排序数组用于二分查找、或将哈希表用于 O(1) 查找。对于 GPU 端瓶颈，考虑减少绘制调用（通过实例化或合并网格）、优化纹理格式（使用压缩纹理如 BCn/ASTC 节省带宽）、调整 LOD 切换距离、或使用遮挡查询（occlusion queries）跳过隐藏几何体。数据结构层面的优化通常能带来 10×–100× 的加速——比微优化大得多的回报。</p></li>
+
+<li><p><strong>第五步：必要时深入汇编级别（Go to assembly if needed）</strong>——仅在前面所有步骤完成后，且剖析数据证明某个紧密循环确实成为了瓶颈，才考虑汇编级别的优化。这可能包括：手写 SIMD 指令（SSE/AVX/NEON）进行向量化操作、使用编译器内建函数（intrinsics）访问 SIMD 指令、或重新排列内存访问模式以更好地利用缓存预取（cache prefetching）。在汇编级别进行优化是费时且易错的，它应该被保留用于最关键的热点——这在整个代码库中不到 1%。</p></li>
+</ol>
+
+<h3>1.5.2 一致性：性能的倍增器</h3>
+<p>最重要的效率原则之一是利用<span class="key-term">一致性</span>（coherence）。一致性意味着相邻的事物在计算上表现相似。在空间上，相邻的像素往往被同一三角形覆盖；相邻的三角形往往共享边；相邻的光线往往击中同一物体。通过利用这些一致性——例如通过共享中间结果或使用层次数据结构跳过不必要的计算——可以实现数量级的加速。</p>
+
+<p>另一种关键策略是尽可能使用<span class="key-term">近似</span>（approximation）而非精确解。在许多情况下，一个快 10 倍且视觉上难以区分的近似，比一个慢很多但完美的解要好得多。图形学中到处都是这样的例子：使用环境光遮蔽来近似全局光照、使用 mipmapping 来近似适当的纹理滤波、使用阴影贴图来近似精确的光源可见性。诀窍是选择其误差在视觉上不冒犯的近似。</p>
+
+<h3>1.5.3 缓存局部性：内存访问的模式决定性能</h3>
+<p>在现代处理器上，内存访问速度紧随运算速度之后是第二大性能瓶颈。CPU 缓存（L1: ~32 KB, 4 周期延迟; L2: ~256 KB, 12 周期; L3: ~8 MB, 40 周期; 主存: ~200 周期）对<span class="key-term">访问模式</span>极为敏感。连续的内存访问比随机访问快数十倍——这一事实深刻地影响着图形数据结构的布局。</p>
+
+<p>考虑以下两种图像处理模式——两者对同一 2048×2048 的 RGBA 图像执行相同的逐像素操作，唯一的区别是遍历顺序：</p>
+
+<pre><code>// 模式 A：逐行遍历（cache-friendly）
+for (int y = 0; y &lt; 2048; y++)
+    for (int x = 0; x &lt; 2048; x++)
+        process(pixels[y][x]);
+
+// 模式 B：逐列遍历（cache-hostile）
+for (int x = 0; x &lt; 2048; x++)
+    for (int y = 0; y &lt; 2048; y++)
+        process(pixels[y][x]);  // 每步跨越 2048 个元素！</code></pre>
+
+<p>模式 A 按行遍历（在 C/C++ 中，二维数组的行连续存储在内存中），使得连续的像素访问实际上访问相邻的内存地址，L1 缓存线（通常 64 字节，容纳 4 个 RGBA 像素）被充分利用。模式 B 按列遍历，每一步访问的地址都与前一步相差整行（2048×4=8192 字节），导致几乎每次内存读取都发生 L1 缓存未命中，迫使 CPU 不断从慢得多的 L2/L3 或主存中重新加载数据。在典型的现代 CPU 上，模式 A 处理整个图像约需 <strong>4 ms</strong>，而模式 B 需要约 <strong>120 ms</strong>——<strong>30 倍的性能差异</strong>，仅仅因为改变了遍历顺序。</p>
+
+<p>这种原则在图形学的各个方面都有体现。在 GPU 上，<span class="key-term">波形/线程束执行</span>（wave/warp execution）使得相邻线程同时执行同一条指令——如果这些线程访问的内存地址是连续的（合并的内存访问），GPU 可以在一次内存事务中完成读取。如果它们向内存的不同区域离散地跳跃，同样的数据需要多次昂贵的事务。这正是为什么 SoA 布局在 GPU 上表现优异的原因所在：当线程束中的 32 个线程同时只读取位置属性时，SoA 将所有位置叠加在连续内存中，实现了完美的合并访问。</p>
+
+<p>这也是硬件设计中的一个核心张力：为图形学提供固定功能的专用硬件（如纹理单元、光栅化器）可以是极高效的，但牺牲了灵活性。可编程着色器的兴起体现了一种转变——以可编程的通用硬件取代固定功能的专用硬件，在计算能力和程序复杂性之间取得平衡。</p>
+
+<!-- ==================== 1.6 ==================== -->
+<h2 id="s1-6">1.6 图形程序的设计与编码</h2>
+
+<p>编写良好的图形程序需要兼顾数学基础和软件工程。本节讨论了几个对于图形代码特别重要的设计原则。</p>
+
+<h3 id="1-6-1">1.6.1 类设计</h3>
+
+<p>图形程序中常见的类包括表示几何对象的类（点、向量、射线、三角形）、变换（矩阵）、着色参数（材质、光源）和容器（网格、场景）。关键的设计决策涉及：</p>
+
+<ul>
+<li><strong>效率 vs. 抽象</strong>：一个 <code>Vector3</code> 类直接暴露 x、y、z 成员变量，可能比具有 getter/setter 的类更快，但灵活性较差。在图形学中，效率通常压倒抽象的纯粹性——Vector 类通常是一个简单结构体。</li>
+<li><strong>值语义 vs. 引用语义</strong>：小的数学类型（向量、点、颜色）通常应具有值语义（复制、传递和返回时按值），以避免因过多的指针间接访问而导致的缓存未命中。较大的对象（网格、纹理）按引用管理。</li>
+<li><strong>内存布局</strong>：对于通过管线传输的大规模数据集，<span class="key-term">数组结构体</span>（Array of Structures, AoS）vs. <span class="key-term">结构体数组</span>（Structure of Arrays, SoA）的布局直接决定了缓存性能。SoA 通常更适合 GPU 处理，因为它允许在访问单个属性时进行一致性内存访问。</li>
+</ul>
+
+<h4>AoS vs SoA：内存布局详解</h4>
+
+<p>理解 AoS 和 SoA 之间的差异对于图形程序员来说至关重要。以下对比揭示了同一组数据（三个顶点，每个带有位置、法线和纹理坐标）在两种布局下的内存排列：</p>
+
+<figure>
+<table style="font-family:Consolas,monospace;font-size:12px">
+<thead><tr><th colspan="8" style="text-align:center;background:#002FA7;color:#fff">AoS（数组结构体）— 每个顶点的全部属性连续存储</th></tr></thead>
+<tbody>
+<tr><td style="background:#e8f0fe;text-align:center;font-weight:700">V₀</td><td>V₀.x</td><td>V₀.y</td><td>V₀.z</td><td>V₀.nx</td><td>V₀.ny</td><td>V₀.nz</td><td>V₀.u</td></tr>
+<tr><td></td><td colspan="7">V₀.v | V₁.x | V₁.y | V₁.z | V₁.nx | V₁.ny | V₁.nz</td></tr>
+<tr><td></td><td colspan="7">V₁.u | V₁.v | V₂.x | V₂.y | V₂.z | V₂.nx | V₂.ny</td></tr>
+<tr><td></td><td colspan="7">V₂.nz | V₂.u | V₂.v | ···</td></tr>
+</tbody>
+</table>
+<figcaption>AoS 布局：同一顶点的所有属性在内存中相邻。有利于一次处理一个顶点的所有属性的代码模式（如模型加载器）。但在 GPU 只需读取位置时，法线和 UV 也被拖入缓存行，浪费 ¾ 的缓存容量。</figcaption>
+</figure>
+
+<figure>
+<table style="font-family:Consolas,monospace;font-size:12px">
+<thead><tr><th colspan="8" style="text-align:center;background:#002FA7;color:#fff">SoA（结构体数组）— 按属性分组，同属性所有顶点连续存储</th></tr></thead>
+<tbody>
+<tr><td style="background:#e8f0fe;text-align:center;font-weight:700">位置数组</td><td>V₀.x</td><td>V₀.y</td><td>V₀.z</td><td>V₁.x</td><td>V₁.y</td><td>V₁.z</td><td>V₂.x</td></tr>
+<tr><td></td><td colspan="7">V₂.y | V₂.z | ···</td></tr>
+<tr><td style="background:#e8f0fe;text-align:center;font-weight:700">法线数组</td><td>V₀.nx</td><td>V₀.ny</td><td>V₀.nz</td><td>V₁.nx</td><td>V₁.ny</td><td>V₁.nz</td><td>V₂.nx</td></tr>
+<tr><td></td><td colspan="7">V₂.ny | V₂.nz | ···</td></tr>
+<tr><td style="background:#e8f0fe;text-align:center;font-weight:700">纹理坐标数组</td><td>V₀.u</td><td>V₀.v</td><td>V₁.u</td><td>V₁.v</td><td>V₂.u</td><td>V₂.v</td><td>···</td></tr>
+</tbody>
+</table>
+<figcaption>SoA 布局：所有顶点的同一属性连续存储。当 GPU 线程束中的 32 个线程同时读取位置时，一次合并的内存事务可以填充整条缓存行——完美利用带宽。</figcaption>
+</figure>
+
+<p><strong>实际决策准则：</strong>如果程序主要在 CPU 端一次处理完整的顶点（如串行解析 OBJ 文件），AoS 可能更适合，因为处理循环需要顶点的所有属性。然而，如果数据将被上传到 GPU 进行并行顶点着色处理（绝大多数实时图形应用），SoA 几乎是严格更优的选择，因为它允许 GPU 对单个属性进行合并访问而不浪费带宽。现代图形 API（如 Vulkan 和 D3D12）通过<span class="key-term">绑定描述</span>（binding descriptions）原生支持 SoA 布局：为位置、法线和 UV 各声明一个独立的顶点缓冲，每个缓冲仅包含其属性数组。</p>
+
+<div class="thought-box"><p><strong>想一想：</strong>为什么一个 4×4 矩阵类（16 个 float）通常应该按值传递，而一个包含数百万个三角形的网格类必须按引用传递？这和拷贝成本以及意图（变换 vs. 共享）有什么关系？</p></div>
+
+<h3 id="1-6-2">1.6.2 Float vs. Double</h3>
+
+<p>在图形学中，使用 <code>float</code>（32 位）还是 <code>double</code>（64 位）是一个反复出现的实际决策。<code>float</code> 使用更少的带宽和内存，在现代 GPU 上执行速度显著更快，对于大多数视觉计算来说其精度已经足够。存储纹理、顶点位置、法线和颜色几乎总是用 <code>float</code>。</p>
+
+<p>然而，在累积大量项（如积分器或大场景中的世界空间坐标）、进行对精度敏感的数学运算（如矩阵求逆、奇异值分解）或运行因连续浮点误差而发散的物理模拟时，<code>double</code> 是必要的。一个常见的策略是：默认使用 <code>float</code>，但在特定的、被识别为精度的热点处切换到 <code>double</code>。现代 GPU 原生支持 <code>float</code>，而 <code>double</code> 则要慢得多（通常为半速或更低），这使得这种区分在着色器代码中尤为重要。</p>
+
+<h4>float vs double 三维权衡表</h4>
+<p>以下是 float 和 double 在存储、速度和精度三个维度上的完整对比：</p>
+
+<table>
+<thead><tr><th>维度</th><th>float（32 位，单精度）</th><th>double（64 位，双精度）</th></tr></thead>
+<tbody>
+<tr><td><strong>存储开销</strong></td><td>4 字节 / 值</td><td>8 字节 / 值（2×）</td></tr>
+<tr><td><strong>寄存器占用</strong></td><td>单个标量寄存器</td><td>一对标量寄存器（2×）</td></tr>
+<tr><td><strong>缓存行占用</strong></td><td>每 64B 缓存行 16 个值</td><td>每 64B 缓存行 8 个值（½）</td></tr>
+<tr><td><strong>内存带宽需求</strong></td><td>基准，低</td><td>2× 带宽（数据传输翻倍）</td></tr>
+<tr><td><strong>GPU ALU 吞吐量</strong></td><td>全速（如 RTX 4090：~83 TFLOPS FP32）</td><td>通常 ½ 或 1/64 速度（~1.3 TFLOPS FP64）</td></tr>
+<tr><td><strong>十进制精度</strong></td><td>约 7 位有效数字</td><td>约 15-16 位有效数字</td></tr>
+<tr><td><strong>整数精确范围</strong></td><td>±16,777,215（2²⁴−1）</td><td>±9,007,199,254,740,991（2⁵³−1）</td></tr>
+<tr><td><strong>机器精度 ε</strong></td><td>1.19 × 10⁻⁷</td><td>2.22 × 10⁻¹⁶</td></tr>
+<tr><td><strong>指数范围</strong></td><td>10⁻³⁸ 到 10³⁸</td><td>10⁻³⁰⁸ 到 10³⁰⁸</td></tr>
+<tr><td><strong>纹理格式</strong></td><td>原生支持（RGBA8/16/32F）</td><td>有限支持，较新 GPU 上可用</td></tr>
+<tr><td><strong>典型图形用途</strong></td><td>顶点位置、法线、颜色、UV、矩阵</td><td>科学可视化、高精累积、坐标变换链</td></tr>
+</tbody>
+</table>
+
+<p>关键结论：对于绝大多数图形任务，float 是正确且高效的选择。仅在以下明确场景才考虑 double：(1) 世界空间坐标精度在场景尺寸跨越千米级时不足；(2) 多层骨骼蒙皮产生累积变换误差；(3) 物理模拟因浮点漂移而不稳定；(4) 需要高精度累积的 Monte Carlo 路径追踪。</p>
+
+<h3 id="1-6-3">1.6.3 调试图形程序</h3>
+
+<p>调试图形程序面临着独特的挑战。一个典型的错误可能表现为渲染图像中一个微妙的颜色伪影——一个像素略微偏暗，一个阴影的边缘略微出现锯齿——而原因可能深埋在数百万个着色器调用中。</p>
+
+<p>一些特别有用的调试技术包括：</p>
+
+<h4>技术一：颜色映射调试（Color-Coded Debugging）</h4>
+<p>将数值直接映射为颜色是图形调试中最直观、最强大的技术。与其在数字的海洋中摸索，不如用眼睛直接"看到"数据。以下是标准的颜色映射咒语：</p>
+
+<pre><code>// 在片元着色器中插入调试代码——不同检查项用不同映射
+
+// 检查 1：验证法线方向是否正确
+vec3 debugColor = worldNormal * 0.5 + 0.5;  // [-1,1] → [0,1]
+// 预期：朝上的面偏绿(G+)，朝右的面偏红(R+)，朝前的面偏蓝(B+)
+
+// 检查 2：查看 UV 布局是否有拉伸或镜像
+debugColor = vec3(texCoord, 0.0);  // RG = UV
+// 预期：平滑渐变，无突变；UV 范围 [0,1]；镜像 UV 会看到重复
+
+// 检查 3：检查深度缓冲
+float depth = texture(depthTex, texCoord).r;
+debugColor = vec3(depth);  // 灰度：近黑远白（或近白远黑取决于约定）
+// 预期：平滑变化，无人为条纹
+
+// 检查 4：识别 NaN / Inf
+if (isnan(debugColor.x) || isinf(debugColor.x))
+    debugColor = vec3(1.0, 0.0, 1.0);  // 紫红色闪烁 = 出问题了
+
+// 检查 5：验证切线空间一致性
+debugColor = bitangent * 0.5 + 0.5;  // 法线贴图调试
+// 预期：bitangent 方向应与 UV 的 V 方向一致</code></pre>
+
+<h4>技术二：像素隔离调试（Single-Pixel Isolation）</h4>
+<p>当渲染图像中某个特定像素出现异常时，现代 GPU 调试器提供逐像素断点能力，允许开发者在着色器执行到该像素时冻结整个 GPU 状态、检查所有输入和中间值。使用 RenderDoc 作为示例工作流：</p>
+
+<pre><code>// 工作流：查找为什么屏幕位置 (847, 392) 的像素是黑色
+
+// 步骤 1：在 RenderDoc 中捕获帧
+// 步骤 2：在 Texture Viewer 中定位像素 (847, 392)
+// --- 右键 → "Debug Pixel" → 选择相应的绘制调用
+// 步骤 3：在 Pixel History 中查看该像素经历的每次绘制
+//    绘制调用 12：深度测试失败（被三角形遮挡）→ 无贡献
+//    绘制调用 15：通过深度测试，但着色器输出 RGB(0,0,0)
+// 步骤 4：单击"Debug"进入着色器逐步模式
+//    检查顶点着色器输入：位置、法线、UV 看起来正常
+//    检查光栅化器插值后的输入到片元着色器：
+//      localVar.worldNormal = vec3(0.001, -0.999, 0.002) ← 近似(0,-1,0)
+//      光照方向 lightDir = vec3(0.2, -0.8, 0.3)
+//      float NdotL = dot(normal, lightDir);  // 约 0.8 → 应该很亮...
+//      等等——光源衰减距离是 5.0，但片元到光源的距离是 12.7
+//      → 衰减因子 = 0.0，所以光照贡献被钳位为 0 → 找到了！</code></pre>
+
+<h4>技术三：参考图像对比（Reference Image Comparison）</h4>
+<p>将实时渲染与一个已知正确的参考图像进行差分是发现细微渲染错误的最可靠方法。基本思想如下：</p>
+
+<pre><code>// 伪代码——通常在外部图像比较工具或专用测试框架中执行
+
+// 步骤 1：生成参考图像（离线路径追踪器或已知正确版本的引擎）
+ReferenceImage ref = RenderSceneWithPathTracer(scene, 4096spp);
+
+// 步骤 2：生成测试图像（当前实时渲染器）
+TestImage test = RenderSceneWithRealtimePipeline(scene);
+
+// 步骤 3：计算差异图像
+Image diff = abs(ref - test);  // 每个像素的 RGB 逐通道相减
+
+// 步骤 4：分析差异
+float avgError = AveragePixel(diff);
+if (avgError > THRESHOLD) {
+    // 高错误区域 = 出了问题的位置
+    // 在差分图上叠加差异热点以引导调试
+    HighlightHotspots(diff, THRESHOLD * 2.0);
+}
+
+// 步骤 5：检查特定渲染通道
+// 如果全局光照通道在差异图中表现为红色，那么就评估 GI 通道
+// 如果阴影通道在差异图中表现为蓝色，就调试级联阴影贴图</code></pre>
+
+<p>在实际应用中，GPU 测试框架（如 Google 的 GraphicsFuzz / Amber，或自定义的 Vulkan/D3D12 黄金图像测试套件）会在每次提交代码更改后自动执行渲染测试，将渲染输出与参考图像进行像素级比对。通常的容忍度是每像素 RGB 各通道差异不超过 1-3 个强度级别（在 0-255 的 8 位尺度上），超过此阈值则标记为测试失败。</p>
+
+<h4>技术四：通道分解调试（Channel Decomposition）</h4>
+<p>复杂的视觉效果往往是多个光照和材质分量叠加的结果。通道分解将每个分量单独可视化、隔离其影响：</p>
+
+<pre><code>// 在着色器代码顶端插入开关：一次只输出一个分量
+
+// 定义调试模式（通过统一变量或 #define）
+#define DEBUG_AMBIENT      0
+#define DEBUG_DIFFUSE      1
+#define DEBUG_SPECULAR     2
+#define DEBUG_NORMAL_MAP   3
+#define DEBUG_SHADOW_MAP   4
+#define DEBUG_AO            5
+#define DEBUG_EMISSIVE     6
+#define DEBUG_FULL         7  // 正常复合渲染
+
+uniform int debugMode = DEBUG_FULL;
+
+void main() {
+    vec3 ambient   = globalAmbient * albedo;
+    vec3 diffuse   = ComputeLambertian(normal, lightDir) * albedo * lightColor;
+    vec3 specular  = ComputeBlinnPhong(normal, lightDir, viewDir, shininess);
+    vec3 ao        = texture(aoTex, texCoord).r;
+    vec3 emissive  = emissiveColor * emissiveMap.rgb;
+    float shadow   = SampleShadowMap(worldPos);
+
+    // 完整复合（正常渲染）
+    if (debugMode == DEBUG_FULL) {
+        outColor = ambient * ao + (diffuse + specular) * shadow + emissive;
+        return;
+    }
+
+    // 通道分解——一次只输出一个分量
+    if (debugMode == DEBUG_AMBIENT)     outColor = ambient;
+    if (debugMode == DEBUG_DIFFUSE)     outColor = diffuse;
+    if (debugMode == DEBUG_SPECULAR)    outColor = specular;  // 应该是离散的高光点
+    if (debugMode == DEBUG_NORMAL_MAP)  outColor = normal * 0.5 + 0.5;
+    if (debugMode == DEBUG_SHADOW_MAP)  outColor = vec3(shadow);  // 纯黑=阴影
+    if (debugMode == DEBUG_AO)          outColor = vec3(ao);
+    if (debugMode == DEBUG_EMISSIVE)    outColor = emissive;
+}</code></pre>
+
+<p>这个技术可以立即回答诸如"这个暗色区域是法线错误导致的，还是阴影导致的，还是 AO 导致的？"之类的问题。通过在 UI 中添加一个调试模式下拉菜单，美术人员和技术美工也可以在不触及着色器代码的情况下自主排查视觉问题。</p>
+
+<!-- ==================== 1.7 ==================== -->
+<h2 id="s1-7">1.7 本书结构</h2>
+
+<p>本书的组织大致遵循图形管线的流程，从数学基础开始，经过几何和渲染，最后到达高级主题。全书共 26 章，可以分为五个主要的逻辑板块。以下是每章的一句话简介：</p>
+
+<h3>基础篇（第 1-7 章）：数学与算法工具包</h3>
+
+<table>
+<thead><tr><th style="width:55px">章节</th><th>核心内容</th></tr></thead>
+<tbody>
+<tr><td><strong>Ch02</strong></td><td><strong>杂项数学（Miscellaneous Math）：</strong>集合、实数、三角学、概率论基础——图形学中无处不在但在标准数学课程中常被跳过的实用数学工具集。</td></tr>
+<tr><td><strong>Ch03</strong></td><td><strong>光栅图像（Raster Images）：</strong>像素、RGB 色彩空间、Gamma 校正、图像存储格式——理解二维图像的表示、显示和存储的核心概念。</td></tr>
+<tr><td><strong>Ch04</strong></td><td><strong>光线追踪（Ray Tracing）：</strong>从眼睛通过像素发射光线到场景中，与物体求交，递归追踪反射/折射——这是渲染最简单也最优雅的入门模型。</td></tr>
+<tr><td><strong>Ch05</strong></td><td><strong>表面着色（Surface Shading）：</strong>光源、BRDF、Phong/Blinn-Phong 模型、逐顶点 vs 逐像素着色——从表面到像素的颜色计算入门。</td></tr>
+<tr><td><strong>Ch06</strong></td><td><strong>线性代数（Linear Algebra）：</strong>行列式、矩阵、特征值、奇异值分解——三维变换、投影和坐标系转换的数学基础设施。</td></tr>
+<tr><td><strong>Ch07</strong></td><td><strong>变换矩阵（Transformation Matrices）：</strong>平移、旋转、缩放、仿射变换、齐次坐标、坐标系变换——将物体从模型空间送往屏幕空间的核心数学操作。</td></tr>
+</tbody>
+</table>
+
+<h3>核心管线篇（第 8-12 章）：从几何体到像素</h3>
+
+<table>
+<thead><tr><th style="width:55px">章节</th><th>核心内容</th></tr></thead>
+<tbody>
+<tr><td><strong>Ch08</strong></td><td><strong>视图（Viewing）：</strong>相机模型、投影变换（正交 vs 透视）、视锥体裁剪、视口变换——定义"我们看到什么"的数学。</td></tr>
+<tr><td><strong>Ch09</strong></td><td><strong>图形管线（The Graphics Pipeline）：</strong>顶点处理→光栅化→片元着色→输出合并全过程、着色器编程模型、管线状态管理——该章是本书对实时图形系统的集中详解。</td></tr>
+<tr><td><strong>Ch10</strong></td><td><strong>信号处理（Signal Processing）：</strong>傅里叶分析、采样定理、滤波、重建、抗锯齿——为什么像素不是点、为什么纹理需要 MIP 映射，全在这一章的信号理论框架中得到解释。</td></tr>
+<tr><td><strong>Ch11</strong></td><td><strong>纹理映射（Texture Mapping）：</strong>纹理坐标、双线性/三线性滤波、MIP 映射、各向异性滤波、程序化纹理——将二维和三维数据映射到表面的核心技术。</td></tr>
+<tr><td><strong>Ch12</strong></td><td><strong>数据结构（Data Structures for Graphics）：</strong>三角网格（翼边/半边）、BVH、KD 树、八叉树、场景图——高效存储、查询和操作三维几何体的数据结构集合。</td></tr>
+</tbody>
+</table>
+
+<h3>物理渲染篇（第 13-14 章）：真实感光照的数学之路</h3>
+
+<table>
+<thead><tr><th style="width:55px">章节</th><th>核心内容</th></tr></thead>
+<tbody>
+<tr><td><strong>Ch13</strong></td><td><strong>蒙特卡洛积分（Monte Carlo Integration）：</strong>随机采样、重要性采样、方差缩减、俄罗斯轮盘赌——用随机数的力量求解渲染方程中不可解析的积分。</td></tr>
+<tr><td><strong>Ch14</strong></td><td><strong>基于物理的渲染（Physically Based Rendering）：</strong>渲染方程、BRDF 理论、菲涅尔效应、微表面模型、多重重要性采样——将"看起来逼真"转化为物理定律和数学公式的框架。</td></tr>
+</tbody>
+</table>
+
+<h3>进阶主题篇（第 15-17 章）：曲线、光照与感知</h3>
+
+<table>
+<thead><tr><th style="width:55px">章节</th><th>核心内容</th></tr></thead>
+<tbody>
+<tr><td><strong>Ch15</strong></td><td><strong>曲线（Curves）：</strong>贝塞尔曲线、B 样条、Catmull-Rom 样条——定义平滑曲线的数学及其在建模和动画中的应用。</td></tr>
+<tr><td><strong>Ch16</strong></td><td><strong>全局光照（Global Illumination）：</strong>路径追踪、光子映射、辐射度算法、双向路径追踪——超越直接光照，模拟光在场景中多次反弹的间接效果。</td></tr>
+<tr><td><strong>Ch17</strong></td><td><strong>颜色与视觉感知（Color and Visual Perception）：</strong>CIE 色彩空间、色度图、色适应、视觉错觉——图形学的终极消费者是人眼，理解人类视觉系统是制作出色图形的关键。</td></tr>
+</tbody>
+</table>
+
+<h3>前沿专题篇（第 18-23 章）：现代图形学前沿</h3>
+
+<table>
+<thead><tr><th style="width:55px">章节</th><th>核心内容</th></tr></thead>
+<tbody>
+<tr><td><strong>Ch18</strong></td><td><strong>体积与体渲染（Volume Rendering）：</strong>参与介质、光线行进、传输方程——渲染云、烟雾、火焰、皮肤等半透明材质。</td></tr>
+<tr><td><strong>Ch19</strong></td><td><strong>高效光线追踪（Efficient Ray Tracing）：</strong>BVH 构建与遍历优化、包光线追踪、去噪——使光线追踪在实际时间预算内可行的工程技巧。</td></tr>
+<tr><td><strong>Ch20</strong></td><td><strong>现代图形硬件（Modern Graphics Hardware）：</strong>GPU 架构、线程束/波形执行、缓存层次、光栅化器硬件实现——理解 GPU 内部实际如何工作以编写高性能着色器。</td></tr>
+<tr><td><strong>Ch21</strong></td><td><strong>游戏图形（Graphics in Games）：</strong>游戏引擎架构、剔除策略、阴影技术、后处理效果——实时图形在游戏这个最严苛的应用领域中的实践集合。</td></tr>
+<tr><td><strong>Ch22</strong></td><td><strong>可视化（Visualization）：</strong>科学可视化、信息可视化、体绘制、流可视化——将数据转化为清晰生动图像的专用技术。</td></tr>
+<tr><td><strong>Ch23</strong></td><td><strong>高级主题（Advanced Topics）：</strong>颜色管理、高动态范围（HDR）、图像变形、非真实感渲染（NPR）——图形学工具箱中的前沿附加组件。</td></tr>
+</tbody>
+</table>
+
+<p>鼓励读者不必线性阅读。前几章（尤其 Ch06-07 的线性代数和 Ch04-05 的光线追踪与着色）提供了理解后续材料至关重要的数学基础，但一旦掌握了基础，可以随意跳到最感兴趣的主题。如果你主要关注实时渲染，重点关注 Ch08-11 和 Ch21；如果你对电影品质的离线渲染感兴趣，则优先阅读 Ch13-14 和 Ch16, Ch19。</p>
+
+<p>每章末尾的练习题为关键概念提供了动手实践，覆盖面从纸上推演（推导某个矩阵的逆）到编程任务（实现一个小型光线追踪器或着色器）。建议即使不提交评分也要尝试做一做——图形学是一门"学中做、做中学"的学科，理论理解与工程实现相辅相成。</p>
+
+<div class="thought-box"><p><strong>想一想：</strong>如果你只能彻底学习本书的三章来制作一个简单的渲染器，你会选择哪三章？（提示：你需要"从什么地方输入几何体（Ch12 数据结构 + Ch06 线性代数 + Ch07 变换）→ 把它放到屏幕上（Ch08 视图 + Ch09 管线）→ 让它看起来漂亮（Ch05 着色 + Ch14 PBR）"。实际上，制作最小可行渲染器你需要 Ch04（光线追踪，最简单的"Hello Triangle"渲染器），Ch06-07（变换矩阵），和 Ch05（让它发光）——这三章就能让你渲染出第一个有光照的彩色三角形。）</p></div>
+
+<!-- ========== 本章核心洞察 ========== -->
+<div class="insight-box"><h3>本章核心洞察</h3>
+<ul>
+<li><strong>计算机图形学 = 建模 + 渲染 + 动画 + 交互</strong>，四个子领域在一个图形系统中协同工作。</li>
+<li><strong>图形管线</strong>将三维顶点通过变换、光栅化、着色和输出合并的高效流水线转换为二维像素。</li>
+<li><strong>浮点精度是真实问题</strong>是真实问题：float 只有约 7 位十进制精度，了解何时使用 double、epsilon 容差以及将坐标系保持在原点附近可以预防微妙的 bug。</li>
+<li><strong>效率源于一致性</strong>：空间相邻的像素/三角形/光线表现相似——利用这些规律可以加速 10-100 倍。</li>
+<li><strong>图形调试需要可视化思维</strong>：将数字映射为颜色（法线→RGB、深度→灰度），逐像素隔离检查，分解着色通道——标准的程序调试技术是不够的。</li>
+</ul>
+</div>
+
+<!-- ========== 课后练习题 ========== -->
+<h2>课后练习题（含答案）</h2>
+
+<details>
+<summary>1. IEEE float 的精度限制：一个 float 能精确表示多少个不同的整数值？</summary>
+<p><strong>解答：</strong>一个 32 位 IEEE float 有 23 位尾数（加一个隐含的 1），产生 24 位精度。因此，它可以精确表示最多 ±(2^24 − 1) ≈ ±16,777,215 范围内的所有整数。超过这个范围，整数之间的距离大于 1，一些整数无法被精确表示。相比之下，64 位 double 有 53 位精度（包含隐含位），可以精确表示最多 ±(2^53 − 1) ≈ ±9×10^15 范围内的所有整数。</p>
+</details>
+
+<details>
+<summary>2. 数值取消：计算 1,000,000.1 − 1,000,000.0 时会发生什么？</summary>
+<p><strong>解答：</strong>两个大数非常接近时，减法会导致<span class="key-term">灾难性取消</span>（catastrophic cancellation）。float 只有约 7 位十进制精度；1,000,000.1 在 float 中存储为 ~1,000,000.125（四舍五入到最接近的可表示 float）。相减产生 ~0.125，而不是预期的 0.1。这意味着结果只有约 1 位有效数字是正确的。这是一个图形程序中的常见陷阱，例如在远离原点处计算相邻顶点之间的差值时。</p>
+</details>
+
+<details>
+<summary>3. AoS vs SoA：解释为什么 SoA 在 GPU 上实现高效内存访问通常更好。</summary>
+<p><strong>解答：</strong>在 AoS（数组结构体）中，单个顶点被存储为连续的内存块：<code>[x,y,z,nx,ny,nz,u,v], [x,y,z,nx,ny,nz,u,v], ...</code>。当顶点着色器只需要位置（x,y,z）来进行变换时，它必须读取整个顶点，跳过法线和纹理坐标。在 SoA（结构体数组）中，所有位置被连续存储：<code>[x,y,z], [x,y,z], ...</code>，然后所有法线：<code>[nx,ny,nz], [nx,ny,nz], ...</code>。缓存线填充有用数据（仅位置），没有因未使用的属性而浪费的带宽。GPU 在同时处理大量顶点时能够高效地进行一致性内存访问——SoA 布局完美地符合这一模式。</p>
+</details>
+
+<details>
+<summary>4. 一致性：为什么说利用空间一致性可以使光线-物体相交从 O(N) 加速到 O(log N)？</summary>
+<p><strong>解答：</strong>在没有一致性的情况下，每条光线必须与场景中的每一个物体进行求交——O(N) 每光线。通过利用空间一致性——将物体分组到嵌套包围盒中——先测试光线是否与包围盒相交。如果光线错过包围盒，其内部的所有 N 个物体立即被拒绝，而无需进行单个三角形求交。递归地构建这个结构（包围体层次结构，BVH）产生了对数遍历时间：在每个级别，我们消除约一半的候选对象，每条光线将仅与 O(log N) 个结点交互。这种一致性驱动的方法在具有数十亿光线的光线追踪器中至关重要。</p>
+</details>
+
+<details>
+<summary>5. 调试：一个像素在渲染图像中应该是红色的，但却是绿色的。描述你将采用的调试工作流。</summary>
+<p><strong>解答：</strong>（1）隔离单独像素：使用 GPU 调试器（RenderDoc 或 Nsight）捕获帧，定位该像素，检查其片元着色器输入。验证表面法线——如果法线指向错误方向，光照方程可能产生错误颜色。（2）分解着色通道：将渲染拆分为独立通道——仅显示漫反射分量，然后添加镜面反射，再添加环境光——以确定哪个分量导致了绿色。（3）检查纹理采样：输出纹理坐标 (u,v) 作为颜色，验证片元从纹理的正确区域采样。（4）与参考比较：如果可能，对同一场景运行光线追踪参考渲染，并对两张图像做差——偏差将精确显示颜色在哪里开始分化。（5）检查着色器输入：验证所有输入（法线、光照方向、材质参数）没有超出预期范围。</p>
+</details>
+
+<!-- ========== QA 零基础问答区 ========== -->
+<h2>QA 零基础问答区</h2>
+
+<div class="qa-item">
+<p class="qa-q">Q: 计算机图形学和计算机视觉有什么区别？</p>
+<p class="qa-a">A: 计算机图形学是从模型生成图像（合成），而计算机视觉是从图像提取信息（分析）。图形学回答"给定一个三维场景，它看起来是什么样子？"，视觉回答"给定一幅图像，其中有什么？"实际上，这两个领域共享大量数学知识——投影、变换、光照模型在两者中都有使用——只是方向相反。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q: 为什么 GPU 比 CPU 更擅长渲染图形？</p>
+<p class="qa-a">A: GPU 设计用于大规模并行处理——它们有数千个小型核心，可以同时操作。渲染自然适合这种架构，因为数百万个像素（或顶点、三角形）可以同时独立处理。而 CPU 的设计用于复杂的顺序任务，其大型核心更少。这也解释了为什么 GPU 能高效处理"为每个像素计算一个颜色"这样的任务，但处理像 AI 逻辑这样具有复杂分支的任务时效率较低。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q: "实时"渲染和"离线"渲染的区别是什么？什么时候应该选择哪一种？</p>
+<p class="qa-a">A: 实时渲染（游戏、VR）每帧必须在 16 ms（60 Hz）或 33 ms（30 Hz）内完成，因此依赖于近似、预计算和专用硬件。离线渲染（电影 VFX）可能需要数小时每帧，因此可以使用精确的光照模拟、复杂的几何体和任意高的采样率。在实践中，选择取决于应用：交互性越高，对近似的容忍度越高；物理精确性越重要，给予的时间就越多。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q: 我需要精通数学才能做计算机图形学吗？</p>
+<p class="qa-a">A: 基础线性代数（向量、矩阵、点积/叉积）和一点微积分（积分、导数的概念）可以让你走很远。许多高级数学（球面调和函数、微分几何、傅里叶分析）在需要时可以学习——并不是每个图形程序员每天都使用这些工具。最重要的是几何直觉：理解点积衡量了"一致性"，叉积产生垂直向量，矩阵编码了变换。本书的前几章正是为建立这些直觉而设计的。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q: 为什么渲染图像中会出现锯齿状的线条（jaggies）？如何消除它们？</p>
+<p class="qa-a">A: 锯齿是由于将连续的三角形边缘采样到离散的像素网格中而产生的——本质上是对平滑信号的欠采样。解决方案是抗锯齿：MSAA 在每个像素内额外采样覆盖几何体（但不重新着色），在平滑边缘的同时保持合理的成本；TAA 使用运动向量累积来自先前帧的样本；超采样以更高分辨率渲染然后下采样。每种方法都在质量与性能之间权衡。抗锯齿的完整数学基础在第 10 章（信号处理）中探讨。</p>
+</div>
+
+<div class="qa-item">
+<p class="qa-q">Q: 这本书教授的是哪一种图形学——OpenGL、DirectX、Vulkan 还是 Metal？</p>
+<p class="qa-a">A: 本书教授的是底层原理——这些原理独立于任何特定 API。无论是 OpenGL、DirectX 还是 Vulkan，图形管线（顶点→光栅化→片元→输出）是相同的。API 变化的是你如何与管线交互（C 风格函数调用 vs 现代命令缓冲），而不是管线本身的功能。理解本书中的原理将使你能够快速学习任何 API，因为你会理解 API 调用背后实际发生的是什么。</p>
+</div>
+
+</body></html>
